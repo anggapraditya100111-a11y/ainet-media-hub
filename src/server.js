@@ -19,7 +19,7 @@ const {
 const { ROLE_LABELS, permissionsForRole, hasPermission } = require('./permissions');
 const { STATUS_LABELS, TRANSITIONS, TRANSITION_PERMISSION, assertTransition } = require('./workflow');
 
-const APP_VERSION = '0.1.1';
+const APP_VERSION = '0.1.2';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const SESSION_HOURS = Math.max(1, Math.min(168, Number(process.env.SESSION_HOURS || 12) || 12));
@@ -191,7 +191,9 @@ app.use(helmet({
       styleSrc: ["'self'"],
       scriptSrc: ["'self'"],
       frameSrc: ["'self'", 'blob:'],
-      upgradeInsecureRequests: COOKIE_SECURE ? [] : null
+      // CasaOS exposes the application through plain HTTP on a local IP.
+      // Disable Helmet's default rewrite of HTTP assets to HTTPS.
+      upgradeInsecureRequests: null
     }
   }
 }));

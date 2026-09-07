@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.2 — 2026-09-07
+
+- Menyamakan konfigurasi keamanan aset statis dengan aplikasi CasaOS AXINDO lainnya.
+- Menonaktifkan pemaksaan HTTPS pada CSS dan JavaScript untuk akses IP lokal.
+- Mengganti tag image dan versi aset agar Docker serta browser tidak memakai cache lama.
+
 ## 0.1.1 — 2026-09-07
 
 - Port eksternal bawaan CasaOS dipindahkan ke 8095.
