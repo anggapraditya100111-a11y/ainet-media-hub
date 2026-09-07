@@ -1,0 +1,25 @@
+{
+  "name": "ainet-media-hub",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Manajemen konten dan Media Library AINET / IMAS untuk CasaOS",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "NODE_ENV=development node --watch src/server.js",
+    "check": "node --check src/server.js && node --check src/db.js && node --check src/security.js && node --check src/workflow.js && node --check src/permissions.js && node --check public/app.js",
+    "test": "node --test tests/*.test.js",
+    "test:integration": "node --test tests/integration.test.js",
+    "verify": "npm run check && npm test"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "cookie-parser": "1.4.7",
+    "express": "5.2.1",
+    "express-rate-limit": "8.6.2",
+    "helmet": "8.3.0",
+    "multer": "2.2.0"
+  }
+}
