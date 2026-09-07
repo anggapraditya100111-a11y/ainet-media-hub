@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1 — 2026-09-07
+
+- Port eksternal bawaan CasaOS dipindahkan ke 8095.
+- Memperbaiki CSS dan JavaScript yang tidak termuat saat aplikasi dibuka melalui HTTP lokal.
+
 ## 0.1.0 — 2026-09-07
 
 - Fondasi aplikasi AXINDO Media Hub untuk Docker/CasaOS.

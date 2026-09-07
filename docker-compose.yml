@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ainet-media-hub:0.1.0
+    image: ainet-media-hub:0.1.1
     container_name: ainet-media-hub
     restart: unless-stopped
     ports:
@@ -55,5 +55,5 @@ x-casaos:
   category: Productivity
   architectures:
     - amd64
-  version: "0.1.0"
+  version: "0.1.1"
   update_at: "2026-09-07"
