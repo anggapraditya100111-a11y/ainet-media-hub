@@ -9,7 +9,7 @@ services:
     container_name: ainet-media-hub
     restart: unless-stopped
     ports:
-      - "${APP_PORT:-8094}:8094"
+      - "${APP_PORT:-8095}:8094"
     environment:
       NODE_ENV: production
       PORT: 8094
@@ -42,7 +42,7 @@ x-casaos:
   id: com.axindo.media-hub
   main: media-hub
   index: /
-  port_map: "8094"
+  port_map: "8095"
   scheme: http
   title:
     en_US: AXINDO Media Hub

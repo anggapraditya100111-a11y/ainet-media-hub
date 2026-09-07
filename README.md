@@ -56,7 +56,7 @@ Installer akan:
 2. membuat password awal Super Admin secara acak;
 3. menyiapkan volume database, upload, dan backup;
 4. membangun container;
-5. menjalankan aplikasi pada `http://IP-CASAOS:8094`.
+5. menjalankan aplikasi pada `http://IP-CASAOS:8095`.
 
 Simpan password yang ditampilkan installer, login menggunakan username `admin`, lalu ubah password dari menu **Profil & Password**.
 
@@ -92,7 +92,7 @@ Arsip lengkap disimpan di `/DATA/AppData/media-hub/backups` dan sebaiknya ikut d
 
 ## Domain dan HTTPS
 
-Untuk domain internal, arahkan reverse proxy ke port `8094`, aktifkan HTTPS, lalu ubah `.env`:
+Untuk domain internal, arahkan reverse proxy ke port `8095`, aktifkan HTTPS, lalu ubah `.env`:
 
 ```env
 TRUST_PROXY=true

@@ -36,7 +36,7 @@ chown -R 1000:1000 /DATA/AppData/media-hub/database /DATA/AppData/media-hub/uplo
 docker compose up -d --build
 
 app_port="$(sed -n 's/^APP_PORT=//p' .env | tail -n 1)"
-app_port="${app_port:-8094}"
+app_port="${app_port:-8095}"
 echo "AXINDO Media Hub aktif di http://IP-CASAOS:$app_port"
 echo "Cek status: docker compose ps"
 echo "Cek log: docker compose logs -f media-hub"
