@@ -83,6 +83,16 @@ function initDatabase() {
     CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(token_hash);
     CREATE INDEX IF NOT EXISTS idx_sessions_expiry ON sessions(expires_at);
 
+    CREATE TABLE IF NOT EXISTS oidc_login_attempts (
+      state_hash TEXT PRIMARY KEY,
+      code_verifier TEXT NOT NULL,
+      nonce TEXT NOT NULL,
+      return_to TEXT NOT NULL DEFAULT '/',
+      expires_at TEXT NOT NULL,
+      created_at TEXT NOT NULL
+    );
+    CREATE INDEX IF NOT EXISTS idx_oidc_attempts_expiry ON oidc_login_attempts(expires_at);
+
     CREATE TABLE IF NOT EXISTS brands (
       id TEXT PRIMARY KEY,
       code TEXT NOT NULL UNIQUE COLLATE NOCASE,
@@ -304,8 +314,31 @@ function initDatabase() {
     );
   `);
 
+  migrateUsersForOidc();
+
   seedBaseData();
   if (String(process.env.SEED_DEMO || '').toLowerCase() === 'true') seedDemoData();
+}
+
+function migrateUsersForOidc() {
+  const columns = new Set(db.prepare('PRAGMA table_info(users)').all().map(column => column.name));
+  const additions = [
+    ['email', 'TEXT'],
+    ['auth_source', "TEXT NOT NULL DEFAULT 'LOCAL'"],
+    ['oidc_issuer', 'TEXT'],
+    ['oidc_subject', 'TEXT'],
+    ['oidc_groups_json', 'TEXT'],
+    ['oidc_last_sync_at', 'TEXT']
+  ];
+  for (const [name, definition] of additions) {
+    if (!columns.has(name)) db.exec(`ALTER TABLE users ADD COLUMN ${name} ${definition}`);
+  }
+  db.exec(`
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_users_oidc_identity
+      ON users(oidc_issuer,oidc_subject)
+      WHERE oidc_issuer IS NOT NULL AND oidc_subject IS NOT NULL;
+    CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+  `);
 }
 
 function setSetting(key, value, actorId = null) {
@@ -422,9 +455,11 @@ function nextContentNumber() {
 function publicUser(row) {
   if (!row) return null;
   return {
-    id: row.id, name: row.name, username: row.username, role: row.role,
+    id: row.id, name: row.name, username: row.username, email: row.email || null, role: row.role,
     vendorId: row.vendor_id || null, active: Boolean(row.active),
-    mustChangePassword: Boolean(row.must_change_password), lastLogin: row.last_login || null
+    authSource: row.auth_source || 'LOCAL',
+    mustChangePassword: Boolean(row.must_change_password), lastLogin: row.last_login || null,
+    oidcLastSyncAt: row.oidc_last_sync_at || null
   };
 }
 
@@ -450,6 +485,7 @@ function notifyRole(role, type, title, body = '', link = '') {
 
 function cleanupExpiredSessions() {
   db.prepare('DELETE FROM sessions WHERE expires_at<=?').run(nowIso());
+  db.prepare('DELETE FROM oidc_login_attempts WHERE expires_at<=?').run(nowIso());
 }
 
 async function createDatabaseBackup(label = 'manual') {

@@ -6,6 +6,7 @@ const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
 const multer = require('multer');
 const { rateLimit } = require('express-rate-limit');
+const oidc = require('openid-client');
 
 const {
   db, UPLOAD_DIR, BACKUP_DIR, nowIso, getSetting, setSetting, nextContentNumber,
@@ -18,13 +19,20 @@ const {
 } = require('./security');
 const { ROLE_LABELS, permissionsForRole, hasPermission } = require('./permissions');
 const { STATUS_LABELS, TRANSITIONS, TRANSITION_PERMISSION, assertTransition } = require('./workflow');
+const {
+  oidcSettings, groupsFromClaims, roleForGroups, identityFromClaims,
+  emailAllowed, safeReturnTo
+} = require('./oidc');
 
-const APP_VERSION = '0.1.2';
+const APP_VERSION = '0.2.0';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
+const OIDC_STATE_COOKIE = 'mh_oidc_state';
 const SESSION_HOURS = Math.max(1, Math.min(168, Number(process.env.SESSION_HOURS || 12) || 12));
 const MAX_UPLOAD_MB = Math.max(1, Math.min(250, Number(process.env.MAX_UPLOAD_MB || 50) || 50));
 const COOKIE_SECURE = String(process.env.COOKIE_SECURE || '').toLowerCase() === 'true';
+const OIDC = oidcSettings();
+let oidcConfigurationPromise = null;
 
 class AppError extends Error {
   constructor(message, status = 400) {
@@ -79,8 +87,115 @@ function settingsPayload() {
     primaryColor: getSetting('THEME_PRIMARY', '#2563eb'),
     secondaryColor: getSetting('THEME_SECONDARY', '#f97316'),
     logoUrl: getSetting('LOGO_PATH') ? '/api/branding/logo' : '',
-    appVersion: APP_VERSION
+    appVersion: APP_VERSION,
+    auth: {
+      oidcEnabled: OIDC.enabled,
+      oidcReady: OIDC.ready,
+      oidcLoginUrl: '/api/auth/oidc/start',
+      localLoginEnabled: !OIDC.enabled || OIDC.localSuperAdminEnabled,
+      localEmergencyOnly: OIDC.enabled
+    }
   };
+}
+
+function requireOidcReady() {
+  if (!OIDC.enabled) throw new AppError('Login AXINDO ID belum diaktifkan.', 404);
+  if (!OIDC.ready) throw new AppError('Konfigurasi AXINDO ID belum lengkap pada server.', 503);
+}
+
+async function oidcConfiguration() {
+  requireOidcReady();
+  if (!oidcConfigurationPromise) {
+    const options = OIDC.allowInsecure ? { execute: [oidc.allowInsecureRequests] } : undefined;
+    oidcConfigurationPromise = oidc.discovery(
+      new URL(OIDC.issuer),
+      OIDC.clientId,
+      { client_secret: OIDC.clientSecret, redirect_uris: [OIDC.redirectUri], response_types: ['code'] },
+      oidc.ClientSecretBasic(OIDC.clientSecret),
+      options
+    ).catch(error => {
+      oidcConfigurationPromise = null;
+      throw error;
+    });
+  }
+  return oidcConfigurationPromise;
+}
+
+function sessionCookieOptions() {
+  return {
+    httpOnly: true,
+    secure: COOKIE_SECURE,
+    sameSite: 'strict',
+    maxAge: SESSION_HOURS * 3600000,
+    path: '/'
+  };
+}
+
+function createSession(userId, res) {
+  cleanupExpiredSessions();
+  const token = randomToken();
+  const timestamp = nowIso();
+  const expiresAt = new Date(Date.now() + SESSION_HOURS * 3600000).toISOString();
+  db.prepare('INSERT INTO sessions(id,token_hash,user_id,expires_at,last_seen,created_at) VALUES(?,?,?,?,?,?)')
+    .run(newId('ses'), hashToken('SESSION', token), userId, expiresAt, timestamp, timestamp);
+  db.prepare('UPDATE users SET last_login=?,updated_at=? WHERE id=?').run(timestamp, timestamp, userId);
+  res.cookie(COOKIE_NAME, token, sessionCookieOptions());
+  return db.prepare('SELECT * FROM users WHERE id=?').get(userId);
+}
+
+function uniqueOidcUsername(suggested, subject) {
+  const base = cleanUsername(suggested) || `axindo-${hashToken('OIDC_USERNAME', subject).slice(0, 10).toLowerCase()}`;
+  if (!db.prepare('SELECT id FROM users WHERE username=?').get(base)) return base;
+  const suffix = hashToken('OIDC_USERNAME', subject).slice(0, 8).toLowerCase();
+  const candidate = `${base.slice(0, Math.max(3, 51 - suffix.length))}-${suffix}`;
+  if (!db.prepare('SELECT id FROM users WHERE username=?').get(candidate)) return candidate;
+  return `axindo-${suffix}-${randomToken(3).toLowerCase()}`;
+}
+
+function provisionOidcUser(claims) {
+  const identity = identityFromClaims(claims);
+  const groups = groupsFromClaims(claims);
+  const role = roleForGroups(groups, OIDC.roleMapping);
+  if (!identity.subject) throw new AppError('AXINDO ID tidak mengirim identitas pengguna.', 403);
+  if (!identity.email) throw new AppError('AXINDO ID tidak mengirim alamat email pengguna.', 403);
+  if (!emailAllowed(identity.email, OIDC.allowedEmailDomains)) throw new AppError('Domain email tidak diizinkan untuk Media Hub.', 403);
+  if (!role) throw new AppError('Akun belum memiliki grup Media Hub yang sesuai di AXINDO ID.', 403);
+
+  let user = db.prepare('SELECT * FROM users WHERE oidc_issuer=? AND oidc_subject=?').get(OIDC.issuer, identity.subject);
+  const timestamp = nowIso();
+  if (!user) {
+    if (!OIDC.autoProvision) throw new AppError('Akun belum terdaftar di Media Hub.', 403);
+    const credentials = hashPassword(`Oidc-${randomToken(32)}A1`);
+    const id = newId('usr');
+    const username = uniqueOidcUsername(identity.suggestedUsername, identity.subject);
+    db.prepare(`INSERT INTO users(
+      id,name,username,email,password_hash,password_salt,role,vendor_id,active,must_change_password,
+      auth_source,oidc_issuer,oidc_subject,oidc_groups_json,oidc_last_sync_at,created_at,updated_at
+    ) VALUES(?,?,?,?,?,?,?,NULL,1,0,'OIDC',?,?,?,?,?,?)`).run(
+      id, identity.name || username, username, identity.email, credentials.hash, credentials.salt, role,
+      OIDC.issuer, identity.subject, JSON.stringify(groups), timestamp, timestamp, timestamp
+    );
+    user = db.prepare('SELECT * FROM users WHERE id=?').get(id);
+    recordAudit({ entityType: 'USER', entityId: id, action: 'OIDC_PROVISION', after: { email: identity.email, role, groups } });
+  } else {
+    if (!user.active) throw new AppError('Akun Media Hub dinonaktifkan.', 403);
+    db.prepare(`UPDATE users SET name=?,email=?,role=?,auth_source='OIDC',oidc_groups_json=?,oidc_last_sync_at=?,updated_at=? WHERE id=?`)
+      .run(identity.name || user.name, identity.email, role, JSON.stringify(groups), timestamp, timestamp, user.id);
+    user = db.prepare('SELECT * FROM users WHERE id=?').get(user.id);
+  }
+  return { user, groups };
+}
+
+function oidcCallbackUrl(req) {
+  const callback = new URL(OIDC.redirectUri);
+  callback.search = new URL(req.originalUrl, 'http://media-hub.local').search;
+  return callback;
+}
+
+function oidcFailureCode(error) {
+  if (error instanceof AppError && error.status === 403) return 'access_denied';
+  if (error instanceof AppError && error.status === 503) return 'configuration';
+  return 'provider_error';
 }
 
 function createUploader(folder, options = {}) {
@@ -191,7 +306,7 @@ app.use(helmet({
       styleSrc: ["'self'"],
       scriptSrc: ["'self'"],
       frameSrc: ["'self'", 'blob:'],
-      // CasaOS exposes the application through plain HTTP on a local IP.
+      // Local Ubuntu deployments may initially use plain HTTP on a private IP.
       // Disable Helmet's default rewrite of HTTP assets to HTTPS.
       upgradeInsecureRequests: null
     }
@@ -215,6 +330,14 @@ const loginLimiter = rateLimit({
   legacyHeaders: false,
   skipSuccessfulRequests: true,
   message: { error: 'Terlalu banyak percobaan login. Coba kembali satu menit lagi.' }
+});
+
+const oidcStartLimiter = rateLimit({
+  windowMs: 60_000,
+  limit: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Terlalu banyak permintaan login. Coba kembali satu menit lagi.' }
 });
 
 function authenticate(req, _res, next) {
@@ -249,37 +372,127 @@ app.get('/api/health', (_req, res) => {
 
 app.get('/api/public/config', (_req, res) => res.json(settingsPayload()));
 
+app.get('/api/auth/oidc/start', oidcStartLimiter, async (req, res) => {
+  try {
+    requireOidcReady();
+    cleanupExpiredSessions();
+    const configuration = await oidcConfiguration();
+    const state = oidc.randomState();
+    const nonce = oidc.randomNonce();
+    const codeVerifier = oidc.randomPKCECodeVerifier();
+    const codeChallenge = await oidc.calculatePKCECodeChallenge(codeVerifier);
+    const timestamp = nowIso();
+    const expiresAt = new Date(Date.now() + 10 * 60_000).toISOString();
+    const returnTo = safeReturnTo(req.query.returnTo);
+
+    db.prepare(`INSERT INTO oidc_login_attempts(state_hash,code_verifier,nonce,return_to,expires_at,created_at)
+      VALUES(?,?,?,?,?,?)`).run(hashToken('OIDC_STATE', state), codeVerifier, nonce, returnTo, expiresAt, timestamp);
+    res.cookie(OIDC_STATE_COOKIE, state, {
+      httpOnly: true, secure: COOKIE_SECURE, sameSite: 'lax',
+      maxAge: 10 * 60_000, path: '/api/auth/oidc/callback'
+    });
+
+    const authorizationUrl = oidc.buildAuthorizationUrl(configuration, {
+      redirect_uri: OIDC.redirectUri,
+      scope: OIDC.scopes,
+      response_type: 'code',
+      code_challenge: codeChallenge,
+      code_challenge_method: 'S256',
+      state,
+      nonce
+    });
+    res.redirect(302, authorizationUrl.href);
+  } catch (error) {
+    recordAudit({ entityType: 'AUTH', action: 'OIDC_START_FAILED', reason: error.message, ip: requestIp(req) });
+    if (!(error instanceof AppError) || error.status >= 500) console.error('Memulai OIDC gagal:', error.message);
+    res.redirect(303, `/?sso_error=${encodeURIComponent(oidcFailureCode(error))}`);
+  }
+});
+
+app.get('/api/auth/oidc/callback', async (req, res) => {
+  let returnTo = '/';
+  try {
+    requireOidcReady();
+    const state = String(req.query.state || '');
+    const browserState = String(req.cookies?.[OIDC_STATE_COOKIE] || '');
+    if (!state || !browserState || hashToken('OIDC_STATE', state) !== hashToken('OIDC_STATE', browserState)) {
+      throw new AppError('Sesi login AXINDO ID tidak valid atau sudah kedaluwarsa.', 401);
+    }
+    const stateHash = hashToken('OIDC_STATE', state);
+    const attempt = db.prepare('SELECT * FROM oidc_login_attempts WHERE state_hash=? AND expires_at>?').get(stateHash, nowIso());
+    if (!attempt) throw new AppError('Sesi login AXINDO ID tidak valid atau sudah kedaluwarsa.', 401);
+    returnTo = safeReturnTo(attempt.return_to);
+    db.prepare('DELETE FROM oidc_login_attempts WHERE state_hash=?').run(stateHash);
+    res.clearCookie(OIDC_STATE_COOKIE, { path: '/api/auth/oidc/callback' });
+    if (req.query.error) throw new AppError('Login dibatalkan atau ditolak oleh AXINDO ID.', 401);
+
+    const configuration = await oidcConfiguration();
+    const tokenResponse = await oidc.authorizationCodeGrant(configuration, oidcCallbackUrl(req), {
+      pkceCodeVerifier: attempt.code_verifier,
+      expectedState: state,
+      expectedNonce: attempt.nonce,
+      idTokenExpected: true
+    });
+    const idClaims = tokenResponse.claims();
+    if (!idClaims?.sub) throw new AppError('Respons AXINDO ID tidak memuat identitas pengguna.', 403);
+    let userInfo = {};
+    if (tokenResponse.access_token && configuration.serverMetadata().userinfo_endpoint) {
+      userInfo = await oidc.fetchUserInfo(configuration, tokenResponse.access_token, idClaims.sub);
+    }
+    const { user, groups } = provisionOidcUser({ ...idClaims, ...userInfo, sub: idClaims.sub });
+    const current = createSession(user.id, res);
+    recordAudit({
+      actorId: user.id, entityType: 'AUTH', entityId: user.id, action: 'OIDC_LOGIN',
+      after: { role: current.role, groups }, ip: requestIp(req)
+    });
+    res.redirect(303, returnTo);
+  } catch (error) {
+    res.clearCookie(OIDC_STATE_COOKIE, { path: '/api/auth/oidc/callback' });
+    recordAudit({ entityType: 'AUTH', action: 'OIDC_LOGIN_FAILED', reason: error.message, ip: requestIp(req) });
+    if (!(error instanceof AppError) || error.status >= 500) console.error('Login OIDC gagal:', error.message);
+    const target = new URL(safeReturnTo(returnTo), OIDC.redirectUri || 'http://media-hub.local/');
+    target.searchParams.set('sso_error', oidcFailureCode(error));
+    res.redirect(303, `${target.pathname}${target.search}${target.hash}`);
+  }
+});
+
 app.post('/api/auth/login', loginLimiter, (req, res, next) => {
   try {
     cleanupExpiredSessions();
     const username = cleanUsername(req.body.username);
     const password = String(req.body.password || '');
     const user = db.prepare('SELECT * FROM users WHERE username=? AND active=1').get(username);
-    if (!user || !verifyPassword(password, user.password_salt, user.password_hash)) {
+    const localAllowed = !OIDC.enabled || (OIDC.localSuperAdminEnabled && user?.role === 'SUPER_ADMIN' && (user.auth_source || 'LOCAL') === 'LOCAL');
+    if (!user || !localAllowed || !verifyPassword(password, user.password_salt, user.password_hash)) {
       recordAudit({ entityType: 'AUTH', action: 'LOGIN_FAILED', reason: username, ip: requestIp(req) });
       throw new AppError('Username atau password salah.', 401);
     }
-    const token = randomToken();
-    const timestamp = nowIso();
-    const expiresAt = new Date(Date.now() + SESSION_HOURS * 3600000).toISOString();
-    db.prepare('INSERT INTO sessions(id,token_hash,user_id,expires_at,last_seen,created_at) VALUES(?,?,?,?,?,?)')
-      .run(newId('ses'), hashToken('SESSION', token), user.id, expiresAt, timestamp, timestamp);
-    db.prepare('UPDATE users SET last_login=?,updated_at=? WHERE id=?').run(timestamp, timestamp, user.id);
+    const current = createSession(user.id, res);
     recordAudit({ actorId: user.id, entityType: 'AUTH', entityId: user.id, action: 'LOGIN', ip: requestIp(req) });
-    res.cookie(COOKIE_NAME, token, {
-      httpOnly: true, secure: COOKIE_SECURE, sameSite: 'strict',
-      maxAge: SESSION_HOURS * 3600000, path: '/'
-    });
-    res.json({ user: publicUser(user) });
+    res.json({ user: publicUser(current) });
   } catch (error) { next(error); }
 });
 
-app.post('/api/auth/logout', authRequired, (req, res) => {
+app.post('/api/auth/logout', authRequired, asyncRoute(async (req, res) => {
   db.prepare('DELETE FROM sessions WHERE id=?').run(req.sessionId);
   recordAudit({ actorId: req.user.id, entityType: 'AUTH', entityId: req.user.id, action: 'LOGOUT', ip: requestIp(req) });
   res.clearCookie(COOKIE_NAME, { path: '/' });
-  res.json({ ok: true });
-});
+  let logoutUrl = '';
+  if (req.user.authSource === 'OIDC' && OIDC.ready) {
+    try {
+      const configuration = await oidcConfiguration();
+      if (configuration.serverMetadata().end_session_endpoint) {
+        logoutUrl = oidc.buildEndSessionUrl(configuration, {
+          post_logout_redirect_uri: OIDC.postLogoutRedirectUri,
+          client_id: OIDC.clientId
+        }).href;
+      }
+    } catch (error) {
+      console.error('Logout OIDC provider gagal:', error.message);
+    }
+  }
+  res.json({ ok: true, logoutUrl });
+}));
 
 app.get('/api/bootstrap', authRequired, (req, res) => {
   const unread = db.prepare('SELECT COUNT(*) AS count FROM notifications WHERE user_id=? AND read_at IS NULL').get(req.user.id).count;
@@ -299,6 +512,7 @@ app.get('/api/bootstrap', authRequired, (req, res) => {
 app.post('/api/profile/password', authRequired, (req, res, next) => {
   try {
     const row = db.prepare('SELECT * FROM users WHERE id=?').get(req.user.id);
+    if ((row.auth_source || 'LOCAL') !== 'LOCAL') throw new AppError('Password akun ini dikelola melalui AXINDO ID.', 403);
     if (!verifyPassword(String(req.body.currentPassword || ''), row.password_salt, row.password_hash)) {
       throw new AppError('Password saat ini salah.', 401);
     }
@@ -913,7 +1127,7 @@ app.patch('/api/vendors/:id', authRequired, permissionRequired('vendor.manage'),
 app.get('/api/users', authRequired, (req, res, next) => {
   try {
     if (req.user.role !== 'SUPER_ADMIN') throw new AppError('Menu pengguna hanya untuk Super Admin.', 403);
-    const rows = db.prepare(`SELECT u.id,u.name,u.username,u.role,u.vendor_id,u.active,u.must_change_password,u.last_login,u.created_at,u.updated_at,v.name AS vendor_name
+    const rows = db.prepare(`SELECT u.id,u.name,u.username,u.email,u.auth_source,u.role,u.vendor_id,u.active,u.must_change_password,u.last_login,u.oidc_last_sync_at,u.created_at,u.updated_at,v.name AS vendor_name
       FROM users u LEFT JOIN vendors v ON v.id=u.vendor_id ORDER BY u.active DESC,u.name`).all();
     res.json({ items: rows.map(row => ({ ...row, active: Boolean(row.active), must_change_password: Boolean(row.must_change_password) })) });
   } catch (error) { next(error); }
@@ -924,6 +1138,7 @@ app.post('/api/users', authRequired, (req, res, next) => {
     if (req.user.role !== 'SUPER_ADMIN') throw new AppError('Menu pengguna hanya untuk Super Admin.', 403);
     const role = String(req.body.role || '');
     if (!Object.hasOwn(ROLE_LABELS, role)) throw new AppError('Role tidak valid.');
+    if (OIDC.enabled && role !== 'SUPER_ADMIN') throw new AppError('Akun operasional dibuat otomatis melalui AXINDO ID. Hanya akun Super Admin darurat yang boleh dibuat lokal.');
     const username = cleanUsername(req.body.username);
     if (username.length < 3) throw new AppError('Username minimal 3 karakter.');
     const password = String(req.body.password || '');
@@ -947,12 +1162,14 @@ app.patch('/api/users/:id', authRequired, (req, res, next) => {
     if (req.user.role !== 'SUPER_ADMIN') throw new AppError('Menu pengguna hanya untuk Super Admin.', 403);
     const user = db.prepare('SELECT * FROM users WHERE id=?').get(req.params.id);
     if (!user) throw new AppError('Pengguna tidak ditemukan.', 404);
+    const oidcUser = (user.auth_source || 'LOCAL') === 'OIDC';
     const sets = [];
     const values = [];
     if (Object.hasOwn(req.body, 'name')) { sets.push('name=?'); values.push(requiredText(req.body.name, 'Nama', 200)); }
     if (Object.hasOwn(req.body, 'role')) {
       const role = String(req.body.role);
       if (!Object.hasOwn(ROLE_LABELS, role)) throw new AppError('Role tidak valid.');
+      if (oidcUser) throw new AppError('Role akun AXINDO ID disinkronkan dari grup Authentik.', 403);
       if (user.id === req.user.id && role !== 'SUPER_ADMIN') throw new AppError('Anda tidak dapat menurunkan role akun sendiri.');
       sets.push('role=?'); values.push(role);
     }
@@ -967,6 +1184,7 @@ app.patch('/api/users/:id', authRequired, (req, res, next) => {
       sets.push('active=?'); values.push(active);
     }
     if (Object.hasOwn(req.body, 'password') && String(req.body.password || '')) {
+      if (oidcUser) throw new AppError('Password akun ini dikelola melalui AXINDO ID.', 403);
       assertPassword(req.body.password);
       const credentials = hashPassword(String(req.body.password));
       sets.push('password_hash=?', 'password_salt=?', 'must_change_password=1');

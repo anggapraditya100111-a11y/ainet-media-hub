@@ -1,8 +1,8 @@
 # Matriks Implementasi Konsep AXINDO Media Hub
 
-Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implementasi repository versi 0.1.0.
+Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implementasi repository versi 0.2.0.
 
-| Area konsep | Implementasi 0.1.0 | Status |
+| Area konsep | Implementasi 0.2.0 | Status |
 |---|---|---|
 | Dual brand AINET / IMAS | Master brand, warna, filter, badge, dan branding UI | Selesai |
 | Permintaan dan brief | Form tujuan, audiens, kampanye, format, channel, CTA, deadline, anggaran | Selesai |
@@ -21,8 +21,9 @@ Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implem
 | Notifikasi | Notifikasi dalam aplikasi berbasis perubahan workflow | Selesai |
 | Audit | Pelaku, waktu, aksi, data sebelum/sesudah, alasan, IP | Selesai |
 | Responsif dan dark mode | Desktop, tablet, mobile, sidebar mobile, tema lokal | Selesai |
-| CasaOS | Dockerfile, Compose, volume persisten, installer, updater, health check | Selesai |
+| Ubuntu Server | Dockerfile, Compose, volume persisten lokal, installer, updater, health check | Selesai |
 | Backup | Database dari UI dan arsip volume melalui script | Selesai |
+| AXINDO ID / SSO | Authentik OIDC, Authorization Code + PKCE, provisioning, sinkronisasi grup/role | Selesai |
 | Notifikasi eksternal | Email/WhatsApp | Phase 2 |
 | Export laporan | Excel/PDF otomatis | Phase 2 |
 | Restore lengkap dari UI | Validasi paket, rollback, restart terkontrol | Phase 2 |
@@ -40,3 +41,5 @@ Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implem
 8. Konten tayang tidak dapat diedit atau dihapus permanen.
 9. Publikasi harus melalui status Terjadwal dan wajib memiliki URL atau bukti.
 10. Seluruh tindakan penting tersimpan dalam audit log.
+11. Pengguna operasional masuk melalui AXINDO ID; password lokal hanya tersedia untuk Super Admin darurat.
+12. Akun tanpa grup Authentik yang dipetakan tidak memperoleh akses Media Hub.

@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.2.0 — 2026-09-10
+
+- Menambahkan Single Sign-On AXINDO ID melalui Authentik OIDC.
+- Menggunakan Authorization Code Flow dengan PKCE, state, nonce, dan discovery issuer.
+- Menambahkan provisioning serta sinkronisasi akun berdasarkan identitas `issuer + subject`.
+- Memetakan grup Authentik ke tujuh role Media Hub dan menolak akun tanpa grup yang sesuai.
+- Membatasi login lokal untuk Super Admin darurat saat OIDC aktif.
+- Menambahkan tampilan login AXINDO ID, sumber akun, waktu sinkronisasi, dan profil SSO.
+- Memindahkan target deployment dari CasaOS ke Docker Compose pada Ubuntu Server.
+- Menambahkan installer konfigurasi OIDC interaktif yang tidak menampilkan Client Secret.
+- Memperbarui Multer ke 2.3.0 untuk menutup kerentanan DoS pada pemrosesan multipart.
+
 ## 0.1.2 — 2026-09-07
 
 - Menyamakan konfigurasi keamanan aset statis dengan aplikasi CasaOS AXINDO lainnya.

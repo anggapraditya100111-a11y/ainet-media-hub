@@ -3,6 +3,7 @@ node_modules/
 data/
 uploads/
 backups/
+runtime/
 *.sqlite
 *.sqlite-shm
 *.sqlite-wal

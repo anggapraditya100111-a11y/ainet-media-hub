@@ -1,8 +1,8 @@
 # AXINDO Media Hub
 
-AXINDO Media Hub adalah aplikasi internal PT Axindo Infinitas Network untuk mengelola produksi konten AINET dan IMAS dari permintaan sampai bukti tayang. Aplikasi dirancang untuk berjalan mandiri di Docker/CasaOS dengan database SQLite dan penyimpanan berkas di server perusahaan.
+AXINDO Media Hub adalah aplikasi internal PT Axindo Infinitas Network untuk mengelola produksi konten AINET dan IMAS dari permintaan sampai bukti tayang. Aplikasi berjalan mandiri di server Ubuntu menggunakan Docker Compose, database SQLite, dan penyimpanan berkas lokal server.
 
-Versi: **0.1.2 — Phase 1 MVP**
+Versi: **0.2.0 — AXINDO ID / OIDC**
 
 ## Fitur yang sudah berfungsi
 
@@ -21,6 +21,9 @@ Versi: **0.1.2 — Phase 1 MVP**
 - Audit log untuk login, perubahan data, status workflow, versi berkas, publikasi, pengguna, pengaturan, dan backup.
 - Branding aplikasi, warna AINET/IMAS, logo perusahaan, dark mode, serta tampilan responsif desktop/mobile.
 - Backup database manual dari UI dan backup lengkap volume melalui script server.
+- Single Sign-On melalui AXINDO ID (Authentik) memakai Authorization Code Flow, PKCE, state, dan nonce.
+- Akun operasional dibuat serta diperbarui otomatis dari klaim OIDC; role mengikuti grup Authentik.
+- Login lokal dibatasi untuk akun Super Admin darurat saat OIDC aktif.
 
 ## Pembagian menu
 
@@ -34,19 +37,14 @@ Versi: **0.1.2 — Phase 1 MVP**
 | Petugas Uploader | Dashboard, Konten Siap Tayang, Jadwal Upload, Riwayat Publikasi, Media Library |
 | Direksi / Manajemen | Dashboard Executive, Kalender, Ringkasan Progres, Performa Konten, Kinerja Vendor, Media Library |
 
-## Instalasi di CasaOS
+## Instalasi di Ubuntu
 
-Lokasi yang disarankan:
-
-```text
-/DATA/AppData/media-hub/app
-```
-
-Clone repository, lalu jalankan:
+Persyaratan: Ubuntu Server, Git, Docker Engine, dan Docker Compose Plugin. Jalankan sebagai `root` atau pengguna yang memiliki akses Docker:
 
 ```bash
-cd /DATA/AppData/media-hub/app
-chmod +x install.sh update.sh backup.sh
+git clone https://github.com/anggapraditya100111-a11y/ainet-media-hub.git /opt/axindo-media-hub
+cd /opt/axindo-media-hub
+chmod +x install.sh update.sh backup.sh configure-oidc.sh
 ./install.sh
 ```
 
@@ -54,27 +52,27 @@ Installer akan:
 
 1. membuat `.env` dan secret keamanan;
 2. membuat password awal Super Admin secara acak;
-3. menyiapkan volume database, upload, dan backup;
+3. menyiapkan folder persisten database, upload, dan backup;
 4. membangun container;
-5. menjalankan aplikasi pada `http://IP-CASAOS:8095`.
+5. menjalankan aplikasi pada `http://IP-SERVER:8095`.
 
 Simpan password yang ditampilkan installer, login menggunakan username `admin`, lalu ubah password dari menu **Profil & Password**.
 
 ## Lokasi data
 
-| Data | Lokasi CasaOS |
+| Data | Lokasi Ubuntu bawaan |
 |---|---|
-| Source dan `.env` | `/DATA/AppData/media-hub/app` |
-| Database SQLite | `/DATA/AppData/media-hub/database` |
-| Draft, aset, bukti, logo | `/DATA/AppData/media-hub/uploads` |
-| Backup | `/DATA/AppData/media-hub/backups` |
+| Source dan `.env` | `/opt/axindo-media-hub` |
+| Database SQLite | `/opt/axindo-media-hub/runtime/database` |
+| Draft, aset, bukti, logo | `/opt/axindo-media-hub/runtime/uploads` |
+| Backup | `/opt/axindo-media-hub/runtime/backups` |
 
 Jangan menaruh `.env`, database, upload, atau backup di dalam Git.
 
 ## Update dari GitHub
 
 ```bash
-cd /DATA/AppData/media-hub/app
+cd /opt/axindo-media-hub
 ./update.sh
 ```
 
@@ -88,7 +86,51 @@ Backup database dapat dibuat melalui menu **Backup Data**. Untuk backup lengkap 
 ./backup.sh
 ```
 
-Arsip lengkap disimpan di `/DATA/AppData/media-hub/backups` dan sebaiknya ikut disalin ke NAS atau media cadangan lain.
+Arsip lengkap disimpan di `runtime/backups` dan sebaiknya ikut disalin ke NAS atau media cadangan lain.
+
+## AXINDO ID / Authentik
+
+Provider Authentik harus memakai slug yang menghasilkan issuer berikut (ubah `.env` jika slug berbeda):
+
+```text
+https://sso.axindo.my.id/application/o/axindo-media-hub/
+```
+
+Setelah domain atau URL final Media Hub dapat dibuka dari browser pengguna, jalankan:
+
+```bash
+cd /opt/axindo-media-hub
+./configure-oidc.sh
+```
+
+Script akan meminta URL Media Hub, Client ID, dan Client Secret. Input Client Secret disembunyikan, disimpan hanya di `.env` dengan permission `600`, dan tidak masuk Git. Script juga menampilkan Redirect URI yang harus sama persis dengan nilai pada Provider Authentik, misalnya:
+
+```text
+https://media.axindo.my.id/api/auth/oidc/callback
+```
+
+Pastikan scope Provider mencakup `openid`, `profile`, dan `email`, serta klaim `groups`. Pemetaan grup bawaan:
+
+| Grup Authentik | Role Media Hub |
+|---|---|
+| `AXINDO - MEDIA HUB - SUPER ADMIN` | Super Admin |
+| `AXINDO - MEDIA HUB - KOORDINATOR` | Koordinator Media |
+| `AXINDO - MEDIA HUB - VENDOR` | Vendor/Kreator |
+| `AXINDO - MEDIA HUB - REVIEWER` | Reviewer |
+| `AXINDO - MEDIA HUB - APPROVER` | Approver |
+| `AXINDO - MEDIA HUB - UPLOADER` | Petugas Uploader |
+| `AXINDO - MEDIA HUB - MANAGEMENT` | Direksi/Manajemen |
+| `AXINDO - DIREKSI` | Direksi/Manajemen |
+
+Jika nama grup berbeda, isi pemetaan satu baris di `.env`, misalnya:
+
+```env
+OIDC_ROLE_MAPPING_JSON={"Tim Media":"COORDINATOR","Vendor Konten":"VENDOR","Direksi":"MANAGEMENT"}
+```
+
+Pengguna tanpa grup yang dipetakan akan ditolak. Jika satu pengguna memiliki beberapa grup, sistem memilih role dengan prioritas paling tinggi. Akun OIDC tidak memiliki password lokal; password dan MFA dikelola melalui AXINDO ID. Akun lokal `admin` tetap tersedia hanya sebagai akses pemulihan.
+
+Saat akun role Vendor masuk pertama kali, Super Admin perlu membuka **Pengguna & Akses** lalu memasangkan akun tersebut dengan data vendor. Sebelum dipasangkan, vendor dapat login tetapi belum melihat tugas produksi.
 
 ## Domain dan HTTPS
 
@@ -138,7 +180,9 @@ Pengujian mencakup urutan workflow, penolakan lompatan status, password scrypt, 
 
 ## Keamanan
 
-- Password di-hash menggunakan `scrypt`, salt unik, dan pepper aplikasi.
+- Password lokal darurat di-hash menggunakan `scrypt`, salt unik, dan pepper aplikasi.
+- OIDC memakai Authorization Code Flow + PKCE, validasi state/nonce, issuer discovery, dan identitas stabil `issuer + subject`.
+- Client Secret hanya dibaca dari `.env`; token OIDC tidak disimpan ke database atau audit log.
 - Sesi disimpan sebagai hash, cookie `HttpOnly`, `SameSite=Strict`, dan dapat memakai `Secure` pada HTTPS.
 - Login dibatasi sepuluh kegagalan per menit.
 - Endpoint memeriksa izin di server; penyembunyian menu bukan satu-satunya pengamanan.

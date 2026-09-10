@@ -4,7 +4,11 @@ set -euo pipefail
 cd "$(dirname "$0")"
 
 if ! command -v docker >/dev/null 2>&1; then
-  echo "Docker tidak ditemukan. Pastikan CasaOS dan Docker sudah aktif."
+  echo "Docker tidak ditemukan. Pasang Docker Engine dan Docker Compose Plugin terlebih dahulu."
+  exit 1
+fi
+if ! docker compose version >/dev/null 2>&1; then
+  echo "Docker Compose Plugin tidak ditemukan."
   exit 1
 fi
 
@@ -26,17 +30,25 @@ if [ ! -f .env ]; then
   echo "Simpan password ini dan ubah setelah login pertama."
 fi
 
-mkdir -p /DATA/AppData/media-hub/database \
-  /DATA/AppData/media-hub/uploads/drafts \
-  /DATA/AppData/media-hub/uploads/library \
-  /DATA/AppData/media-hub/uploads/proofs \
-  /DATA/AppData/media-hub/backups
-chown -R 1000:1000 /DATA/AppData/media-hub/database /DATA/AppData/media-hub/uploads /DATA/AppData/media-hub/backups
+data_root="$(sed -n 's/^DATA_ROOT=//p' .env | tail -n 1)"
+data_root="${data_root:-./runtime}"
+if [ "$data_root" = "/" ] || [ "$data_root" = "." ] || [ "$data_root" = "./" ]; then
+  echo "DATA_ROOT tidak aman. Gunakan folder khusus seperti ./runtime atau /var/lib/axindo-media-hub."
+  exit 1
+fi
+mkdir -p "$data_root/database" \
+  "$data_root/uploads/drafts" \
+  "$data_root/uploads/library" \
+  "$data_root/uploads/proofs" \
+  "$data_root/uploads/branding" \
+  "$data_root/backups"
+chown -R 1000:1000 "$data_root/database" "$data_root/uploads" "$data_root/backups"
 
 docker compose up -d --build
 
 app_port="$(sed -n 's/^APP_PORT=//p' .env | tail -n 1)"
 app_port="${app_port:-8095}"
-echo "AXINDO Media Hub aktif di http://IP-CASAOS:$app_port"
+echo "AXINDO Media Hub aktif di http://IP-SERVER:$app_port"
 echo "Cek status: docker compose ps"
 echo "Cek log: docker compose logs -f media-hub"
+echo "Setelah domain siap, jalankan ./configure-oidc.sh untuk menghubungkan AXINDO ID."
