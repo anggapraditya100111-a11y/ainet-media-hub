@@ -62,6 +62,7 @@ if [ -z "$client_secret" ]; then
 fi
 
 redirect_uri="$app_url/api/auth/oidc/callback"
+set_env PUBLIC_APP_URL "$app_url"
 set_env OIDC_ENABLED true
 set_env OIDC_ISSUER_URL "$issuer"
 set_env OIDC_CLIENT_ID "$client_id"

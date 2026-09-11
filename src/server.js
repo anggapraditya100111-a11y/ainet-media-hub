@@ -24,7 +24,7 @@ const {
   emailAllowed, safeReturnTo
 } = require('./oidc');
 
-const APP_VERSION = '0.2.1';
+const APP_VERSION = '0.2.2';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';
@@ -97,6 +97,30 @@ function settingsPayload() {
       localPersonalOnly: OIDC.enabled,
       localPersonalRoles: [...LOCAL_PERSONAL_ROLES]
     }
+  };
+}
+
+function accessManifest() {
+  let publicUrl = String(process.env.PUBLIC_APP_URL || '').trim().replace(/\/$/, '');
+  if (!publicUrl && OIDC.redirectUri) {
+    try { publicUrl = new URL(OIDC.redirectUri).origin; } catch {}
+  }
+  if (!publicUrl) publicUrl = 'https://mediahub.axindo.my.id';
+  return {
+    schemaVersion: 1,
+    id: 'media-hub',
+    name: 'AXINDO Media Hub',
+    description: 'Manajemen produksi dan publikasi konten AINET–IMAS.',
+    url: publicUrl,
+    roles: [
+      { code: 'SUPER_ADMIN', label: 'Super Admin', assignment: 'OIDC', group: 'AXINDO - MEDIA HUB - SUPER ADMIN' },
+      { code: 'COORDINATOR', label: 'Koordinator Media', assignment: 'OIDC', group: 'AXINDO - MEDIA HUB - KOORDINATOR' },
+      { code: 'REVIEWER', label: 'Reviewer', assignment: 'OIDC', group: 'AXINDO - MEDIA HUB - REVIEWER' },
+      { code: 'APPROVER', label: 'Approver', assignment: 'OIDC', group: 'AXINDO - MEDIA HUB - APPROVER' },
+      { code: 'UPLOADER', label: 'Petugas Uploader', assignment: 'OIDC', group: 'AXINDO - MEDIA HUB - UPLOADER' },
+      { code: 'MANAGEMENT', label: 'Direksi / Manajemen', assignment: 'OIDC', group: 'AXINDO - MEDIA HUB - MANAGEMENT' },
+      { code: 'VENDOR', label: 'Vendor / Kreator', assignment: 'PERSONAL' }
+    ]
   };
 }
 
@@ -373,6 +397,11 @@ app.get('/api/health', (_req, res) => {
 });
 
 app.get('/api/public/config', (_req, res) => res.json(settingsPayload()));
+
+app.get('/.well-known/axindo-access.json', (_req, res) => {
+  res.set('Cache-Control', 'public, max-age=300, must-revalidate');
+  res.json(accessManifest());
+});
 
 app.get('/api/auth/oidc/start', oidcStartLimiter, async (req, res) => {
   try {

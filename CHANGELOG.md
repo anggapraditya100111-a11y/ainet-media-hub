@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.2 — 2026-09-11
+
+- Menambahkan manifest publik `/.well-known/axindo-access.json` untuk AXINDO Access Manager.
+- Role AXINDO ID dan role Personal dipisahkan secara eksplisit pada manifest.
+- Daftar role Media Hub kini dapat disinkronkan otomatis oleh panel akses pusat.
+
 ## 0.2.1 — 2026-09-11
 
 - Mengganti istilah login lokal darurat menjadi **Login Personal**.

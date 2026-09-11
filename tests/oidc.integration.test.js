@@ -177,6 +177,13 @@ test('login OIDC membuat akun, role, sesi, dan logout AXINDO ID', { timeout: 30_
   assert.equal(publicConfig.auth.localLoginEnabled, true);
   assert.deepEqual(publicConfig.auth.localPersonalRoles, ['SUPER_ADMIN', 'VENDOR']);
 
+  const accessManifestResponse = await fetch(`${appUrl}/.well-known/axindo-access.json`);
+  assert.equal(accessManifestResponse.status, 200);
+  const accessManifest = await accessManifestResponse.json();
+  assert.equal(accessManifest.id, 'media-hub');
+  assert.ok(accessManifest.roles.some(role => role.code === 'COORDINATOR' && role.assignment === 'OIDC'));
+  assert.ok(accessManifest.roles.some(role => role.code === 'VENDOR' && role.assignment === 'PERSONAL'));
+
   const start = await fetch(`${appUrl}/api/auth/oidc/start`, { redirect: 'manual' });
   assert.equal(start.status, 302, stderr);
   const stateCookie = cookie(start, 'mh_oidc_state');
