@@ -2,7 +2,7 @@
 
 AXINDO Media Hub adalah aplikasi internal PT Axindo Infinitas Network untuk mengelola produksi konten AINET dan IMAS dari permintaan sampai bukti tayang. Aplikasi berjalan mandiri di server Ubuntu menggunakan Docker Compose, database SQLite, dan penyimpanan berkas lokal server.
 
-Versi: **0.2.0 — AXINDO ID / OIDC**
+Versi: **0.2.1 — AXINDO ID dan Login Personal**
 
 ## Fitur yang sudah berfungsi
 
@@ -23,7 +23,7 @@ Versi: **0.2.0 — AXINDO ID / OIDC**
 - Backup database manual dari UI dan backup lengkap volume melalui script server.
 - Single Sign-On melalui AXINDO ID (Authentik) memakai Authorization Code Flow, PKCE, state, dan nonce.
 - Akun operasional dibuat serta diperbarui otomatis dari klaim OIDC; role mengikuti grup Authentik.
-- Login lokal dibatasi untuk akun Super Admin darurat saat OIDC aktif.
+- Login Personal dibatasi untuk akun lokal Super Admin dan Vendor saat OIDC aktif; pengguna internal lainnya wajib memakai AXINDO ID.
 
 ## Pembagian menu
 
@@ -128,9 +128,9 @@ Jika nama grup berbeda, isi pemetaan satu baris di `.env`, misalnya:
 OIDC_ROLE_MAPPING_JSON={"Tim Media":"COORDINATOR","Vendor Konten":"VENDOR","Direksi":"MANAGEMENT"}
 ```
 
-Pengguna tanpa grup yang dipetakan akan ditolak. Jika satu pengguna memiliki beberapa grup, sistem memilih role dengan prioritas paling tinggi. Akun OIDC tidak memiliki password lokal; password dan MFA dikelola melalui AXINDO ID. Akun lokal `admin` tetap tersedia hanya sebagai akses pemulihan.
+Pengguna tanpa grup yang dipetakan akan ditolak. Jika satu pengguna memiliki beberapa grup, sistem memilih role dengan prioritas paling tinggi. Akun OIDC tidak memiliki password lokal; password dan MFA dikelola melalui AXINDO ID. Login Personal menggunakan username dan password tersendiri dan hanya dapat digunakan oleh Super Admin serta Vendor.
 
-Saat akun role Vendor masuk pertama kali, Super Admin perlu membuka **Pengguna & Akses** lalu memasangkan akun tersebut dengan data vendor. Sebelum dipasangkan, vendor dapat login tetapi belum melihat tugas produksi.
+Untuk memberi akses kepada vendor, Super Admin membuka **Pengguna & Akses**, memilih **Tambah Login Personal**, mengisi username serta password awal, memilih role Vendor, lalu memasangkannya dengan data vendor. Sebelum dipasangkan, vendor dapat login tetapi belum melihat tugas produksi.
 
 ## Domain dan HTTPS
 
@@ -180,7 +180,7 @@ Pengujian mencakup urutan workflow, penolakan lompatan status, password scrypt, 
 
 ## Keamanan
 
-- Password lokal darurat di-hash menggunakan `scrypt`, salt unik, dan pepper aplikasi.
+- Password Login Personal di-hash menggunakan `scrypt`, salt unik, dan pepper aplikasi.
 - OIDC memakai Authorization Code Flow + PKCE, validasi state/nonce, issuer discovery, dan identitas stabil `issuer + subject`.
 - Client Secret hanya dibaca dari `.env`; token OIDC tidak disimpan ke database atau audit log.
 - Sesi disimpan sebagai hash, cookie `HttpOnly`, `SameSite=Strict`, dan dapat memakai `Secure` pada HTTPS.

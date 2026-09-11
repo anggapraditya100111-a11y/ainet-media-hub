@@ -61,6 +61,9 @@ function parseAllowedDomains(value) {
 
 function oidcSettings(env = process.env) {
   const requested = enabled(env.OIDC_ENABLED);
+  const localPersonalValue = String(env.LOCAL_PERSONAL_LOGIN_ENABLED ?? '').trim()
+    ? env.LOCAL_PERSONAL_LOGIN_ENABLED
+    : env.LOCAL_SUPER_ADMIN_ENABLED;
   const settings = {
     enabled: requested,
     issuer: String(env.OIDC_ISSUER_URL || '').trim(),
@@ -71,7 +74,7 @@ function oidcSettings(env = process.env) {
     scopes: String(env.OIDC_SCOPES || 'openid profile email').trim(),
     allowedEmailDomains: parseAllowedDomains(env.OIDC_ALLOWED_EMAIL_DOMAINS),
     autoProvision: env.OIDC_AUTO_PROVISION == null ? true : enabled(env.OIDC_AUTO_PROVISION),
-    localSuperAdminEnabled: env.LOCAL_SUPER_ADMIN_ENABLED == null ? true : enabled(env.LOCAL_SUPER_ADMIN_ENABLED),
+    localPersonalLoginEnabled: localPersonalValue == null ? true : enabled(localPersonalValue),
     allowInsecure: enabled(env.OIDC_ALLOW_INSECURE),
     roleMapping: {},
     errors: []

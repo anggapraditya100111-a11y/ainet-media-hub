@@ -174,6 +174,8 @@ test('login OIDC membuat akun, role, sesi, dan logout AXINDO ID', { timeout: 30_
   const publicConfig = await fetch(`${appUrl}/api/public/config`).then(response => response.json());
   assert.equal(publicConfig.auth.oidcEnabled, true);
   assert.equal(publicConfig.auth.oidcReady, true);
+  assert.equal(publicConfig.auth.localLoginEnabled, true);
+  assert.deepEqual(publicConfig.auth.localPersonalRoles, ['SUPER_ADMIN', 'VENDOR']);
 
   const start = await fetch(`${appUrl}/api/auth/oidc/start`, { redirect: 'manual' });
   assert.equal(start.status, 302, stderr);
@@ -200,12 +202,48 @@ test('login OIDC membuat akun, role, sesi, dan logout AXINDO ID', { timeout: 30_
     method: 'POST', headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ username: 'vendor', password: 'Demo12345' })
   });
-  assert.equal(vendorLogin.status, 401);
+  assert.equal(vendorLogin.status, 200);
+  const reviewerLogin = await fetch(`${appUrl}/api/auth/login`, {
+    method: 'POST', headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ username: 'reviewer', password: 'Demo12345' })
+  });
+  assert.equal(reviewerLogin.status, 401);
   const adminLogin = await fetch(`${appUrl}/api/auth/login`, {
     method: 'POST', headers: { 'content-type': 'application/json' },
     body: JSON.stringify({ username: 'admin', password: 'Admin12345' })
   });
   assert.equal(adminLogin.status, 200);
+  const adminCookie = cookie(adminLogin, 'mh_session');
+  assert.ok(adminCookie);
+
+  const vendorListResponse = await fetch(`${appUrl}/api/vendors`, { headers: { cookie: adminCookie } });
+  const vendorList = await vendorListResponse.json();
+  assert.equal(vendorListResponse.status, 200);
+  assert.ok(vendorList.items[0]?.id);
+  const personalVendorResponse = await fetch(`${appUrl}/api/users`, {
+    method: 'POST',
+    headers: { cookie: adminCookie, 'content-type': 'application/json' },
+    body: JSON.stringify({
+      name: 'Vendor Personal', username: 'vendorpersonal', password: 'Vendor12345',
+      role: 'VENDOR', vendorId: vendorList.items[0].id
+    })
+  });
+  assert.equal(personalVendorResponse.status, 201, await personalVendorResponse.text());
+  const personalVendorLogin = await fetch(`${appUrl}/api/auth/login`, {
+    method: 'POST', headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ username: 'vendorpersonal', password: 'Vendor12345' })
+  });
+  assert.equal(personalVendorLogin.status, 200);
+
+  const localCoordinatorResponse = await fetch(`${appUrl}/api/users`, {
+    method: 'POST',
+    headers: { cookie: adminCookie, 'content-type': 'application/json' },
+    body: JSON.stringify({
+      name: 'Koordinator Lokal', username: 'koordinatorlokal', password: 'Koordinator12345',
+      role: 'COORDINATOR'
+    })
+  });
+  assert.equal(localCoordinatorResponse.status, 400);
 
   const logoutResponse = await fetch(`${appUrl}/api/auth/logout`, {
     method: 'POST', headers: { cookie: sessionCookie, 'content-type': 'application/json' }, body: '{}'

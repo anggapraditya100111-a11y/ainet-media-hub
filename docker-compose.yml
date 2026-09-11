@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ainet-media-hub:0.2.0
+    image: ainet-media-hub:0.2.1
     container_name: ainet-media-hub
     restart: unless-stopped
     ports:
@@ -34,6 +34,7 @@ services:
       OIDC_ALLOWED_EMAIL_DOMAINS: "${OIDC_ALLOWED_EMAIL_DOMAINS:-}"
       OIDC_AUTO_PROVISION: "${OIDC_AUTO_PROVISION:-true}"
       OIDC_ROLE_MAPPING_JSON: "${OIDC_ROLE_MAPPING_JSON:-}"
+      LOCAL_PERSONAL_LOGIN_ENABLED: "${LOCAL_PERSONAL_LOGIN_ENABLED:-}"
       LOCAL_SUPER_ADMIN_ENABLED: "${LOCAL_SUPER_ADMIN_ENABLED:-true}"
       OIDC_ALLOW_INSECURE: "${OIDC_ALLOW_INSECURE:-false}"
       DATA_DIR: /app/data

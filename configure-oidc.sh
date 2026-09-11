@@ -70,7 +70,7 @@ set_env OIDC_REDIRECT_URI "$redirect_uri"
 set_env OIDC_POST_LOGOUT_REDIRECT_URI "$app_url/"
 set_env OIDC_SCOPES "openid profile email"
 set_env OIDC_AUTO_PROVISION true
-set_env LOCAL_SUPER_ADMIN_ENABLED true
+set_env LOCAL_PERSONAL_LOGIN_ENABLED true
 
 if [[ "$app_url" == https://* ]]; then
   set_env TRUST_PROXY true

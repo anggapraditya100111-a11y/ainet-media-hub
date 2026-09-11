@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#0b1739">
   <meta name="description" content="AXINDO Media Hub — manajemen produksi dan publikasi konten AINET / IMAS">
   <title>AXINDO Media Hub</title>
-  <link rel="stylesheet" href="/styles.css?v=0.2.0">
+  <link rel="stylesheet" href="/styles.css?v=0.2.1">
 </head>
 <body>
   <div class="brand-ribbon" aria-hidden="true"><span></span><span></span></div>
@@ -40,7 +40,7 @@
         <div id="oidc-login" class="oidc-login" hidden>
           <a id="oidc-login-button" class="btn btn-primary btn-wide sso-button" href="/api/auth/oidc/start"><span>AX</span>Masuk dengan AXINDO ID</a>
           <p class="sso-caption">Satu akun untuk seluruh aplikasi internal AXINDO.</p>
-          <button id="local-login-toggle" class="link-button" type="button">Login Super Admin darurat</button>
+          <button id="local-login-toggle" class="link-button" type="button">Login Personal</button>
         </div>
         <div id="local-login-fields" class="local-login-fields">
           <label class="field">
@@ -51,8 +51,8 @@
             <span>Password</span>
             <input id="login-password" name="password" type="password" autocomplete="current-password" required placeholder="Masukkan password">
           </label>
-          <button id="local-login-button" class="btn btn-primary btn-wide" type="submit">Masuk</button>
-          <p id="local-login-note" class="sso-caption" hidden>Akses lokal hanya untuk pemulihan oleh Super Admin.</p>
+          <button id="local-login-button" class="btn btn-primary btn-wide" type="submit">Masuk dengan Login Personal</button>
+          <p id="local-login-note" class="sso-caption" hidden>Gunakan username dan password akun personal Super Admin atau Vendor.</p>
         </div>
         <p class="login-foot">PT Axindo Infinitas Network</p>
       </form>
@@ -75,7 +75,7 @@
           <div id="user-avatar" class="avatar">A</div>
           <div><strong id="user-name">Pengguna</strong><span id="user-role">Role</span></div>
         </div>
-        <span id="version-label" class="version-label">v0.2.0</span>
+        <span id="version-label" class="version-label">v0.2.1</span>
       </div>
     </aside>
     <div id="nav-backdrop" class="nav-backdrop"></div>
@@ -107,6 +107,6 @@
   <div id="toast-region" class="toast-region" aria-live="assertive"></div>
   <div id="loading" class="loading" hidden><span></span><span></span><span></span></div>
 
-  <script src="/app.js?v=0.2.0" defer></script>
+  <script src="/app.js?v=0.2.1" defer></script>
 </body>
 </html>

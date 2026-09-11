@@ -24,6 +24,18 @@ test('konfigurasi OIDC wajib lengkap saat diaktifkan', () => {
   assert.equal(complete.postLogoutRedirectUri, 'https://media.axindo.my.id/');
 });
 
+test('konfigurasi Login Personal memakai nama baru dan tetap membaca konfigurasi lama', () => {
+  assert.equal(oidcSettings({}).localPersonalLoginEnabled, true);
+  assert.equal(oidcSettings({
+    LOCAL_PERSONAL_LOGIN_ENABLED: 'false',
+    LOCAL_SUPER_ADMIN_ENABLED: 'true'
+  }).localPersonalLoginEnabled, false);
+  assert.equal(oidcSettings({
+    LOCAL_PERSONAL_LOGIN_ENABLED: '',
+    LOCAL_SUPER_ADMIN_ENABLED: 'false'
+  }).localPersonalLoginEnabled, false);
+});
+
 test('grup Authentik dipetakan dengan role paling berwenang', () => {
   const mapping = parseRoleMapping(JSON.stringify({
     COORDINATOR: ['Tim Media'],

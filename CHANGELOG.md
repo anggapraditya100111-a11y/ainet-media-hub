@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.1 — 2026-09-11
+
+- Mengganti istilah login lokal darurat menjadi **Login Personal**.
+- Mengizinkan Login Personal hanya untuk akun lokal Super Admin dan Vendor saat AXINDO ID aktif.
+- Mengizinkan Super Admin membuat akun Vendor beserta username, password, dan pasangan data vendornya.
+- Pengguna internal selain Super Admin tetap wajib masuk melalui AXINDO ID.
+
 ## 0.2.0 — 2026-09-10
 
 - Menambahkan Single Sign-On AXINDO ID melalui Authentik OIDC.

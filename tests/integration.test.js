@@ -78,6 +78,9 @@ test('alur konten lengkap dan akses Media Library', { timeout: 30_000 }, async t
   const loginPage = await fetch(`${baseUrl}/`);
   assert.equal(loginPage.status, 200);
   assert.equal(loginPage.headers.get('content-security-policy').includes('upgrade-insecure-requests'), false);
+  const loginHtml = await loginPage.text();
+  assert.match(loginHtml, /Login Personal/);
+  assert.doesNotMatch(loginHtml, /Login Super Admin darurat/);
 
   const adminCookie = await login(baseUrl, 'admin', 'Admin12345');
   const vendorCookie = await login(baseUrl, 'vendor', 'Demo12345');

@@ -1,8 +1,8 @@
 # Matriks Implementasi Konsep AXINDO Media Hub
 
-Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implementasi repository versi 0.2.0.
+Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implementasi repository versi 0.2.1.
 
-| Area konsep | Implementasi 0.2.0 | Status |
+| Area konsep | Implementasi 0.2.1 | Status |
 |---|---|---|
 | Dual brand AINET / IMAS | Master brand, warna, filter, badge, dan branding UI | Selesai |
 | Permintaan dan brief | Form tujuan, audiens, kampanye, format, channel, CTA, deadline, anggaran | Selesai |
@@ -41,5 +41,5 @@ Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implem
 8. Konten tayang tidak dapat diedit atau dihapus permanen.
 9. Publikasi harus melalui status Terjadwal dan wajib memiliki URL atau bukti.
 10. Seluruh tindakan penting tersimpan dalam audit log.
-11. Pengguna operasional masuk melalui AXINDO ID; password lokal hanya tersedia untuk Super Admin darurat.
+11. Pengguna internal masuk melalui AXINDO ID; Login Personal hanya tersedia untuk Super Admin dan Vendor.
 12. Akun tanpa grup Authentik yang dipetakan tidak memperoleh akses Media Hub.

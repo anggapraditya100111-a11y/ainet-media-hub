@@ -24,10 +24,11 @@ const {
   emailAllowed, safeReturnTo
 } = require('./oidc');
 
-const APP_VERSION = '0.2.0';
+const APP_VERSION = '0.2.1';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';
+const LOCAL_PERSONAL_ROLES = new Set(['SUPER_ADMIN', 'VENDOR']);
 const SESSION_HOURS = Math.max(1, Math.min(168, Number(process.env.SESSION_HOURS || 12) || 12));
 const MAX_UPLOAD_MB = Math.max(1, Math.min(250, Number(process.env.MAX_UPLOAD_MB || 50) || 50));
 const COOKIE_SECURE = String(process.env.COOKIE_SECURE || '').toLowerCase() === 'true';
@@ -92,8 +93,9 @@ function settingsPayload() {
       oidcEnabled: OIDC.enabled,
       oidcReady: OIDC.ready,
       oidcLoginUrl: '/api/auth/oidc/start',
-      localLoginEnabled: !OIDC.enabled || OIDC.localSuperAdminEnabled,
-      localEmergencyOnly: OIDC.enabled
+      localLoginEnabled: !OIDC.enabled || OIDC.localPersonalLoginEnabled,
+      localPersonalOnly: OIDC.enabled,
+      localPersonalRoles: [...LOCAL_PERSONAL_ROLES]
     }
   };
 }
@@ -462,7 +464,10 @@ app.post('/api/auth/login', loginLimiter, (req, res, next) => {
     const username = cleanUsername(req.body.username);
     const password = String(req.body.password || '');
     const user = db.prepare('SELECT * FROM users WHERE username=? AND active=1').get(username);
-    const localAllowed = !OIDC.enabled || (OIDC.localSuperAdminEnabled && user?.role === 'SUPER_ADMIN' && (user.auth_source || 'LOCAL') === 'LOCAL');
+    const localAccount = (user?.auth_source || 'LOCAL') === 'LOCAL';
+    const localAllowed = !OIDC.enabled || (
+      OIDC.localPersonalLoginEnabled && localAccount && LOCAL_PERSONAL_ROLES.has(user?.role)
+    );
     if (!user || !localAllowed || !verifyPassword(password, user.password_salt, user.password_hash)) {
       recordAudit({ entityType: 'AUTH', action: 'LOGIN_FAILED', reason: username, ip: requestIp(req) });
       throw new AppError('Username atau password salah.', 401);
@@ -1138,7 +1143,9 @@ app.post('/api/users', authRequired, (req, res, next) => {
     if (req.user.role !== 'SUPER_ADMIN') throw new AppError('Menu pengguna hanya untuk Super Admin.', 403);
     const role = String(req.body.role || '');
     if (!Object.hasOwn(ROLE_LABELS, role)) throw new AppError('Role tidak valid.');
-    if (OIDC.enabled && role !== 'SUPER_ADMIN') throw new AppError('Akun operasional dibuat otomatis melalui AXINDO ID. Hanya akun Super Admin darurat yang boleh dibuat lokal.');
+    if (OIDC.enabled && (!OIDC.localPersonalLoginEnabled || !LOCAL_PERSONAL_ROLES.has(role))) {
+      throw new AppError('Saat AXINDO ID aktif, Login Personal hanya dapat dibuat untuk Super Admin dan Vendor.');
+    }
     const username = cleanUsername(req.body.username);
     if (username.length < 3) throw new AppError('Username minimal 3 karakter.');
     const password = String(req.body.password || '');
@@ -1170,6 +1177,9 @@ app.patch('/api/users/:id', authRequired, (req, res, next) => {
       const role = String(req.body.role);
       if (!Object.hasOwn(ROLE_LABELS, role)) throw new AppError('Role tidak valid.');
       if (oidcUser) throw new AppError('Role akun AXINDO ID disinkronkan dari grup Authentik.', 403);
+      if (OIDC.enabled && role !== user.role && !LOCAL_PERSONAL_ROLES.has(role)) {
+        throw new AppError('Saat AXINDO ID aktif, Login Personal hanya dapat menggunakan role Super Admin atau Vendor.');
+      }
       if (user.id === req.user.id && role !== 'SUPER_ADMIN') throw new AppError('Anda tidak dapat menurunkan role akun sendiri.');
       sets.push('role=?'); values.push(role);
     }
