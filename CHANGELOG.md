@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.4 — 2026-09-12
+
+- Tambahkan penyelesaian handoff melalui URL fragment bila Safari iPhone memutus `window.opener`.
+- Simpan PKCE verifier hanya di `sessionStorage` dan hapus segera setelah pertukaran kode selesai.
+- Periksa sesi Media Hub sebelum menyatakan popup yang tertutup sebagai kegagalan.
+
 ## 0.3.3 — 2026-09-12
 
 - Cegah monitor popup membatalkan pertukaran kode login yang sedang diproses backend.

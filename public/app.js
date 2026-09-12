@@ -106,9 +106,14 @@ async function init() {
     const config = await api('/api/public/config');
     applyConfig(config);
     configureLogin(config.auth);
+    const redirectedHandoff = await completeRedirectedAccessHandoff();
     await bootstrap();
     showApp();
     await openPage('dashboard');
+    if (redirectedHandoff) {
+      toast('Login AXINDO ID berhasil.');
+      window.setTimeout(() => window.close(), 500);
+    }
   } catch (error) {
     if (error.status !== 401) toast(error.message, true);
     showLogin();
@@ -205,6 +210,29 @@ async function popupCodeChallenge(verifier) {
   return btoa(binary).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
 }
 
+function accessHandoffStorageKey(channel) {
+  return `media-hub-handoff:${channel}`;
+}
+
+async function completeRedirectedAccessHandoff() {
+  const params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  if (params.get('access_handoff') !== '1') return null;
+
+  const channel = String(params.get('channel') || '');
+  const code = String(params.get('code') || '');
+  const verifier = sessionStorage.getItem(accessHandoffStorageKey(channel)) || '';
+  window.history.replaceState({}, document.title, `${window.location.pathname}${window.location.search}`);
+  if (!/^mh_[a-f0-9]{48}$/.test(channel)
+    || !/^[a-zA-Z0-9_-]{40,200}$/.test(code)
+    || !/^[a-zA-Z0-9_-]{43,128}$/.test(verifier)) {
+    throw new Error('Kode login dari AXINDO Access tidak valid atau sudah kedaluwarsa.');
+  }
+
+  await api('/api/auth/access/complete', { method: 'POST', body: { code, verifier } });
+  sessionStorage.removeItem(accessHandoffStorageKey(channel));
+  return { channel };
+}
+
 async function startAccessPopupLogin() {
   const auth = state.config.auth || {};
   if (!auth.accessHandoffReady) return toast('Koneksi AXINDO Access pada server belum aktif.', true);
@@ -215,6 +243,7 @@ async function startAccessPopupLogin() {
 
   const channel = randomPopupChannel();
   const verifier = randomPopupVerifier();
+  sessionStorage.setItem(accessHandoffStorageKey(channel), verifier);
   const width = Math.min(470, Math.max(360, window.screen.availWidth - 24));
   const height = Math.min(760, Math.max(600, window.screen.availHeight - 48));
   const left = Math.max(0, Math.round((window.screen.availWidth - width) / 2));
@@ -224,7 +253,10 @@ async function startAccessPopupLogin() {
     channel,
     `popup=yes,width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
   );
-  if (!popup) return toast('Popup diblokir browser. Izinkan popup untuk Media Hub lalu coba kembali.', true);
+  if (!popup) {
+    sessionStorage.removeItem(accessHandoffStorageKey(channel));
+    return toast('Popup diblokir browser. Izinkan popup untuk Media Hub lalu coba kembali.', true);
+  }
 
   popupLogin = {
     window: popup,
@@ -245,8 +277,11 @@ async function startAccessPopupLogin() {
         active.closedAt = Date.now();
         return;
       }
-      if (Date.now() - active.closedAt < 1500) return;
-      finishPopupLogin(false, 'Popup login ditutup sebelum proses selesai.');
+      if (Date.now() - active.closedAt < 1500 || active.checkingSession) return;
+      active.checkingSession = true;
+      api('/api/bootstrap').then(() => finishPopupLogin(true)).catch(() => {
+        if (popupLogin === active) finishPopupLogin(false, 'Popup login ditutup sebelum proses selesai.');
+      });
     }, 250)
   };
   $('#oidc-login-button').disabled = true;
@@ -291,6 +326,7 @@ async function finishPopupLogin(success, message = '') {
   if (!active) return;
   popupLogin = null;
   window.clearInterval(active.monitor);
+  sessionStorage.removeItem(accessHandoffStorageKey(active.channel));
   if (active.window && !active.window.closed) active.window.close();
   $('#oidc-login-button').disabled = !state.config.auth?.accessHandoffReady;
 
