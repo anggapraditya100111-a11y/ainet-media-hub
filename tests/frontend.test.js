@@ -13,6 +13,7 @@ const manifest = JSON.parse(fs.readFileSync(path.join(root, 'public', 'manifest.
 test('login utama memakai popup AXINDO Access dengan handoff yang diverifikasi', () => {
   assert.match(html, /Masuk melalui AXINDO Access/);
   assert.match(app, /window\.open\(/);
+  assert.match(app, /\/handoff\?handoff=media-hub/);
   assert.match(app, /axindo-access-handoff/);
   assert.match(app, /\/api\/auth\/access\/complete/);
   assert.match(app, /code_challenge/);
@@ -26,7 +27,7 @@ test('login utama memakai popup AXINDO Access dengan handoff yang diverifikasi',
 
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.3\.1/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.3\.2/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);

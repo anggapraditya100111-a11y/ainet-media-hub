@@ -24,7 +24,7 @@ const {
   emailAllowed, safeReturnTo
 } = require('./oidc');
 
-const APP_VERSION = '0.3.1';
+const APP_VERSION = '0.3.2';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';
@@ -132,7 +132,7 @@ function settingsPayload() {
       popupLoginUrl: '/api/auth/oidc/start?mode=popup',
       accessPortalUrl: ACCESS_PORTAL_URL,
       accessPortalOrigin: new URL(ACCESS_PORTAL_URL).origin,
-      accessPortalPopupUrl: `${ACCESS_PORTAL_URL}/?handoff=media-hub`,
+      accessPortalPopupUrl: `${ACCESS_PORTAL_URL}/handoff?handoff=media-hub`,
       localLoginEnabled: !OIDC.enabled || OIDC.localPersonalLoginEnabled,
       localPersonalOnly: OIDC.enabled,
       localPersonalRoles: [...LOCAL_PERSONAL_ROLES]
