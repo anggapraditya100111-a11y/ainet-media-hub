@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.5 — 2026-09-12
+
+- Sembunyikan form ubah password bagi pengguna yang masuk melalui AXINDO Access maupun OIDC langsung.
+- Tampilkan sumber akun `ACCESS` sebagai AXINDO ID pada profil dan administrasi pengguna.
+- Cegah Super Admin mengubah password atau role akun AXINDO ID yang dibuat melalui handoff AXINDO Access.
+
 ## 0.3.4 — 2026-09-12
 
 - Tambahkan penyelesaian handoff melalui URL fragment bila Safari iPhone memutus `window.opener`.

@@ -16,6 +16,11 @@ let popupLogin = null;
 const $ = selector => document.querySelector(selector);
 const page = $('#page');
 
+function isAxindoIdUser(user) {
+  const authSource = user?.authSource || user?.auth_source;
+  return authSource === 'OIDC' || authSource === 'ACCESS';
+}
+
 const icons = {
   dashboard: '⌂', calendar: '▦', pipeline: '⌘', request: '＋', task: '✓',
   review: '◎', approval: '◆', upload: '↑', library: '▣', vendor: '◇',
@@ -508,7 +513,7 @@ async function renderDashboard() {
   page.innerHTML = `
     <div class="page-head"><div><h2>Halo, ${escapeHtml(firstName(state.user.name))}</h2><p>${dashboardGreeting()}</p></div>
       ${has('content.create') ? '<button id="dashboard-create" class="btn btn-primary">＋ Buat Permintaan</button>' : ''}</div>
-    ${state.user.mustChangePassword ? '<div class="notice warn" style="margin-bottom:16px">Password akun ini masih merupakan password awal. Ubah melalui menu Profil & Password.</div>' : ''}
+    ${state.user.mustChangePassword && !isAxindoIdUser(state.user) ? '<div class="notice warn" style="margin-bottom:16px">Password akun ini masih merupakan password awal. Ubah melalui menu Profil & Password.</div>' : ''}
     ${state.user.role === 'VENDOR' && !state.user.vendorId ? '<div class="notice warn" style="margin-bottom:16px">Akun Vendor Anda belum dipasangkan dengan data vendor. Hubungi Super Admin agar tugas produksi dapat ditampilkan.</div>' : ''}
     <div class="grid-3">${metricCards.map(([label, value, icon, tone]) => `<article class="card metric ${tone}"><div class="metric-icon">${icons[icon]}</div><span>${label}</span><strong>${number(value)}</strong></article>`).join('')}</div>
     <div class="grid-2" style="margin-top:16px">
@@ -1108,29 +1113,29 @@ async function renderUsers() {
   const ssoEnabled = Boolean(state.config.auth?.oidcEnabled);
   page.innerHTML = `<div class="page-head"><div><h2>Pengguna & Akses</h2><p>${ssoEnabled ? 'Pengguna internal memakai AXINDO ID. Login Personal tersedia untuk Super Admin dan Vendor; setiap akun Vendor wajib dipasangkan ke data vendor.' : 'Role menjadi dasar menu dan hak akses. Vendor hanya dapat melihat tugas dari perusahaannya.'}</p></div><button id="user-create" class="btn btn-primary">＋ ${ssoEnabled ? 'Tambah Login Personal' : 'Tambah Pengguna'}</button></div>
     <section class="card"><div class="table-wrap"><table><thead><tr><th>Pengguna</th><th>Sumber</th><th>Role</th><th>Vendor</th><th>Login Terakhir</th><th>Status</th></tr></thead><tbody>
-      ${data.items.map(user => `<tr data-user-id="${attr(user.id)}"><td><span class="cell-title">${escapeHtml(user.name)}</span><span class="cell-meta">${escapeHtml(user.email || '@' + user.username)}${user.must_change_password && user.auth_source !== 'OIDC' ? ' · wajib ganti password' : ''}</span></td><td><span class="tag">${user.auth_source === 'OIDC' ? 'AXINDO ID' : 'Login Personal'}</span>${user.oidc_last_sync_at ? `<span class="cell-meta">Sinkron ${dateTime(user.oidc_last_sync_at)}</span>` : ''}</td><td>${escapeHtml(state.roleLabels[user.role] || user.role)}</td><td>${escapeHtml(user.vendor_name || '-')}</td><td>${dateTime(user.last_login)}</td><td>${statusHtml(user.active ? 'ACTIVE' : 'INACTIVE')}</td></tr>`).join('')}
+      ${data.items.map(user => `<tr data-user-id="${attr(user.id)}"><td><span class="cell-title">${escapeHtml(user.name)}</span><span class="cell-meta">${escapeHtml(user.email || '@' + user.username)}${user.must_change_password && !isAxindoIdUser(user) ? ' · wajib ganti password' : ''}</span></td><td><span class="tag">${isAxindoIdUser(user) ? 'AXINDO ID' : 'Login Personal'}</span>${user.oidc_last_sync_at ? `<span class="cell-meta">Sinkron ${dateTime(user.oidc_last_sync_at)}</span>` : ''}</td><td>${escapeHtml(state.roleLabels[user.role] || user.role)}</td><td>${escapeHtml(user.vendor_name || '-')}</td><td>${dateTime(user.last_login)}</td><td>${statusHtml(user.active ? 'ACTIVE' : 'INACTIVE')}</td></tr>`).join('')}
     </tbody></table></div></section>`;
   $('#user-create').addEventListener('click', () => showUserForm(null, vendors.items));
   page.querySelectorAll('[data-user-id]').forEach(row => row.addEventListener('click', () => showUserForm(data.items.find(user => user.id === row.dataset.userId), vendors.items)));
 }
 
 function showUserForm(user, vendors) {
-  const oidcUser = user?.auth_source === 'OIDC';
+  const axindoIdUser = isAxindoIdUser(user);
   const ssoEnabled = Boolean(state.config.auth?.oidcEnabled);
   const personalRoles = [
     ['SUPER_ADMIN', state.roleLabels.SUPER_ADMIN || 'Super Admin'],
     ['VENDOR', state.roleLabels.VENDOR || 'Vendor / Kreator']
   ];
-  const currentIsLegacyLocal = user && !oidcUser && ssoEnabled && !personalRoles.some(([role]) => role === user.role);
-  const roles = ssoEnabled && !oidcUser
+  const currentIsLegacyLocal = user && !axindoIdUser && ssoEnabled && !personalRoles.some(([role]) => role === user.role);
+  const roles = ssoEnabled && !axindoIdUser
     ? (currentIsLegacyLocal ? [[user.role, `${state.roleLabels[user.role] || user.role} (akun lokal lama)`], ...personalRoles] : personalRoles)
     : Object.entries(state.roleLabels);
   openModal(user ? 'Edit Pengguna' : (ssoEnabled ? 'Tambah Login Personal' : 'Tambah Pengguna'), `<form id="user-form"><div class="form-grid">
-    <label class="field full"><span>Nama *</span><input name="name" required maxlength="200" value="${attr(user?.name)}" ${oidcUser ? 'disabled' : ''}></label>
+    <label class="field full"><span>Nama *</span><input name="name" required maxlength="200" value="${attr(user?.name)}" ${axindoIdUser ? 'disabled' : ''}></label>
     ${user ? `<label class="field"><span>Username</span><input value="${attr(user.username)}" disabled></label>` : '<label class="field"><span>Username *</span><input name="username" required minlength="3" maxlength="60" autocomplete="off"></label>'}
-    ${oidcUser ? `<label class="field"><span>Role dari AXINDO ID</span><input value="${attr(state.roleLabels[user.role] || user.role)}" disabled><small>Ubah melalui grup pengguna di Authentik.</small></label>` : `<label class="field"><span>Role *</span><select name="role" required>${optionsHtml(roles, user?.role || (state.config.auth?.oidcEnabled ? 'SUPER_ADMIN' : 'COORDINATOR'))}</select></label>`}
+    ${axindoIdUser ? `<label class="field"><span>Role dari AXINDO ID</span><input value="${attr(state.roleLabels[user.role] || user.role)}" disabled><small>Ubah melalui grup pengguna di Authentik.</small></label>` : `<label class="field"><span>Role *</span><select name="role" required>${optionsHtml(roles, user?.role || (state.config.auth?.oidcEnabled ? 'SUPER_ADMIN' : 'COORDINATOR'))}</select></label>`}
     <label class="field"><span>Vendor (untuk role Vendor)</span><select name="vendorId"><option value="">Pilih vendor</option>${vendors.map(vendor => `<option value="${attr(vendor.id)}" ${vendor.id === user?.vendor_id ? 'selected' : ''}>${escapeHtml(vendor.name)}</option>`).join('')}</select></label>
-    ${oidcUser ? '<div class="notice full">Password dikelola melalui AXINDO ID.</div>' : `<label class="field full"><span>${user ? 'Password baru (kosongkan bila tidak diubah)' : 'Password awal *'}</span><input type="password" name="password" ${user ? '' : 'required'} minlength="8" autocomplete="new-password"><small>Login Personal memakai username dan password. Minimal 8 karakter, mengandung huruf dan angka.</small></label>`}
+    ${axindoIdUser ? '<div class="notice full">Password dikelola melalui AXINDO ID.</div>' : `<label class="field full"><span>${user ? 'Password baru (kosongkan bila tidak diubah)' : 'Password awal *'}</span><input type="password" name="password" ${user ? '' : 'required'} minlength="8" autocomplete="new-password"><small>Login Personal memakai username dan password. Minimal 8 karakter, mengandung huruf dan angka.</small></label>`}
     ${user ? `<label class="check full"><input type="checkbox" name="active" ${user.active ? 'checked' : ''}>Akun aktif</label>` : ''}
     </div><div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn btn-primary">Simpan Pengguna</button></div></form>`, 'Administrasi akses');
   $('#user-form [data-close-modal]').addEventListener('click', closeModal);
@@ -1209,11 +1214,11 @@ async function renderBackups() {
 }
 
 async function renderProfile() {
-  const usesOidc = state.user.authSource === 'OIDC';
+  const usesAxindoId = isAxindoIdUser(state.user);
   page.innerHTML = `<div class="page-head"><div><h2>Profil & Password</h2><p>Kelola keamanan akun Anda.</p></div></div>
-    <div class="grid-2"><section class="card detail-section"><h3>Informasi Akun</h3><dl class="detail-list">${detailItem('Nama', state.user.name)}${detailItem('Username', '@' + state.user.username)}${detailItem('Email', state.user.email || '-')}${detailItem('Sumber akun', usesOidc ? 'AXINDO ID' : 'Lokal')}${detailItem('Role', state.roleLabels[state.user.role] || state.user.role)}${detailItem('Login terakhir', dateTime(state.user.lastLogin))}</dl></section>
-    ${usesOidc ? '<section class="card detail-section"><h3>Keamanan AXINDO ID</h3><div class="notice success">Akun ini masuk melalui Single Sign-On. Password, MFA, dan pemulihan akun dikelola terpusat di AXINDO ID.</div></section>' : '<form id="password-form" class="card detail-section"><h3>Ubah Password</h3><div class="field"><span>Password saat ini</span><input type="password" name="currentPassword" required autocomplete="current-password"></div><div class="field" style="margin-top:13px"><span>Password baru</span><input type="password" name="newPassword" required minlength="8" autocomplete="new-password"><small>Minimal 8 karakter, mengandung huruf dan angka.</small></div><button class="btn btn-primary" style="margin-top:16px" type="submit">Ubah Password</button></form>'}</div>`;
-  if (usesOidc) return;
+    <div class="grid-2"><section class="card detail-section"><h3>Informasi Akun</h3><dl class="detail-list">${detailItem('Nama', state.user.name)}${detailItem('Username', '@' + state.user.username)}${detailItem('Email', state.user.email || '-')}${detailItem('Sumber akun', usesAxindoId ? 'AXINDO ID' : 'Lokal')}${detailItem('Role', state.roleLabels[state.user.role] || state.user.role)}${detailItem('Login terakhir', dateTime(state.user.lastLogin))}</dl></section>
+    ${usesAxindoId ? '<section class="card detail-section"><h3>Keamanan AXINDO ID</h3><div class="notice success">Akun ini masuk melalui Single Sign-On. Password, MFA, dan pemulihan akun dikelola terpusat di AXINDO ID.</div></section>' : '<form id="password-form" class="card detail-section"><h3>Ubah Password</h3><div class="field"><span>Password saat ini</span><input type="password" name="currentPassword" required autocomplete="current-password"></div><div class="field" style="margin-top:13px"><span>Password baru</span><input type="password" name="newPassword" required minlength="8" autocomplete="new-password"><small>Minimal 8 karakter, mengandung huruf dan angka.</small></div><button class="btn btn-primary" style="margin-top:16px" type="submit">Ubah Password</button></form>'}</div>`;
+  if (usesAxindoId) return;
   $('#password-form').addEventListener('submit', async event => {
     event.preventDefault(); setLoading(true);
     try { await api('/api/profile/password', { method: 'POST', body: Object.fromEntries(new FormData(event.currentTarget).entries()) }); event.currentTarget.reset(); state.user.mustChangePassword = false; toast('Password berhasil diubah.'); }

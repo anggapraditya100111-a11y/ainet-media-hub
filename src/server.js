@@ -24,7 +24,7 @@ const {
   emailAllowed, safeReturnTo
 } = require('./oidc');
 
-const APP_VERSION = '0.3.4';
+const APP_VERSION = '0.3.5';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';
@@ -1302,14 +1302,14 @@ app.patch('/api/users/:id', authRequired, (req, res, next) => {
     if (req.user.role !== 'SUPER_ADMIN') throw new AppError('Menu pengguna hanya untuk Super Admin.', 403);
     const user = db.prepare('SELECT * FROM users WHERE id=?').get(req.params.id);
     if (!user) throw new AppError('Pengguna tidak ditemukan.', 404);
-    const oidcUser = (user.auth_source || 'LOCAL') === 'OIDC';
+    const axindoIdUser = ['OIDC', 'ACCESS'].includes(user.auth_source || 'LOCAL');
     const sets = [];
     const values = [];
     if (Object.hasOwn(req.body, 'name')) { sets.push('name=?'); values.push(requiredText(req.body.name, 'Nama', 200)); }
     if (Object.hasOwn(req.body, 'role')) {
       const role = String(req.body.role);
       if (!Object.hasOwn(ROLE_LABELS, role)) throw new AppError('Role tidak valid.');
-      if (oidcUser) throw new AppError('Role akun AXINDO ID disinkronkan dari grup Authentik.', 403);
+      if (axindoIdUser) throw new AppError('Role akun AXINDO ID disinkronkan dari grup Authentik.', 403);
       if (OIDC.enabled && role !== user.role && !LOCAL_PERSONAL_ROLES.has(role)) {
         throw new AppError('Saat AXINDO ID aktif, Login Personal hanya dapat menggunakan role Super Admin atau Vendor.');
       }
@@ -1327,7 +1327,7 @@ app.patch('/api/users/:id', authRequired, (req, res, next) => {
       sets.push('active=?'); values.push(active);
     }
     if (Object.hasOwn(req.body, 'password') && String(req.body.password || '')) {
-      if (oidcUser) throw new AppError('Password akun ini dikelola melalui AXINDO ID.', 403);
+      if (axindoIdUser) throw new AppError('Password akun ini dikelola melalui AXINDO ID.', 403);
       assertPassword(req.body.password);
       const credentials = hashPassword(String(req.body.password));
       sets.push('password_hash=?', 'password_salt=?', 'must_change_password=1');

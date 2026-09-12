@@ -30,9 +30,16 @@ test('login utama memakai popup AXINDO Access dengan handoff yang diverifikasi',
   assert.doesNotMatch(app, /access_token|id_token|client_secret/i);
 });
 
+test('akun AXINDO ID dari OIDC maupun AXINDO Access tidak mendapat form ubah password', () => {
+  assert.match(app, /function isAxindoIdUser\(user\)/);
+  assert.match(app, /authSource === 'OIDC' \|\| authSource === 'ACCESS'/);
+  assert.match(app, /const usesAxindoId = isAxindoIdUser\(state\.user\)/);
+  assert.match(app, /if \(usesAxindoId\) return/);
+});
+
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.3\.4/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.3\.5/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);

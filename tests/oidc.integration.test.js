@@ -213,6 +213,11 @@ test('login OIDC membuat akun, role, sesi, dan logout AXINDO ID', { timeout: 30_
   const handoffBootstrap = await fetch(`${appUrl}/api/bootstrap`, { headers: { cookie: handoffSession } }).then(response => response.json());
   assert.equal(handoffBootstrap.user.authSource, 'ACCESS');
   assert.equal(handoffBootstrap.user.role, 'COORDINATOR');
+  const handoffPasswordResponse = await fetch(`${appUrl}/api/profile/password`, {
+    method: 'POST', headers: { cookie: handoffSession, 'content-type': 'application/json' },
+    body: JSON.stringify({ currentPassword: 'TidakBerlaku1', newPassword: 'PasswordBaru1' })
+  });
+  assert.equal(handoffPasswordResponse.status, 403);
 
   const start = await fetch(`${appUrl}/api/auth/oidc/start`, { redirect: 'manual' });
   assert.equal(start.status, 302, stderr);
@@ -252,7 +257,7 @@ test('login OIDC membuat akun, role, sesi, dan logout AXINDO ID', { timeout: 30_
 
   const popupPage = await fetch(popupTarget).then(response => response.text());
   assert.match(popupPage, /Popup akan tertutup otomatis/);
-  assert.match(popupPage, /popup\.js\?v=0\.3\.4/);
+  assert.match(popupPage, /popup\.js\?v=0\.3\.5/);
 
   const vendorLogin = await fetch(`${appUrl}/api/auth/login`, {
     method: 'POST', headers: { 'content-type': 'application/json' },
@@ -271,6 +276,12 @@ test('login OIDC membuat akun, role, sesi, dan logout AXINDO ID', { timeout: 30_
   assert.equal(adminLogin.status, 200);
   const adminCookie = cookie(adminLogin, 'mh_session');
   assert.ok(adminCookie);
+
+  const adminChangesHandoffPassword = await fetch(`${appUrl}/api/users/${handoffBootstrap.user.id}`, {
+    method: 'PATCH', headers: { cookie: adminCookie, 'content-type': 'application/json' },
+    body: JSON.stringify({ password: 'PasswordBaru1' })
+  });
+  assert.equal(adminChangesHandoffPassword.status, 403);
 
   const vendorListResponse = await fetch(`${appUrl}/api/vendors`, { headers: { cookie: adminCookie } });
   const vendorList = await vendorListResponse.json();
