@@ -24,7 +24,7 @@ const {
   emailAllowed, safeReturnTo
 } = require('./oidc');
 
-const APP_VERSION = '0.3.2';
+const APP_VERSION = '0.3.3';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';

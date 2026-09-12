@@ -1,6 +1,6 @@
 {
   "name": "ainet-media-hub",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "private": true,
   "description": "Manajemen konten dan Media Library AINET / IMAS untuk Ubuntu Server",
   "main": "src/server.js",
