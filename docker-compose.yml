@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ainet-media-hub:0.3.1
+    image: ainet-media-hub:0.3.2
     container_name: ainet-media-hub
     restart: unless-stopped
     ports:

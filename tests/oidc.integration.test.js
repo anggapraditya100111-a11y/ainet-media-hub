@@ -193,7 +193,7 @@ test('login OIDC membuat akun, role, sesi, dan logout AXINDO ID', { timeout: 30_
   assert.deepEqual(publicConfig.auth.localPersonalRoles, ['SUPER_ADMIN', 'VENDOR']);
   assert.equal(publicConfig.auth.accessPortalUrl, 'https://akses.axindo.my.id');
   assert.equal(publicConfig.auth.accessPortalOrigin, 'https://akses.axindo.my.id');
-  assert.match(publicConfig.auth.accessPortalPopupUrl, /akses\.axindo\.my\.id\/\?handoff=media-hub$/);
+  assert.match(publicConfig.auth.accessPortalPopupUrl, /akses\.axindo\.my\.id\/handoff\?handoff=media-hub$/);
 
   const accessManifestResponse = await fetch(`${appUrl}/.well-known/axindo-access.json`);
   assert.equal(accessManifestResponse.status, 200);
@@ -252,7 +252,7 @@ test('login OIDC membuat akun, role, sesi, dan logout AXINDO ID', { timeout: 30_
 
   const popupPage = await fetch(popupTarget).then(response => response.text());
   assert.match(popupPage, /Popup akan tertutup otomatis/);
-  assert.match(popupPage, /popup\.js\?v=0\.3\.1/);
+  assert.match(popupPage, /popup\.js\?v=0\.3\.2/);
 
   const vendorLogin = await fetch(`${appUrl}/api/auth/login`, {
     method: 'POST', headers: { 'content-type': 'application/json' },

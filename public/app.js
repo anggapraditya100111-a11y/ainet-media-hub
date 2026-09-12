@@ -241,7 +241,7 @@ async function startAccessPopupLogin() {
   $('#popup-login-status').textContent = 'Membuka AXINDO Access…';
   popup.focus();
   try {
-    const accessUrl = new URL(auth.accessPortalPopupUrl || 'https://akses.axindo.my.id/?handoff=media-hub');
+    const accessUrl = new URL(auth.accessPortalPopupUrl || 'https://akses.axindo.my.id/handoff?handoff=media-hub');
     accessUrl.searchParams.set('handoff', 'media-hub');
     accessUrl.searchParams.set('channel', channel);
     accessUrl.searchParams.set('return_origin', window.location.origin);

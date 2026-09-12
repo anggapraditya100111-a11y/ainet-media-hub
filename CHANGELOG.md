@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.2 — 2026-09-12
+
+- Mengarahkan popup login ke endpoint khusus `/handoff` milik AXINDO Access.
+- Mempertahankan hubungan popup lintas subdomain agar kode login dapat dikirim kembali ke Media Hub.
+- Membuat URL aset versi baru agar browser tidak memakai JavaScript login lama dari cache.
+
 ## 0.3.1 — 2026-09-12
 
 - Membuka halaman web AXINDO Access di popup, bukan endpoint redirect Authentik.
