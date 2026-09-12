@@ -2,7 +2,7 @@
 
 AXINDO Media Hub adalah aplikasi internal PT Axindo Infinitas Network untuk mengelola produksi konten AINET dan IMAS dari permintaan sampai bukti tayang. Aplikasi berjalan mandiri di server Ubuntu menggunakan Docker Compose, database SQLite, dan penyimpanan berkas lokal server.
 
-Versi: **0.2.2 — Integrasi AXINDO Access Manager**
+Versi: **0.3.0 — Popup AXINDO Access & mode mobile**
 
 ## Fitur yang sudah berfungsi
 
@@ -22,8 +22,10 @@ Versi: **0.2.2 — Integrasi AXINDO Access Manager**
 - Branding aplikasi, warna AINET/IMAS, logo perusahaan, dark mode, serta tampilan responsif desktop/mobile.
 - Backup database manual dari UI dan backup lengkap volume melalui script server.
 - Single Sign-On melalui AXINDO ID (Authentik) memakai Authorization Code Flow, PKCE, state, dan nonce.
+- Login AXINDO ID dibuka sebagai popup melalui `akses.axindo.my.id`; popup tertutup otomatis setelah sesi Media Hub berhasil dibuat.
 - Akun operasional dibuat serta diperbarui otomatis dari klaim OIDC; role mengikuti grup Authentik.
 - Login Personal dibatasi untuk akun lokal Super Admin dan Vendor saat OIDC aktif; pengguna internal lainnya wajib memakai AXINDO ID.
+- Mode mobile bergaya aplikasi Android dengan app bar, navigasi bawah berbasis role, bottom sheet, tombol sentuh, safe-area, dan dukungan instalasi PWA.
 
 ## Pembagian menu
 
@@ -96,17 +98,17 @@ Provider Authentik harus memakai slug yang menghasilkan issuer berikut (ubah `.e
 https://sso.axindo.my.id/application/o/axindo-media-hub/
 ```
 
-Setelah domain atau URL final Media Hub dapat dibuka dari browser pengguna, jalankan:
+Setelah domain Media Hub dan AXINDO Access dapat dibuka dari browser pengguna, jalankan:
 
 ```bash
 cd /opt/axindo-media-hub
 ./configure-oidc.sh
 ```
 
-Script akan meminta URL Media Hub, Client ID, dan Client Secret. Input Client Secret disembunyikan, disimpan hanya di `.env` dengan permission `600`, dan tidak masuk Git. Script juga menampilkan Redirect URI yang harus sama persis dengan nilai pada Provider Authentik, misalnya:
+Script akan meminta URL Media Hub, URL AXINDO Access, Client ID, dan Client Secret. Input Client Secret disembunyikan, disimpan hanya di `.env` dengan permission `600`, dan tidak masuk Git. Script juga menampilkan Redirect URI yang harus sama persis dengan nilai pada Provider Authentik, misalnya:
 
 ```text
-https://media.axindo.my.id/api/auth/oidc/callback
+https://mediahub.axindo.my.id/api/auth/oidc/callback
 ```
 
 Pastikan scope Provider mencakup `openid`, `profile`, dan `email`, serta klaim `groups`. Pemetaan grup bawaan:
@@ -129,6 +131,8 @@ OIDC_ROLE_MAPPING_JSON={"Tim Media":"COORDINATOR","Vendor Konten":"VENDOR","Dire
 ```
 
 Pengguna tanpa grup yang dipetakan akan ditolak. Jika satu pengguna memiliki beberapa grup, sistem memilih role dengan prioritas paling tinggi. Akun OIDC tidak memiliki password lokal; password dan MFA dikelola melalui AXINDO ID. Login Personal menggunakan username dan password tersendiri dan hanya dapat digunakan oleh Super Admin serta Vendor.
+
+Tombol login utama membuka popup AXINDO Access. Setelah autentikasi Access berhasil, popup yang sama menyelesaikan OIDC Media Hub memakai sesi Authentik yang sudah aktif, mengirim hasil melalui `postMessage` yang diverifikasi berdasarkan origin dan token kanal acak, lalu tertutup otomatis. Browser harus mengizinkan popup untuk domain Media Hub.
 
 Untuk memberi akses kepada vendor, Super Admin membuka **Pengguna & Akses**, memilih **Tambah Login Personal**, mengisi username serta password awal, memilih role Vendor, lalu memasangkannya dengan data vendor. Sebelum dipasangkan, vendor dapat login tetapi belum melihat tugas produksi.
 

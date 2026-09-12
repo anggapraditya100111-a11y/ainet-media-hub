@@ -11,6 +11,8 @@ const state = {
   assignments: null
 };
 
+let popupLogin = null;
+
 const $ = selector => document.querySelector(selector);
 const page = $('#page');
 
@@ -85,6 +87,7 @@ const PAGE_META = {
 
 document.addEventListener('DOMContentLoaded', init);
 $('#login-form').addEventListener('submit', login);
+$('#oidc-login-button').addEventListener('click', startAccessPopupLogin);
 $('#local-login-toggle').addEventListener('click', () => setLocalLoginVisible(true));
 $('#logout-button').addEventListener('click', logout);
 $('#menu-toggle').addEventListener('click', () => document.body.classList.add('nav-open'));
@@ -94,6 +97,7 @@ $('#theme-toggle').addEventListener('click', toggleTheme);
 $('#notifications-button').addEventListener('click', showNotifications);
 document.querySelectorAll('[data-close-modal]').forEach(button => button.addEventListener('click', closeModal));
 document.addEventListener('keydown', event => { if (event.key === 'Escape') closeModal(); });
+window.addEventListener('message', handlePopupLoginMessage);
 
 async function init() {
   applySavedTheme();
@@ -166,19 +170,112 @@ function configureLogin(auth = {}) {
   const oidcArea = $('#oidc-login');
   const oidcButton = $('#oidc-login-button');
   oidcArea.hidden = !oidcEnabled;
-  oidcButton.href = oidcReady ? (auth.oidcLoginUrl || '/api/auth/oidc/start') : '#';
   oidcButton.classList.toggle('disabled', !oidcReady);
   oidcButton.setAttribute('aria-disabled', String(!oidcReady));
-  oidcButton.onclick = oidcReady ? null : event => {
-    event.preventDefault();
-    toast('Konfigurasi AXINDO ID pada server belum lengkap.', true);
-  };
+  oidcButton.disabled = !oidcReady;
   $('#local-login-toggle').hidden = !localEnabled;
   $('#local-login-note').hidden = !oidcEnabled;
   $('#login-description').textContent = oidcEnabled
-    ? 'Pengguna internal masuk dengan AXINDO ID. Super Admin dan Vendor dapat memakai Login Personal.'
+    ? 'Pengguna internal masuk melalui popup AXINDO Access. Super Admin dan Vendor dapat memakai Login Personal.'
     : 'Gunakan username dan password akun yang diberikan.';
+  $('#popup-login-status').textContent = oidcReady
+    ? `Login aman melalui ${new URL(auth.accessPortalUrl || 'https://akses.axindo.my.id').hostname}.`
+    : 'Konfigurasi AXINDO ID pada server belum lengkap.';
   setLocalLoginVisible(!oidcEnabled && localEnabled || oidcEnabled && !oidcReady && localEnabled);
+}
+
+function randomPopupChannel() {
+  const bytes = new Uint8Array(24);
+  window.crypto.getRandomValues(bytes);
+  return `mh_${Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('')}`;
+}
+
+function startAccessPopupLogin() {
+  const auth = state.config.auth || {};
+  if (!auth.oidcReady) return toast('Konfigurasi AXINDO ID pada server belum lengkap.', true);
+  if (popupLogin?.window && !popupLogin.window.closed) {
+    popupLogin.window.focus();
+    return;
+  }
+
+  const channel = randomPopupChannel();
+  const accessUrl = new URL(auth.accessPortalPopupUrl || 'https://akses.axindo.my.id/api/auth/oidc/start?mode=popup');
+  accessUrl.searchParams.set('mode', 'popup');
+  const width = Math.min(470, Math.max(360, window.screen.availWidth - 24));
+  const height = Math.min(760, Math.max(600, window.screen.availHeight - 48));
+  const left = Math.max(0, Math.round((window.screen.availWidth - width) / 2));
+  const top = Math.max(0, Math.round((window.screen.availHeight - height) / 2));
+  const popup = window.open(
+    accessUrl.href,
+    channel,
+    `popup=yes,width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+  );
+  if (!popup) return toast('Popup diblokir browser. Izinkan popup untuk Media Hub lalu coba kembali.', true);
+
+  popupLogin = {
+    window: popup,
+    channel,
+    stage: 'access',
+    accessOrigin: auth.accessPortalOrigin || accessUrl.origin,
+    monitor: window.setInterval(() => {
+      if (!popupLogin || !popup.closed) return;
+      finishPopupLogin(false, 'Popup login ditutup sebelum proses selesai.');
+    }, 500)
+  };
+  $('#oidc-login-button').disabled = true;
+  $('#popup-login-status').textContent = 'Menunggu login dari AXINDO Access…';
+  popup.focus();
+}
+
+function handlePopupLoginMessage(event) {
+  const active = popupLogin;
+  if (!active || event.source !== active.window || event.data?.channel !== active.channel) return;
+
+  if (active.stage === 'access') {
+    if (event.origin !== active.accessOrigin || event.data?.type !== 'axindo-access-auth') return;
+    if (event.data.status !== 'success') return finishPopupLogin(false, event.data.message || 'Login AXINDO Access gagal.');
+    active.stage = 'media-hub';
+    $('#popup-login-status').textContent = 'Menghubungkan AXINDO ID ke Media Hub…';
+    const handoffUrl = new URL(state.config.auth?.popupLoginUrl || '/api/auth/oidc/start?mode=popup', window.location.origin);
+    handoffUrl.searchParams.set('mode', 'popup');
+    handoffUrl.searchParams.set('channel', active.channel);
+    try { active.window.location = handoffUrl.href; }
+    catch { return finishPopupLogin(false, 'Popup tidak dapat melanjutkan ke Media Hub.'); }
+    return;
+  }
+
+  if (active.stage === 'media-hub' && event.origin === window.location.origin && event.data?.type === 'media-hub-auth') {
+    if (event.data.status === 'success') finishPopupLogin(true);
+    else finishPopupLogin(false, event.data.message || 'Login Media Hub gagal.');
+  }
+}
+
+async function finishPopupLogin(success, message = '') {
+  const active = popupLogin;
+  if (!active) return;
+  popupLogin = null;
+  window.clearInterval(active.monitor);
+  if (active.window && !active.window.closed) active.window.close();
+  $('#oidc-login-button').disabled = !state.config.auth?.oidcReady;
+
+  if (!success) {
+    $('#popup-login-status').textContent = 'Login belum berhasil. Silakan coba kembali.';
+    if (message) toast(message, true);
+    return;
+  }
+
+  setLoading(true);
+  try {
+    await bootstrap();
+    showApp();
+    await openPage('dashboard');
+    toast('Login AXINDO ID berhasil.');
+  } catch (error) {
+    showLogin();
+    toast(error.message || 'Sesi Media Hub belum terbentuk.', true);
+  } finally {
+    setLoading(false);
+  }
 }
 
 function setLocalLoginVisible(visible) {
@@ -189,7 +286,7 @@ function setLocalLoginVisible(visible) {
     input.disabled = !enabled;
     input.required = enabled;
   }
-  if (enabled) $('#login-username').focus();
+  if (enabled && window.matchMedia('(min-width: 861px)').matches) $('#login-username').focus();
 }
 
 function showSsoError() {
@@ -230,6 +327,7 @@ function showLogin() {
   $('#app-view').hidden = true;
   $('#login-view').hidden = false;
   closeNavigation();
+  $('#mobile-navigation').innerHTML = '';
 }
 
 function showApp() {
@@ -261,6 +359,29 @@ function renderNavigation() {
       </button>`).join('')}
     </section>`).join('');
   $('#navigation').querySelectorAll('[data-page]').forEach(button => button.addEventListener('click', () => openPage(button.dataset.page)));
+  renderMobileNavigation(menu);
+}
+
+function renderMobileNavigation(menu) {
+  const primaryByRole = {
+    SUPER_ADMIN: 'pipeline', COORDINATOR: 'pipeline', VENDOR: 'my-tasks', REVIEWER: 'review-queue',
+    APPROVER: 'approval-queue', UPLOADER: 'ready', MANAGEMENT: 'reports'
+  };
+  const preferred = ['dashboard', primaryByRole[state.user.role], 'calendar', 'library'].filter(Boolean);
+  const items = preferred.map(id => menu.find(item => item[1] === id)).filter(Boolean)
+    .filter((item, index, all) => all.findIndex(candidate => candidate[1] === item[1]) === index);
+  const shortLabels = {
+    dashboard: 'Beranda', pipeline: 'Pipeline', 'my-tasks': 'Tugas', 'review-queue': 'Review',
+    'approval-queue': 'Approval', ready: 'Tayang', reports: 'Laporan', calendar: 'Kalender', library: 'Library'
+  };
+  const nav = $('#mobile-navigation');
+  nav.innerHTML = `${items.map(([, id, label, icon]) => `
+    <button class="mobile-nav-btn ${state.currentPage === id ? 'active' : ''}" data-mobile-page="${id}">
+      <span>${icons[icon] || '•'}</span><small>${shortLabels[id] || label}</small>
+    </button>`).join('')}
+    <button class="mobile-nav-btn" data-mobile-menu="true"><span>☰</span><small>Menu</small></button>`;
+  nav.querySelectorAll('[data-mobile-page]').forEach(button => button.addEventListener('click', () => openPage(button.dataset.mobilePage)));
+  nav.querySelector('[data-mobile-menu]')?.addEventListener('click', () => document.body.classList.add('nav-open'));
 }
 
 async function openPage(pageId) {

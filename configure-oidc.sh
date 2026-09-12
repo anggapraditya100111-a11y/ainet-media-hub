@@ -33,7 +33,7 @@ default_issuer="$(current_value OIDC_ISSUER_URL)"
 default_issuer="${default_issuer:-https://sso.axindo.my.id/application/o/axindo-media-hub/}"
 
 echo "Konfigurasi AXINDO ID untuk Media Hub"
-read -r -p "URL Media Hub (contoh https://media.axindo.my.id): " app_url
+read -r -p "URL Media Hub (contoh https://mediahub.axindo.my.id): " app_url
 app_url="${app_url%/}"
 if [[ ! "$app_url" =~ ^https?://[^/]+ ]]; then
   echo "URL Media Hub tidak valid."
@@ -43,6 +43,16 @@ fi
 read -r -p "Issuer Authentik [$default_issuer]: " issuer
 issuer="${issuer:-$default_issuer}"
 issuer="${issuer%/}/"
+
+default_access_url="$(current_value ACCESS_PORTAL_URL)"
+default_access_url="${default_access_url:-https://akses.axindo.my.id}"
+read -r -p "URL AXINDO Access [$default_access_url]: " access_url
+access_url="${access_url:-$default_access_url}"
+access_url="${access_url%/}"
+if [[ ! "$access_url" =~ ^https?://[^/]+ ]]; then
+  echo "URL AXINDO Access tidak valid."
+  exit 1
+fi
 
 existing_client_id="$(current_value OIDC_CLIENT_ID)"
 read -r -p "Client ID${existing_client_id:+ (Enter untuk mempertahankan yang tersimpan)}: " client_id
@@ -63,6 +73,7 @@ fi
 
 redirect_uri="$app_url/api/auth/oidc/callback"
 set_env PUBLIC_APP_URL "$app_url"
+set_env ACCESS_PORTAL_URL "$access_url"
 set_env OIDC_ENABLED true
 set_env OIDC_ISSUER_URL "$issuer"
 set_env OIDC_CLIENT_ID "$client_id"
@@ -90,7 +101,7 @@ docker compose up -d --build --force-recreate
 app_port="$(current_value APP_PORT)"
 app_port="${app_port:-8095}"
 if curl --fail --silent "http://127.0.0.1:$app_port/api/health" >/dev/null; then
-  echo "AXINDO ID aktif. Buka $app_url dan uji tombol Masuk dengan AXINDO ID."
+  echo "AXINDO ID aktif. Buka $app_url dan uji popup Masuk melalui AXINDO Access."
 else
   echo "Container dijalankan, tetapi health check belum siap. Cek: docker compose logs -f media-hub"
 fi

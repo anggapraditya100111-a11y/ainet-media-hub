@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0 — 2026-09-12
+
+- Mengubah login utama menjadi popup melalui AXINDO Access pada `akses.axindo.my.id`.
+- Menambahkan handoff OIDC dua tahap dalam satu popup dengan verifikasi origin dan token kanal acak.
+- Menutup popup otomatis setelah sesi Media Hub berhasil dibuat dan memuat dashboard tanpa refresh manual.
+- Menambahkan tampilan penyelesaian popup untuk status berhasil atau gagal.
+- Menambahkan mode mobile bergaya aplikasi Android dengan app bar, navigasi bawah sesuai role, bottom sheet, safe-area, serta target sentuh yang lebih nyaman.
+- Menambahkan manifest PWA dan ikon aplikasi Media Hub.
+- Menambahkan migrasi database untuk menyimpan mode dan kanal percobaan login popup.
+
 ## 0.2.2 — 2026-09-11
 
 - Menambahkan manifest publik `/.well-known/axindo-access.json` untuk AXINDO Access Manager.

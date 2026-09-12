@@ -1,6 +1,6 @@
 # Matriks Implementasi Konsep AXINDO Media Hub
 
-Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implementasi repository versi 0.2.1.
+Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implementasi repository versi 0.3.0.
 
 | Area konsep | Implementasi 0.2.1 | Status |
 |---|---|---|
@@ -20,10 +20,10 @@ Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implem
 | Laporan | Status, brand, vendor SLA, reach, engagement, leads, biaya/lead | Selesai |
 | Notifikasi | Notifikasi dalam aplikasi berbasis perubahan workflow | Selesai |
 | Audit | Pelaku, waktu, aksi, data sebelum/sesudah, alasan, IP | Selesai |
-| Responsif dan dark mode | Desktop, tablet, mobile, sidebar mobile, tema lokal | Selesai |
+| Responsif dan dark mode | Desktop, tablet, mode aplikasi Android, navigasi bawah berbasis role, PWA, tema lokal | Selesai |
 | Ubuntu Server | Dockerfile, Compose, volume persisten lokal, installer, updater, health check | Selesai |
 | Backup | Database dari UI dan arsip volume melalui script | Selesai |
-| AXINDO ID / SSO | Authentik OIDC, Authorization Code + PKCE, provisioning, sinkronisasi grup/role | Selesai |
+| AXINDO ID / SSO | Popup AXINDO Access, handoff Authentik OIDC, Authorization Code + PKCE, provisioning, sinkronisasi grup/role | Selesai |
 | Notifikasi eksternal | Email/WhatsApp | Phase 2 |
 | Export laporan | Excel/PDF otomatis | Phase 2 |
 | Restore lengkap dari UI | Validasi paket, rollback, restart terkontrol | Phase 2 |
