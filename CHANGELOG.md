@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.1 — 2026-09-12
+
+- Membuka halaman web AXINDO Access di popup, bukan endpoint redirect Authentik.
+- Menggunakan sesi Access yang sudah aktif sehingga pengguna tidak perlu login ulang di Media Hub.
+- Menukar kode satu kali berbasis PKCE melalui backend dan memverifikasi origin, jendela popup, kanal, audience, serta role.
+- Membuat sesi Media Hub dengan sumber `ACCESS` agar logout tidak mengarahkan browser ke Authentik.
+- Menambahkan jalur internal Docker menuju Access Manager untuk menghindari ketergantungan pada DNS publik.
+
 ## 0.3.0 — 2026-09-12
 
 - Mengubah login utama menjadi popup melalui AXINDO Access pada `akses.axindo.my.id`.

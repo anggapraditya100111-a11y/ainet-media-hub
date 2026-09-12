@@ -165,7 +165,7 @@ async function logout() {
 
 function configureLogin(auth = {}) {
   const oidcEnabled = Boolean(auth.oidcEnabled);
-  const oidcReady = Boolean(auth.oidcReady);
+  const oidcReady = Boolean(auth.accessHandoffReady);
   const localEnabled = auth.localLoginEnabled !== false;
   const oidcArea = $('#oidc-login');
   const oidcButton = $('#oidc-login-button');
@@ -190,23 +190,37 @@ function randomPopupChannel() {
   return `mh_${Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('')}`;
 }
 
-function startAccessPopupLogin() {
+function randomPopupVerifier() {
+  const bytes = new Uint8Array(32);
+  window.crypto.getRandomValues(bytes);
+  let binary = '';
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
+}
+
+async function popupCodeChallenge(verifier) {
+  const digest = await window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier));
+  let binary = '';
+  for (const byte of new Uint8Array(digest)) binary += String.fromCharCode(byte);
+  return btoa(binary).replaceAll('+', '-').replaceAll('/', '_').replace(/=+$/, '');
+}
+
+async function startAccessPopupLogin() {
   const auth = state.config.auth || {};
-  if (!auth.oidcReady) return toast('Konfigurasi AXINDO ID pada server belum lengkap.', true);
+  if (!auth.accessHandoffReady) return toast('Koneksi AXINDO Access pada server belum aktif.', true);
   if (popupLogin?.window && !popupLogin.window.closed) {
     popupLogin.window.focus();
     return;
   }
 
   const channel = randomPopupChannel();
-  const accessUrl = new URL(auth.accessPortalPopupUrl || 'https://akses.axindo.my.id/api/auth/oidc/start?mode=popup');
-  accessUrl.searchParams.set('mode', 'popup');
+  const verifier = randomPopupVerifier();
   const width = Math.min(470, Math.max(360, window.screen.availWidth - 24));
   const height = Math.min(760, Math.max(600, window.screen.availHeight - 48));
   const left = Math.max(0, Math.round((window.screen.availWidth - width) / 2));
   const top = Math.max(0, Math.round((window.screen.availHeight - height) / 2));
   const popup = window.open(
-    accessUrl.href,
+    'about:blank',
     channel,
     `popup=yes,width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
   );
@@ -215,16 +229,30 @@ function startAccessPopupLogin() {
   popupLogin = {
     window: popup,
     channel,
-    stage: 'access',
-    accessOrigin: auth.accessPortalOrigin || accessUrl.origin,
+    verifier,
+    stage: 'preparing',
+    accessOrigin: auth.accessPortalOrigin || new URL(auth.accessPortalUrl || 'https://akses.axindo.my.id').origin,
     monitor: window.setInterval(() => {
       if (!popupLogin || !popup.closed) return;
       finishPopupLogin(false, 'Popup login ditutup sebelum proses selesai.');
     }, 500)
   };
   $('#oidc-login-button').disabled = true;
-  $('#popup-login-status').textContent = 'Menunggu login dari AXINDO Access…';
+  $('#popup-login-status').textContent = 'Membuka AXINDO Access…';
   popup.focus();
+  try {
+    const accessUrl = new URL(auth.accessPortalPopupUrl || 'https://akses.axindo.my.id/?handoff=media-hub');
+    accessUrl.searchParams.set('handoff', 'media-hub');
+    accessUrl.searchParams.set('channel', channel);
+    accessUrl.searchParams.set('return_origin', window.location.origin);
+    accessUrl.searchParams.set('code_challenge', await popupCodeChallenge(verifier));
+    if (!popupLogin || popup.closed) return;
+    popupLogin.stage = 'access';
+    popup.location.replace(accessUrl.href);
+    $('#popup-login-status').textContent = 'Menunggu login dari AXINDO Access…';
+  } catch {
+    finishPopupLogin(false, 'Popup AXINDO Access tidak dapat dibuka.');
+  }
 }
 
 function handlePopupLoginMessage(event) {
@@ -232,21 +260,17 @@ function handlePopupLoginMessage(event) {
   if (!active || event.source !== active.window || event.data?.channel !== active.channel) return;
 
   if (active.stage === 'access') {
-    if (event.origin !== active.accessOrigin || event.data?.type !== 'axindo-access-auth') return;
+    if (event.origin !== active.accessOrigin || event.data?.type !== 'axindo-access-handoff') return;
     if (event.data.status !== 'success') return finishPopupLogin(false, event.data.message || 'Login AXINDO Access gagal.');
-    active.stage = 'media-hub';
-    $('#popup-login-status').textContent = 'Menghubungkan AXINDO ID ke Media Hub…';
-    const handoffUrl = new URL(state.config.auth?.popupLoginUrl || '/api/auth/oidc/start?mode=popup', window.location.origin);
-    handoffUrl.searchParams.set('mode', 'popup');
-    handoffUrl.searchParams.set('channel', active.channel);
-    try { active.window.location = handoffUrl.href; }
-    catch { return finishPopupLogin(false, 'Popup tidak dapat melanjutkan ke Media Hub.'); }
-    return;
-  }
-
-  if (active.stage === 'media-hub' && event.origin === window.location.origin && event.data?.type === 'media-hub-auth') {
-    if (event.data.status === 'success') finishPopupLogin(true);
-    else finishPopupLogin(false, event.data.message || 'Login Media Hub gagal.');
+    if (!/^[a-zA-Z0-9_-]{40,200}$/.test(String(event.data.code || ''))) {
+      return finishPopupLogin(false, 'Kode dari AXINDO Access tidak valid.');
+    }
+    active.stage = 'exchange';
+    $('#popup-login-status').textContent = 'Membuat sesi Media Hub…';
+    api('/api/auth/access/complete', {
+      method: 'POST', body: { code: event.data.code, verifier: active.verifier }
+    }).then(() => finishPopupLogin(true))
+      .catch(error => finishPopupLogin(false, error.message || 'Login Media Hub gagal.'));
   }
 }
 
@@ -256,7 +280,7 @@ async function finishPopupLogin(success, message = '') {
   popupLogin = null;
   window.clearInterval(active.monitor);
   if (active.window && !active.window.closed) active.window.close();
-  $('#oidc-login-button').disabled = !state.config.auth?.oidcReady;
+  $('#oidc-login-button').disabled = !state.config.auth?.accessHandoffReady;
 
   if (!success) {
     $('#popup-login-status').textContent = 'Login belum berhasil. Silakan coba kembali.';

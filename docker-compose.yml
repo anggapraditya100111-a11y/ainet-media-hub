@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ainet-media-hub:0.3.0
+    image: ainet-media-hub:0.3.1
     container_name: ainet-media-hub
     restart: unless-stopped
     ports:
@@ -21,6 +21,7 @@ services:
       DEFAULT_COMPANY_NAME: "${DEFAULT_COMPANY_NAME:-PT Axindo Infinitas Network}"
       PUBLIC_APP_URL: "${PUBLIC_APP_URL:-https://mediahub.axindo.my.id}"
       ACCESS_PORTAL_URL: "${ACCESS_PORTAL_URL:-https://akses.axindo.my.id}"
+      ACCESS_PORTAL_INTERNAL_URL: "${ACCESS_PORTAL_INTERNAL_URL:-http://host.docker.internal:8096}"
       TRUST_PROXY: "${TRUST_PROXY:-false}"
       COOKIE_SECURE: "${COOKIE_SECURE:-false}"
       SESSION_HOURS: "${SESSION_HOURS:-12}"
@@ -46,6 +47,8 @@ services:
       - ${DATA_ROOT:-./runtime}/database:/app/data
       - ${DATA_ROOT:-./runtime}/uploads:/app/uploads
       - ${DATA_ROOT:-./runtime}/backups:/app/backups
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8094/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
       interval: 30s
