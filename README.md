@@ -21,7 +21,7 @@ Versi: **0.3.4 — Fallback login Safari iPhone**
 - Audit log untuk login, perubahan data, status workflow, versi berkas, publikasi, pengguna, pengaturan, dan backup.
 - Branding aplikasi, warna AINET/IMAS, logo perusahaan, dark mode, serta tampilan responsif desktop/mobile.
 - Backup database manual dari UI dan backup lengkap volume melalui script server.
-- Single Sign-On melalui AXINDO ID (Authentik) memakai Authorization Code Flow, PKCE, state, dan nonce.
+- SSO pengguna melalui AXINDO Access; Authentik tetap menjadi backend AXINDO ID dan grup, dengan Authorization Code Flow, PKCE, state, dan nonce.
 - Login dibuka sebagai popup halaman `akses.axindo.my.id`; sesi Access yang masih aktif langsung dipakai dan popup tertutup otomatis.
 - Akun operasional dibuat serta diperbarui otomatis dari klaim OIDC; role mengikuti grup Authentik.
 - Login Personal dibatasi untuk akun lokal Super Admin dan Vendor saat OIDC aktif; pengguna internal lainnya wajib memakai AXINDO ID.
@@ -90,7 +90,9 @@ Backup database dapat dibuat melalui menu **Backup Data**. Untuk backup lengkap 
 
 Arsip lengkap disimpan di `runtime/backups` dan sebaiknya ikut disalin ke NAS atau media cadangan lain.
 
-## AXINDO ID / Authentik
+## AXINDO Access dan Authentik
+
+Standar lengkap untuk menghubungkan aplikasi AXINDO baru tersedia di [Blueprint Integrasi Aplikasi dengan AXINDO Access](https://github.com/anggapraditya100111-a11y/axindo-access-manager/blob/main/docs/APP_SSO_INTEGRATION_BLUEPRINT.md). Gunakan panduan tersebut untuk manifest, handoff, PKCE, fallback Safari iPhone, deployment, pengujian, dan troubleshooting.
 
 Provider Authentik harus memakai slug yang menghasilkan issuer berikut (ubah `.env` jika slug berbeda):
 
