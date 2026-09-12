@@ -1,5 +1,7 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 const { hashPassword, verifyPassword, assertPassword, cleanText, safeFilename } = require('../src/security');
 
 test('password di-hash dan diverifikasi dengan scrypt', () => {
@@ -17,4 +19,12 @@ test('password lemah ditolak', () => {
 test('teks dan nama file dibersihkan', () => {
   assert.equal(cleanText('  <script>halo</script>  '), 'scripthalo/script');
   assert.equal(safeFilename('../../Brosur Produk 2026.pdf'), 'Brosur-Produk-2026.pdf');
+});
+
+test('updater produksi selalu berpindah dan menarik branch main', () => {
+  const updater = fs.readFileSync(path.join(__dirname, '..', 'update.sh'), 'utf8');
+  assert.match(updater, /git fetch origin main/);
+  assert.match(updater, /git switch main/);
+  assert.match(updater, /git pull --ff-only origin main/);
+  assert.doesNotMatch(updater, /git fetch origin "\$current_branch"/);
 });

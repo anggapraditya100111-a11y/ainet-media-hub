@@ -21,9 +21,15 @@ fi
 echo "Membuat backup sebelum update..."
 docker compose exec -T media-hub node -e "require('./src/db').createDatabaseBackup('pre-update').then(console.log).catch(e=>{console.error(e);process.exit(1)})"
 
-current_branch="$(git branch --show-current)"
-git fetch origin "$current_branch"
-git pull --ff-only origin "$current_branch"
+git fetch origin main
+if [ "$(git branch --show-current)" != "main" ]; then
+  if git show-ref --verify --quiet refs/heads/main; then
+    git switch main
+  else
+    git switch --track -c main origin/main
+  fi
+fi
+git pull --ff-only origin main
 docker compose up -d --build --force-recreate
 
 app_port="$(sed -n 's/^APP_PORT=//p' .env 2>/dev/null | tail -n 1)"
