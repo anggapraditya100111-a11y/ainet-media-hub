@@ -176,6 +176,9 @@ test('login OIDC membuat akun, role, sesi, dan logout AXINDO ID', { timeout: 30_
   assert.equal(publicConfig.auth.oidcReady, true);
   assert.equal(publicConfig.auth.localLoginEnabled, true);
   assert.deepEqual(publicConfig.auth.localPersonalRoles, ['SUPER_ADMIN', 'VENDOR']);
+  assert.equal(publicConfig.auth.accessPortalUrl, 'https://akses.axindo.my.id');
+  assert.equal(publicConfig.auth.accessPortalOrigin, 'https://akses.axindo.my.id');
+  assert.match(publicConfig.auth.accessPortalPopupUrl, /akses\.axindo\.my\.id\/api\/auth\/oidc\/start\?mode=popup$/);
 
   const accessManifestResponse = await fetch(`${appUrl}/.well-known/axindo-access.json`);
   assert.equal(accessManifestResponse.status, 200);
@@ -204,6 +207,25 @@ test('login OIDC membuat akun, role, sesi, dan logout AXINDO ID', { timeout: 30_
   assert.equal(bootstrap.user.email, 'media@axindo.my.id');
   assert.equal(bootstrap.user.authSource, 'OIDC');
   assert.equal(bootstrap.user.role, 'COORDINATOR');
+
+  const popupChannel = `mh_${'a'.repeat(48)}`;
+  const popupStart = await fetch(`${appUrl}/api/auth/oidc/start?mode=popup&channel=${popupChannel}`, { redirect: 'manual' });
+  assert.equal(popupStart.status, 302, stderr);
+  const popupStateCookie = cookie(popupStart, 'mh_oidc_state');
+  const popupAuthorize = await fetch(popupStart.headers.get('location'), { redirect: 'manual' });
+  const popupCallback = await fetch(popupAuthorize.headers.get('location'), {
+    redirect: 'manual', headers: { cookie: popupStateCookie }
+  });
+  assert.equal(popupCallback.status, 303, stderr);
+  const popupTarget = new URL(popupCallback.headers.get('location'), appUrl);
+  assert.equal(popupTarget.pathname, '/popup-complete.html');
+  assert.equal(popupTarget.searchParams.get('status'), 'success');
+  assert.equal(popupTarget.searchParams.get('channel'), popupChannel);
+  assert.ok(cookie(popupCallback, 'mh_session'));
+
+  const popupPage = await fetch(popupTarget).then(response => response.text());
+  assert.match(popupPage, /Popup akan tertutup otomatis/);
+  assert.match(popupPage, /popup\.js\?v=0\.3\.0/);
 
   const vendorLogin = await fetch(`${appUrl}/api/auth/login`, {
     method: 'POST', headers: { 'content-type': 'application/json' },

@@ -88,6 +88,8 @@ function initDatabase() {
       code_verifier TEXT NOT NULL,
       nonce TEXT NOT NULL,
       return_to TEXT NOT NULL DEFAULT '/',
+      mode TEXT NOT NULL DEFAULT 'redirect',
+      popup_channel TEXT,
       expires_at TEXT NOT NULL,
       created_at TEXT NOT NULL
     );
@@ -315,9 +317,16 @@ function initDatabase() {
   `);
 
   migrateUsersForOidc();
+  migrateOidcAttemptsForPopup();
 
   seedBaseData();
   if (String(process.env.SEED_DEMO || '').toLowerCase() === 'true') seedDemoData();
+}
+
+function migrateOidcAttemptsForPopup() {
+  const columns = new Set(db.prepare('PRAGMA table_info(oidc_login_attempts)').all().map(column => column.name));
+  if (!columns.has('mode')) db.exec("ALTER TABLE oidc_login_attempts ADD COLUMN mode TEXT NOT NULL DEFAULT 'redirect'");
+  if (!columns.has('popup_channel')) db.exec('ALTER TABLE oidc_login_attempts ADD COLUMN popup_channel TEXT');
 }
 
 function migrateUsersForOidc() {

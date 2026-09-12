@@ -1,0 +1,13 @@
+{
+  "name": "AXINDO Media Hub",
+  "short_name": "Media Hub",
+  "description": "Manajemen produksi dan publikasi konten AINET dan IMAS.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f4f6fa",
+  "theme_color": "#0b1739",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

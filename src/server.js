@@ -24,11 +24,13 @@ const {
   emailAllowed, safeReturnTo
 } = require('./oidc');
 
-const APP_VERSION = '0.2.2';
+const APP_VERSION = '0.3.0';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';
 const LOCAL_PERSONAL_ROLES = new Set(['SUPER_ADMIN', 'VENDOR']);
+const POPUP_CHANNEL_PATTERN = /^[a-zA-Z0-9_-]{20,160}$/;
+const ACCESS_PORTAL_URL = normalizedAccessPortalUrl(process.env.ACCESS_PORTAL_URL);
 const SESSION_HOURS = Math.max(1, Math.min(168, Number(process.env.SESSION_HOURS || 12) || 12));
 const MAX_UPLOAD_MB = Math.max(1, Math.min(250, Number(process.env.MAX_UPLOAD_MB || 50) || 50));
 const COOKIE_SECURE = String(process.env.COOKIE_SECURE || '').toLowerCase() === 'true';
@@ -40,6 +42,25 @@ class AppError extends Error {
     super(message);
     this.status = status;
   }
+}
+
+function normalizedAccessPortalUrl(value) {
+  try {
+    const url = new URL(String(value || 'https://akses.axindo.my.id').trim());
+    if (url.protocol !== 'https:' && url.hostname !== 'localhost' && url.hostname !== '127.0.0.1') throw new Error();
+    url.pathname = url.pathname.replace(/\/$/, '');
+    url.search = '';
+    url.hash = '';
+    return url.href.replace(/\/$/, '');
+  } catch {
+    return 'https://akses.axindo.my.id';
+  }
+}
+
+function popupCompletionTarget(status, channel, message = '') {
+  const query = new URLSearchParams({ status, channel });
+  if (message) query.set('message', message);
+  return `/popup-complete.html?${query}`;
 }
 
 function asyncRoute(handler) {
@@ -93,6 +114,10 @@ function settingsPayload() {
       oidcEnabled: OIDC.enabled,
       oidcReady: OIDC.ready,
       oidcLoginUrl: '/api/auth/oidc/start',
+      popupLoginUrl: '/api/auth/oidc/start?mode=popup',
+      accessPortalUrl: ACCESS_PORTAL_URL,
+      accessPortalOrigin: new URL(ACCESS_PORTAL_URL).origin,
+      accessPortalPopupUrl: `${ACCESS_PORTAL_URL}/api/auth/oidc/start?mode=popup`,
       localLoginEnabled: !OIDC.enabled || OIDC.localPersonalLoginEnabled,
       localPersonalOnly: OIDC.enabled,
       localPersonalRoles: [...LOCAL_PERSONAL_ROLES]
@@ -324,6 +349,7 @@ const app = express();
 if (String(process.env.TRUST_PROXY || '').toLowerCase() === 'true') app.set('trust proxy', 1);
 app.disable('x-powered-by');
 app.use(helmet({
+  crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
@@ -415,9 +441,16 @@ app.get('/api/auth/oidc/start', oidcStartLimiter, async (req, res) => {
     const timestamp = nowIso();
     const expiresAt = new Date(Date.now() + 10 * 60_000).toISOString();
     const returnTo = safeReturnTo(req.query.returnTo);
+    const mode = req.query.mode === 'popup' ? 'popup' : 'redirect';
+    const popupChannel = mode === 'popup' ? String(req.query.channel || '') : '';
+    if (mode === 'popup' && !POPUP_CHANNEL_PATTERN.test(popupChannel)) {
+      throw new AppError('Saluran login popup tidak valid.', 400);
+    }
 
-    db.prepare(`INSERT INTO oidc_login_attempts(state_hash,code_verifier,nonce,return_to,expires_at,created_at)
-      VALUES(?,?,?,?,?,?)`).run(hashToken('OIDC_STATE', state), codeVerifier, nonce, returnTo, expiresAt, timestamp);
+    db.prepare(`INSERT INTO oidc_login_attempts(state_hash,code_verifier,nonce,return_to,mode,popup_channel,expires_at,created_at)
+      VALUES(?,?,?,?,?,?,?,?)`).run(
+      hashToken('OIDC_STATE', state), codeVerifier, nonce, returnTo, mode, popupChannel || null, expiresAt, timestamp
+    );
     res.cookie(OIDC_STATE_COOKIE, state, {
       httpOnly: true, secure: COOKIE_SECURE, sameSite: 'lax',
       maxAge: 10 * 60_000, path: '/api/auth/oidc/callback'
@@ -436,12 +469,17 @@ app.get('/api/auth/oidc/start', oidcStartLimiter, async (req, res) => {
   } catch (error) {
     recordAudit({ entityType: 'AUTH', action: 'OIDC_START_FAILED', reason: error.message, ip: requestIp(req) });
     if (!(error instanceof AppError) || error.status >= 500) console.error('Memulai OIDC gagal:', error.message);
+    const popupChannel = String(req.query.channel || '');
+    if (req.query.mode === 'popup' && POPUP_CHANNEL_PATTERN.test(popupChannel)) {
+      return res.redirect(303, popupCompletionTarget('error', popupChannel, 'Login AXINDO ID belum dapat dimulai.'));
+    }
     res.redirect(303, `/?sso_error=${encodeURIComponent(oidcFailureCode(error))}`);
   }
 });
 
 app.get('/api/auth/oidc/callback', async (req, res) => {
   let returnTo = '/';
+  let attempt;
   try {
     requireOidcReady();
     const state = String(req.query.state || '');
@@ -450,7 +488,7 @@ app.get('/api/auth/oidc/callback', async (req, res) => {
       throw new AppError('Sesi login AXINDO ID tidak valid atau sudah kedaluwarsa.', 401);
     }
     const stateHash = hashToken('OIDC_STATE', state);
-    const attempt = db.prepare('SELECT * FROM oidc_login_attempts WHERE state_hash=? AND expires_at>?').get(stateHash, nowIso());
+    attempt = db.prepare('SELECT * FROM oidc_login_attempts WHERE state_hash=? AND expires_at>?').get(stateHash, nowIso());
     if (!attempt) throw new AppError('Sesi login AXINDO ID tidak valid atau sudah kedaluwarsa.', 401);
     returnTo = safeReturnTo(attempt.return_to);
     db.prepare('DELETE FROM oidc_login_attempts WHERE state_hash=?').run(stateHash);
@@ -476,11 +514,16 @@ app.get('/api/auth/oidc/callback', async (req, res) => {
       actorId: user.id, entityType: 'AUTH', entityId: user.id, action: 'OIDC_LOGIN',
       after: { role: current.role, groups }, ip: requestIp(req)
     });
-    res.redirect(303, returnTo);
+    res.redirect(303, attempt.mode === 'popup'
+      ? popupCompletionTarget('success', attempt.popup_channel)
+      : returnTo);
   } catch (error) {
     res.clearCookie(OIDC_STATE_COOKIE, { path: '/api/auth/oidc/callback' });
     recordAudit({ entityType: 'AUTH', action: 'OIDC_LOGIN_FAILED', reason: error.message, ip: requestIp(req) });
     if (!(error instanceof AppError) || error.status >= 500) console.error('Login OIDC gagal:', error.message);
+    if (attempt?.mode === 'popup' && POPUP_CHANNEL_PATTERN.test(attempt.popup_channel || '')) {
+      return res.redirect(303, popupCompletionTarget('error', attempt.popup_channel, 'Login AXINDO ID gagal.'));
+    }
     const target = new URL(safeReturnTo(returnTo), OIDC.redirectUri || 'http://media-hub.local/');
     target.searchParams.set('sso_error', oidcFailureCode(error));
     res.redirect(303, `${target.pathname}${target.search}${target.hash}`);
