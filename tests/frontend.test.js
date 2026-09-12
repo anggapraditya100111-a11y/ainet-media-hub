@@ -21,13 +21,15 @@ test('login utama memakai popup AXINDO Access dengan handoff yang diverifikasi',
   assert.match(app, /event\.origin !== active\.accessOrigin/);
   assert.match(app, /event\.source !== active\.window/);
   assert.match(app, /event\.data\?\.channel !== active\.channel/);
+  assert.match(app, /active\.stage === 'exchange'/);
+  assert.match(app, /Date\.now\(\) - active\.closedAt < 1500/);
   assert.doesNotMatch(app, /active\.window\.location = handoffUrl/);
   assert.doesNotMatch(app, /access_token|id_token|client_secret/i);
 });
 
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.3\.2/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.3\.3/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);

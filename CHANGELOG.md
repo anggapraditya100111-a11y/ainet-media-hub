@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.3 — 2026-09-12
+
+- Cegah monitor popup membatalkan pertukaran kode login yang sedang diproses backend.
+- Tambahkan toleransi 1,5 detik sebelum popup yang benar-benar ditutup pengguna dinyatakan gagal.
+- Gunakan versi aset baru agar browser tidak mempertahankan logika monitor lama.
+
 ## 0.3.2 — 2026-09-12
 
 - Mengarahkan popup login ke endpoint khusus `/handoff` milik AXINDO Access.

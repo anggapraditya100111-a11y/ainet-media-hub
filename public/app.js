@@ -233,9 +233,21 @@ async function startAccessPopupLogin() {
     stage: 'preparing',
     accessOrigin: auth.accessPortalOrigin || new URL(auth.accessPortalUrl || 'https://akses.axindo.my.id').origin,
     monitor: window.setInterval(() => {
-      if (!popupLogin || !popup.closed) return;
+      const active = popupLogin;
+      if (!active || !popup.closed) {
+        if (active) active.closedAt = 0;
+        return;
+      }
+      // AXINDO Access closes the popup after delivering its one-time code. Do
+      // not cancel the in-flight backend exchange just because it is closed.
+      if (active.stage === 'exchange') return;
+      if (!active.closedAt) {
+        active.closedAt = Date.now();
+        return;
+      }
+      if (Date.now() - active.closedAt < 1500) return;
       finishPopupLogin(false, 'Popup login ditutup sebelum proses selesai.');
-    }, 500)
+    }, 250)
   };
   $('#oidc-login-button').disabled = true;
   $('#popup-login-status').textContent = 'Membuka AXINDO Access…';
