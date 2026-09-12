@@ -24,13 +24,14 @@ const {
   emailAllowed, safeReturnTo
 } = require('./oidc');
 
-const APP_VERSION = '0.3.0';
+const APP_VERSION = '0.3.1';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';
 const LOCAL_PERSONAL_ROLES = new Set(['SUPER_ADMIN', 'VENDOR']);
 const POPUP_CHANNEL_PATTERN = /^[a-zA-Z0-9_-]{20,160}$/;
 const ACCESS_PORTAL_URL = normalizedAccessPortalUrl(process.env.ACCESS_PORTAL_URL);
+const ACCESS_PORTAL_INTERNAL_URL = normalizedInternalAccessUrl(process.env.ACCESS_PORTAL_INTERNAL_URL || ACCESS_PORTAL_URL);
 const SESSION_HOURS = Math.max(1, Math.min(168, Number(process.env.SESSION_HOURS || 12) || 12));
 const MAX_UPLOAD_MB = Math.max(1, Math.min(250, Number(process.env.MAX_UPLOAD_MB || 50) || 50));
 const COOKIE_SECURE = String(process.env.COOKIE_SECURE || '').toLowerCase() === 'true';
@@ -54,6 +55,19 @@ function normalizedAccessPortalUrl(value) {
     return url.href.replace(/\/$/, '');
   } catch {
     return 'https://akses.axindo.my.id';
+  }
+}
+
+function normalizedInternalAccessUrl(value) {
+  try {
+    const url = new URL(String(value || '').trim());
+    if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) throw new Error();
+    url.pathname = url.pathname.replace(/\/$/, '');
+    url.search = '';
+    url.hash = '';
+    return url.href.replace(/\/$/, '');
+  } catch {
+    return ACCESS_PORTAL_URL;
   }
 }
 
@@ -113,11 +127,12 @@ function settingsPayload() {
     auth: {
       oidcEnabled: OIDC.enabled,
       oidcReady: OIDC.ready,
+      accessHandoffReady: OIDC.enabled,
       oidcLoginUrl: '/api/auth/oidc/start',
       popupLoginUrl: '/api/auth/oidc/start?mode=popup',
       accessPortalUrl: ACCESS_PORTAL_URL,
       accessPortalOrigin: new URL(ACCESS_PORTAL_URL).origin,
-      accessPortalPopupUrl: `${ACCESS_PORTAL_URL}/api/auth/oidc/start?mode=popup`,
+      accessPortalPopupUrl: `${ACCESS_PORTAL_URL}/?handoff=media-hub`,
       localLoginEnabled: !OIDC.enabled || OIDC.localPersonalLoginEnabled,
       localPersonalOnly: OIDC.enabled,
       localPersonalRoles: [...LOCAL_PERSONAL_ROLES]
@@ -203,7 +218,8 @@ function uniqueOidcUsername(suggested, subject) {
   return `axindo-${suffix}-${randomToken(3).toLowerCase()}`;
 }
 
-function provisionOidcUser(claims) {
+function provisionOidcUser(claims, authSource = 'OIDC') {
+  if (!['OIDC', 'ACCESS'].includes(authSource)) throw new AppError('Sumber autentikasi tidak valid.', 500);
   const identity = identityFromClaims(claims);
   const groups = groupsFromClaims(claims);
   const role = roleForGroups(groups, OIDC.roleMapping);
@@ -222,16 +238,16 @@ function provisionOidcUser(claims) {
     db.prepare(`INSERT INTO users(
       id,name,username,email,password_hash,password_salt,role,vendor_id,active,must_change_password,
       auth_source,oidc_issuer,oidc_subject,oidc_groups_json,oidc_last_sync_at,created_at,updated_at
-    ) VALUES(?,?,?,?,?,?,?,NULL,1,0,'OIDC',?,?,?,?,?,?)`).run(
-      id, identity.name || username, username, identity.email, credentials.hash, credentials.salt, role,
+    ) VALUES(?,?,?,?,?,?,?,NULL,1,0,?,?,?,?,?,?,?)`).run(
+      id, identity.name || username, username, identity.email, credentials.hash, credentials.salt, role, authSource,
       OIDC.issuer, identity.subject, JSON.stringify(groups), timestamp, timestamp, timestamp
     );
     user = db.prepare('SELECT * FROM users WHERE id=?').get(id);
-    recordAudit({ entityType: 'USER', entityId: id, action: 'OIDC_PROVISION', after: { email: identity.email, role, groups } });
+    recordAudit({ entityType: 'USER', entityId: id, action: `${authSource}_PROVISION`, after: { email: identity.email, role, groups } });
   } else {
     if (!user.active) throw new AppError('Akun Media Hub dinonaktifkan.', 403);
-    db.prepare(`UPDATE users SET name=?,email=?,role=?,auth_source='OIDC',oidc_groups_json=?,oidc_last_sync_at=?,updated_at=? WHERE id=?`)
-      .run(identity.name || user.name, identity.email, role, JSON.stringify(groups), timestamp, timestamp, user.id);
+    db.prepare(`UPDATE users SET name=?,email=?,role=?,auth_source=?,oidc_groups_json=?,oidc_last_sync_at=?,updated_at=? WHERE id=?`)
+      .run(identity.name || user.name, identity.email, role, authSource, JSON.stringify(groups), timestamp, timestamp, user.id);
     user = db.prepare('SELECT * FROM users WHERE id=?').get(user.id);
   }
   return { user, groups };
@@ -428,6 +444,51 @@ app.get('/.well-known/axindo-access.json', (_req, res) => {
   res.set('Cache-Control', 'public, max-age=300, must-revalidate');
   res.json(accessManifest());
 });
+
+app.post('/api/auth/access/complete', oidcStartLimiter, asyncRoute(async (req, res) => {
+  requireOidcReady();
+  const code = String(req.body?.code || '');
+  const verifier = String(req.body?.verifier || '');
+  if (!/^[a-zA-Z0-9_-]{40,200}$/.test(code) || !/^[a-zA-Z0-9_-]{43,128}$/.test(verifier)) {
+    throw new AppError('Kode login AXINDO Access tidak valid.', 401);
+  }
+
+  let response;
+  try {
+    response = await fetch(`${ACCESS_PORTAL_INTERNAL_URL}/api/auth/handoff/exchange`, {
+      method: 'POST',
+      headers: { accept: 'application/json', 'content-type': 'application/json', 'x-axindo-handoff': '1' },
+      body: JSON.stringify({ code, verifier, audience: 'media-hub' }),
+      signal: AbortSignal.timeout(8_000)
+    });
+  } catch (error) {
+    console.error('Pertukaran sesi AXINDO Access gagal:', error.message);
+    throw new AppError('AXINDO Access belum dapat dihubungi.', 502);
+  }
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new AppError(payload.error || 'Kode login AXINDO Access tidak berlaku.', response.status === 403 ? 403 : 401);
+  }
+  if (payload.audience !== 'media-hub' || !payload.identity?.subject) {
+    throw new AppError('Respons AXINDO Access tidak valid.', 502);
+  }
+
+  const identity = payload.identity;
+  const { user, groups } = provisionOidcUser({
+    sub: identity.subject,
+    email: identity.email,
+    email_verified: true,
+    name: identity.name,
+    preferred_username: identity.username,
+    groups: payload.groups
+  }, 'ACCESS');
+  const current = createSession(user.id, res);
+  recordAudit({
+    actorId: user.id, entityType: 'AUTH', entityId: user.id, action: 'ACCESS_HANDOFF_LOGIN',
+    after: { role: current.role, groups }, ip: requestIp(req)
+  });
+  res.json({ user: publicUser(current) });
+}));
 
 app.get('/api/auth/oidc/start', oidcStartLimiter, async (req, res) => {
   try {

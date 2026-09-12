@@ -13,18 +13,20 @@ const manifest = JSON.parse(fs.readFileSync(path.join(root, 'public', 'manifest.
 test('login utama memakai popup AXINDO Access dengan handoff yang diverifikasi', () => {
   assert.match(html, /Masuk melalui AXINDO Access/);
   assert.match(app, /window\.open\(/);
-  assert.match(app, /axindo-access-auth/);
-  assert.match(app, /media-hub-auth/);
+  assert.match(app, /axindo-access-handoff/);
+  assert.match(app, /\/api\/auth\/access\/complete/);
+  assert.match(app, /code_challenge/);
+  assert.match(app, /popupCodeChallenge/);
   assert.match(app, /event\.origin !== active\.accessOrigin/);
   assert.match(app, /event\.source !== active\.window/);
   assert.match(app, /event\.data\?\.channel !== active\.channel/);
-  assert.match(popup, /window\.opener\.postMessage/);
-  assert.doesNotMatch(popup, /access_token|id_token|client_secret/i);
+  assert.doesNotMatch(app, /active\.window\.location = handoffUrl/);
+  assert.doesNotMatch(app, /access_token|id_token|client_secret/i);
 });
 
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.3\.0/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.3\.1/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);

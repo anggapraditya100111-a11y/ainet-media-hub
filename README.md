@@ -2,7 +2,7 @@
 
 AXINDO Media Hub adalah aplikasi internal PT Axindo Infinitas Network untuk mengelola produksi konten AINET dan IMAS dari permintaan sampai bukti tayang. Aplikasi berjalan mandiri di server Ubuntu menggunakan Docker Compose, database SQLite, dan penyimpanan berkas lokal server.
 
-Versi: **0.3.0 — Popup AXINDO Access & mode mobile**
+Versi: **0.3.1 — Handoff sesi AXINDO Access & mode mobile**
 
 ## Fitur yang sudah berfungsi
 
@@ -22,7 +22,7 @@ Versi: **0.3.0 — Popup AXINDO Access & mode mobile**
 - Branding aplikasi, warna AINET/IMAS, logo perusahaan, dark mode, serta tampilan responsif desktop/mobile.
 - Backup database manual dari UI dan backup lengkap volume melalui script server.
 - Single Sign-On melalui AXINDO ID (Authentik) memakai Authorization Code Flow, PKCE, state, dan nonce.
-- Login AXINDO ID dibuka sebagai popup melalui `akses.axindo.my.id`; popup tertutup otomatis setelah sesi Media Hub berhasil dibuat.
+- Login dibuka sebagai popup halaman `akses.axindo.my.id`; sesi Access yang masih aktif langsung dipakai dan popup tertutup otomatis.
 - Akun operasional dibuat serta diperbarui otomatis dari klaim OIDC; role mengikuti grup Authentik.
 - Login Personal dibatasi untuk akun lokal Super Admin dan Vendor saat OIDC aktif; pengguna internal lainnya wajib memakai AXINDO ID.
 - Mode mobile bergaya aplikasi Android dengan app bar, navigasi bawah berbasis role, bottom sheet, tombol sentuh, safe-area, dan dukungan instalasi PWA.
@@ -132,7 +132,9 @@ OIDC_ROLE_MAPPING_JSON={"Tim Media":"COORDINATOR","Vendor Konten":"VENDOR","Dire
 
 Pengguna tanpa grup yang dipetakan akan ditolak. Jika satu pengguna memiliki beberapa grup, sistem memilih role dengan prioritas paling tinggi. Akun OIDC tidak memiliki password lokal; password dan MFA dikelola melalui AXINDO ID. Login Personal menggunakan username dan password tersendiri dan hanya dapat digunakan oleh Super Admin serta Vendor.
 
-Tombol login utama membuka popup AXINDO Access. Setelah autentikasi Access berhasil, popup yang sama menyelesaikan OIDC Media Hub memakai sesi Authentik yang sudah aktif, mengirim hasil melalui `postMessage` yang diverifikasi berdasarkan origin dan token kanal acak, lalu tertutup otomatis. Browser harus mengizinkan popup untuk domain Media Hub.
+Tombol login utama membuka halaman AXINDO Access di dalam popup. Jika pengguna sudah login di Access, tidak ada form login kedua. Access menerbitkan kode satu kali berumur 90 detik yang terikat pada origin Media Hub dan PKCE. Backend Media Hub menukar kode tersebut menjadi sesi lokal, lalu popup tertutup otomatis. Authentik tetap menjadi backend identitas dan grup, tetapi halaman Authentik tidak dibuka pada alur normal ini. Browser harus mengizinkan popup untuk domain Media Hub.
+
+Komunikasi backend Media Hub ke Access menggunakan `ACCESS_PORTAL_INTERNAL_URL`. Docker Compose memakai `http://host.docker.internal:8096` secara bawaan agar pertukaran tidak bergantung pada DNS publik atau Cloudflare Tunnel.
 
 Untuk memberi akses kepada vendor, Super Admin membuka **Pengguna & Akses**, memilih **Tambah Login Personal**, mengisi username serta password awal, memilih role Vendor, lalu memasangkannya dengan data vendor. Sebelum dipasangkan, vendor dapat login tetapi belum melihat tugas produksi.
 

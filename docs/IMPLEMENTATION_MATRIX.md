@@ -23,7 +23,7 @@ Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implem
 | Responsif dan dark mode | Desktop, tablet, mode aplikasi Android, navigasi bawah berbasis role, PWA, tema lokal | Selesai |
 | Ubuntu Server | Dockerfile, Compose, volume persisten lokal, installer, updater, health check | Selesai |
 | Backup | Database dari UI dan arsip volume melalui script | Selesai |
-| AXINDO ID / SSO | Popup AXINDO Access, handoff Authentik OIDC, Authorization Code + PKCE, provisioning, sinkronisasi grup/role | Selesai |
+| AXINDO ID / SSO | Popup web AXINDO Access, kode satu kali + PKCE, provisioning, sinkronisasi grup/role; Authentik tetap backend | Selesai |
 | Notifikasi eksternal | Email/WhatsApp | Phase 2 |
 | Export laporan | Excel/PDF otomatis | Phase 2 |
 | Restore lengkap dari UI | Validasi paket, rollback, restart terkontrol | Phase 2 |

@@ -68,9 +68,22 @@ test('login OIDC membuat akun, role, sesi, dan logout AXINDO ID', { timeout: 30_
   const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 });
   const publicJwk = { ...publicKey.export({ format: 'jwk' }), kid, use: 'sig', alg: 'RS256' };
   const codes = new Map();
+  const handoffCode = crypto.randomBytes(32).toString('base64url');
+  const handoffVerifier = crypto.randomBytes(32).toString('base64url');
 
   const provider = http.createServer(async (req, res) => {
     const url = new URL(req.url, issuer);
+    if (url.pathname === '/api/auth/handoff/exchange') {
+      assert.equal(req.headers['x-axindo-handoff'], '1');
+      const body = JSON.parse(await requestBody(req));
+      assert.deepEqual(body, { code: handoffCode, verifier: handoffVerifier, audience: 'media-hub' });
+      return json(res, 200, {
+        identity: {
+          subject: 'authentik-user-123', username: 'media', name: 'Koordinator Media', email: 'media@axindo.my.id'
+        },
+        groups: ['Tim Media'], audience: 'media-hub', returnOrigin: appUrl
+      });
+    }
     if (url.pathname.includes('.well-known/openid-configuration')) {
       return json(res, 200, {
         issuer,
@@ -158,7 +171,8 @@ test('login OIDC membuat akun, role, sesi, dan logout AXINDO ID', { timeout: 30_
       OIDC_CLIENT_SECRET: clientSecret,
       OIDC_REDIRECT_URI: callbackUrl,
       OIDC_POST_LOGOUT_REDIRECT_URI: `${appUrl}/`,
-      OIDC_ROLE_MAPPING_JSON: JSON.stringify({ 'Tim Media': 'COORDINATOR' })
+      OIDC_ROLE_MAPPING_JSON: JSON.stringify({ 'Tim Media': 'COORDINATOR' }),
+      ACCESS_PORTAL_INTERNAL_URL: `http://127.0.0.1:${providerPort}`
     },
     stdio: ['ignore', 'pipe', 'pipe']
   });
@@ -174,11 +188,12 @@ test('login OIDC membuat akun, role, sesi, dan logout AXINDO ID', { timeout: 30_
   const publicConfig = await fetch(`${appUrl}/api/public/config`).then(response => response.json());
   assert.equal(publicConfig.auth.oidcEnabled, true);
   assert.equal(publicConfig.auth.oidcReady, true);
+  assert.equal(publicConfig.auth.accessHandoffReady, true);
   assert.equal(publicConfig.auth.localLoginEnabled, true);
   assert.deepEqual(publicConfig.auth.localPersonalRoles, ['SUPER_ADMIN', 'VENDOR']);
   assert.equal(publicConfig.auth.accessPortalUrl, 'https://akses.axindo.my.id');
   assert.equal(publicConfig.auth.accessPortalOrigin, 'https://akses.axindo.my.id');
-  assert.match(publicConfig.auth.accessPortalPopupUrl, /akses\.axindo\.my\.id\/api\/auth\/oidc\/start\?mode=popup$/);
+  assert.match(publicConfig.auth.accessPortalPopupUrl, /akses\.axindo\.my\.id\/\?handoff=media-hub$/);
 
   const accessManifestResponse = await fetch(`${appUrl}/.well-known/axindo-access.json`);
   assert.equal(accessManifestResponse.status, 200);
@@ -186,6 +201,18 @@ test('login OIDC membuat akun, role, sesi, dan logout AXINDO ID', { timeout: 30_
   assert.equal(accessManifest.id, 'media-hub');
   assert.ok(accessManifest.roles.some(role => role.code === 'COORDINATOR' && role.assignment === 'OIDC'));
   assert.ok(accessManifest.roles.some(role => role.code === 'VENDOR' && role.assignment === 'PERSONAL'));
+
+  const handoffResponse = await fetch(`${appUrl}/api/auth/access/complete`, {
+    method: 'POST', headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ code: handoffCode, verifier: handoffVerifier })
+  });
+  const handoffPayload = await handoffResponse.json();
+  assert.equal(handoffResponse.status, 200, JSON.stringify(handoffPayload));
+  const handoffSession = cookie(handoffResponse, 'mh_session');
+  assert.ok(handoffSession);
+  const handoffBootstrap = await fetch(`${appUrl}/api/bootstrap`, { headers: { cookie: handoffSession } }).then(response => response.json());
+  assert.equal(handoffBootstrap.user.authSource, 'ACCESS');
+  assert.equal(handoffBootstrap.user.role, 'COORDINATOR');
 
   const start = await fetch(`${appUrl}/api/auth/oidc/start`, { redirect: 'manual' });
   assert.equal(start.status, 302, stderr);
@@ -225,7 +252,7 @@ test('login OIDC membuat akun, role, sesi, dan logout AXINDO ID', { timeout: 30_
 
   const popupPage = await fetch(popupTarget).then(response => response.text());
   assert.match(popupPage, /Popup akan tertutup otomatis/);
-  assert.match(popupPage, /popup\.js\?v=0\.3\.0/);
+  assert.match(popupPage, /popup\.js\?v=0\.3\.1/);
 
   const vendorLogin = await fetch(`${appUrl}/api/auth/login`, {
     method: 'POST', headers: { 'content-type': 'application/json' },
