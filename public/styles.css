@@ -243,6 +243,34 @@ tbody tr:last-child td { border-bottom: 0; }
 .timeline-item strong { display: block; font-size: 12px; }
 .timeline-item p { margin: 4px 0 0; color: var(--muted); font-size: 11px; line-height: 1.45; }
 
+.discussion-list { display: grid; gap: 12px; }
+.discussion-item { display: grid; grid-template-columns: 38px 1fr; gap: 11px; padding: 13px; border: 1px solid var(--line); border-radius: 14px; background: color-mix(in srgb, var(--canvas) 55%, var(--surface)); }
+.discussion-item .avatar { width: 38px; height: 38px; }
+.discussion-item strong { margin-right: 8px; font-size: 12px; }
+.discussion-item .tag { padding: 3px 7px; }
+.discussion-item p { margin: 7px 0 5px; white-space: pre-wrap; font-size: 13px; line-height: 1.55; }
+.discussion-item small, .file-card small, .schedule-row span, .approval-row small { display: block; color: var(--muted); font-size: 10px; }
+.file-grid { display: grid; gap: 10px; }
+.file-card { display: grid; grid-template-columns: 48px minmax(0,1fr) auto; align-items: center; gap: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 14px; }
+.file-icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 13px; color: var(--primary); background: var(--blue-soft); font-size: 12px; font-weight: 900; }
+.file-card strong { display: block; margin: 6px 0 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+.schedule-list, .platform-plans { display: grid; gap: 10px; }
+.schedule-row, .approval-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 13px; }
+.schedule-row strong, .approval-row strong { display: block; margin-bottom: 4px; font-size: 12px; }
+.upload-progress { margin-top: 16px; padding: 13px; border-radius: 13px; background: var(--blue-soft); }
+.upload-progress > div { height: 9px; overflow: hidden; border-radius: 999px; background: color-mix(in srgb, var(--primary) 14%, var(--surface)); }
+.upload-progress span { display: block; width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg,var(--primary),var(--secondary)); transition: width .15s ease; }
+.upload-progress p { margin: 8px 0 0; color: var(--muted); font-size: 11px; }
+.file-check span { min-width: 0; }
+.file-check strong, .file-check small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.file-check small { margin-top: 3px; color: var(--muted); }
+.approval-secret { max-width: 560px; margin: auto; text-align: center; }
+.approval-secret .success-mark { width: 64px; height: 64px; display: grid; place-items: center; margin: 0 auto 12px; border-radius: 22px; color: #fff; background: var(--success); font-size: 28px; }
+.approval-secret .field { margin-top: 14px; text-align: left; }
+.approval-secret .actions { justify-content: center; margin-top: 18px; }
+.platform-plan { padding: 15px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); }
+.platform-plan .form-grid { margin-top: 12px; }
+
 .bar-chart { display: grid; gap: 12px; }
 .bar-row { display: grid; grid-template-columns: minmax(110px, 170px) 1fr 44px; align-items: center; gap: 11px; font-size: 12px; }
 .bar-track { height: 9px; overflow: hidden; border-radius: 999px; background: var(--canvas); }
@@ -335,6 +363,9 @@ body.dark input, body.dark select, body.dark textarea { color-scheme: dark; }
   .form-grid { grid-template-columns: 1fr; }
   .form-grid .full { grid-column: auto; }
   .detail-list { grid-template-columns: 1fr; }
+  .file-card { grid-template-columns: 44px minmax(0,1fr); }
+  .file-card .actions { grid-column: 1 / -1; }
+  .schedule-row, .approval-row { align-items: flex-start; flex-wrap: wrap; }
   .modal { padding: 0; place-items: end center; }
   .modal-card { width: 100%; max-height: 94vh; border-radius: 20px 20px 0 0; }
   .bar-row { grid-template-columns: 100px 1fr 35px; }

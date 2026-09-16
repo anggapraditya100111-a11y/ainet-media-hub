@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.4.0 — 2026-09-16
+
+- Menyederhanakan role operasional menjadi Super Admin, Koordinator Media, Vendor, Direksi, dan Petugas Upload.
+- Koordinator menggantikan tahap Reviewer serta memegang keputusan lanjut produksi dan review hasil akhir.
+- Menambahkan diskusi Koordinator–Vendor per fase: Brief, Pra-Produksi, dan Hasil Produksi.
+- Menambahkan upload besar bertahap dengan progres, pembatalan, resume protokol, versioning, dan checksum.
+- Menambahkan link Ringkasan Materi berbasis snapshot yang terbuka selama 12 jam dan dapat dicabut.
+- Menambahkan approval Direksi untuk satu Direksi terpilih melalui link tanpa kedaluwarsa dan PIN 8 digit.
+- Approval mendukung pratinjau gambar, PDF, video/audio streaming; file Office dan arsip diunduh.
+- Menambahkan keputusan revisi/approval Direksi, pembatalan link, batas percobaan PIN, audit, dan invalidasi saat file berubah.
+- Menambahkan jadwal serta bukti tayang terpisah per platform dan petugas upload.
+- Menyempurnakan antarmuka mobile/PWA ala aplikasi Android untuk diskusi, upload, approval, dan publikasi.
+
 ## 0.3.6 — 2026-09-16
 
 - Tambahkan tombol **Edit Deskripsi** untuk vendor pada tugas yang sedang berstatus Produksi.

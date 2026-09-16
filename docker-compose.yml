@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ainet-media-hub:0.3.6
+    image: ainet-media-hub:0.4.0
     container_name: ainet-media-hub
     restart: unless-stopped
     ports:
@@ -26,6 +26,7 @@ services:
       COOKIE_SECURE: "${COOKIE_SECURE:-false}"
       SESSION_HOURS: "${SESSION_HOURS:-12}"
       MAX_UPLOAD_MB: "${MAX_UPLOAD_MB:-50}"
+      MAX_COLLAB_UPLOAD_MB: "${MAX_COLLAB_UPLOAD_MB:-500}"
       SEED_DEMO: "${SEED_DEMO:-false}"
       OIDC_ENABLED: "${OIDC_ENABLED:-false}"
       OIDC_ISSUER_URL: "${OIDC_ISSUER_URL:-}"

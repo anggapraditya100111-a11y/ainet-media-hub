@@ -1,13 +1,13 @@
 {
   "name": "ainet-media-hub",
-  "version": "0.3.6",
+  "version": "0.4.0",
   "private": true,
   "description": "Manajemen konten dan Media Library AINET / IMAS untuk Ubuntu Server",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
     "dev": "NODE_ENV=development node --watch src/server.js",
-    "check": "node --check src/server.js && node --check src/db.js && node --check src/security.js && node --check src/oidc.js && node --check src/workflow.js && node --check src/permissions.js && node --check public/app.js",
+    "check": "node --check src/server.js && node --check src/workflow-v4.js && node --check src/db.js && node --check src/security.js && node --check src/oidc.js && node --check src/workflow.js && node --check src/permissions.js && node --check public/app.js && node --check public/share.js && node --check public/approval.js",
     "test": "node --test tests/*.test.js",
     "test:integration": "node --test tests/integration.test.js",
     "verify": "npm run check && npm test"

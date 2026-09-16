@@ -1,16 +1,17 @@
 # Matriks Implementasi Konsep AXINDO Media Hub
 
-Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implementasi repository versi 0.3.0.
+Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implementasi repository versi 0.4.0.
 
-| Area konsep | Implementasi 0.2.1 | Status |
+| Area konsep | Implementasi 0.4.0 | Status |
 |---|---|---|
 | Dual brand AINET / IMAS | Master brand, warna, filter, badge, dan branding UI | Selesai |
 | Permintaan dan brief | Form tujuan, audiens, kampanye, format, channel, CTA, deadline, anggaran | Selesai |
-| Penugasan vendor | Vendor, koordinator, reviewer, approver, uploader | Selesai |
-| Produksi dan draft | Upload berkas berversi dengan caption dan catatan perubahan | Selesai |
-| Review dan revisi | Keputusan reviewer, catatan wajib saat revisi, jejak workflow | Selesai |
-| Persetujuan | Approval rutin/sensitif dan penguncian versi disetujui | Selesai |
-| Jadwal | Rencana tayang, kalender, status terjadwal | Selesai |
+| Penugasan vendor | Koordinator, vendor, Direksi terpilih, dan Petugas Upload per platform | Selesai |
+| Produksi dan draft | Diskusi per fase serta upload besar bertahap, berversi, dan ber-checksum | Selesai |
+| Review dan revisi | Keputusan Koordinator, catatan revisi wajib, diskusi vendor, dan jejak workflow | Selesai |
+| Persetujuan | Direksi tertentu, link tanpa kedaluwarsa, PIN 8 digit, versi final terikat, dan pencabutan | Selesai |
+| Ringkasan materi | Snapshot read-only, lampiran terpilih, masa berlaku 12 jam, dan pencabutan | Selesai |
+| Jadwal | Waktu dan Petugas Upload terpisah untuk setiap platform | Selesai |
 | Bukti tayang | URL, screenshot/PDF, waktu, channel, dan metrik | Selesai |
 | Media Library | Enam kategori, versi, masa berlaku, checksum, status, owner | Selesai |
 | Akses vendor ke Library | Baca/unduh aset aktif tanpa hak kelola | Selesai |
@@ -36,10 +37,10 @@ Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implem
 3. Vendor hanya melihat konten yang terhubung ke vendornya.
 4. Seluruh pengguna dapat membuka Media Library, tetapi hanya Admin/Koordinator yang dapat mengelola versi dan status.
 5. Aset kedaluwarsa/arsip tidak dapat diunduh oleh vendor maupun user baca-saja.
-6. Konten sensitif hanya dapat disetujui Approver atau Super Admin.
+6. Koordinator memilih apakah hasil disetujui langsung atau dikirim kepada satu Direksi tertentu melalui link dan PIN.
 7. Perubahan substansial setelah approval membuka kembali proses review.
 8. Konten tayang tidak dapat diedit atau dihapus permanen.
-9. Publikasi harus melalui status Terjadwal dan wajib memiliki URL atau bukti.
+9. Setiap platform wajib memiliki URL atau bukti; konten selesai setelah seluruh jadwal dipublikasikan.
 10. Seluruh tindakan penting tersimpan dalam audit log.
 11. Pengguna internal masuk melalui AXINDO ID; Login Personal hanya tersedia untuk Super Admin dan Vendor.
 12. Akun tanpa grup Authentik yang dipetakan tidak memperoleh akses Media Hub.

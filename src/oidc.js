@@ -1,25 +1,30 @@
 const { cleanUsername } = require('./security');
 
 const VALID_ROLES = new Set([
-  'SUPER_ADMIN', 'COORDINATOR', 'VENDOR', 'REVIEWER',
-  'APPROVER', 'UPLOADER', 'MANAGEMENT'
+  'SUPER_ADMIN', 'COORDINATOR', 'VENDOR', 'UPLOADER', 'MANAGEMENT'
 ]);
 
 const ROLE_PRECEDENCE = [
-  'SUPER_ADMIN', 'COORDINATOR', 'APPROVER', 'REVIEWER',
-  'UPLOADER', 'MANAGEMENT', 'VENDOR'
+  'SUPER_ADMIN', 'COORDINATOR', 'MANAGEMENT', 'UPLOADER', 'VENDOR'
 ];
 
 const DEFAULT_ROLE_MAPPING = Object.freeze({
   'AXINDO - MEDIA HUB - SUPER ADMIN': 'SUPER_ADMIN',
   'AXINDO - MEDIA HUB - KOORDINATOR': 'COORDINATOR',
   'AXINDO - MEDIA HUB - VENDOR': 'VENDOR',
-  'AXINDO - MEDIA HUB - REVIEWER': 'REVIEWER',
-  'AXINDO - MEDIA HUB - APPROVER': 'APPROVER',
+  'AXINDO - MEDIA HUB - REVIEWER': 'COORDINATOR',
+  'AXINDO - MEDIA HUB - APPROVER': 'MANAGEMENT',
   'AXINDO - MEDIA HUB - UPLOADER': 'UPLOADER',
   'AXINDO - MEDIA HUB - MANAGEMENT': 'MANAGEMENT',
   'AXINDO - DIREKSI': 'MANAGEMENT'
 });
+
+function normalizedRole(value) {
+  const role = String(value || '').trim().toUpperCase();
+  if (role === 'REVIEWER') return 'COORDINATOR';
+  if (role === 'APPROVER') return 'MANAGEMENT';
+  return role;
+}
 
 function enabled(value) {
   return ['1', 'true', 'yes', 'on'].includes(String(value || '').trim().toLowerCase());
@@ -42,13 +47,14 @@ function parseRoleMapping(value) {
 
   const mapping = {};
   for (const [key, item] of Object.entries(parsed)) {
-    if (VALID_ROLES.has(key) && Array.isArray(item)) {
+    const keyRole = normalizedRole(key);
+    if ((VALID_ROLES.has(keyRole) || ['REVIEWER', 'APPROVER'].includes(String(key).toUpperCase())) && Array.isArray(item)) {
       for (const group of item) {
-        if (String(group || '').trim()) mapping[String(group).trim()] = key;
+        if (String(group || '').trim()) mapping[String(group).trim()] = keyRole;
       }
       continue;
     }
-    const role = String(item || '').trim().toUpperCase();
+    const role = normalizedRole(item);
     if (!VALID_ROLES.has(role)) throw new Error(`Role OIDC tidak valid untuk grup ${key}.`);
     if (String(key || '').trim()) mapping[String(key).trim()] = role;
   }

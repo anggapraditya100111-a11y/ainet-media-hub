@@ -2,16 +2,19 @@
 
 AXINDO Media Hub adalah aplikasi internal PT Axindo Infinitas Network untuk mengelola produksi konten AINET dan IMAS dari permintaan sampai bukti tayang. Aplikasi berjalan mandiri di server Ubuntu menggunakan Docker Compose, database SQLite, dan penyimpanan berkas lokal server.
 
-Versi: **0.3.6 — Deskripsi produksi vendor**
+Versi: **0.4.0 — Kolaborasi Produksi & Approval Direksi**
 
 ## Fitur yang sudah berfungsi
 
-- Workflow terkunci: Permintaan → Brief → Penugasan → Produksi → Draft → Review → Revisi/Approval → Disetujui → Terjadwal → Tayang.
-- Tujuh role: Super Admin, Koordinator Media, Vendor/Kreator, Reviewer, Approver, Petugas Uploader, dan Direksi/Manajemen.
+- Workflow terkunci: Permintaan → Brief → Pra-Produksi → Produksi → Review Koordinator → Revisi/Approval Direksi → Disetujui → Terjadwal → Selesai Tayang.
+- Lima role operasional: Super Admin, Koordinator Media, Vendor/Kreator, Direksi, dan Petugas Upload.
 - Vendor hanya melihat konten yang ditugaskan kepada vendornya dan tidak menyimpan kredensial media sosial.
-- Konten sensitif membutuhkan izin approver khusus; konten rutin dapat disetujui Koordinator atau Approver.
-- Upload draft berversi, catatan revisi, keputusan review, dan keputusan persetujuan.
-- Jadwal publikasi serta bukti tayang berupa tautan dan/atau berkas.
+- Diskusi dan lampiran dipisahkan untuk Brief, Pra-Produksi, dan Hasil Produksi.
+- Upload besar bertahap dengan progres, pembatalan, resume protokol, versioning, dan checksum; upload tidak mengubah status otomatis.
+- Koordinator dapat menyetujui langsung atau memilih satu Direksi dan file final tertentu untuk approval melalui link + PIN.
+- Link approval Direksi tidak kedaluwarsa, dapat dicabut Koordinator, dibatasi lima percobaan PIN, dan tertutup setelah keputusan atau perubahan file.
+- Link Ringkasan Materi berupa snapshot read-only, dapat dibuka tanpa login selama 12 jam, dan hanya memuat lampiran terpilih.
+- Jadwal publikasi dan bukti tayang terpisah per platform serta petugas upload.
 - Pencatatan reach, impressions, engagement, leads/PSB, anggaran, dan biaya per lead.
 - Media Library bersama untuk logo, brosur, template, foto/video, materi kampanye, dan arsip.
 - Media Library memiliki versi aktif, tanggal berlaku, tanggal kedaluwarsa, checksum, pemilik, serta status.
@@ -31,13 +34,11 @@ Versi: **0.3.6 — Deskripsi produksi vendor**
 
 | Role | Menu utama |
 |---|---|
-| Super Admin | Dashboard, Kalender, Pipeline, Permintaan, Review, Persetujuan, Siap Tayang, Media Library, Vendor, Laporan, Pengguna, Audit, Pengaturan, Backup |
-| Koordinator Media | Dashboard, Kalender, Pipeline, Permintaan, Review Draft, Siap Tayang, Media Library, Vendor, Laporan |
+| Super Admin | Dashboard, Kalender, Pipeline, Permintaan, Review Hasil, Approval Direksi, Siap Tayang, Media Library, Vendor, Laporan, Pengguna, Audit, Pengaturan, Backup |
+| Koordinator Media | Dashboard, Kalender, Pipeline, Permintaan, Review Hasil, Approval Direksi, Siap Tayang, Media Library, Vendor, Laporan |
 | Vendor / Kreator | Dashboard, Tugas Saya, Jadwal, Permintaan Revisi, Media Library, Riwayat Tugas |
-| Reviewer | Dashboard, Menunggu Review, Perlu Revisi, Riwayat Review, Kalender, Media Library |
-| Approver | Dashboard, Approval Saya, Riwayat Persetujuan, Kalender, Media Library |
-| Petugas Uploader | Dashboard, Konten Siap Tayang, Jadwal Upload, Riwayat Publikasi, Media Library |
-| Direksi / Manajemen | Dashboard Executive, Kalender, Ringkasan Progres, Performa Konten, Kinerja Vendor, Media Library |
+| Direksi | Approval Saya, Dashboard Executive, Kalender, Ringkasan Progres, Performa Konten, Media Library |
+| Petugas Upload | Dashboard, Konten Siap Tayang, Jadwal Upload, Riwayat Publikasi, Media Library |
 
 ## Instalasi di Ubuntu
 
@@ -120,11 +121,11 @@ Pastikan scope Provider mencakup `openid`, `profile`, dan `email`, serta klaim `
 | `AXINDO - MEDIA HUB - SUPER ADMIN` | Super Admin |
 | `AXINDO - MEDIA HUB - KOORDINATOR` | Koordinator Media |
 | `AXINDO - MEDIA HUB - VENDOR` | Vendor/Kreator |
-| `AXINDO - MEDIA HUB - REVIEWER` | Reviewer |
-| `AXINDO - MEDIA HUB - APPROVER` | Approver |
-| `AXINDO - MEDIA HUB - UPLOADER` | Petugas Uploader |
-| `AXINDO - MEDIA HUB - MANAGEMENT` | Direksi/Manajemen |
-| `AXINDO - DIREKSI` | Direksi/Manajemen |
+| `AXINDO - MEDIA HUB - REVIEWER` | Koordinator Media (alias lama) |
+| `AXINDO - MEDIA HUB - APPROVER` | Direksi (alias lama) |
+| `AXINDO - MEDIA HUB - UPLOADER` | Petugas Upload |
+| `AXINDO - MEDIA HUB - MANAGEMENT` | Direksi |
+| `AXINDO - DIREKSI` | Direksi |
 
 Jika nama grup berbeda, isi pemetaan satu baris di `.env`, misalnya:
 
@@ -171,10 +172,8 @@ Untuk menampilkan data dan akun demo, set `SEED_DEMO=true`. Password semua akun 
 |---|---|
 | `koordinator` | Koordinator Media |
 | `vendor` | Vendor / Kreator |
-| `reviewer` | Reviewer |
-| `approver` | Approver |
-| `uploader` | Petugas Uploader |
-| `manajemen` | Direksi / Manajemen |
+| `uploader` | Petugas Upload |
+| `manajemen` | Direksi |
 
 Data demo tidak aktif pada instalasi produksi bawaan.
 

@@ -2,38 +2,29 @@ const ROLE_LABELS = Object.freeze({
   SUPER_ADMIN: 'Super Admin',
   COORDINATOR: 'Koordinator Media',
   VENDOR: 'Vendor / Kreator',
-  REVIEWER: 'Reviewer',
-  APPROVER: 'Approver',
-  UPLOADER: 'Petugas Uploader',
-  MANAGEMENT: 'Direksi / Manajemen'
+  UPLOADER: 'Petugas Upload',
+  MANAGEMENT: 'Direksi'
 });
 
 const ROLE_PERMISSIONS = Object.freeze({
   SUPER_ADMIN: ['*'],
   COORDINATOR: [
     'dashboard.view', 'calendar.view', 'content.view_all', 'content.create',
-    'content.edit', 'content.assign', 'content.review', 'content.approve_regular',
-    'content.schedule', 'library.view', 'library.download', 'library.manage',
+    'content.edit', 'content.assign', 'content.discuss', 'content.review',
+    'content.approve_production', 'content.request_director_approval', 'content.schedule',
+    'library.view', 'library.download', 'library.manage',
     'vendor.view', 'vendor.manage', 'reports.view', 'notifications.view'
   ],
   VENDOR: [
     'dashboard.view', 'calendar.view', 'content.view_assigned', 'content.production',
-    'content.upload_draft', 'library.view', 'library.download', 'notifications.view'
-  ],
-  REVIEWER: [
-    'dashboard.view', 'calendar.view', 'content.view_all', 'content.review',
-    'library.view', 'library.download', 'notifications.view'
-  ],
-  APPROVER: [
-    'dashboard.view', 'calendar.view', 'content.view_all', 'content.approve_regular',
-    'content.approve_sensitive', 'library.view', 'library.download', 'notifications.view'
+    'content.upload_draft', 'content.discuss', 'library.view', 'library.download', 'notifications.view'
   ],
   UPLOADER: [
     'dashboard.view', 'calendar.view', 'content.view_approved', 'content.publish',
     'library.view', 'library.download', 'notifications.view'
   ],
   MANAGEMENT: [
-    'dashboard.executive', 'calendar.view', 'content.view_all', 'reports.view',
+    'dashboard.executive', 'calendar.view', 'content.view_all', 'content.director_approve', 'reports.view',
     'vendor.view', 'vendor.performance', 'library.view', 'library.download',
     'notifications.view'
   ]

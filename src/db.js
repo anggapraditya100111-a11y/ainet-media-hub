@@ -8,7 +8,7 @@ const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(process.cwd(), 'uploads')
 const BACKUP_DIR = process.env.BACKUP_DIR || path.join(process.cwd(), 'backups');
 
 for (const directory of [DATA_DIR, UPLOAD_DIR, BACKUP_DIR]) fs.mkdirSync(directory, { recursive: true });
-for (const directory of ['drafts', 'library', 'proofs', 'branding']) {
+for (const directory of ['drafts', 'library', 'proofs', 'branding', 'collaboration', 'chunks']) {
   fs.mkdirSync(path.join(UPLOAD_DIR, directory), { recursive: true });
 }
 
@@ -238,6 +238,131 @@ function initDatabase() {
       FOREIGN KEY(uploader_id) REFERENCES users(id)
     );
 
+    CREATE TABLE IF NOT EXISTS collaboration_messages (
+      id TEXT PRIMARY KEY,
+      content_id TEXT NOT NULL,
+      phase TEXT NOT NULL CHECK(phase IN ('BRIEF','PRE_PRODUCTION','PRODUCTION_RESULT')),
+      message TEXT,
+      sender_id TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY(content_id) REFERENCES contents(id) ON DELETE CASCADE,
+      FOREIGN KEY(sender_id) REFERENCES users(id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_collaboration_messages ON collaboration_messages(content_id,created_at);
+
+    CREATE TABLE IF NOT EXISTS collaboration_files (
+      id TEXT PRIMARY KEY,
+      content_id TEXT NOT NULL,
+      message_id TEXT,
+      phase TEXT NOT NULL CHECK(phase IN ('BRIEF','PRE_PRODUCTION','PRODUCTION_RESULT')),
+      version_number INTEGER NOT NULL DEFAULT 1,
+      file_path TEXT NOT NULL UNIQUE,
+      original_name TEXT NOT NULL,
+      mime_type TEXT NOT NULL,
+      file_size INTEGER NOT NULL,
+      checksum TEXT NOT NULL,
+      uploaded_by TEXT NOT NULL,
+      is_final INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY(content_id) REFERENCES contents(id) ON DELETE CASCADE,
+      FOREIGN KEY(message_id) REFERENCES collaboration_messages(id) ON DELETE SET NULL,
+      FOREIGN KEY(uploaded_by) REFERENCES users(id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_collaboration_files ON collaboration_files(content_id,phase,version_number);
+
+    CREATE TABLE IF NOT EXISTS material_share_links (
+      id TEXT PRIMARY KEY,
+      content_id TEXT NOT NULL,
+      token_hash TEXT NOT NULL UNIQUE,
+      snapshot_json TEXT NOT NULL,
+      attachment_ids_json TEXT NOT NULL DEFAULT '[]',
+      expires_at TEXT NOT NULL,
+      revoked_at TEXT,
+      last_viewed_at TEXT,
+      view_count INTEGER NOT NULL DEFAULT 0,
+      created_by TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY(content_id) REFERENCES contents(id) ON DELETE CASCADE,
+      FOREIGN KEY(created_by) REFERENCES users(id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_material_share_content ON material_share_links(content_id,created_at DESC);
+
+    CREATE TABLE IF NOT EXISTS director_approval_requests (
+      id TEXT PRIMARY KEY,
+      content_id TEXT NOT NULL,
+      director_id TEXT NOT NULL,
+      token_hash TEXT NOT NULL UNIQUE,
+      pin_hash TEXT NOT NULL,
+      attachment_ids_json TEXT NOT NULL DEFAULT '[]',
+      status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK(status IN ('ACTIVE','APPROVED','REVISION','CANCELLED')),
+      note TEXT,
+      attempt_count INTEGER NOT NULL DEFAULT 0,
+      locked_at TEXT,
+      opened_at TEXT,
+      decided_at TEXT,
+      cancelled_at TEXT,
+      created_by TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY(content_id) REFERENCES contents(id) ON DELETE CASCADE,
+      FOREIGN KEY(director_id) REFERENCES users(id),
+      FOREIGN KEY(created_by) REFERENCES users(id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_director_approval_content ON director_approval_requests(content_id,status,created_at DESC);
+
+    CREATE TABLE IF NOT EXISTS approval_access_sessions (
+      id TEXT PRIMARY KEY,
+      request_id TEXT NOT NULL,
+      token_hash TEXT NOT NULL UNIQUE,
+      expires_at TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY(request_id) REFERENCES director_approval_requests(id) ON DELETE CASCADE
+    );
+    CREATE INDEX IF NOT EXISTS idx_approval_access_expiry ON approval_access_sessions(expires_at);
+
+    CREATE TABLE IF NOT EXISTS publication_schedules (
+      id TEXT PRIMARY KEY,
+      content_id TEXT NOT NULL,
+      channel_id TEXT NOT NULL,
+      scheduled_at TEXT NOT NULL,
+      uploader_id TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'SCHEDULED' CHECK(status IN ('SCHEDULED','PUBLISHED','CANCELLED')),
+      platform_url TEXT,
+      published_at TEXT,
+      proof_path TEXT,
+      proof_name TEXT,
+      proof_mime TEXT,
+      metrics_json TEXT,
+      created_by TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      FOREIGN KEY(content_id) REFERENCES contents(id) ON DELETE CASCADE,
+      FOREIGN KEY(channel_id) REFERENCES channels(id),
+      FOREIGN KEY(uploader_id) REFERENCES users(id),
+      FOREIGN KEY(created_by) REFERENCES users(id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_publication_schedules ON publication_schedules(content_id,status,scheduled_at);
+
+    CREATE TABLE IF NOT EXISTS chunk_upload_sessions (
+      id TEXT PRIMARY KEY,
+      content_id TEXT NOT NULL,
+      phase TEXT NOT NULL CHECK(phase IN ('BRIEF','PRE_PRODUCTION','PRODUCTION_RESULT')),
+      original_name TEXT NOT NULL,
+      mime_type TEXT NOT NULL,
+      total_size INTEGER NOT NULL,
+      chunk_size INTEGER NOT NULL,
+      received_size INTEGER NOT NULL DEFAULT 0,
+      next_chunk INTEGER NOT NULL DEFAULT 0,
+      temp_path TEXT NOT NULL UNIQUE,
+      message TEXT,
+      created_by TEXT NOT NULL,
+      expires_at TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK(status IN ('ACTIVE','COMPLETED','CANCELLED')),
+      created_at TEXT NOT NULL,
+      FOREIGN KEY(content_id) REFERENCES contents(id) ON DELETE CASCADE,
+      FOREIGN KEY(created_by) REFERENCES users(id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_chunk_upload_expiry ON chunk_upload_sessions(expires_at,status);
+
     CREATE TABLE IF NOT EXISTS media_assets (
       id TEXT PRIMARY KEY,
       code TEXT NOT NULL UNIQUE,
@@ -318,9 +443,18 @@ function initDatabase() {
 
   migrateUsersForOidc();
   migrateOidcAttemptsForPopup();
+  migrateWorkflowV4();
 
   seedBaseData();
   if (String(process.env.SEED_DEMO || '').toLowerCase() === 'true') seedDemoData();
+}
+
+function migrateWorkflowV4() {
+  db.exec(`
+    UPDATE users SET role='COORDINATOR',updated_at=datetime('now') WHERE role='REVIEWER';
+    UPDATE users SET role='MANAGEMENT',updated_at=datetime('now') WHERE role='APPROVER';
+    UPDATE contents SET status='DRAFT_SUBMITTED',updated_at=datetime('now') WHERE status='IN_REVIEW';
+  `);
 }
 
 function migrateOidcAttemptsForPopup() {
@@ -418,9 +552,7 @@ function seedDemoData() {
   const demoUsers = [
     ['Koordinator Media', 'koordinator', 'COORDINATOR', null],
     ['Kreator Vendor', 'vendor', 'VENDOR', vendor.id],
-    ['Reviewer Konten', 'reviewer', 'REVIEWER', null],
-    ['Approver Konten', 'approver', 'APPROVER', null],
-    ['Petugas Uploader', 'uploader', 'UPLOADER', null],
+    ['Petugas Upload', 'uploader', 'UPLOADER', null],
     ['Direksi', 'manajemen', 'MANAGEMENT', null]
   ];
   for (const [name, username, role, vendorId] of demoUsers) {
@@ -432,8 +564,6 @@ function seedDemoData() {
 
   if (!db.prepare('SELECT id FROM contents LIMIT 1').get()) {
     const creator = db.prepare("SELECT id FROM users WHERE username='koordinator'").get();
-    const reviewer = db.prepare("SELECT id FROM users WHERE username='reviewer'").get();
-    const approver = db.prepare("SELECT id FROM users WHERE username='approver'").get();
     const uploader = db.prepare("SELECT id FROM users WHERE username='uploader'").get();
     const id = newId('cnt');
     db.prepare(`INSERT INTO contents(id,content_no,title,description,objective,audience,brand_id,campaign,category,content_type,approval_level,status,priority,due_date,publish_at,brief,coordinator_id,vendor_id,reviewer_id,approver_id,uploader_id,created_by,created_at,updated_at)
@@ -443,7 +573,7 @@ function seedDemoData() {
       'PROMOTION', 'CAROUSEL', 'REGULAR', 'IN_PRODUCTION', 'HIGH',
       new Date(Date.now() + 3 * 86400000).toISOString().slice(0, 10),
       new Date(Date.now() + 5 * 86400000).toISOString(), 'Carousel 5 slide dengan CTA WhatsApp.',
-      creator.id, vendor.id, reviewer.id, approver.id, uploader.id, creator.id, timestamp, timestamp
+      creator.id, vendor.id, null, null, uploader.id, creator.id, timestamp, timestamp
     );
     db.prepare('INSERT INTO content_channels(content_id,channel_id) VALUES(?,?)').run(id, 'channel-instagram');
     db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
@@ -495,6 +625,7 @@ function notifyRole(role, type, title, body = '', link = '') {
 function cleanupExpiredSessions() {
   db.prepare('DELETE FROM sessions WHERE expires_at<=?').run(nowIso());
   db.prepare('DELETE FROM oidc_login_attempts WHERE expires_at<=?').run(nowIso());
+  db.prepare('DELETE FROM approval_access_sessions WHERE expires_at<=?').run(nowIso());
 }
 
 async function createDatabaseBackup(label = 'manual') {

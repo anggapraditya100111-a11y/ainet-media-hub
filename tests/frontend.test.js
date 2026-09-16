@@ -46,11 +46,21 @@ test('vendor dapat mengedit deskripsi hanya melalui aksi produksi khusus', () =>
 
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.3\.6/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.4\.0/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);
   assert.match(css, /@media \(display-mode: standalone\)/);
   assert.equal(manifest.display, 'standalone');
   assert.equal(manifest.start_url, '/');
+});
+
+test('workflow kolaborasi v0.4.0 tersedia di desktop dan mobile', () => {
+  assert.match(app, /Diskusi & Upload/);
+  assert.match(app, /uploadCollaborativeFile/);
+  assert.match(app, /Kirim Hasil ke Koordinator/);
+  assert.match(app, /Kirim Approval ke Direksi/);
+  assert.match(app, /Jadwal per Platform/);
+  assert.match(css, /\.discussion-list/);
+  assert.match(css, /\.upload-progress/);
 });

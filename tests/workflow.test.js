@@ -4,10 +4,7 @@ const { canTransition, assertTransition, TRANSITIONS } = require('../src/workflo
 const { hasPermission, permissionsForRole } = require('../src/permissions');
 
 test('workflow mengikuti urutan produksi sampai publikasi', () => {
-  const states = [
-    'REQUESTED', 'BRIEFED', 'ASSIGNED', 'IN_PRODUCTION', 'DRAFT_SUBMITTED',
-    'IN_REVIEW', 'APPROVAL_PENDING', 'APPROVED', 'SCHEDULED', 'PUBLISHED'
-  ];
+  const states = ['REQUESTED', 'BRIEFED', 'ASSIGNED', 'IN_PRODUCTION', 'DRAFT_SUBMITTED', 'APPROVAL_PENDING', 'APPROVED', 'SCHEDULED', 'PUBLISHED'];
   for (let index = 0; index < states.length - 1; index += 1) {
     assert.equal(canTransition(states[index], states[index + 1]), true);
   }
@@ -22,7 +19,7 @@ test('workflow menolak lompatan tahap', () => {
 test('vendor hanya memiliki izin produksi dan library baca', () => {
   assert.equal(hasPermission('VENDOR', 'content.upload_draft'), true);
   assert.equal(hasPermission('VENDOR', 'library.download'), true);
-  assert.equal(hasPermission('VENDOR', 'content.approve_regular'), false);
+  assert.equal(hasPermission('VENDOR', 'content.approve_production'), false);
   assert.equal(hasPermission('VENDOR', 'library.manage'), false);
 });
 

@@ -39,7 +39,7 @@ test('konfigurasi Login Personal memakai nama baru dan tetap membaca konfigurasi
 test('grup Authentik dipetakan dengan role paling berwenang', () => {
   const mapping = parseRoleMapping(JSON.stringify({
     COORDINATOR: ['Tim Media'],
-    APPROVER: ['Penyetuju'],
+    MANAGEMENT: ['Penyetuju'],
     'Vendor Eksternal': 'VENDOR'
   }));
   const groups = groupsFromClaims({ groups: ['Penyetuju', 'Tim Media'], ak_groups: 'Vendor Eksternal' });

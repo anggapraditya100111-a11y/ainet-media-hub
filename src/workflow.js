@@ -5,11 +5,11 @@ const STATUSES = Object.freeze([
 ]);
 
 const STATUS_LABELS = Object.freeze({
-  REQUESTED: 'Permintaan', BRIEFED: 'Brief', ASSIGNED: 'Ditugaskan',
-  IN_PRODUCTION: 'Produksi', DRAFT_SUBMITTED: 'Draft Terkirim',
-  IN_REVIEW: 'Review', REVISION_REQUIRED: 'Perlu Revisi',
-  APPROVAL_PENDING: 'Menunggu Persetujuan', APPROVED: 'Disetujui',
-  SCHEDULED: 'Terjadwal', PUBLISHED: 'Tayang', CANCELLED: 'Dibatalkan'
+  REQUESTED: 'Permintaan', BRIEFED: 'Brief Siap', ASSIGNED: 'Pra-Produksi',
+  IN_PRODUCTION: 'Produksi', DRAFT_SUBMITTED: 'Review Koordinator',
+  IN_REVIEW: 'Review Koordinator', REVISION_REQUIRED: 'Revisi Produksi',
+  APPROVAL_PENDING: 'Approval Direksi', APPROVED: 'Disetujui',
+  SCHEDULED: 'Terjadwal', PUBLISHED: 'Selesai Tayang', CANCELLED: 'Dibatalkan'
 });
 
 const TRANSITIONS = Object.freeze({
@@ -17,8 +17,8 @@ const TRANSITIONS = Object.freeze({
   BRIEFED: ['ASSIGNED', 'CANCELLED'],
   ASSIGNED: ['IN_PRODUCTION', 'CANCELLED'],
   IN_PRODUCTION: ['DRAFT_SUBMITTED', 'CANCELLED'],
-  DRAFT_SUBMITTED: ['IN_REVIEW', 'REVISION_REQUIRED'],
-  IN_REVIEW: ['REVISION_REQUIRED', 'APPROVAL_PENDING'],
+  DRAFT_SUBMITTED: ['REVISION_REQUIRED', 'APPROVAL_PENDING', 'APPROVED'],
+  IN_REVIEW: ['REVISION_REQUIRED', 'APPROVAL_PENDING', 'APPROVED'],
   REVISION_REQUIRED: ['IN_PRODUCTION', 'CANCELLED'],
   APPROVAL_PENDING: ['APPROVED', 'REVISION_REQUIRED'],
   APPROVED: ['SCHEDULED', 'REVISION_REQUIRED'],
@@ -30,12 +30,12 @@ const TRANSITIONS = Object.freeze({
 const TRANSITION_PERMISSION = Object.freeze({
   BRIEFED: 'content.edit',
   ASSIGNED: 'content.assign',
-  IN_PRODUCTION: 'content.production',
+  IN_PRODUCTION: 'content.approve_production',
   DRAFT_SUBMITTED: 'content.upload_draft',
   IN_REVIEW: 'content.review',
   REVISION_REQUIRED: 'content.review',
   APPROVAL_PENDING: 'content.review',
-  APPROVED: 'content.approve_regular',
+  APPROVED: 'content.review',
   SCHEDULED: 'content.schedule',
   PUBLISHED: 'content.publish',
   CANCELLED: 'content.edit'
