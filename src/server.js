@@ -24,7 +24,7 @@ const {
   emailAllowed, safeReturnTo
 } = require('./oidc');
 
-const APP_VERSION = '0.3.5';
+const APP_VERSION = '0.3.6';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';
@@ -834,6 +834,28 @@ app.patch('/api/contents/:id', authRequired, permissionRequired('content.edit'),
       recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: current.id, action: reopen ? 'EDIT_REOPEN_REVIEW' : 'UPDATE', before: current, after: req.body, ip: requestIp(req) });
     })();
     res.json({ item: getContent(current.id, req.user), reopenedReview: reopen });
+  } catch (error) { next(error); }
+});
+
+app.patch('/api/contents/:id/vendor-description', authRequired, permissionRequired('content.production'), (req, res, next) => {
+  try {
+    const current = getContent(req.params.id, req.user);
+    if (req.user.role !== 'VENDOR') throw new AppError('Deskripsi produksi hanya dapat diubah oleh vendor yang ditugaskan.', 403);
+    if (current.vendor_id !== req.user.vendorId) throw new AppError('Tugas ini tidak diberikan kepada vendor Anda.', 403);
+    if (current.status !== 'IN_PRODUCTION') throw new AppError('Deskripsi hanya dapat diubah ketika konten berstatus Produksi.', 409);
+    const description = cleanText(req.body.description, 2000);
+    const timestamp = nowIso();
+    db.prepare('UPDATE contents SET description=?,updated_at=? WHERE id=?').run(description || null, timestamp, current.id);
+    recordAudit({
+      actorId: req.user.id,
+      entityType: 'CONTENT',
+      entityId: current.id,
+      action: 'VENDOR_DESCRIPTION_UPDATE',
+      before: { description: current.description || '' },
+      after: { description },
+      ip: requestIp(req)
+    });
+    res.json({ item: getContent(current.id, req.user) });
   } catch (error) { next(error); }
 });
 

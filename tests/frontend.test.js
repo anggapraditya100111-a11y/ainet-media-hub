@@ -37,9 +37,16 @@ test('akun AXINDO ID dari OIDC maupun AXINDO Access tidak mendapat form ubah pas
   assert.match(app, /if \(usesAxindoId\) return/);
 });
 
+test('vendor dapat mengedit deskripsi hanya melalui aksi produksi khusus', () => {
+  assert.match(app, /data-content-action="description">Edit Deskripsi/);
+  assert.match(app, /function showVendorDescriptionForm\(item\)/);
+  assert.match(app, /\/vendor-description/);
+  assert.match(app, /Brief dari Koordinator Media tetap tidak berubah/);
+});
+
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.3\.5/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.3\.6/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);

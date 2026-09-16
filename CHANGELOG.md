@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.6 — 2026-09-16
+
+- Tambahkan tombol **Edit Deskripsi** untuk vendor pada tugas yang sedang berstatus Produksi.
+- Batasi perubahan vendor hanya pada deskripsi tugas miliknya; brief Koordinator dan data lainnya tetap terkunci.
+- Tampilkan Brief Produksi dan Deskripsi Produksi sebagai dua informasi terpisah pada detail konten.
+- Catat perubahan deskripsi vendor pada audit log.
+
 ## 0.3.5 — 2026-09-12
 
 - Sembunyikan form ubah password bagi pengguna yang masuk melalui AXINDO Access maupun OIDC langsung.

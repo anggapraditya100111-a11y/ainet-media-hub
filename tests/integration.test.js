@@ -111,8 +111,23 @@ test('alur konten lengkap dan akses Media Library', { timeout: 30_000 }, async t
     const result = await request(baseUrl, `/api/contents/${contentId}/transition`, { method: 'POST', body: { toStatus } }, adminCookie);
     assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   }
+  let descriptionResult = await request(baseUrl, `/api/contents/${contentId}/vendor-description`, {
+    method: 'PATCH', body: { description: 'Deskripsi dari vendor sebelum produksi.' }
+  }, vendorCookie);
+  assert.equal(descriptionResult.response.status, 409);
   let result = await request(baseUrl, `/api/contents/${contentId}/transition`, { method: 'POST', body: { toStatus: 'IN_PRODUCTION' } }, vendorCookie);
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+
+  descriptionResult = await request(baseUrl, `/api/contents/${contentId}/vendor-description`, {
+    method: 'PATCH', body: { description: 'Vendor menyiapkan carousel lima slide dengan visual keluarga.' }
+  }, vendorCookie);
+  assert.equal(descriptionResult.response.status, 200, JSON.stringify(descriptionResult.payload));
+  assert.equal(descriptionResult.payload.item.description, 'Vendor menyiapkan carousel lima slide dengan visual keluarga.');
+
+  const vendorGeneralEdit = await request(baseUrl, `/api/contents/${contentId}`, {
+    method: 'PATCH', body: { title: 'Judul yang tidak boleh diubah vendor' }
+  }, vendorCookie);
+  assert.equal(vendorGeneralEdit.response.status, 403);
 
   const draftForm = new FormData();
   draftForm.set('file', new Blob(['%PDF-1.4 integration draft'], { type: 'application/pdf' }), 'draft-v1.pdf');

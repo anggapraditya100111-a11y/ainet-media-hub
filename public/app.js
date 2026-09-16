@@ -708,7 +708,8 @@ async function showContentDetail(id) {
               ${detailItem('Kampanye', item.campaign)}${detailItem('Format', labelize(item.content_type))}
               ${detailItem('Tingkat Persetujuan', item.approval_level === 'SENSITIVE' ? 'Sensitif' : 'Rutin')}${detailItem('Anggaran', rupiah(item.budget))}
             </dl>
-            <h3 style="margin-top:20px">Brief Produksi</h3><div class="rich-text muted">${escapeHtml(item.brief || item.description || 'Belum diisi.')}</div>
+            <h3 style="margin-top:20px">Brief Produksi</h3><div class="rich-text muted">${escapeHtml(item.brief || 'Belum diisi.')}</div>
+            <h3 style="margin-top:20px">Deskripsi Produksi</h3><div class="rich-text muted">${escapeHtml(item.description || 'Belum diisi.')}</div>
             <h3 style="margin-top:20px">Caption</h3><div class="rich-text muted">${escapeHtml(item.caption || 'Belum diisi.')}</div>
             ${item.hashtags ? `<p class="tag" style="margin-top:14px">${escapeHtml(item.hashtags)}</p>` : ''}
           </section>
@@ -743,6 +744,7 @@ function contentActions(item) {
   const buttons = [];
   if (has('content.edit') && !['PUBLISHED', 'CANCELLED'].includes(item.status)) buttons.push(`<button class="btn btn-ghost" data-content-action="edit">Edit & Penugasan</button>`);
   if (has('content.edit') && !['PUBLISHED', 'CANCELLED'].includes(item.status)) buttons.push(`<button class="btn btn-ghost" data-content-action="assets">Aset Referensi</button>`);
+  if (state.user.role === 'VENDOR' && item.status === 'IN_PRODUCTION') buttons.push(`<button class="btn btn-ghost" data-content-action="description">Edit Deskripsi</button>`);
   if (item.status === 'IN_PRODUCTION' && (has('content.upload_draft') || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-primary" data-content-action="draft">↑ Upload Draft</button>`);
   if (item.status === 'SCHEDULED' && has('content.publish')) buttons.push(`<button class="btn btn-success" data-content-action="publish">✓ Bukti Tayang</button>`);
   if (['APPROVED', 'SCHEDULED', 'PUBLISHED'].includes(item.status) && has('library.manage')) buttons.push(`<button class="btn btn-soft" data-content-action="promote">Jadikan Aset Resmi</button>`);
@@ -757,11 +759,31 @@ function contentActions(item) {
 
 function bindDetailActions(item) {
   $('[data-content-action="edit"]')?.addEventListener('click', () => showContentForm(item));
+  $('[data-content-action="description"]')?.addEventListener('click', () => showVendorDescriptionForm(item));
   $('[data-content-action="draft"]')?.addEventListener('click', () => showDraftForm(item));
   $('[data-content-action="publish"]')?.addEventListener('click', () => showPublicationForm(item));
   $('[data-content-action="assets"]')?.addEventListener('click', () => showContentAssetsForm(item));
   $('[data-content-action="promote"]')?.addEventListener('click', () => showPromoteForm(item));
   document.querySelectorAll('[data-transition]').forEach(button => button.addEventListener('click', () => showTransitionForm(item, button.dataset.transition)));
+}
+
+function showVendorDescriptionForm(item) {
+  openModal('Edit Deskripsi Produksi', `<form id="vendor-description-form">
+    <div class="notice">Deskripsi ini dapat dilengkapi oleh vendor selama tugas berstatus Produksi. Brief dari Koordinator Media tetap tidak berubah.</div>
+    <label class="field" style="margin-top:16px"><span>Deskripsi Produksi</span><textarea name="description" maxlength="2000" rows="8" placeholder="Tuliskan rincian materi atau pekerjaan yang sedang diproduksi">${escapeHtml(item.description || '')}</textarea><small>Maksimal 2.000 karakter.</small></label>
+    <div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn btn-primary">Simpan Deskripsi</button></div>
+  </form>`, item.content_no);
+  $('#vendor-description-form [data-close-modal]').addEventListener('click', closeModal);
+  $('#vendor-description-form').addEventListener('submit', async event => {
+    event.preventDefault(); setLoading(true);
+    try {
+      const description = new FormData(event.currentTarget).get('description');
+      await api(`/api/contents/${item.id}/vendor-description`, { method: 'PATCH', body: { description } });
+      toast('Deskripsi produksi berhasil diperbarui.');
+      await showContentDetail(item.id);
+    } catch (error) { toast(error.message, true); }
+    finally { setLoading(false); }
+  });
 }
 
 function transitionPermission(item, next) {

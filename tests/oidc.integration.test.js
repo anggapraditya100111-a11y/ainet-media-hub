@@ -257,7 +257,7 @@ test('login OIDC membuat akun, role, sesi, dan logout AXINDO ID', { timeout: 30_
 
   const popupPage = await fetch(popupTarget).then(response => response.text());
   assert.match(popupPage, /Popup akan tertutup otomatis/);
-  assert.match(popupPage, /popup\.js\?v=0\.3\.5/);
+  assert.match(popupPage, /popup\.js\?v=0\.3\.6/);
 
   const vendorLogin = await fetch(`${appUrl}/api/auth/login`, {
     method: 'POST', headers: { 'content-type': 'application/json' },
