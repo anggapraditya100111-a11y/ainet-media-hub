@@ -536,6 +536,56 @@ function installWorkflowV4(app, options) {
     } catch (error) { next(error); }
   });
 
+  app.patch('/api/schedules/:id', authRequired, (req, res, next) => {
+    try {
+      ensurePermission(req.user, 'content.schedule');
+      const schedule = db.prepare(`SELECT ps.*,ch.name AS channel_name,u.name AS uploader_name
+        FROM publication_schedules ps JOIN channels ch ON ch.id=ps.channel_id
+        JOIN users u ON u.id=ps.uploader_id WHERE ps.id=?`).get(req.params.id);
+      if (!schedule) throw new AppError('Jadwal tidak ditemukan.', 404);
+      const item = getContent(schedule.content_id, req.user);
+      if (schedule.status !== 'SCHEDULED') throw new AppError('Jadwal yang sudah tayang tidak dapat diedit.', 409);
+      const scheduledAt = cleanText(req.body.scheduledAt, 40);
+      const uploader = db.prepare("SELECT id,name FROM users WHERE id=? AND role='UPLOADER' AND active=1")
+        .get(String(req.body.uploaderId || ''));
+      if (!scheduledAt || !uploader) throw new AppError('Waktu dan petugas upload wajib valid.');
+      const timestamp = nowIso();
+      const before = {
+        scheduledAt: schedule.scheduled_at,
+        uploaderId: schedule.uploader_id,
+        uploaderName: schedule.uploader_name
+      };
+      const after = { scheduledAt, uploaderId: uploader.id, uploaderName: uploader.name };
+      db.transaction(() => {
+        db.prepare('UPDATE publication_schedules SET scheduled_at=?,uploader_id=?,updated_at=? WHERE id=?')
+          .run(scheduledAt, uploader.id, timestamp, schedule.id);
+        const nextSchedule = db.prepare(`SELECT scheduled_at,uploader_id FROM publication_schedules
+          WHERE content_id=? AND status='SCHEDULED' ORDER BY scheduled_at,id LIMIT 1`).get(item.id);
+        if (nextSchedule) {
+          db.prepare('UPDATE contents SET publish_at=?,uploader_id=?,updated_at=? WHERE id=?')
+            .run(nextSchedule.scheduled_at, nextSchedule.uploader_id, timestamp, item.id);
+        }
+        db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+          VALUES(?,?,?,?,?,?,?,?)`).run(newId('evt'), item.id, item.status, item.status, 'UPDATE_SCHEDULE',
+          `${schedule.channel_name}: ${scheduledAt} · ${uploader.name}`, req.user.id, timestamp);
+        recordAudit({ actorId: req.user.id, entityType: 'PUBLICATION_SCHEDULE', entityId: schedule.id,
+          action: 'UPDATE', before, after, ip: requestIp(req) });
+      })();
+      const link = `/contents/${item.id}`;
+      if (schedule.uploader_id !== uploader.id) {
+        notifyUser(schedule.uploader_id, 'UPLOAD_REASSIGNED', `Tugas ${item.content_no} dialihkan`,
+          `${schedule.channel_name} dialihkan kepada ${uploader.name}.`, link);
+        notifyUser(uploader.id, 'UPLOAD_ASSIGNED', `Jadwal ${item.content_no} diperbarui`,
+          `${schedule.channel_name} · ${scheduledAt}`, link);
+      } else if (schedule.scheduled_at !== scheduledAt) {
+        notifyUser(uploader.id, 'UPLOAD_RESCHEDULED', `Jadwal ${item.content_no} berubah`,
+          `${schedule.channel_name} · ${scheduledAt}`, link);
+      }
+      res.json({ item: { ...schedule, scheduled_at: scheduledAt, uploader_id: uploader.id,
+        uploader_name: uploader.name, updated_at: timestamp } });
+    } catch (error) { next(error); }
+  });
+
   app.post('/api/schedules/:id/publish', authRequired, proofUpload.single('file'), (req, res, next) => {
     try {
       const schedule = db.prepare('SELECT * FROM publication_schedules WHERE id=?').get(req.params.id);

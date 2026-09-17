@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.2 — 2026-09-17
+
+- Menambahkan tombol **Edit Jadwal** per platform untuk Koordinator dan Super Admin.
+- Mengizinkan perubahan waktu tayang dan Petugas Upload selama jadwal belum dipublikasikan.
+- Mengunci jadwal yang sudah tayang agar riwayat publikasi tetap konsisten.
+- Memberi notifikasi kepada petugas lama dan baru saat tugas dialihkan serta mencatat perubahan dalam workflow dan audit log.
+
 ## 0.4.1 — 2026-09-17
 
 - Memindahkan kepemilikan PIN approval 8 digit sepenuhnya ke akun Direksi; PIN disimpan dengan hash dan tidak pernah ditampilkan kepada Koordinator.

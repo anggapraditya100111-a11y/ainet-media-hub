@@ -62,9 +62,17 @@ test('akses edit vendor diatur per kolom dan diproses sebagai usulan', () => {
   assert.match(app, /data-review-vendor-edit/);
 });
 
+test('koordinator dapat mengubah jadwal dan petugas upload sebelum tayang', () => {
+  assert.match(app, /data-edit-schedule/);
+  assert.match(app, /function showEditScheduleForm\(item, schedule\)/);
+  assert.match(app, /Edit Jadwal Platform/);
+  assert.match(app, /method: 'PATCH'/);
+  assert.match(app, /Jadwal dan petugas upload berhasil diperbarui/);
+});
+
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.4\.1/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.4\.2/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);

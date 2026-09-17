@@ -76,11 +76,18 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   await waitForHealth(baseUrl, child);
 
   const adminCookie = await login(baseUrl, 'admin', 'Admin12345');
+  const coordinatorCookie = await login(baseUrl, 'koordinator', 'Demo12345');
   const vendorCookie = await login(baseUrl, 'vendor', 'Demo12345');
   const uploaderCookie = await login(baseUrl, 'uploader', 'Demo12345');
   const managementCookie = await login(baseUrl, 'manajemen', 'Demo12345');
+  let result = await request(baseUrl, '/api/users', { method: 'POST', body: {
+    name: 'Petugas Upload Kedua', username: 'uploader2', password: 'Demo12345', role: 'UPLOADER'
+  } }, adminCookie);
+  assert.equal(result.response.status, 201, JSON.stringify(result.payload));
+  const secondUploaderId = result.payload.id;
+  const secondUploaderCookie = await login(baseUrl, 'uploader2', 'Demo12345');
   const directorPin = '77258816';
-  let result = await request(baseUrl, '/api/profile/approval-pin', { method: 'POST', body: { newPin: directorPin, confirmPin: directorPin } }, managementCookie);
+  result = await request(baseUrl, '/api/profile/approval-pin', { method: 'POST', body: { newPin: directorPin, confirmPin: directorPin } }, managementCookie);
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   const assignments = await request(baseUrl, '/api/meta/assignments', {}, adminCookie);
   assert.deepEqual([...new Set(assignments.payload.users.map(user => user.role))].sort(), ['COORDINATOR', 'MANAGEMENT', 'UPLOADER']);
@@ -174,13 +181,39 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
     { channelId: 'channel-tiktok', scheduledAt: '2026-09-20T11:00', uploaderId: byRole('UPLOADER') }
   ] } }, adminCookie);
   assert.equal(result.response.status, 201, JSON.stringify(result.payload));
-  const schedules = await request(baseUrl, `/api/contents/${contentId}/schedules`, {}, uploaderCookie);
+  let schedules = await request(baseUrl, `/api/contents/${contentId}/schedules`, {}, uploaderCookie);
   assert.equal(schedules.payload.items.length, 2);
-  for (let index = 0; index < schedules.payload.items.length; index += 1) {
-    const form = new FormData(); form.set('platformUrl', `https://example.test/post-${index}`);
-    result = await request(baseUrl, `/api/schedules/${schedules.payload.items[index].id}/publish`, { method: 'POST', body: form }, uploaderCookie);
-    assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-    const detail = await request(baseUrl, `/api/contents/${contentId}`, {}, adminCookie);
-    assert.equal(detail.payload.item.status, index === 0 ? 'SCHEDULED' : 'PUBLISHED');
-  }
+  const reassignedSchedule = schedules.payload.items[0];
+  result = await request(baseUrl, `/api/schedules/${reassignedSchedule.id}`, { method: 'PATCH', body: {
+    scheduledAt: '2026-09-21T09:30', uploaderId: secondUploaderId
+  } }, vendorCookie);
+  assert.equal(result.response.status, 403, 'vendor tidak boleh mengubah jadwal');
+  result = await request(baseUrl, `/api/schedules/${reassignedSchedule.id}`, { method: 'PATCH', body: {
+    scheduledAt: '2026-09-21T09:30', uploaderId: secondUploaderId
+  } }, coordinatorCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  assert.equal(result.payload.item.scheduled_at, '2026-09-21T09:30');
+  assert.equal(result.payload.item.uploader_id, secondUploaderId);
+  schedules = await request(baseUrl, `/api/contents/${contentId}/schedules`, {}, adminCookie);
+  assert.equal(schedules.payload.items.find(row => row.id === reassignedSchedule.id).uploader_name, 'Petugas Upload Kedua');
+
+  let form = new FormData(); form.set('platformUrl', 'https://example.test/post-reassigned');
+  result = await request(baseUrl, `/api/schedules/${reassignedSchedule.id}/publish`, { method: 'POST', body: form }, uploaderCookie);
+  assert.equal(result.response.status, 403, 'petugas lama tidak boleh menerbitkan jadwal yang dialihkan');
+  form = new FormData(); form.set('platformUrl', 'https://example.test/post-reassigned');
+  result = await request(baseUrl, `/api/schedules/${reassignedSchedule.id}/publish`, { method: 'POST', body: form }, secondUploaderCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  result = await request(baseUrl, `/api/schedules/${reassignedSchedule.id}`, { method: 'PATCH', body: {
+    scheduledAt: '2026-09-22T09:30', uploaderId: secondUploaderId
+  } }, coordinatorCookie);
+  assert.equal(result.response.status, 409, 'jadwal yang sudah tayang harus terkunci');
+  let detail = await request(baseUrl, `/api/contents/${contentId}`, {}, adminCookie);
+  assert.equal(detail.payload.item.status, 'SCHEDULED');
+
+  const remainingSchedule = schedules.payload.items.find(row => row.id !== reassignedSchedule.id);
+  form = new FormData(); form.set('platformUrl', 'https://example.test/post-remaining');
+  result = await request(baseUrl, `/api/schedules/${remainingSchedule.id}/publish`, { method: 'POST', body: form }, uploaderCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  detail = await request(baseUrl, `/api/contents/${contentId}`, {}, adminCookie);
+  assert.equal(detail.payload.item.status, 'PUBLISHED');
 });

@@ -728,7 +728,11 @@ async function showContentDetail(id) {
             ${data.versions.length ? `<div class="table-wrap"><table><thead><tr><th>Versi</th><th>Berkas</th><th>Pengirim</th><th>Waktu</th><th></th></tr></thead><tbody>${data.versions.map(version => `<tr><td>v${version.version_number}${version.is_approved ? ' ✓' : ''}</td><td><span class="cell-title truncate">${escapeHtml(version.original_name)}</span><span class="cell-meta">${fileSize(version.file_size)}</span></td><td>${escapeHtml(version.submitted_by_name)}</td><td>${dateTime(version.created_at)}</td><td><a class="btn btn-ghost btn-small" href="${attr(version.fileUrl)}" target="_blank" rel="noopener">Buka</a></td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">Tidak ada file dari versi aplikasi lama.</p>'}
           </section>
           <section class="card detail-section" style="margin-top:16px"><h3>Jadwal Platform</h3>
-            ${(data.schedules || []).length ? `<div class="schedule-list">${data.schedules.map(schedule => `<article class="schedule-row"><div><strong>${escapeHtml(schedule.channel_name)}</strong><span>${dateTime(schedule.scheduled_at)} · ${escapeHtml(schedule.uploader_name)}</span></div>${statusHtml(schedule.status)}${schedule.status === 'SCHEDULED' && (state.user.role === 'SUPER_ADMIN' || schedule.uploader_id === state.user.id) ? `<button class="btn btn-success btn-small" data-publish-schedule="${attr(schedule.id)}">Catat Tayang</button>` : ''}${schedule.platform_url ? externalLink(schedule.platform_url) : ''}</article>`).join('')}</div>` : emptyInline('Jadwal dibuat setelah hasil disetujui.')}
+            ${(data.schedules || []).length ? `<div class="schedule-list">${data.schedules.map(schedule => {
+              const mayEdit = schedule.status === 'SCHEDULED' && (state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN');
+              const mayPublish = schedule.status === 'SCHEDULED' && (state.user.role === 'SUPER_ADMIN' || schedule.uploader_id === state.user.id);
+              return `<article class="schedule-row"><div><strong>${escapeHtml(schedule.channel_name)}</strong><span>${dateTime(schedule.scheduled_at)} · ${escapeHtml(schedule.uploader_name)}</span></div>${statusHtml(schedule.status)}${mayEdit || mayPublish ? `<div class="actions">${mayEdit ? `<button class="btn btn-ghost btn-small" data-edit-schedule="${attr(schedule.id)}">Edit Jadwal</button>` : ''}${mayPublish ? `<button class="btn btn-success btn-small" data-publish-schedule="${attr(schedule.id)}">Catat Tayang</button>` : ''}</div>` : ''}${schedule.platform_url ? externalLink(schedule.platform_url) : ''}</article>`;
+            }).join('')}</div>` : emptyInline('Jadwal dibuat setelah hasil disetujui.')}
           </section>
           <section class="card detail-section" style="margin-top:16px"><h3>Bukti Tayang</h3>
             ${data.proofs.length ? data.proofs.map(proof => `<div class="notice success" style="margin-bottom:10px"><strong>${escapeHtml(proof.channel_name || 'Publikasi')}</strong> · ${dateTime(proof.published_at)}<br>${externalLink(proof.platform_url)}${proof.fileUrl ? ` · <a href="${attr(proof.fileUrl)}" target="_blank" rel="noopener">Buka bukti</a>` : ''}<br><small>Reach ${number(proof.metrics.reach)} · Engagement ${number(proof.metrics.engagement)} · Leads ${number(proof.metrics.leads)}</small></div>`).join('') : emptyInline('Belum ada bukti tayang')}
@@ -804,6 +808,10 @@ function bindDetailActions(item, data = {}) {
   $('[data-content-action="schedule"]')?.addEventListener('click', () => showScheduleForm(item));
   $('[data-content-action="assets"]')?.addEventListener('click', () => showContentAssetsForm(item));
   $('[data-content-action="promote"]')?.addEventListener('click', () => showPromoteForm(item));
+  document.querySelectorAll('[data-edit-schedule]').forEach(button => button.addEventListener('click', () => {
+    const schedule = (data.schedules || []).find(row => row.id === button.dataset.editSchedule);
+    if (schedule) showEditScheduleForm(item, schedule);
+  }));
   document.querySelectorAll('[data-publish-schedule]').forEach(button => button.addEventListener('click', () => showSchedulePublicationForm(item, button.dataset.publishSchedule)));
   document.querySelectorAll('[data-cancel-approval]').forEach(button => button.addEventListener('click', () => cancelDirectorApproval(item, button.dataset.cancelApproval)));
   document.querySelectorAll('[data-copy-approval]').forEach(button => button.addEventListener('click', async () => {
@@ -1110,6 +1118,34 @@ async function showScheduleForm(item) {
       try {
         await api(`/api/contents/${item.id}/schedules`, { method: 'POST', body: { plans } });
         toast('Jadwal platform berhasil dibuat.');
+        await showContentDetail(item.id);
+      } catch (error) { toast(error.message, true); }
+      finally { setLoading(false); }
+    });
+  } catch (error) { toast(error.message, true); }
+}
+
+async function showEditScheduleForm(item, schedule) {
+  try {
+    const assignments = await loadAssignments();
+    const uploaders = assignments.users.filter(user => user.role === 'UPLOADER');
+    openModal('Edit Jadwal Platform', `<form id="edit-schedule-form">
+      <div class="notice">Platform <strong>${escapeHtml(schedule.channel_name)}</strong> tetap sama. Perubahan petugas dan waktu akan dicatat dalam audit.</div>
+      <div class="form-grid" style="margin-top:16px">
+        <label class="field"><span>Waktu tayang</span><input type="datetime-local" name="scheduledAt" required value="${attr(toLocalDateTime(schedule.scheduled_at))}"></label>
+        <label class="field"><span>Petugas upload</span><select name="uploaderId" required><option value="">Pilih petugas</option>${uploaders.map(user => `<option value="${attr(user.id)}" ${user.id === schedule.uploader_id ? 'selected' : ''}>${escapeHtml(user.name)}</option>`).join('')}</select></label>
+      </div>
+      <div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn btn-primary">Simpan Perubahan</button></div>
+    </form>`, item.content_no);
+    $('#edit-schedule-form [data-close-modal]').addEventListener('click', () => showContentDetail(item.id));
+    $('#edit-schedule-form').addEventListener('submit', async event => {
+      event.preventDefault(); setLoading(true);
+      try {
+        const form = new FormData(event.currentTarget);
+        await api(`/api/schedules/${schedule.id}`, { method: 'PATCH', body: {
+          scheduledAt: form.get('scheduledAt'), uploaderId: form.get('uploaderId')
+        } });
+        toast('Jadwal dan petugas upload berhasil diperbarui.');
         await showContentDetail(item.id);
       } catch (error) { toast(error.message, true); }
       finally { setLoading(false); }
