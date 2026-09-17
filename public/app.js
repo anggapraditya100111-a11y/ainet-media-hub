@@ -727,7 +727,7 @@ async function showContentDetail(id) {
           <section class="card detail-section" style="margin-top:16px"><h3>Versi Lama</h3>
             ${data.versions.length ? `<div class="table-wrap"><table><thead><tr><th>Versi</th><th>Berkas</th><th>Pengirim</th><th>Waktu</th><th></th></tr></thead><tbody>${data.versions.map(version => `<tr><td>v${version.version_number}${version.is_approved ? ' ✓' : ''}</td><td><span class="cell-title truncate">${escapeHtml(version.original_name)}</span><span class="cell-meta">${fileSize(version.file_size)}</span></td><td>${escapeHtml(version.submitted_by_name)}</td><td>${dateTime(version.created_at)}</td><td><a class="btn btn-ghost btn-small" href="${attr(version.fileUrl)}" target="_blank" rel="noopener">Buka</a></td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">Tidak ada file dari versi aplikasi lama.</p>'}
           </section>
-          <section class="card detail-section" style="margin-top:16px"><h3>Jadwal Platform</h3>
+          <section class="card detail-section" style="margin-top:16px"><div class="card-head"><h3>Jadwal Platform</h3>${item.status === 'SCHEDULED' && (state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN') ? '<button class="btn btn-primary btn-small" data-content-action="add-schedule">＋ Tambah Channel</button>' : ''}</div>
             ${(data.schedules || []).length ? `<div class="schedule-list">${data.schedules.map(schedule => {
               const mayEdit = schedule.status === 'SCHEDULED' && (state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN');
               const mayPublish = schedule.status === 'SCHEDULED' && (state.user.role === 'SUPER_ADMIN' || schedule.uploader_id === state.user.id);
@@ -805,12 +805,13 @@ function bindDetailActions(item, data = {}) {
   $('[data-content-action="share"]')?.addEventListener('click', () => showShareForm(item, data.collaborationFiles || []));
   $('[data-content-action="submit-result"]')?.addEventListener('click', () => submitProductionResult(item));
   $('[data-content-action="director"]')?.addEventListener('click', () => showDirectorApprovalForm(item, data.collaborationFiles || []));
-  $('[data-content-action="schedule"]')?.addEventListener('click', () => showScheduleForm(item));
+  $('[data-content-action="schedule"]')?.addEventListener('click', () => showScheduleForm(item, data.schedules || []));
+  $('[data-content-action="add-schedule"]')?.addEventListener('click', () => showScheduleForm(item, data.schedules || []));
   $('[data-content-action="assets"]')?.addEventListener('click', () => showContentAssetsForm(item));
   $('[data-content-action="promote"]')?.addEventListener('click', () => showPromoteForm(item));
   document.querySelectorAll('[data-edit-schedule]').forEach(button => button.addEventListener('click', () => {
     const schedule = (data.schedules || []).find(row => row.id === button.dataset.editSchedule);
-    if (schedule) showEditScheduleForm(item, schedule);
+    if (schedule) showEditScheduleForm(item, schedule, data.schedules || []);
   }));
   document.querySelectorAll('[data-publish-schedule]').forEach(button => button.addEventListener('click', () => showSchedulePublicationForm(item, button.dataset.publishSchedule)));
   document.querySelectorAll('[data-cancel-approval]').forEach(button => button.addEventListener('click', () => cancelDirectorApproval(item, button.dataset.cancelApproval)));
@@ -1097,14 +1098,18 @@ async function cancelDirectorApproval(item, approvalId) {
   finally { setLoading(false); }
 }
 
-async function showScheduleForm(item) {
+async function showScheduleForm(item, existingSchedules = []) {
   try {
     const assignments = await loadAssignments();
     const uploaders = assignments.users.filter(user => user.role === 'UPLOADER');
-    openModal('Jadwal per Platform', `<form id="schedule-form">
-      <div class="notice success">Setiap platform memiliki waktu, petugas, dan bukti tayang sendiri. Konten selesai hanya setelah seluruh jadwal dipublikasikan.</div>
-      <div class="platform-plans">${state.channels.map(channel => `<article class="platform-plan"><label class="check"><input type="checkbox" data-plan-check value="${attr(channel.id)}"><strong>${escapeHtml(channel.name)}</strong></label><div class="form-grid"><label class="field"><span>Waktu tayang</span><input type="datetime-local" data-plan-time value="${attr(toLocalDateTime(item.publish_at || new Date().toISOString()))}"></label><label class="field"><span>Petugas upload</span><select data-plan-uploader><option value="">Pilih petugas</option>${uploaders.map(user => `<option value="${attr(user.id)}">${escapeHtml(user.name)}</option>`).join('')}</select></label></div></article>`).join('')}</div>
-      <div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn btn-success">Simpan Jadwal</button></div>
+    const usedChannels = new Set(existingSchedules.filter(schedule => schedule.status !== 'CANCELLED').map(schedule => schedule.channel_id));
+    const availableChannels = state.channels.filter(channel => !usedChannels.has(channel.id));
+    const adding = item.status === 'SCHEDULED';
+    if (!availableChannels.length) return toast('Semua channel aktif sudah memiliki jadwal.', true);
+    openModal(adding ? 'Tambah Channel Upload' : 'Jadwal per Platform', `<form id="schedule-form">
+      <div class="notice success">Pilih channel tambahan beserta waktu dan petugasnya. Channel yang sudah dijadwalkan tidak dapat diduplikasi.</div>
+      <div class="platform-plans">${availableChannels.map(channel => `<article class="platform-plan"><label class="check"><input type="checkbox" data-plan-check value="${attr(channel.id)}"><strong>${escapeHtml(channel.name)}</strong></label><div class="form-grid"><label class="field"><span>Waktu tayang</span><input type="datetime-local" data-plan-time value="${attr(toLocalDateTime(item.publish_at || new Date().toISOString()))}"></label><label class="field"><span>Petugas upload</span><select data-plan-uploader><option value="">Pilih petugas</option>${uploaders.map(user => `<option value="${attr(user.id)}">${escapeHtml(user.name)}</option>`).join('')}</select></label></div></article>`).join('')}</div>
+      <div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn btn-success">${adding ? 'Tambah Jadwal' : 'Simpan Jadwal'}</button></div>
     </form>`, item.content_no);
     $('#schedule-form [data-close-modal]').addEventListener('click', closeModal);
     $('#schedule-form').addEventListener('submit', async event => {
@@ -1117,7 +1122,7 @@ async function showScheduleForm(item) {
       setLoading(true);
       try {
         await api(`/api/contents/${item.id}/schedules`, { method: 'POST', body: { plans } });
-        toast('Jadwal platform berhasil dibuat.');
+        toast(adding ? 'Channel upload berhasil ditambahkan.' : 'Jadwal platform berhasil dibuat.');
         await showContentDetail(item.id);
       } catch (error) { toast(error.message, true); }
       finally { setLoading(false); }
@@ -1125,13 +1130,15 @@ async function showScheduleForm(item) {
   } catch (error) { toast(error.message, true); }
 }
 
-async function showEditScheduleForm(item, schedule) {
+async function showEditScheduleForm(item, schedule, schedules = []) {
   try {
     const assignments = await loadAssignments();
     const uploaders = assignments.users.filter(user => user.role === 'UPLOADER');
+    const usedChannels = new Set(schedules.filter(row => row.id !== schedule.id && row.status !== 'CANCELLED').map(row => row.channel_id));
     openModal('Edit Jadwal Platform', `<form id="edit-schedule-form">
-      <div class="notice">Platform <strong>${escapeHtml(schedule.channel_name)}</strong> tetap sama. Perubahan petugas dan waktu akan dicatat dalam audit.</div>
+      <div class="notice">Channel, petugas, dan waktu dapat diubah selama jadwal belum tayang. Seluruh perubahan dicatat dalam audit.</div>
       <div class="form-grid" style="margin-top:16px">
+        <label class="field"><span>Channel upload</span><select name="channelId" required>${state.channels.map(channel => `<option value="${attr(channel.id)}" ${channel.id === schedule.channel_id ? 'selected' : ''} ${usedChannels.has(channel.id) ? 'disabled' : ''}>${escapeHtml(channel.name)}${usedChannels.has(channel.id) ? ' — sudah dijadwalkan' : ''}</option>`).join('')}</select></label>
         <label class="field"><span>Waktu tayang</span><input type="datetime-local" name="scheduledAt" required value="${attr(toLocalDateTime(schedule.scheduled_at))}"></label>
         <label class="field"><span>Petugas upload</span><select name="uploaderId" required><option value="">Pilih petugas</option>${uploaders.map(user => `<option value="${attr(user.id)}" ${user.id === schedule.uploader_id ? 'selected' : ''}>${escapeHtml(user.name)}</option>`).join('')}</select></label>
       </div>
@@ -1143,9 +1150,9 @@ async function showEditScheduleForm(item, schedule) {
       try {
         const form = new FormData(event.currentTarget);
         await api(`/api/schedules/${schedule.id}`, { method: 'PATCH', body: {
-          scheduledAt: form.get('scheduledAt'), uploaderId: form.get('uploaderId')
+          channelId: form.get('channelId'), scheduledAt: form.get('scheduledAt'), uploaderId: form.get('uploaderId')
         } });
-        toast('Jadwal dan petugas upload berhasil diperbarui.');
+        toast('Channel, jadwal, dan petugas upload berhasil diperbarui.');
         await showContentDetail(item.id);
       } catch (error) { toast(error.message, true); }
       finally { setLoading(false); }

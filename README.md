@@ -2,7 +2,7 @@
 
 AXINDO Media Hub adalah aplikasi internal PT Axindo Infinitas Network untuk mengelola produksi konten AINET dan IMAS dari permintaan sampai bukti tayang. Aplikasi berjalan mandiri di server Ubuntu menggunakan Docker Compose, database SQLite, dan penyimpanan berkas lokal server.
 
-Versi: **0.4.2 — Edit Jadwal dan Petugas Upload**
+Versi: **0.4.3 — Edit dan Tambah Channel Upload**
 
 ## Fitur yang sudah berfungsi
 
@@ -17,7 +17,7 @@ Versi: **0.4.2 — Edit Jadwal dan Petugas Upload**
 - Koordinator dapat menyetujui langsung atau memilih satu Direksi dan file final tertentu untuk approval melalui link; PIN pribadi dibuat dan hanya diketahui oleh Direksi.
 - Link approval Direksi tidak kedaluwarsa, dapat dicabut Koordinator, dibatasi lima percobaan PIN, dan tertutup setelah keputusan atau perubahan file.
 - Link Ringkasan Materi berupa snapshot read-only, dapat dibuka tanpa login selama 12 jam, dan hanya memuat lampiran terpilih.
-- Jadwal publikasi dan bukti tayang terpisah per platform serta petugas upload; Koordinator dapat mengubah waktu atau petugas selama jadwal belum tayang.
+- Jadwal publikasi dan bukti tayang terpisah per platform serta petugas upload; Koordinator dapat menambah channel serta mengubah channel, waktu, atau petugas selama jadwal belum tayang.
 - Pencatatan reach, impressions, engagement, leads/PSB, anggaran, dan biaya per lead.
 - Media Library bersama untuk logo, brosur, template, foto/video, materi kampanye, dan arsip.
 - Media Library memiliki versi aktif, tanggal berlaku, tanggal kedaluwarsa, checksum, pemilik, serta status.

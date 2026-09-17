@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.3 — 2026-09-17
+
+- Mengizinkan Koordinator menambahkan channel upload baru setelah jadwal awal dikirim.
+- Mengizinkan channel/platform pada jadwal yang belum tayang untuk diubah bersama waktu dan Petugas Upload.
+- Mencegah duplikasi jadwal untuk channel yang sama dan mengunci perpindahan channel setelah tayang.
+- Menyelaraskan daftar channel konten, notifikasi petugas, workflow, dan audit setelah channel jadwal berubah.
+
 ## 0.4.2 — 2026-09-17
 
 - Menambahkan tombol **Edit Jadwal** per platform untuk Koordinator dan Super Admin.

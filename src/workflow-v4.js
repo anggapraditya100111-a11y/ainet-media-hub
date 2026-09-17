@@ -503,25 +503,40 @@ function installWorkflowV4(app, options) {
     try {
       const item = getContent(req.params.id, req.user);
       ensurePermission(req.user, 'content.schedule');
-      if (item.status !== 'APPROVED') throw new AppError('Konten harus disetujui sebelum dijadwalkan.', 409);
+      if (!['APPROVED', 'SCHEDULED'].includes(item.status)) throw new AppError('Channel hanya dapat dijadwalkan setelah konten disetujui dan sebelum seluruhnya tayang.', 409);
       const plans = Array.isArray(req.body.plans) ? req.body.plans : [];
       if (!plans.length) throw new AppError('Minimal satu jadwal platform wajib dibuat.');
       const timestamp = nowIso();
+      const prepared = [];
+      const requestedChannels = new Set();
+      for (const plan of plans) {
+        const channel = db.prepare('SELECT id,name FROM channels WHERE id=? AND active=1').get(String(plan.channelId || ''));
+        const uploader = db.prepare("SELECT id,name FROM users WHERE id=? AND role='UPLOADER' AND active=1").get(String(plan.uploaderId || ''));
+        const scheduledAt = cleanText(plan.scheduledAt, 40);
+        if (!channel || !uploader || !scheduledAt) throw new AppError('Platform, waktu, dan petugas upload wajib valid.');
+        if (requestedChannels.has(channel.id)) throw new AppError(`Platform ${channel.name} dipilih lebih dari satu kali.`, 409);
+        const duplicate = db.prepare("SELECT id FROM publication_schedules WHERE content_id=? AND channel_id=? AND status!='CANCELLED'")
+          .get(item.id, channel.id);
+        if (duplicate) throw new AppError(`Jadwal untuk ${channel.name} sudah tersedia. Gunakan Edit Jadwal untuk mengubahnya.`, 409);
+        requestedChannels.add(channel.id);
+        prepared.push({ channel, uploader, scheduledAt });
+      }
       db.transaction(() => {
-        for (const plan of plans) {
-          const channel = db.prepare('SELECT id FROM channels WHERE id=? AND active=1').get(String(plan.channelId || ''));
-          const uploader = db.prepare("SELECT id FROM users WHERE id=? AND role='UPLOADER' AND active=1").get(String(plan.uploaderId || ''));
-          if (!channel || !uploader || !String(plan.scheduledAt || '').trim()) throw new AppError('Platform, waktu, dan petugas upload wajib valid.');
+        for (const plan of prepared) {
           db.prepare(`INSERT INTO publication_schedules(id,content_id,channel_id,scheduled_at,uploader_id,created_by,created_at,updated_at)
-            VALUES(?,?,?,?,?,?,?,?)`).run(newId('sch'), item.id, channel.id, cleanText(plan.scheduledAt, 40), uploader.id, req.user.id, timestamp, timestamp);
-          notifyUser(uploader.id, 'UPLOAD_ASSIGNED', `Jadwal ${item.content_no}`, `${item.title} · ${plan.scheduledAt}`, `/contents/${item.id}`);
+            VALUES(?,?,?,?,?,?,?,?)`).run(newId('sch'), item.id, plan.channel.id, plan.scheduledAt, plan.uploader.id, req.user.id, timestamp, timestamp);
+          db.prepare('INSERT OR IGNORE INTO content_channels(content_id,channel_id) VALUES(?,?)').run(item.id, plan.channel.id);
+          notifyUser(plan.uploader.id, 'UPLOAD_ASSIGNED', `Jadwal ${item.content_no}`, `${plan.channel.name} · ${plan.scheduledAt}`, `/contents/${item.id}`);
         }
-        const firstPlan = plans.slice().sort((a, b) => String(a.scheduledAt).localeCompare(String(b.scheduledAt)))[0];
+        const firstPlan = db.prepare(`SELECT scheduled_at,uploader_id FROM publication_schedules
+          WHERE content_id=? AND status='SCHEDULED' ORDER BY scheduled_at,id LIMIT 1`).get(item.id);
         db.prepare("UPDATE contents SET status='SCHEDULED',publish_at=?,uploader_id=?,updated_at=? WHERE id=?")
-          .run(cleanText(firstPlan.scheduledAt, 40), String(firstPlan.uploaderId), timestamp, item.id);
-        db.prepare("INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at) VALUES(?,?,?,'SCHEDULED','CREATE_SCHEDULES',?,?,?)")
-          .run(newId('evt'), item.id, item.status, `${plans.length} platform`, req.user.id, timestamp);
-        recordAudit({ actorId: req.user.id, entityType: 'PUBLICATION_SCHEDULE', entityId: item.id, action: 'CREATE', after: { plans }, ip: requestIp(req) });
+          .run(firstPlan.scheduled_at, firstPlan.uploader_id, timestamp, item.id);
+        const action = item.status === 'APPROVED' ? 'CREATE_SCHEDULES' : 'ADD_SCHEDULES';
+        db.prepare("INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at) VALUES(?,?,?,'SCHEDULED',?,?,?,?)")
+          .run(newId('evt'), item.id, item.status, action, `${prepared.length} platform`, req.user.id, timestamp);
+        recordAudit({ actorId: req.user.id, entityType: 'PUBLICATION_SCHEDULE', entityId: item.id,
+          action: item.status === 'APPROVED' ? 'CREATE' : 'ADD', after: { plans: prepared.map(plan => ({ channelId: plan.channel.id, scheduledAt: plan.scheduledAt, uploaderId: plan.uploader.id })) }, ip: requestIp(req) });
       })();
       res.status(201).json({ ok: true });
     } catch (error) { next(error); }
@@ -545,20 +560,36 @@ function installWorkflowV4(app, options) {
       if (!schedule) throw new AppError('Jadwal tidak ditemukan.', 404);
       const item = getContent(schedule.content_id, req.user);
       if (schedule.status !== 'SCHEDULED') throw new AppError('Jadwal yang sudah tayang tidak dapat diedit.', 409);
+      const channel = db.prepare('SELECT id,name FROM channels WHERE id=? AND active=1').get(String(req.body.channelId || ''));
       const scheduledAt = cleanText(req.body.scheduledAt, 40);
       const uploader = db.prepare("SELECT id,name FROM users WHERE id=? AND role='UPLOADER' AND active=1")
         .get(String(req.body.uploaderId || ''));
-      if (!scheduledAt || !uploader) throw new AppError('Waktu dan petugas upload wajib valid.');
+      if (!channel || !scheduledAt || !uploader) throw new AppError('Platform, waktu, dan petugas upload wajib valid.');
+      const duplicate = db.prepare("SELECT id FROM publication_schedules WHERE content_id=? AND channel_id=? AND id!=? AND status!='CANCELLED'")
+        .get(item.id, channel.id, schedule.id);
+      if (duplicate) throw new AppError(`Jadwal untuk ${channel.name} sudah tersedia.`, 409);
       const timestamp = nowIso();
       const before = {
+        channelId: schedule.channel_id,
+        channelName: schedule.channel_name,
         scheduledAt: schedule.scheduled_at,
         uploaderId: schedule.uploader_id,
         uploaderName: schedule.uploader_name
       };
-      const after = { scheduledAt, uploaderId: uploader.id, uploaderName: uploader.name };
+      const after = { channelId: channel.id, channelName: channel.name, scheduledAt, uploaderId: uploader.id, uploaderName: uploader.name };
       db.transaction(() => {
-        db.prepare('UPDATE publication_schedules SET scheduled_at=?,uploader_id=?,updated_at=? WHERE id=?')
-          .run(scheduledAt, uploader.id, timestamp, schedule.id);
+        db.prepare('UPDATE publication_schedules SET channel_id=?,scheduled_at=?,uploader_id=?,updated_at=? WHERE id=?')
+          .run(channel.id, scheduledAt, uploader.id, timestamp, schedule.id);
+        db.prepare('INSERT OR IGNORE INTO content_channels(content_id,channel_id) VALUES(?,?)').run(item.id, channel.id);
+        if (channel.id !== schedule.channel_id) {
+          const oldChannelUsed = db.prepare("SELECT id FROM publication_schedules WHERE content_id=? AND channel_id=? AND status!='CANCELLED' LIMIT 1")
+            .get(item.id, schedule.channel_id);
+          const oldChannelPublished = db.prepare('SELECT id FROM publication_proofs WHERE content_id=? AND channel_id=? LIMIT 1')
+            .get(item.id, schedule.channel_id);
+          if (!oldChannelUsed && !oldChannelPublished) {
+            db.prepare('DELETE FROM content_channels WHERE content_id=? AND channel_id=?').run(item.id, schedule.channel_id);
+          }
+        }
         const nextSchedule = db.prepare(`SELECT scheduled_at,uploader_id FROM publication_schedules
           WHERE content_id=? AND status='SCHEDULED' ORDER BY scheduled_at,id LIMIT 1`).get(item.id);
         if (nextSchedule) {
@@ -567,7 +598,7 @@ function installWorkflowV4(app, options) {
         }
         db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
           VALUES(?,?,?,?,?,?,?,?)`).run(newId('evt'), item.id, item.status, item.status, 'UPDATE_SCHEDULE',
-          `${schedule.channel_name}: ${scheduledAt} · ${uploader.name}`, req.user.id, timestamp);
+          `${channel.name}: ${scheduledAt} · ${uploader.name}`, req.user.id, timestamp);
         recordAudit({ actorId: req.user.id, entityType: 'PUBLICATION_SCHEDULE', entityId: schedule.id,
           action: 'UPDATE', before, after, ip: requestIp(req) });
       })();
@@ -576,13 +607,13 @@ function installWorkflowV4(app, options) {
         notifyUser(schedule.uploader_id, 'UPLOAD_REASSIGNED', `Tugas ${item.content_no} dialihkan`,
           `${schedule.channel_name} dialihkan kepada ${uploader.name}.`, link);
         notifyUser(uploader.id, 'UPLOAD_ASSIGNED', `Jadwal ${item.content_no} diperbarui`,
-          `${schedule.channel_name} · ${scheduledAt}`, link);
-      } else if (schedule.scheduled_at !== scheduledAt) {
+          `${channel.name} · ${scheduledAt}`, link);
+      } else if (schedule.scheduled_at !== scheduledAt || schedule.channel_id !== channel.id) {
         notifyUser(uploader.id, 'UPLOAD_RESCHEDULED', `Jadwal ${item.content_no} berubah`,
-          `${schedule.channel_name} · ${scheduledAt}`, link);
+          `${channel.name} · ${scheduledAt}`, link);
       }
-      res.json({ item: { ...schedule, scheduled_at: scheduledAt, uploader_id: uploader.id,
-        uploader_name: uploader.name, updated_at: timestamp } });
+      res.json({ item: { ...schedule, channel_id: channel.id, channel_name: channel.name,
+        scheduled_at: scheduledAt, uploader_id: uploader.id, uploader_name: uploader.name, updated_at: timestamp } });
     } catch (error) { next(error); }
   });
 

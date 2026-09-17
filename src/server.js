@@ -26,7 +26,7 @@ const {
 } = require('./oidc');
 const { installWorkflowV4 } = require('./workflow-v4');
 
-const APP_VERSION = '0.4.2';
+const APP_VERSION = '0.4.3';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';
