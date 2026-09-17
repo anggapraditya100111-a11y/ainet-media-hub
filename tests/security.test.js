@@ -2,7 +2,10 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { hashPassword, verifyPassword, assertPassword, cleanText, safeFilename } = require('../src/security');
+const {
+  hashPassword, verifyPassword, assertPassword, hashApprovalPin, verifyApprovalPin,
+  encryptSecret, decryptSecret, cleanText, safeFilename
+} = require('../src/security');
 
 test('password di-hash dan diverifikasi dengan scrypt', () => {
   const credentials = hashPassword('Rahasia123');
@@ -14,6 +17,18 @@ test('password di-hash dan diverifikasi dengan scrypt', () => {
 test('password lemah ditolak', () => {
   assert.throws(() => assertPassword('pendek'), /minimal 8 karakter/);
   assert.throws(() => assertPassword('tanpaangka'), /huruf serta angka/);
+});
+
+test('PIN approval Direksi di-hash dan token link dienkripsi', () => {
+  const credentials = hashApprovalPin('77258816');
+  assert.notEqual(credentials.hash, '77258816');
+  assert.equal(verifyApprovalPin('77258816', credentials.salt, credentials.hash), true);
+  assert.equal(verifyApprovalPin('00000000', credentials.salt, credentials.hash), false);
+  assert.throws(() => hashApprovalPin('1234'), /tepat 8 digit/);
+  const encrypted = encryptSecret('DIRECTOR_LINK_TOKEN', 'token-rahasia');
+  assert.notEqual(encrypted, 'token-rahasia');
+  assert.equal(decryptSecret('DIRECTOR_LINK_TOKEN', encrypted), 'token-rahasia');
+  assert.equal(decryptSecret('PURPOSE_LAIN', encrypted), null);
 });
 
 test('teks dan nama file dibersihkan', () => {

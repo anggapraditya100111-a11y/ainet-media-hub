@@ -34,19 +34,37 @@ test('akun AXINDO ID dari OIDC maupun AXINDO Access tidak mendapat form ubah pas
   assert.match(app, /function isAxindoIdUser\(user\)/);
   assert.match(app, /authSource === 'OIDC' \|\| authSource === 'ACCESS'/);
   assert.match(app, /const usesAxindoId = isAxindoIdUser\(state\.user\)/);
-  assert.match(app, /if \(usesAxindoId\) return/);
+  assert.match(app, /const accountSecurity = usesAxindoId/);
+  assert.match(app, /\$\('#password-form'\)\?\.addEventListener/);
 });
 
-test('vendor dapat mengedit deskripsi hanya melalui aksi produksi khusus', () => {
-  assert.match(app, /data-content-action="description">Edit Deskripsi/);
-  assert.match(app, /function showVendorDescriptionForm\(item\)/);
-  assert.match(app, /\/vendor-description/);
-  assert.match(app, /Brief dari Koordinator Media tetap tidak berubah/);
+test('PIN approval hanya dikelola Direksi dan koordinator hanya menyalin link', () => {
+  assert.match(app, /id="approval-pin-form"/);
+  assert.match(app, /PIN approval pribadi/);
+  assert.match(app, /data-copy-approval/);
+  assert.match(app, />Salin Link</);
+  assert.doesNotMatch(app, /Salin Link \+ PIN|id="approval-pin"/);
+});
+
+test('permintaan konten menerima URL dan file referensi', () => {
+  assert.match(app, /name="referenceUrls"/);
+  assert.match(app, /name="referenceFiles" multiple/);
+  assert.match(app, /uploadCollaborativeFile\(contentId, 'BRIEF'/);
+});
+
+test('akses edit vendor diatur per kolom dan diproses sebagai usulan', () => {
+  assert.match(app, /name="vendorEditPermissions"/);
+  assert.match(app, /data-content-action="vendor-edit">Usulkan Edit Materi/);
+  assert.match(app, /function showVendorEditForm\(item\)/);
+  assert.match(app, /\/vendor-edits/);
+  assert.match(app, /Tulisan Koordinator tetap dipertahankan/);
+  assert.match(app, /Diedit oleh Vendor/);
+  assert.match(app, /data-review-vendor-edit/);
 });
 
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.4\.0/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.4\.1/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);

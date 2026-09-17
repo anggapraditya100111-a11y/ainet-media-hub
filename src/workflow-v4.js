@@ -5,7 +5,7 @@ const express = require('express');
 const multer = require('multer');
 
 const { db, UPLOAD_DIR, nowIso, getSetting, recordAudit, notifyUser } = require('./db');
-const { newId, randomToken, hashToken, cleanText, safeFilename } = require('./security');
+const { newId, randomToken, hashToken, verifyApprovalPin, encryptSecret, decryptSecret, cleanText, safeFilename } = require('./security');
 
 const PHASES = new Set(['BRIEF', 'PRE_PRODUCTION', 'PRODUCTION_RESULT']);
 const PREVIEWABLE = /^(image|video|audio)\//;
@@ -136,7 +136,10 @@ function installWorkflowV4(app, options) {
       assertDiscuss(req.user, item);
       const phase = String(req.body.phase || 'PRE_PRODUCTION');
       if (!PHASES.has(phase)) throw new AppError('Tahap berkas tidak valid.');
-      if (req.user.role === 'VENDOR' && phase === 'BRIEF') throw new AppError('Lampiran brief hanya dapat ditambah Koordinator.', 403);
+      if (req.user.role === 'VENDOR' && phase === 'BRIEF') {
+        if (!(item.vendorEditPermissions || []).includes('attachments')) throw new AppError('Koordinator belum memberikan akses upload lampiran Brief.', 403);
+        if (!['ASSIGNED', 'IN_PRODUCTION', 'REVISION_REQUIRED'].includes(item.status)) throw new AppError('Lampiran Brief hanya dapat ditambah vendor saat Pra-Produksi, Produksi, atau Revisi.', 409);
+      }
       if (req.user.role === 'VENDOR' && phase === 'PRE_PRODUCTION' && item.status !== 'ASSIGNED') throw new AppError('Draft pra-produksi diunggah saat tahap Pra-Produksi.', 409);
       if (req.user.role === 'VENDOR' && phase === 'PRODUCTION_RESULT' && item.status !== 'IN_PRODUCTION') throw new AppError('Hasil produksi diunggah saat tahap Produksi.', 409);
       const totalSize = Number(req.body.totalSize || 0);
@@ -328,8 +331,13 @@ function installWorkflowV4(app, options) {
     try {
       const item = getContent(req.params.id, req.user);
       if (!isCoordinator(req.user)) throw new AppError('Hanya Koordinator yang dapat melihat approval.', 403);
-      const rows = db.prepare(`SELECT dar.id,dar.status,dar.note,dar.attempt_count,dar.locked_at,dar.opened_at,dar.decided_at,dar.cancelled_at,dar.created_at,u.name AS director_name
-        FROM director_approval_requests dar JOIN users u ON u.id=dar.director_id WHERE dar.content_id=? ORDER BY dar.created_at DESC`).all(item.id);
+      const rows = db.prepare(`SELECT dar.id,dar.status,dar.note,dar.attempt_count,dar.locked_at,dar.link_token_ciphertext,dar.opened_at,dar.decided_at,dar.cancelled_at,dar.created_at,u.name AS director_name
+        FROM director_approval_requests dar JOIN users u ON u.id=dar.director_id WHERE dar.content_id=? ORDER BY dar.created_at DESC`).all(item.id)
+        .map(row => {
+          const token = row.status === 'ACTIVE' ? decryptSecret('DIRECTOR_LINK_TOKEN', row.link_token_ciphertext) : null;
+          const { link_token_ciphertext, ...safe } = row;
+          return { ...safe, url: token ? `/approval.html?token=${token}` : null };
+        });
       res.json({ items: rows });
     } catch (error) { next(error); }
   });
@@ -339,27 +347,28 @@ function installWorkflowV4(app, options) {
       const item = getContent(req.params.id, req.user);
       ensurePermission(req.user, 'content.request_director_approval');
       if (!['DRAFT_SUBMITTED', 'IN_REVIEW'].includes(item.status)) throw new AppError('Konten harus berada di Review Koordinator.', 409);
-      const director = db.prepare("SELECT id,name FROM users WHERE id=? AND role='MANAGEMENT' AND active=1").get(String(req.body.directorId || ''));
+      if (db.prepare("SELECT id FROM vendor_content_edits WHERE content_id=? AND status='PENDING' LIMIT 1").get(item.id)) throw new AppError('Masih ada usulan edit vendor yang belum diterima atau ditolak.', 409);
+      const director = db.prepare("SELECT id,name,approval_pin_hash,approval_pin_salt FROM users WHERE id=? AND role='MANAGEMENT' AND active=1").get(String(req.body.directorId || ''));
       if (!director) throw new AppError('Pilih satu Direksi aktif.');
+      if (!director.approval_pin_hash || !director.approval_pin_salt) throw new AppError(`${director.name} belum membuat PIN approval pribadi. Minta Direksi mengaturnya melalui menu Profil.`, 409);
       const requested = Array.isArray(req.body.fileIds) ? req.body.fileIds.map(String) : [];
       const available = new Set(db.prepare("SELECT id FROM collaboration_files WHERE content_id=? AND phase='PRODUCTION_RESULT'").all(item.id).map(row => row.id));
       const fileIds = requested.filter(id => available.has(id));
       if (!fileIds.length) throw new AppError('Pilih minimal satu hasil final untuk approval.');
       const token = randomToken(32);
-      const pin = String(crypto.randomInt(0, 100000000)).padStart(8, '0');
       const id = newId('aprq');
       const timestamp = nowIso();
       db.transaction(() => {
         invalidateApproval(item.id, req.user.id, 'Diganti dengan permintaan approval baru.');
-        db.prepare(`INSERT INTO director_approval_requests(id,content_id,director_id,token_hash,pin_hash,attachment_ids_json,created_by,created_at)
-          VALUES(?,?,?,?,?,?,?,?)`).run(id, item.id, director.id, hashToken('DIRECTOR_LINK', token), hashToken('DIRECTOR_PIN', `${id}|${pin}`), JSON.stringify(fileIds), req.user.id, timestamp);
+        db.prepare(`INSERT INTO director_approval_requests(id,content_id,director_id,token_hash,pin_hash,link_token_ciphertext,attachment_ids_json,created_by,created_at)
+          VALUES(?,?,?,?,?,?,?,?,?)`).run(id, item.id, director.id, hashToken('DIRECTOR_LINK', token), 'DIRECTOR_OWNED', encryptSecret('DIRECTOR_LINK_TOKEN', token), JSON.stringify(fileIds), req.user.id, timestamp);
         db.prepare("UPDATE contents SET status='APPROVAL_PENDING',approver_id=?,updated_at=? WHERE id=?").run(director.id, timestamp, item.id);
         db.prepare("INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at) VALUES(?,?,?,'APPROVAL_PENDING','REQUEST_DIRECTOR_APPROVAL',?,?,?)")
           .run(newId('evt'), item.id, item.status, `Direksi: ${director.name}`, req.user.id, timestamp);
         recordAudit({ actorId: req.user.id, entityType: 'DIRECTOR_APPROVAL', entityId: id, action: 'CREATE', after: { contentId: item.id, directorId: director.id, fileIds }, ip: requestIp(req) });
       })();
       notifyUser(director.id, 'DIRECTOR_APPROVAL', `Approval ${item.content_no}`, item.title, `/contents/${item.id}`);
-      res.status(201).json({ id, url: `/approval.html?token=${token}`, pin, director: director.name });
+      res.status(201).json({ id, url: `/approval.html?token=${token}`, director: director.name });
     } catch (error) { next(error); }
   });
 
@@ -384,7 +393,8 @@ function installWorkflowV4(app, options) {
 
   function approvalByToken(token) {
     return db.prepare(`SELECT dar.*,c.content_no,c.title,c.description,c.objective,c.audience,c.brief,c.caption,c.hashtags,c.call_to_action,c.status AS content_status,
-      c.coordinator_id,c.vendor_id,b.name AS brand_name,u.name AS director_name,u.active AS director_active FROM director_approval_requests dar
+      c.coordinator_id,c.vendor_id,b.name AS brand_name,u.name AS director_name,u.active AS director_active,
+      u.approval_pin_hash AS director_pin_hash,u.approval_pin_salt AS director_pin_salt FROM director_approval_requests dar
       JOIN contents c ON c.id=dar.content_id JOIN brands b ON b.id=c.brand_id JOIN users u ON u.id=dar.director_id
       WHERE dar.token_hash=?`).get(hashToken('DIRECTOR_LINK', token));
   }
@@ -417,13 +427,13 @@ function installWorkflowV4(app, options) {
     try {
       const approval = approvalByToken(req.params.token);
       if (!approval || approval.status !== 'ACTIVE' || !approval.director_active) throw new AppError('Link approval sudah tidak aktif.', 410);
-      if (approval.locked_at || approval.attempt_count >= 5) throw new AppError('PIN terkunci. Hubungi Koordinator.', 423);
-      const supplied = hashToken('DIRECTOR_PIN', `${approval.id}|${String(req.body.pin || '')}`);
-      if (supplied !== approval.pin_hash) {
+      if (!approval.director_pin_hash || !approval.director_pin_salt) throw new AppError('Direksi belum membuat PIN approval pribadi.', 409);
+      if (approval.locked_at || approval.attempt_count >= 5) throw new AppError('PIN terkunci. Direksi dapat mengatur ulang PIN melalui menu Profil.', 423);
+      if (!verifyApprovalPin(String(req.body.pin || ''), approval.director_pin_salt, approval.director_pin_hash)) {
         const attempts = approval.attempt_count + 1;
         db.prepare('UPDATE director_approval_requests SET attempt_count=?,locked_at=? WHERE id=?').run(attempts, attempts >= 5 ? nowIso() : null, approval.id);
         recordAudit({ actorId: approval.director_id, entityType: 'DIRECTOR_APPROVAL', entityId: approval.id, action: 'PIN_FAILED', after: { attempts }, ip: requestIp(req) });
-        throw new AppError(attempts >= 5 ? 'PIN terkunci. Hubungi Koordinator.' : `PIN salah. Sisa percobaan ${5 - attempts}.`, attempts >= 5 ? 423 : 401);
+        throw new AppError(attempts >= 5 ? 'PIN terkunci. Direksi dapat mengatur ulang PIN melalui menu Profil.' : `PIN salah. Sisa percobaan ${5 - attempts}.`, attempts >= 5 ? 423 : 401);
       }
       const session = randomToken(32);
       const timestamp = nowIso();

@@ -65,6 +65,8 @@ function initDatabase() {
       vendor_id TEXT,
       active INTEGER NOT NULL DEFAULT 1,
       must_change_password INTEGER NOT NULL DEFAULT 1,
+      approval_pin_hash TEXT,
+      approval_pin_salt TEXT,
       last_login TEXT,
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL,
@@ -133,6 +135,8 @@ function initDatabase() {
       caption TEXT,
       hashtags TEXT,
       call_to_action TEXT,
+      reference_urls_json TEXT NOT NULL DEFAULT '[]',
+      vendor_edit_permissions_json TEXT NOT NULL DEFAULT '[]',
       internal_notes TEXT,
       coordinator_id TEXT,
       vendor_id TEXT,
@@ -270,6 +274,27 @@ function initDatabase() {
     );
     CREATE INDEX IF NOT EXISTS idx_collaboration_files ON collaboration_files(content_id,phase,version_number);
 
+    CREATE TABLE IF NOT EXISTS vendor_content_edits (
+      id TEXT PRIMARY KEY,
+      content_id TEXT NOT NULL,
+      field_name TEXT NOT NULL CHECK(field_name IN ('brief','description','caption','hashtags','call_to_action')),
+      base_value TEXT NOT NULL DEFAULT '',
+      added_value TEXT NOT NULL,
+      proposed_value TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'PENDING' CHECK(status IN ('PENDING','ACCEPTED','REJECTED')),
+      vendor_user_id TEXT NOT NULL,
+      reviewed_by TEXT,
+      review_note TEXT,
+      created_at TEXT NOT NULL,
+      reviewed_at TEXT,
+      FOREIGN KEY(content_id) REFERENCES contents(id) ON DELETE CASCADE,
+      FOREIGN KEY(vendor_user_id) REFERENCES users(id),
+      FOREIGN KEY(reviewed_by) REFERENCES users(id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_vendor_content_edits ON vendor_content_edits(content_id,status,created_at DESC);
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_vendor_content_edits_pending
+      ON vendor_content_edits(content_id,field_name) WHERE status='PENDING';
+
     CREATE TABLE IF NOT EXISTS material_share_links (
       id TEXT PRIMARY KEY,
       content_id TEXT NOT NULL,
@@ -293,6 +318,7 @@ function initDatabase() {
       director_id TEXT NOT NULL,
       token_hash TEXT NOT NULL UNIQUE,
       pin_hash TEXT NOT NULL,
+      link_token_ciphertext TEXT,
       attachment_ids_json TEXT NOT NULL DEFAULT '[]',
       status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK(status IN ('ACTIVE','APPROVED','REVISION','CANCELLED')),
       note TEXT,
@@ -443,10 +469,59 @@ function initDatabase() {
 
   migrateUsersForOidc();
   migrateOidcAttemptsForPopup();
+  migrateApprovalSecurityAndReferences();
   migrateWorkflowV4();
 
   seedBaseData();
   if (String(process.env.SEED_DEMO || '').toLowerCase() === 'true') seedDemoData();
+}
+
+function migrateApprovalSecurityAndReferences() {
+  const userColumns = new Set(db.prepare('PRAGMA table_info(users)').all().map(column => column.name));
+  if (!userColumns.has('approval_pin_hash')) db.exec('ALTER TABLE users ADD COLUMN approval_pin_hash TEXT');
+  if (!userColumns.has('approval_pin_salt')) db.exec('ALTER TABLE users ADD COLUMN approval_pin_salt TEXT');
+
+  const contentColumns = new Set(db.prepare('PRAGMA table_info(contents)').all().map(column => column.name));
+  if (!contentColumns.has('reference_urls_json')) db.exec("ALTER TABLE contents ADD COLUMN reference_urls_json TEXT NOT NULL DEFAULT '[]'");
+  if (!contentColumns.has('vendor_edit_permissions_json')) db.exec("ALTER TABLE contents ADD COLUMN vendor_edit_permissions_json TEXT NOT NULL DEFAULT '[]'");
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS vendor_content_edits (
+      id TEXT PRIMARY KEY,
+      content_id TEXT NOT NULL,
+      field_name TEXT NOT NULL CHECK(field_name IN ('brief','description','caption','hashtags','call_to_action')),
+      base_value TEXT NOT NULL DEFAULT '',
+      added_value TEXT NOT NULL,
+      proposed_value TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'PENDING' CHECK(status IN ('PENDING','ACCEPTED','REJECTED')),
+      vendor_user_id TEXT NOT NULL,
+      reviewed_by TEXT,
+      review_note TEXT,
+      created_at TEXT NOT NULL,
+      reviewed_at TEXT,
+      FOREIGN KEY(content_id) REFERENCES contents(id) ON DELETE CASCADE,
+      FOREIGN KEY(vendor_user_id) REFERENCES users(id),
+      FOREIGN KEY(reviewed_by) REFERENCES users(id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_vendor_content_edits ON vendor_content_edits(content_id,status,created_at DESC);
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_vendor_content_edits_pending
+      ON vendor_content_edits(content_id,field_name) WHERE status='PENDING';
+  `);
+
+  const approvalColumns = new Set(db.prepare('PRAGMA table_info(director_approval_requests)').all().map(column => column.name));
+  if (!approvalColumns.has('link_token_ciphertext')) {
+    db.exec('ALTER TABLE director_approval_requests ADD COLUMN link_token_ciphertext TEXT');
+    const timestamp = nowIso();
+    db.exec(`
+      UPDATE director_approval_requests
+      SET status='CANCELLED',cancelled_at='${timestamp}',note=COALESCE(note,'Dibatalkan saat migrasi ke PIN pribadi Direksi.')
+      WHERE status='ACTIVE';
+      UPDATE contents
+      SET status='DRAFT_SUBMITTED',locked_at=NULL,updated_at='${timestamp}'
+      WHERE status='APPROVAL_PENDING';
+      DELETE FROM approval_access_sessions;
+    `);
+  }
 }
 
 function migrateWorkflowV4() {
@@ -597,6 +672,7 @@ function publicUser(row) {
     id: row.id, name: row.name, username: row.username, email: row.email || null, role: row.role,
     vendorId: row.vendor_id || null, active: Boolean(row.active),
     authSource: row.auth_source || 'LOCAL',
+    approvalPinSet: Boolean(row.approval_pin_hash && row.approval_pin_salt),
     mustChangePassword: Boolean(row.must_change_password), lastLogin: row.last_login || null,
     oidcLastSyncAt: row.oidc_last_sync_at || null
   };

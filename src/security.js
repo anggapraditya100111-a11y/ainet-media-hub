@@ -38,6 +38,54 @@ function verifyPassword(password, salt, expectedHash) {
   return actual.length === expected.length && crypto.timingSafeEqual(actual, expected);
 }
 
+function assertApprovalPin(pin) {
+  const value = String(pin || '');
+  if (!/^\d{8}$/.test(value)) {
+    const error = new Error('PIN approval harus terdiri dari tepat 8 digit.');
+    error.status = 400;
+    throw error;
+  }
+}
+
+function hashApprovalPin(pin, salt = crypto.randomBytes(16).toString('hex')) {
+  assertApprovalPin(pin);
+  return {
+    salt,
+    hash: crypto.scryptSync(`APPROVAL_PIN|${pin}|${APP_PEPPER}`, salt, 64).toString('base64url')
+  };
+}
+
+function verifyApprovalPin(pin, salt, expectedHash) {
+  if (!salt || !expectedHash || !/^\d{8}$/.test(String(pin || ''))) return false;
+  const actual = Buffer.from(crypto.scryptSync(`APPROVAL_PIN|${pin}|${APP_PEPPER}`, salt, 64).toString('base64url'));
+  const expected = Buffer.from(String(expectedHash));
+  return actual.length === expected.length && crypto.timingSafeEqual(actual, expected);
+}
+
+function secretKey(purpose) {
+  return crypto.createHash('sha256').update(`${APP_PEPPER}|${purpose}`).digest();
+}
+
+function encryptSecret(purpose, value) {
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv('aes-256-gcm', secretKey(purpose), iv);
+  const encrypted = Buffer.concat([cipher.update(String(value), 'utf8'), cipher.final()]);
+  const tag = cipher.getAuthTag();
+  return [iv, tag, encrypted].map(part => part.toString('base64url')).join('.');
+}
+
+function decryptSecret(purpose, value) {
+  try {
+    const [iv, tag, encrypted] = String(value || '').split('.').map(part => Buffer.from(part, 'base64url'));
+    if (!iv?.length || !tag?.length || !encrypted) return null;
+    const decipher = crypto.createDecipheriv('aes-256-gcm', secretKey(purpose), iv);
+    decipher.setAuthTag(tag);
+    return Buffer.concat([decipher.update(encrypted), decipher.final()]).toString('utf8');
+  } catch {
+    return null;
+  }
+}
+
 function cleanText(value, max = 1000) {
   return String(value ?? '').replace(/[<>]/g, '').trim().slice(0, max);
 }
@@ -57,5 +105,6 @@ function checksum(buffer) {
 
 module.exports = {
   newId, randomToken, hashToken, assertPassword, hashPassword, verifyPassword,
+  assertApprovalPin, hashApprovalPin, verifyApprovalPin, encryptSecret, decryptSecret,
   cleanText, cleanUsername, safeFilename, checksum
 };

@@ -1,15 +1,16 @@
 # Matriks Implementasi Konsep AXINDO Media Hub
 
-Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implementasi repository versi 0.4.0.
+Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implementasi repository versi 0.4.1.
 
-| Area konsep | Implementasi 0.4.0 | Status |
+| Area konsep | Implementasi 0.4.1 | Status |
 |---|---|---|
 | Dual brand AINET / IMAS | Master brand, warna, filter, badge, dan branding UI | Selesai |
 | Permintaan dan brief | Form tujuan, audiens, kampanye, format, channel, CTA, deadline, anggaran | Selesai |
 | Penugasan vendor | Koordinator, vendor, Direksi terpilih, dan Petugas Upload per platform | Selesai |
 | Produksi dan draft | Diskusi per fase serta upload besar bertahap, berversi, dan ber-checksum | Selesai |
 | Review dan revisi | Keputusan Koordinator, catatan revisi wajib, diskusi vendor, dan jejak workflow | Selesai |
-| Persetujuan | Direksi tertentu, link tanpa kedaluwarsa, PIN 8 digit, versi final terikat, dan pencabutan | Selesai |
+| Persetujuan | Direksi tertentu, link tanpa kedaluwarsa, PIN pribadi Direksi 8 digit, versi final terikat, salin link, dan pencabutan | Selesai |
+| Edit materi Vendor | Akses per kolom dari Koordinator, usulan tambahan non-destruktif, review terima/tolak, atribusi nama Vendor | Selesai |
 | Ringkasan materi | Snapshot read-only, lampiran terpilih, masa berlaku 12 jam, dan pencabutan | Selesai |
 | Jadwal | Waktu dan Petugas Upload terpisah untuk setiap platform | Selesai |
 | Bukti tayang | URL, screenshot/PDF, waktu, channel, dan metrik | Selesai |
@@ -37,7 +38,7 @@ Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implem
 3. Vendor hanya melihat konten yang terhubung ke vendornya.
 4. Seluruh pengguna dapat membuka Media Library, tetapi hanya Admin/Koordinator yang dapat mengelola versi dan status.
 5. Aset kedaluwarsa/arsip tidak dapat diunduh oleh vendor maupun user baca-saja.
-6. Koordinator memilih apakah hasil disetujui langsung atau dikirim kepada satu Direksi tertentu melalui link dan PIN.
+6. Koordinator memilih apakah hasil disetujui langsung atau dikirim kepada satu Direksi tertentu melalui link; PIN pribadi hanya dibuat dan diketahui Direksi.
 7. Perubahan substansial setelah approval membuka kembali proses review.
 8. Konten tayang tidak dapat diedit atau dihapus permanen.
 9. Setiap platform wajib memiliki URL atau bukti; konten selesai setelah seluruh jadwal dipublikasikan.

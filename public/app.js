@@ -613,6 +613,7 @@ async function showContentForm(existing = null) {
   try {
     const assignments = await loadAssignments();
     const selectedChannels = new Set(existing?.channelIds || []);
+    const selectedVendorPermissions = new Set(existing?.vendorEditPermissions || []);
     openModal(existing ? 'Edit Konten' : 'Buat Permintaan Konten', `
       <form id="content-form">
         <section class="form-section"><h3>Identitas Konten</h3><div class="form-grid">
@@ -638,6 +639,16 @@ async function showContentForm(existing = null) {
           <label class="field"><span>Hashtag</span><input name="hashtags" maxlength="1000" value="${attr(existing?.hashtags)}"></label>
           <label class="field"><span>Call to Action</span><input name="callToAction" maxlength="1000" value="${attr(existing?.call_to_action)}"></label>
         </div></section>
+        <section class="form-section"><h3>Referensi Konten</h3><div class="form-grid">
+          <label class="field full"><span>Link sosial media / web</span><textarea name="referenceUrls" maxlength="10000" placeholder="Satu link per baris, contoh:\nhttps://www.instagram.com/...\nhttps://contoh.com/artikel">${escapeHtml((existing?.referenceUrls || []).join('\n'))}</textarea><small>Maksimal 10 link HTTP/HTTPS.</small></label>
+          <label class="field full"><span>Upload gambar, video, atau PDF</span><input type="file" name="referenceFiles" multiple accept="image/*,video/*,.pdf"><small>File disimpan sebagai lampiran Brief dan dapat dilihat vendor yang ditugaskan.</small></label>
+        </div><div id="upload-progress" class="upload-progress" hidden><div><span></span></div><p>Menyiapkan upload referensi…</p></div></section>
+        <section class="form-section"><h3>Akses Edit Vendor</h3>
+          <div class="notice">Vendor hanya dapat menambahkan usulan. Tulisan Koordinator tidak dapat dihapus dan perubahan baru aktif setelah diterima Koordinator.</div>
+          <div class="check-row" style="margin-top:14px">${[
+            ['brief','Brief Produksi'],['description','Deskripsi'],['caption','Draft Caption'],['hashtags','Hashtag'],['call_to_action','Call to Action'],['attachments','Upload Lampiran Brief']
+          ].map(([value, label]) => `<label class="check"><input type="checkbox" name="vendorEditPermissions" value="${value}" ${selectedVendorPermissions.has(value) ? 'checked' : ''}>${label}</label>`).join('')}</div>
+        </section>
         <section class="form-section"><h3>Deadline & Penanggung Jawab</h3><div class="form-grid">
           <label class="field"><span>Deadline Produksi</span><input type="date" name="dueDate" value="${attr(existing?.due_date)}"></label>
           <label class="field"><span>Rencana Tayang</span><input type="datetime-local" name="publishAt" value="${attr(toLocalDateTime(existing?.publish_at))}"></label>
@@ -654,13 +665,21 @@ async function showContentForm(existing = null) {
       try {
         const form = new FormData(event.currentTarget);
         const body = {};
-        for (const [key, value] of form.entries()) if (key !== 'channelIds') body[key] = value;
+        for (const [key, value] of form.entries()) if (!['channelIds', 'referenceFiles', 'vendorEditPermissions'].includes(key)) body[key] = value;
         body.channelIds = form.getAll('channelIds');
+        body.vendorEditPermissions = form.getAll('vendorEditPermissions');
         if (!body.channelIds.length) throw new Error('Pilih minimal satu channel.');
         const result = await api(existing ? `/api/contents/${existing.id}` : '/api/contents', { method: existing ? 'PATCH' : 'POST', body });
+        const contentId = existing?.id || result.item.id;
+        const referenceFiles = form.getAll('referenceFiles').filter(file => file instanceof File && file.size);
+        let uploadError = null;
+        for (const file of referenceFiles) {
+          try { await uploadCollaborativeFile(contentId, 'BRIEF', file, 'Referensi permintaan konten'); }
+          catch (error) { uploadError = error; break; }
+        }
         closeModal();
-        toast(result.reopenedReview ? 'Perubahan disimpan dan review dibuka kembali.' : existing ? 'Konten diperbarui.' : 'Permintaan konten dibuat.');
-        if (existing) await showContentDetail(existing.id); else await openPage(state.currentPage);
+        toast(uploadError ? `Konten tersimpan, tetapi upload referensi gagal: ${uploadError.message}` : result.reopenedReview ? 'Perubahan disimpan dan review dibuka kembali.' : existing ? 'Konten diperbarui.' : 'Permintaan konten dibuat.', Boolean(uploadError));
+        if (existing) await showContentDetail(existing.id); else if (referenceFiles.length) await showContentDetail(contentId); else await openPage(state.currentPage);
       } catch (error) { toast(error.message, true); }
       finally { setLoading(false); }
     });
@@ -692,11 +711,13 @@ async function showContentDetail(id) {
               ${detailItem('Kampanye', item.campaign)}${detailItem('Format', labelize(item.content_type))}
               ${detailItem('Tingkat Persetujuan', item.approval_level === 'SENSITIVE' ? 'Sensitif' : 'Rutin')}${detailItem('Anggaran', rupiah(item.budget))}
             </dl>
-            <h3 style="margin-top:20px">Brief Produksi</h3><div class="rich-text muted">${escapeHtml(item.brief || 'Belum diisi.')}</div>
-            <h3 style="margin-top:20px">Deskripsi Produksi</h3><div class="rich-text muted">${escapeHtml(item.description || 'Belum diisi.')}</div>
-            <h3 style="margin-top:20px">Caption</h3><div class="rich-text muted">${escapeHtml(item.caption || 'Belum diisi.')}</div>
-            ${item.hashtags ? `<p class="tag" style="margin-top:14px">${escapeHtml(item.hashtags)}</p>` : ''}
+            <h3 style="margin-top:20px">Brief Produksi</h3>${vendorEditBadge(data, 'brief')}<div class="rich-text muted">${escapeHtml(item.brief || 'Belum diisi.')}</div>
+            <h3 style="margin-top:20px">Deskripsi Produksi</h3>${vendorEditBadge(data, 'description')}<div class="rich-text muted">${escapeHtml(item.description || 'Belum diisi.')}</div>
+            <h3 style="margin-top:20px">Caption</h3>${vendorEditBadge(data, 'caption')}<div class="rich-text muted">${escapeHtml(item.caption || 'Belum diisi.')}</div>
+            <h3 style="margin-top:20px">Hashtag</h3>${vendorEditBadge(data, 'hashtags')}<div class="rich-text muted">${escapeHtml(item.hashtags || 'Belum diisi.')}</div>
+            <h3 style="margin-top:20px">Call to Action</h3>${vendorEditBadge(data, 'call_to_action')}<div class="rich-text muted">${escapeHtml(item.call_to_action || 'Belum diisi.')}</div>
           </section>
+          ${vendorEditReviewSection(data.vendorEdits || [])}
           <section class="card detail-section" style="margin-top:16px"><div class="card-head"><h3>Diskusi Produksi</h3><button class="btn btn-primary btn-small" data-content-action="discuss">＋ Pesan / File</button></div>
             ${(data.discussions || []).length ? `<div class="discussion-list">${data.discussions.map(message => `<article class="discussion-item"><div class="avatar">${escapeHtml(message.sender_name.slice(0, 1))}</div><div><strong>${escapeHtml(message.sender_name)}</strong><span class="tag">${phaseLabel(message.phase)}</span><p>${escapeHtml(message.message || '')}</p><small>${dateTime(message.created_at)}</small></div></article>`).join('')}</div>` : emptyInline('Belum ada diskusi. Koordinator dan vendor dapat membahas script, storyboard, materi, serta revisi di sini.')}
           </section>
@@ -721,9 +742,11 @@ async function showContentDetail(id) {
           </dl></section>
           <section class="card detail-section" style="margin-top:16px"><h3>Aset Referensi</h3>
             ${data.assets.length ? data.assets.map(asset => `<span class="tag" style="margin:0 5px 7px 0">${escapeHtml(asset.title)}</span>`).join('') : '<p class="muted">Belum ada aset ditautkan.</p>'}
+            <h3 style="margin-top:18px">Link Referensi</h3>
+            ${(item.referenceUrls || []).length ? `<div class="reference-list">${item.referenceUrls.map(referenceLink).join('')}</div>` : '<p class="muted">Belum ada link sosial media atau web.</p>'}
           </section>
           <section class="card detail-section" style="margin-top:16px"><h3>Approval Direksi</h3>
-            ${(data.directorApprovals || []).length ? data.directorApprovals.map(approval => `<div class="approval-row"><div><strong>${escapeHtml(approval.director_name)}</strong><small>${dateTime(approval.created_at)}</small></div>${statusHtml(approval.status)}${approval.status === 'ACTIVE' && (state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN') ? `<button class="btn btn-danger btn-small" data-cancel-approval="${attr(approval.id)}">Batalkan</button>` : ''}</div>`).join('') : '<p class="muted">Belum pernah dikirim ke Direksi.</p>'}
+            ${(data.directorApprovals || []).length ? data.directorApprovals.map(approval => `<div class="approval-row"><div><strong>${escapeHtml(approval.director_name)}</strong><small>${dateTime(approval.created_at)}</small></div>${statusHtml(approval.status)}${approval.status === 'ACTIVE' && (state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN') ? `<div class="actions">${approval.url ? `<button class="btn btn-ghost btn-small" data-copy-approval="${attr(approval.url)}">Salin Link</button>` : ''}<button class="btn btn-danger btn-small" data-cancel-approval="${attr(approval.id)}">Batalkan</button></div>` : ''}</div>`).join('') : '<p class="muted">Belum pernah dikirim ke Direksi.</p>'}
           </section>
           <section class="card detail-section" style="margin-top:16px"><h3>Jejak Workflow</h3><div class="timeline">
             ${data.events.map(event => `<div class="timeline-item"><strong>${escapeHtml(state.statusLabels[event.to_status] || event.to_status)}</strong><p>${escapeHtml(event.actor_name)} · ${dateTime(event.created_at)}${event.note ? `<br>${escapeHtml(event.note)}` : ''}</p></div>`).join('')}
@@ -735,13 +758,28 @@ async function showContentDetail(id) {
   finally { setLoading(false); }
 }
 
+function vendorFieldLabel(field) {
+  return ({ brief: 'Brief Produksi', description: 'Deskripsi', caption: 'Draft Caption', hashtags: 'Hashtag', call_to_action: 'Call to Action' })[field] || labelize(field);
+}
+
+function vendorEditBadge(data, field) {
+  const attribution = data.vendorEditAttributions?.[field];
+  return attribution ? `<p class="vendor-edit-badge">Diedit oleh Vendor: ${escapeHtml(attribution.vendorName)}</p>` : '';
+}
+
+function vendorEditReviewSection(edits) {
+  if (!edits.length) return '';
+  const mayReview = state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN';
+  return `<section class="card detail-section" style="margin-top:16px"><h3>Usulan Edit Vendor</h3><div class="vendor-edit-list">${edits.slice(0, 10).map(edit => `<article class="vendor-edit-row"><div class="card-head"><div><strong>${escapeHtml(vendorFieldLabel(edit.field_name))}</strong><small>${escapeHtml(edit.vendor_name)} · ${dateTime(edit.created_at)}</small></div>${statusHtml(edit.status)}</div><p>${escapeHtml(edit.added_value)}</p>${edit.review_note ? `<small>Catatan Koordinator: ${escapeHtml(edit.review_note)}</small>` : ''}${mayReview && edit.status === 'PENDING' ? `<div class="actions"><button class="btn btn-success btn-small" data-review-vendor-edit="${attr(edit.id)}" data-review-action="ACCEPT">Terima</button><button class="btn btn-danger btn-small" data-review-vendor-edit="${attr(edit.id)}" data-review-action="REJECT">Tolak</button></div>` : ''}</article>`).join('')}</div></section>`;
+}
+
 function contentActions(item) {
   const buttons = [];
   if (has('content.edit') && !['PUBLISHED', 'CANCELLED'].includes(item.status)) buttons.push(`<button class="btn btn-ghost" data-content-action="edit">Edit & Penugasan</button>`);
   if (has('content.edit') && !['PUBLISHED', 'CANCELLED'].includes(item.status)) buttons.push(`<button class="btn btn-ghost" data-content-action="assets">Aset Referensi</button>`);
   if ((has('content.discuss') || state.user.role === 'SUPER_ADMIN') && !['CANCELLED'].includes(item.status)) buttons.push(`<button class="btn btn-ghost" data-content-action="discuss">Diskusi & Upload</button>`);
   if ((state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN') && !['CANCELLED', 'PUBLISHED'].includes(item.status)) buttons.push(`<button class="btn btn-soft" data-content-action="share">Salin Link Ringkasan</button>`);
-  if (state.user.role === 'VENDOR' && item.status === 'IN_PRODUCTION') buttons.push(`<button class="btn btn-ghost" data-content-action="description">Edit Deskripsi</button>`);
+  if (state.user.role === 'VENDOR' && ['ASSIGNED', 'IN_PRODUCTION', 'REVISION_REQUIRED'].includes(item.status) && (item.vendorEditPermissions || []).some(permission => permission !== 'attachments')) buttons.push(`<button class="btn btn-ghost" data-content-action="vendor-edit">Usulkan Edit Materi</button>`);
   if (item.status === 'IN_PRODUCTION' && state.user.role === 'VENDOR') buttons.push(`<button class="btn btn-primary" data-content-action="submit-result">Kirim Hasil ke Koordinator</button>`);
   if (['DRAFT_SUBMITTED', 'IN_REVIEW'].includes(item.status) && (state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-primary" data-content-action="director">Kirim ke Direksi</button>`);
   if (item.status === 'APPROVED' && (has('content.schedule') || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-success" data-content-action="schedule">Buat Jadwal Platform</button>`);
@@ -758,7 +796,7 @@ function contentActions(item) {
 
 function bindDetailActions(item, data = {}) {
   $('[data-content-action="edit"]')?.addEventListener('click', () => showContentForm(item));
-  $('[data-content-action="description"]')?.addEventListener('click', () => showVendorDescriptionForm(item));
+  $('[data-content-action="vendor-edit"]')?.addEventListener('click', () => showVendorEditForm(item));
   document.querySelectorAll('[data-content-action="discuss"]').forEach(button => button.addEventListener('click', () => showDiscussionForm(item)));
   $('[data-content-action="share"]')?.addEventListener('click', () => showShareForm(item, data.collaborationFiles || []));
   $('[data-content-action="submit-result"]')?.addEventListener('click', () => submitProductionResult(item));
@@ -768,22 +806,58 @@ function bindDetailActions(item, data = {}) {
   $('[data-content-action="promote"]')?.addEventListener('click', () => showPromoteForm(item));
   document.querySelectorAll('[data-publish-schedule]').forEach(button => button.addEventListener('click', () => showSchedulePublicationForm(item, button.dataset.publishSchedule)));
   document.querySelectorAll('[data-cancel-approval]').forEach(button => button.addEventListener('click', () => cancelDirectorApproval(item, button.dataset.cancelApproval)));
+  document.querySelectorAll('[data-copy-approval]').forEach(button => button.addEventListener('click', async () => {
+    const url = new URL(button.dataset.copyApproval, window.location.origin).href;
+    await navigator.clipboard.writeText(url);
+    toast('Link approval disalin. PIN tetap hanya diketahui Direksi.');
+  }));
+  document.querySelectorAll('[data-review-vendor-edit]').forEach(button => button.addEventListener('click', async () => {
+    const action = button.dataset.reviewAction;
+    const note = window.prompt(action === 'ACCEPT' ? 'Catatan penerimaan (opsional):' : 'Alasan penolakan (opsional):', '');
+    if (note == null) return;
+    setLoading(true);
+    try {
+      await api(`/api/contents/${item.id}/vendor-edits/${button.dataset.reviewVendorEdit}/review`, { method: 'POST', body: { action, note } });
+      toast(action === 'ACCEPT' ? 'Usulan vendor diterima.' : 'Usulan vendor ditolak.');
+      await showContentDetail(item.id);
+    } catch (error) { toast(error.message, true); }
+    finally { setLoading(false); }
+  }));
   document.querySelectorAll('[data-transition]').forEach(button => button.addEventListener('click', () => showTransitionForm(item, button.dataset.transition)));
 }
 
-function showVendorDescriptionForm(item) {
-  openModal('Edit Deskripsi Produksi', `<form id="vendor-description-form">
-    <div class="notice">Deskripsi ini dapat dilengkapi oleh vendor selama tugas berstatus Produksi. Brief dari Koordinator Media tetap tidak berubah.</div>
-    <label class="field" style="margin-top:16px"><span>Deskripsi Produksi</span><textarea name="description" maxlength="2000" rows="8" placeholder="Tuliskan rincian materi atau pekerjaan yang sedang diproduksi">${escapeHtml(item.description || '')}</textarea><small>Maksimal 2.000 karakter.</small></label>
-    <div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn btn-primary">Simpan Deskripsi</button></div>
+function showVendorEditForm(item) {
+  const definitions = {
+    brief: ['Brief Produksi', item.brief || '', 5000], description: ['Deskripsi', item.description || '', 2000],
+    caption: ['Draft Caption', item.caption || '', 5000], hashtags: ['Hashtag', item.hashtags || '', 1000],
+    call_to_action: ['Call to Action', item.call_to_action || '', 1000]
+  };
+  const allowed = (item.vendorEditPermissions || []).filter(permission => definitions[permission]);
+  if (!allowed.length) return toast('Koordinator belum memberikan akses edit materi.', true);
+  openModal('Usulkan Edit Materi', `<form id="vendor-edit-form">
+    <div class="notice">Tulisan Koordinator tetap dipertahankan. Tambahan Anda dikirim sebagai usulan dan baru aktif setelah diterima Koordinator.</div>
+    <label class="field" style="margin-top:16px"><span>Kolom yang diedit</span><select name="fieldName">${allowed.map(field => `<option value="${field}">${escapeHtml(definitions[field][0])}</option>`).join('')}</select></label>
+    <div class="field" style="margin-top:14px"><span>Isi Koordinator — tidak dapat diubah</span><div id="vendor-edit-base" class="readonly-material"></div></div>
+    <label class="field" style="margin-top:14px"><span>Tambahan / revisi dari Vendor *</span><textarea name="addedValue" required rows="7" placeholder="Tuliskan tambahan tanpa mengulang atau menghapus materi Koordinator"></textarea><small id="vendor-edit-limit"></small></label>
+    <div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn btn-primary">Kirim Usulan</button></div>
   </form>`, item.content_no);
-  $('#vendor-description-form [data-close-modal]').addEventListener('click', closeModal);
-  $('#vendor-description-form').addEventListener('submit', async event => {
+  const formNode = $('#vendor-edit-form');
+  const fieldNode = formNode.elements.fieldName;
+  const refresh = () => {
+    const definition = definitions[fieldNode.value];
+    $('#vendor-edit-base').textContent = definition[1] || 'Belum ada tulisan Koordinator.';
+    formNode.elements.addedValue.maxLength = Math.max(1, definition[2] - definition[1].length - (definition[1] ? 2 : 0));
+    $('#vendor-edit-limit').textContent = `Maksimal tambahan ${number(formNode.elements.addedValue.maxLength)} karakter.`;
+  };
+  refresh();
+  fieldNode.addEventListener('change', refresh);
+  formNode.querySelector('[data-close-modal]').addEventListener('click', closeModal);
+  formNode.addEventListener('submit', async event => {
     event.preventDefault(); setLoading(true);
     try {
-      const description = new FormData(event.currentTarget).get('description');
-      await api(`/api/contents/${item.id}/vendor-description`, { method: 'PATCH', body: { description } });
-      toast('Deskripsi produksi berhasil diperbarui.');
+      const form = new FormData(event.currentTarget);
+      await api(`/api/contents/${item.id}/vendor-edits`, { method: 'POST', body: { fieldName: form.get('fieldName'), addedValue: form.get('addedValue') } });
+      toast('Usulan edit dikirim kepada Koordinator.');
       await showContentDetail(item.id);
     } catch (error) { toast(error.message, true); }
     finally { setLoading(false); }
@@ -982,8 +1056,8 @@ async function showDirectorApprovalForm(item, files) {
     const directors = assignments.users.filter(user => user.role === 'MANAGEMENT');
     const finalFiles = files.filter(file => file.phase === 'PRODUCTION_RESULT');
     openModal('Kirim Approval ke Direksi', `<form id="director-form">
-      <div class="notice warn">Link tidak kedaluwarsa otomatis. Link dapat dibatalkan Koordinator dan akan tertutup setelah keputusan atau file berubah. PIN memiliki maksimal 5 percobaan.</div>
-      <label class="field" style="margin-top:16px"><span>Direksi yang dituju *</span><select name="directorId" required><option value="">Pilih satu Direksi</option>${directors.map(user => `<option value="${attr(user.id)}">${escapeHtml(user.name)}</option>`).join('')}</select></label>
+      <div class="notice warn">Link tidak kedaluwarsa otomatis dan dapat dibatalkan Koordinator. PIN adalah PIN pribadi milik Direksi, tidak dibuat atau ditampilkan kepada Koordinator.</div>
+      <label class="field" style="margin-top:16px"><span>Direksi yang dituju *</span><select name="directorId" required><option value="">Pilih satu Direksi</option>${directors.map(user => `<option value="${attr(user.id)}" ${user.approval_pin_set ? '' : 'disabled'}>${escapeHtml(user.name)}${user.approval_pin_set ? '' : ' — PIN belum dibuat'}</option>`).join('')}</select><small>Direksi menyiapkan PIN 8 digit dari menu Profil.</small></label>
       <div class="form-section" style="margin-top:16px"><h3>Versi final yang disetujui *</h3><div class="check-row">${shareFileChecks(finalFiles)}</div></div>
       <div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn btn-primary">Buat Link Approval</button></div>
     </form>`, item.content_no);
@@ -994,8 +1068,8 @@ async function showDirectorApprovalForm(item, files) {
         const form = new FormData(event.currentTarget);
         const result = await api(`/api/contents/${item.id}/director-approvals`, { method: 'POST', body: { directorId: form.get('directorId'), fileIds: form.getAll('fileIds') } });
         const url = new URL(result.url, window.location.origin).href;
-        openModal('Link Approval Siap', `<div class="approval-secret"><div class="success-mark">✓</div><h3>${escapeHtml(result.director)}</h3><p class="muted">Kirim link dan PIN melalui kanal yang berbeda bila memungkinkan.</p><label class="field"><span>Link approval</span><input id="approval-url" readonly value="${attr(url)}"></label><label class="field"><span>PIN 8 digit</span><input id="approval-pin" readonly value="${attr(result.pin)}"></label><div class="actions"><button class="btn btn-primary" id="copy-approval">Salin Link + PIN</button><button class="btn btn-ghost" data-close-modal>Tutup</button></div></div>`, item.content_no);
-        $('#copy-approval').addEventListener('click', async () => { await navigator.clipboard.writeText(`${item.title}\n${url}\nPIN: ${result.pin}`); toast('Link dan PIN disalin.'); });
+        openModal('Link Approval Siap', `<div class="approval-secret"><div class="success-mark">✓</div><h3>${escapeHtml(result.director)}</h3><p class="muted">Bagikan link ini kepada Direksi. Direksi membukanya memakai PIN approval pribadinya.</p><label class="field"><span>Link approval</span><input id="approval-url" readonly value="${attr(url)}"></label><div class="notice success" style="margin-top:14px">PIN tidak ditampilkan karena hanya dimiliki oleh akun Direksi.</div><div class="actions"><button class="btn btn-primary" id="copy-approval">Salin Link</button><button class="btn btn-ghost" data-close-modal>Tutup</button></div></div>`, item.content_no);
+        $('#copy-approval').addEventListener('click', async () => { await navigator.clipboard.writeText(`${item.title}\n${url}`); toast('Link approval disalin.'); });
         $('#modal-body [data-close-modal]').addEventListener('click', () => showContentDetail(item.id));
       } catch (error) { toast(error.message, true); }
       finally { setLoading(false); }
@@ -1470,14 +1544,31 @@ async function renderBackups() {
 
 async function renderProfile() {
   const usesAxindoId = isAxindoIdUser(state.user);
+  const accountSecurity = usesAxindoId
+    ? '<section class="card detail-section"><h3>Keamanan AXINDO ID</h3><div class="notice success">Akun ini masuk melalui Single Sign-On. Password, MFA, dan pemulihan akun dikelola terpusat di AXINDO ID.</div></section>'
+    : '<form id="password-form" class="card detail-section"><h3>Ubah Password</h3><div class="field"><span>Password saat ini</span><input type="password" name="currentPassword" required autocomplete="current-password"></div><div class="field" style="margin-top:13px"><span>Password baru</span><input type="password" name="newPassword" required minlength="8" autocomplete="new-password"><small>Minimal 8 karakter, mengandung huruf dan angka.</small></div><button class="btn btn-primary" style="margin-top:16px" type="submit">Ubah Password</button></form>';
+  const approvalPin = state.user.role === 'MANAGEMENT' ? `<form id="approval-pin-form" class="card detail-section"><h3>${state.user.approvalPinSet ? 'Ubah' : 'Buat'} PIN Approval</h3><div class="notice">PIN 8 digit ini milik pribadi Direksi dan digunakan pada semua link approval yang ditujukan kepada Anda. Koordinator tidak dapat melihatnya.</div>
+    ${state.user.approvalPinSet ? '<div class="field" style="margin-top:13px"><span>PIN saat ini</span><input class="pin-profile-input" type="password" name="currentPin" required inputmode="numeric" pattern="[0-9]{8}" maxlength="8" autocomplete="off"></div>' : ''}
+    <div class="field" style="margin-top:13px"><span>PIN baru</span><input class="pin-profile-input" type="password" name="newPin" required inputmode="numeric" pattern="[0-9]{8}" maxlength="8" autocomplete="new-password"><small>Tepat 8 angka. Jangan berikan PIN kepada Koordinator atau vendor.</small></div>
+    <div class="field" style="margin-top:13px"><span>Ulangi PIN baru</span><input class="pin-profile-input" type="password" name="confirmPin" required inputmode="numeric" pattern="[0-9]{8}" maxlength="8" autocomplete="new-password"></div>
+    <button class="btn btn-primary" style="margin-top:16px" type="submit">Simpan PIN Approval</button></form>` : '';
   page.innerHTML = `<div class="page-head"><div><h2>Profil & Password</h2><p>Kelola keamanan akun Anda.</p></div></div>
     <div class="grid-2"><section class="card detail-section"><h3>Informasi Akun</h3><dl class="detail-list">${detailItem('Nama', state.user.name)}${detailItem('Username', '@' + state.user.username)}${detailItem('Email', state.user.email || '-')}${detailItem('Sumber akun', usesAxindoId ? 'AXINDO ID' : 'Lokal')}${detailItem('Role', state.roleLabels[state.user.role] || state.user.role)}${detailItem('Login terakhir', dateTime(state.user.lastLogin))}</dl></section>
-    ${usesAxindoId ? '<section class="card detail-section"><h3>Keamanan AXINDO ID</h3><div class="notice success">Akun ini masuk melalui Single Sign-On. Password, MFA, dan pemulihan akun dikelola terpusat di AXINDO ID.</div></section>' : '<form id="password-form" class="card detail-section"><h3>Ubah Password</h3><div class="field"><span>Password saat ini</span><input type="password" name="currentPassword" required autocomplete="current-password"></div><div class="field" style="margin-top:13px"><span>Password baru</span><input type="password" name="newPassword" required minlength="8" autocomplete="new-password"><small>Minimal 8 karakter, mengandung huruf dan angka.</small></div><button class="btn btn-primary" style="margin-top:16px" type="submit">Ubah Password</button></form>'}</div>`;
-  if (usesAxindoId) return;
-  $('#password-form').addEventListener('submit', async event => {
+    ${accountSecurity}${approvalPin}</div>`;
+  $('#password-form')?.addEventListener('submit', async event => {
     event.preventDefault(); setLoading(true);
     try { await api('/api/profile/password', { method: 'POST', body: Object.fromEntries(new FormData(event.currentTarget).entries()) }); event.currentTarget.reset(); state.user.mustChangePassword = false; toast('Password berhasil diubah.'); }
     catch (error) { toast(error.message, true); }
+    finally { setLoading(false); }
+  });
+  $('#approval-pin-form')?.addEventListener('submit', async event => {
+    event.preventDefault(); setLoading(true);
+    try {
+      await api('/api/profile/approval-pin', { method: 'POST', body: Object.fromEntries(new FormData(event.currentTarget).entries()) });
+      state.user.approvalPinSet = true;
+      toast('PIN approval berhasil disimpan.');
+      await renderProfile();
+    } catch (error) { toast(error.message, true); }
     finally { setLoading(false); }
   });
 }
@@ -1646,4 +1737,12 @@ function externalLink(value) {
     if (!['http:', 'https:'].includes(url.protocol)) return escapeHtml(value);
     return `<a href="${attr(url.href)}" target="_blank" rel="noopener noreferrer">Buka publikasi</a>`;
   } catch { return escapeHtml(value); }
+}
+
+function referenceLink(value) {
+  try {
+    const url = new URL(value);
+    if (!['http:', 'https:'].includes(url.protocol)) return '';
+    return `<a class="reference-link" href="${attr(url.href)}" target="_blank" rel="noopener noreferrer"><span>${escapeHtml(url.hostname)}</span><small>${escapeHtml(url.href)}</small></a>`;
+  } catch { return ''; }
 }

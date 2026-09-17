@@ -46,10 +46,10 @@ async function transition(baseUrl, contentId, toStatus, cookie, note = '') {
   return result.payload.item;
 }
 
-async function chunkUpload(baseUrl, contentId, cookie, name, contents, message = '') {
+async function chunkUpload(baseUrl, contentId, cookie, name, contents, message = '', phase = 'PRODUCTION_RESULT') {
   const buffer = Buffer.from(contents);
   let result = await request(baseUrl, `/api/contents/${contentId}/uploads/init`, { method: 'POST', body: {
-    phase: 'PRODUCTION_RESULT', filename: name, mimeType: 'application/pdf', totalSize: buffer.length, message
+    phase, filename: name, mimeType: 'application/pdf', totalSize: buffer.length, message
   } }, cookie);
   assert.equal(result.response.status, 201, JSON.stringify(result.payload));
   const upload = result.payload;
@@ -78,21 +78,45 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   const adminCookie = await login(baseUrl, 'admin', 'Admin12345');
   const vendorCookie = await login(baseUrl, 'vendor', 'Demo12345');
   const uploaderCookie = await login(baseUrl, 'uploader', 'Demo12345');
+  const managementCookie = await login(baseUrl, 'manajemen', 'Demo12345');
+  const directorPin = '77258816';
+  let result = await request(baseUrl, '/api/profile/approval-pin', { method: 'POST', body: { newPin: directorPin, confirmPin: directorPin } }, managementCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   const assignments = await request(baseUrl, '/api/meta/assignments', {}, adminCookie);
   assert.deepEqual([...new Set(assignments.payload.users.map(user => user.role))].sort(), ['COORDINATOR', 'MANAGEMENT', 'UPLOADER']);
+  assert.equal(assignments.payload.users.find(user => user.role === 'MANAGEMENT').approval_pin_set, 1);
   const vendorId = assignments.payload.vendors[0].id;
   const byRole = role => assignments.payload.users.find(user => user.role === role).id;
 
   const created = await request(baseUrl, '/api/contents', { method: 'POST', body: {
     title: 'Video Edukasi AINET', brandId: 'brand-ainet', channelIds: ['channel-instagram', 'channel-tiktok'],
-    contentType: 'REELS', brief: 'Video 30 detik dengan script edukasi.', vendorId, coordinatorId: byRole('COORDINATOR')
+    contentType: 'REELS', brief: 'Video 30 detik dengan script edukasi.', vendorId, coordinatorId: byRole('COORDINATOR'),
+    referenceUrls: 'https://www.instagram.com/contoh/\nhttps://example.test/referensi',
+    vendorEditPermissions: ['brief', 'description', 'caption', 'hashtags', 'call_to_action', 'attachments']
   } }, adminCookie);
   assert.equal(created.response.status, 201, `${JSON.stringify(created.payload)}\n${stderr}`);
   const contentId = created.payload.item.id;
   await transition(baseUrl, contentId, 'BRIEFED', adminCookie);
   await transition(baseUrl, contentId, 'ASSIGNED', adminCookie);
 
-  let result = await request(baseUrl, `/api/contents/${contentId}/messages`, { method: 'POST', body: { phase: 'PRE_PRODUCTION', message: 'Draft script sudah disiapkan untuk dibahas.' } }, vendorCookie);
+  result = await request(baseUrl, `/api/contents/${contentId}`, {}, adminCookie);
+  assert.deepEqual(result.payload.item.referenceUrls, ['https://www.instagram.com/contoh/', 'https://example.test/referensi']);
+  const briefReferenceId = await chunkUpload(baseUrl, contentId, vendorCookie, 'referensi-vendor.pdf', '%PDF-1.4 referensi vendor', 'Referensi tambahan vendor.', 'BRIEF');
+  assert.ok(briefReferenceId);
+  result = await request(baseUrl, `/api/contents/${contentId}/vendor-edits`, { method: 'POST', body: { fieldName: 'brief', addedValue: 'Tambahkan penutup dengan nomor WhatsApp.' } }, vendorCookie);
+  assert.equal(result.response.status, 201, JSON.stringify(result.payload));
+  const vendorEditId = result.payload.id;
+  result = await request(baseUrl, `/api/contents/${contentId}`, {}, vendorCookie);
+  assert.equal(result.payload.item.brief, 'Video 30 detik dengan script edukasi.', 'usulan belum boleh langsung mengubah materi Koordinator');
+  assert.equal(result.payload.vendorEdits[0].status, 'PENDING');
+  result = await request(baseUrl, `/api/contents/${contentId}/vendor-description`, { method: 'PATCH', body: { description: 'hapus materi lama' } }, vendorCookie);
+  assert.equal(result.response.status, 410, 'endpoint edit langsung lama harus dinonaktifkan');
+  result = await request(baseUrl, `/api/contents/${contentId}/vendor-edits/${vendorEditId}/review`, { method: 'POST', body: { action: 'ACCEPT', note: 'Tambahan diterima.' } }, adminCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  assert.equal(result.payload.item.brief, 'Video 30 detik dengan script edukasi.\n\nTambahkan penutup dengan nomor WhatsApp.');
+  result = await request(baseUrl, `/api/contents/${contentId}`, {}, adminCookie);
+  assert.equal(result.payload.vendorEditAttributions.brief.vendorName, 'Studio Kreatif Nusantara');
+  result = await request(baseUrl, `/api/contents/${contentId}/messages`, { method: 'POST', body: { phase: 'PRE_PRODUCTION', message: 'Draft script sudah disiapkan untuk dibahas.' } }, vendorCookie);
   assert.equal(result.response.status, 201);
   result = await request(baseUrl, `/api/contents/${contentId}/transition`, { method: 'POST', body: { toStatus: 'IN_PRODUCTION' } }, vendorCookie);
   assert.equal(result.response.status, 403, 'Vendor tidak boleh menyetujui mulai produksi sendiri');
@@ -115,11 +139,13 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
 
   const approval = await request(baseUrl, `/api/contents/${contentId}/director-approvals`, { method: 'POST', body: { directorId: byRole('MANAGEMENT'), fileIds: [firstFileId] } }, adminCookie);
   assert.equal(approval.response.status, 201, JSON.stringify(approval.payload));
-  assert.match(approval.payload.pin, /^\d{8}$/);
+  assert.equal(Object.hasOwn(approval.payload, 'pin'), false, 'PIN Direksi tidak boleh dikirim ke Koordinator');
   const approvalToken = new URL(approval.payload.url, baseUrl).searchParams.get('token');
+  const approvalHistory = await request(baseUrl, `/api/contents/${contentId}/director-approvals`, {}, adminCookie);
+  assert.equal(approvalHistory.payload.items[0].url, approval.payload.url);
   result = await request(baseUrl, `/api/public/approvals/${approvalToken}`);
   assert.equal(result.response.status, 401);
-  const unlocked = await request(baseUrl, `/api/public/approvals/${approvalToken}/unlock`, { method: 'POST', body: { pin: approval.payload.pin } });
+  const unlocked = await request(baseUrl, `/api/public/approvals/${approvalToken}/unlock`, { method: 'POST', body: { pin: directorPin } });
   assert.equal(unlocked.response.status, 200);
   const approvalCookie = unlocked.response.headers.get('set-cookie').split(';')[0];
   result = await request(baseUrl, `/api/public/approvals/${approvalToken}`, {}, approvalCookie);
@@ -138,7 +164,7 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   const finalApproval = await request(baseUrl, `/api/contents/${contentId}/director-approvals`, { method: 'POST', body: { directorId: byRole('MANAGEMENT'), fileIds: [finalFileId] } }, adminCookie);
   assert.equal(finalApproval.response.status, 201, JSON.stringify(finalApproval.payload));
   const finalToken = new URL(finalApproval.payload.url, baseUrl).searchParams.get('token');
-  const finalUnlock = await request(baseUrl, `/api/public/approvals/${finalToken}/unlock`, { method: 'POST', body: { pin: finalApproval.payload.pin } });
+  const finalUnlock = await request(baseUrl, `/api/public/approvals/${finalToken}/unlock`, { method: 'POST', body: { pin: directorPin } });
   const finalCookie = finalUnlock.response.headers.get('set-cookie').split(';')[0];
   result = await request(baseUrl, `/api/public/approvals/${finalToken}/decision`, { method: 'POST', body: { decision: 'APPROVED', note: 'Disetujui.' } }, finalCookie);
   assert.equal(result.payload.status, 'APPROVED');

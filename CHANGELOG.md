@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.4.1 — 2026-09-17
+
+- Memindahkan kepemilikan PIN approval 8 digit sepenuhnya ke akun Direksi; PIN disimpan dengan hash dan tidak pernah ditampilkan kepada Koordinator.
+- Menambahkan pengaturan PIN approval pada menu Profil Direksi, termasuk penggantian PIN dan pembukaan kembali batas percobaan.
+- Menambahkan tombol **Salin Link** di samping tombol pembatalan approval tanpa menyalin PIN.
+- Mengenkripsi token link approval yang perlu ditampilkan kembali kepada Koordinator.
+- Membatalkan link approval aktif dari versi lama saat migrasi agar PIN lama yang pernah terlihat tidak dapat digunakan kembali.
+- Menambahkan hingga 10 URL referensi serta upload banyak file gambar, video, atau PDF pada form permintaan konten.
+- Menampilkan link dan lampiran referensi pada detail konten untuk alur kerja Koordinator–Vendor.
+- Menambahkan checklist Koordinator untuk akses edit Vendor per kolom: Brief, Deskripsi, Caption, Hashtag, Call to Action, dan upload lampiran Brief.
+- Perubahan Vendor diproses sebagai usulan tambahan sehingga tulisan Koordinator tidak dapat dihapus; Koordinator dapat menerima atau menolak setiap usulan.
+- Menampilkan atribusi **Diedit oleh Vendor** beserta nama vendor pada materi yang usulannya diterima.
+
 ## 0.4.0 — 2026-09-16
 
 - Menyederhanakan role operasional menjadi Super Admin, Koordinator Media, Vendor, Direksi, dan Petugas Upload.
