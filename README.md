@@ -94,7 +94,7 @@ Backup database dapat dibuat melalui menu **Backup Data**. Untuk backup lengkap 
 ./backup.sh
 ```
 
-Arsip lengkap disimpan di `runtime/backups` dan sebaiknya ikut disalin ke NAS atau media cadangan lain.
+Script backup lengkap membuat snapshot SQLite konsisten dengan `VACUUM INTO`, memvalidasinya dengan `PRAGMA quick_check`, lalu mengarsipkan snapshot database bersama seluruh folder upload. Media Hub tetap dapat berjalan selama proses ini. Arsip lengkap disimpan di `runtime/backups` (atau lokasi `DATA_ROOT/backups`) dan sebaiknya ikut disalin ke NAS atau media cadangan lain. Backup otomatis/full yang lebih tua dari 30 hari dibersihkan; backup manual dari UI tidak ikut dihapus.
 
 ## AXINDO Access dan Authentik
 
