@@ -1,13 +1,14 @@
 # Matriks Implementasi Konsep AXINDO Media Hub
 
-Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implementasi repository versi 0.4.4.
+Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implementasi repository versi 0.5.0.
 
-| Area konsep | Implementasi 0.4.4 | Status |
+| Area konsep | Implementasi 0.5.0 | Status |
 |---|---|---|
 | Dual brand AINET / IMAS | Master brand, warna, filter, badge, dan branding UI | Selesai |
 | Permintaan dan brief | Form tujuan, audiens, kampanye, format, channel, CTA, deadline, anggaran | Selesai |
-| Penugasan vendor | Koordinator, vendor, Direksi terpilih, dan Petugas Upload per platform | Selesai |
-| Produksi dan draft | Diskusi per fase serta upload besar bertahap, berversi, dan ber-checksum | Selesai |
+| Metode produksi | Pilihan Produksi Vendor atau Internal Koordinator; metode dikunci setelah produksi dimulai | Selesai |
+| Penugasan vendor | Khusus mode Vendor: Koordinator, vendor, Direksi terpilih, dan Petugas Upload per platform | Selesai |
+| Produksi dan draft | Vendor atau Koordinator dapat mengunggah hasil sesuai mode; upload besar bertahap, berversi, dan ber-checksum | Selesai |
 | Review dan revisi | Keputusan Koordinator, catatan revisi wajib, diskusi vendor, dan jejak workflow | Selesai |
 | Persetujuan | Direksi tertentu, link tanpa kedaluwarsa, PIN pribadi Direksi 8 digit, versi final terikat, salin link, dan pencabutan | Selesai |
 | Edit materi Vendor | Akses per kolom dari Koordinator, usulan tambahan non-destruktif, review terima/tolak, atribusi nama Vendor | Selesai |

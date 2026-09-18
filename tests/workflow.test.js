@@ -16,6 +16,10 @@ test('workflow menolak lompatan tahap', () => {
   assert.throws(() => assertTransition('IN_PRODUCTION', 'PUBLISHED'), /tidak diperbolehkan/);
 });
 
+test('produksi internal dapat dimulai langsung setelah brief siap', () => {
+  assert.equal(canTransition('BRIEFED', 'IN_PRODUCTION'), true);
+});
+
 test('vendor hanya memiliki izin produksi dan library baca', () => {
   assert.equal(hasPermission('VENDOR', 'content.upload_draft'), true);
   assert.equal(hasPermission('VENDOR', 'library.download'), true);

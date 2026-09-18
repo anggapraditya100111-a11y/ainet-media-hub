@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.0 — 2026-09-18
+
+- Menambahkan pilihan metode **Produksi Vendor** atau **Produksi Internal oleh Koordinator** pada permintaan konten.
+- Produksi Internal melewati Pra-Produksi Vendor dan langsung masuk dari Brief Siap ke Produksi Internal.
+- Koordinator dapat mengunggah hasil final, menyelesaikan produksi internal, lalu menyetujui langsung atau mengirimkannya ke Direksi.
+- Menyembunyikan penugasan serta akses edit Vendor untuk konten Internal dan mencegah konten tersebut terlihat oleh akun Vendor.
+- Mengunci perubahan metode setelah produksi dimulai serta mencatat metode dan aktivitas internal pada workflow dan audit.
+- Menambahkan ringkasan produksi Internal dan Vendor pada Laporan & Performa.
+
 ## 0.4.4 — 2026-09-18
 
 - Menambahkan dua pilihan keluar: hanya dari Media Hub atau sekaligus dari AXINDO Access.

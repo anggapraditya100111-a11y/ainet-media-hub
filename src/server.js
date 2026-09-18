@@ -26,7 +26,7 @@ const {
 } = require('./oidc');
 const { installWorkflowV4 } = require('./workflow-v4');
 
-const APP_VERSION = '0.4.4';
+const APP_VERSION = '0.5.0';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';
@@ -336,14 +336,20 @@ function removeUpload(file) {
 
 function serializeContent(row) {
   if (!row) return null;
+  const productionMode = row.production_mode || 'VENDOR';
+  let statusLabel = STATUS_LABELS[row.status] || row.status;
+  if (productionMode === 'INTERNAL' && row.status === 'IN_PRODUCTION') statusLabel = 'Produksi Internal';
+  if (productionMode === 'INTERNAL' && row.status === 'REVISION_REQUIRED') statusLabel = 'Revisi Internal';
   return {
     ...row,
+    production_mode: productionMode,
+    productionModeLabel: productionMode === 'INTERNAL' ? 'Internal oleh Koordinator' : 'Vendor',
     budget: Number(row.budget || 0),
     channels: row.channel_names ? String(row.channel_names).split('||').filter(Boolean) : [],
     channelIds: row.channel_ids ? String(row.channel_ids).split('||').filter(Boolean) : [],
     referenceUrls: jsonObject(row.reference_urls_json, []),
     vendorEditPermissions: jsonObject(row.vendor_edit_permissions_json, []),
-    statusLabel: STATUS_LABELS[row.status] || row.status,
+    statusLabel,
     versionCount: Number(row.version_count || 0),
     proofCount: Number(row.proof_count || 0)
   };
@@ -773,6 +779,7 @@ app.post('/api/contents', authRequired, permissionRequired('content.create'), (r
     const id = newId('cnt');
     const timestamp = nowIso();
     const channelIds = arrayValue(req.body.channelIds);
+    const productionMode = String(req.body.productionMode || 'VENDOR') === 'INTERNAL' ? 'INTERNAL' : 'VENDOR';
     const payload = {
       id,
       contentNo: nextContentNumber(),
@@ -785,6 +792,7 @@ app.post('/api/contents', authRequired, permissionRequired('content.create'), (r
       category: cleanText(req.body.category || 'EDUCATION', 50),
       contentType: cleanText(req.body.contentType || 'SOCIAL_POST', 50),
       approvalLevel: String(req.body.approvalLevel || 'REGULAR') === 'SENSITIVE' ? 'SENSITIVE' : 'REGULAR',
+      productionMode,
       priority: ['LOW', 'NORMAL', 'HIGH', 'URGENT'].includes(req.body.priority) ? req.body.priority : 'NORMAL',
       dueDate: cleanText(req.body.dueDate, 20) || null,
       publishAt: cleanText(req.body.publishAt, 40) || null,
@@ -794,19 +802,19 @@ app.post('/api/contents', authRequired, permissionRequired('content.create'), (r
       hashtags: cleanText(req.body.hashtags, 1000),
       callToAction: cleanText(req.body.callToAction, 1000),
       referenceUrls: referenceUrls(req.body.referenceUrls),
-      vendorEditPermissions: vendorEditPermissions(req.body.vendorEditPermissions),
+      vendorEditPermissions: productionMode === 'VENDOR' ? vendorEditPermissions(req.body.vendorEditPermissions) : [],
       internalNotes: cleanText(req.body.internalNotes, 2000),
       coordinatorId: cleanText(req.body.coordinatorId, 100) || req.user.id,
-      vendorId: cleanText(req.body.vendorId, 100) || null,
+      vendorId: productionMode === 'VENDOR' ? cleanText(req.body.vendorId, 100) || null : null,
       reviewerId: cleanText(req.body.reviewerId, 100) || null,
       approverId: cleanText(req.body.approverId, 100) || null,
       uploaderId: cleanText(req.body.uploaderId, 100) || null
     };
     db.transaction(() => {
-      db.prepare(`INSERT INTO contents(id,content_no,title,description,objective,audience,brand_id,campaign,category,content_type,approval_level,status,priority,due_date,publish_at,budget,brief,caption,hashtags,call_to_action,reference_urls_json,vendor_edit_permissions_json,internal_notes,coordinator_id,vendor_id,reviewer_id,approver_id,uploader_id,created_by,created_at,updated_at)
-        VALUES(?,?,?,?,?,?,?,?,?,?,?,'REQUESTED',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
+      db.prepare(`INSERT INTO contents(id,content_no,title,description,objective,audience,brand_id,campaign,category,content_type,approval_level,production_mode,status,priority,due_date,publish_at,budget,brief,caption,hashtags,call_to_action,reference_urls_json,vendor_edit_permissions_json,internal_notes,coordinator_id,vendor_id,reviewer_id,approver_id,uploader_id,created_by,created_at,updated_at)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,'REQUESTED',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
         payload.id, payload.contentNo, payload.title, payload.description, payload.objective, payload.audience,
-        payload.brandId, payload.campaign, payload.category, payload.contentType, payload.approvalLevel,
+        payload.brandId, payload.campaign, payload.category, payload.contentType, payload.approvalLevel, payload.productionMode,
         payload.priority, payload.dueDate, payload.publishAt, payload.budget, payload.brief, payload.caption,
         payload.hashtags, payload.callToAction, JSON.stringify(payload.referenceUrls), JSON.stringify(payload.vendorEditPermissions), payload.internalNotes, payload.coordinatorId, payload.vendorId,
         payload.reviewerId, payload.approverId, payload.uploaderId, req.user.id, timestamp, timestamp
@@ -876,12 +884,22 @@ app.patch('/api/contents/:id', authRequired, permissionRequired('content.edit'),
       priority: ['priority', 20], dueDate: ['due_date', 20], publishAt: ['publish_at', 40],
       brief: ['brief', 5000], caption: ['caption', 5000], hashtags: ['hashtags', 1000],
       callToAction: ['call_to_action', 1000], internalNotes: ['internal_notes', 2000],
-      coordinatorId: ['coordinator_id', 100], vendorId: ['vendor_id', 100], reviewerId: ['reviewer_id', 100],
+      coordinatorId: ['coordinator_id', 100], reviewerId: ['reviewer_id', 100],
       approverId: ['approver_id', 100], uploaderId: ['uploader_id', 100]
     };
     const sets = [];
     const values = [];
     let substantiveChange = false;
+    let effectiveProductionMode = current.production_mode || 'VENDOR';
+    if (Object.hasOwn(req.body, 'productionMode')) {
+      const productionMode = String(req.body.productionMode || '');
+      if (!['VENDOR', 'INTERNAL'].includes(productionMode)) throw new AppError('Metode produksi tidak valid.');
+      if (productionMode !== effectiveProductionMode && !['REQUESTED', 'BRIEFED'].includes(current.status)) {
+        throw new AppError('Metode produksi hanya dapat diubah sebelum produksi dimulai.', 409);
+      }
+      effectiveProductionMode = productionMode;
+      sets.push('production_mode=?'); values.push(productionMode);
+    }
     for (const [input, [column, max]] of Object.entries(allowed)) {
       if (!Object.hasOwn(req.body, input)) continue;
       let value = cleanText(req.body[input], max) || null;
@@ -896,9 +914,14 @@ app.patch('/api/contents/:id', authRequired, permissionRequired('content.edit'),
       values.push(JSON.stringify(referenceUrls(req.body.referenceUrls)));
       substantiveChange = true;
     }
-    if (Object.hasOwn(req.body, 'vendorEditPermissions')) {
+    if (Object.hasOwn(req.body, 'vendorId') || (effectiveProductionMode === 'INTERNAL' && current.vendor_id)) {
+      const vendorId = cleanText(req.body.vendorId, 100) || null;
+      if (effectiveProductionMode === 'INTERNAL' && vendorId) throw new AppError('Produksi internal tidak menggunakan vendor.');
+      sets.push('vendor_id=?'); values.push(effectiveProductionMode === 'VENDOR' ? vendorId : null);
+    }
+    if (Object.hasOwn(req.body, 'vendorEditPermissions') || effectiveProductionMode === 'INTERNAL') {
       sets.push('vendor_edit_permissions_json=?');
-      values.push(JSON.stringify(vendorEditPermissions(req.body.vendorEditPermissions)));
+      values.push(JSON.stringify(effectiveProductionMode === 'VENDOR' ? vendorEditPermissions(req.body.vendorEditPermissions) : []));
     }
     if (Object.hasOwn(req.body, 'budget')) { sets.push('budget=?'); values.push(Math.max(0, toInteger(req.body.budget))); }
     if (!sets.length && !Object.hasOwn(req.body, 'channelIds')) throw new AppError('Tidak ada perubahan yang dikirim.');
@@ -1035,12 +1058,25 @@ app.post('/api/contents/:id/transition', authRequired, (req, res, next) => {
     assertTransition(item.status, toStatus);
     if (toStatus === 'DRAFT_SUBMITTED') throw new AppError('Gunakan tombol Kirim Hasil ke Koordinator.', 409);
     if (toStatus === 'PUBLISHED') throw new AppError('Gunakan menu Bukti Tayang untuk menandai konten sebagai tayang.', 409);
+    const internalProduction = item.production_mode === 'INTERNAL';
     let permission = TRANSITION_PERMISSION[toStatus];
-    if (item.status === 'REVISION_REQUIRED' && toStatus === 'IN_PRODUCTION') permission = 'content.production';
+    if (item.status === 'REVISION_REQUIRED' && toStatus === 'IN_PRODUCTION') {
+      permission = internalProduction ? 'content.approve_production' : 'content.production';
+    }
     if (item.status === 'APPROVAL_PENDING') throw new AppError('Keputusan approval hanya melalui link Direksi atau pembatalan oleh Koordinator.', 409);
     ensurePermission(req.user, permission);
+    if (internalProduction && req.user.role === 'VENDOR') throw new AppError('Konten ini diproduksi secara internal oleh Koordinator.', 403);
     if (req.user.role === 'VENDOR' && item.vendor_id !== req.user.vendorId) throw new AppError('Tugas ini tidak diberikan kepada vendor Anda.', 403);
-    if (toStatus === 'ASSIGNED' && !item.vendor_id) throw new AppError('Pilih vendor sebelum menugaskan konten.', 409);
+    if (toStatus === 'ASSIGNED') {
+      if (internalProduction) throw new AppError('Produksi internal tidak memerlukan penugasan Vendor.', 409);
+      if (!item.vendor_id) throw new AppError('Pilih vendor sebelum menugaskan konten.', 409);
+    }
+    if (item.status === 'BRIEFED' && toStatus === 'IN_PRODUCTION' && !internalProduction) {
+      throw new AppError('Produksi Vendor harus melalui tahap Pra-Produksi.', 409);
+    }
+    if (internalProduction && toStatus === 'IN_PRODUCTION' && req.user.role === 'COORDINATOR' && item.coordinator_id !== req.user.id) {
+      throw new AppError('Produksi internal hanya dapat diproses Koordinator yang ditugaskan.', 403);
+    }
     if (['APPROVAL_PENDING', 'APPROVED'].includes(toStatus) && !latestVersion(item.id)
       && !db.prepare("SELECT id FROM collaboration_files WHERE content_id=? AND phase='PRODUCTION_RESULT' LIMIT 1").get(item.id)) throw new AppError('Hasil produksi belum tersedia.', 409);
     if (toStatus === 'APPROVED' && db.prepare("SELECT id FROM vendor_content_edits WHERE content_id=? AND status='PENDING' LIMIT 1").get(item.id)) {
@@ -1066,12 +1102,12 @@ app.post('/api/contents/:id/transition', authRequired, (req, res, next) => {
           .run(newId('apr'), item.id, version?.id || null, toStatus === 'APPROVED' ? 'APPROVED' : 'REVISION', note, req.user.id, timestamp);
         if (toStatus === 'APPROVED' && version) db.prepare('UPDATE content_versions SET is_approved=1 WHERE id=?').run(version.id);
       }
-      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: item.id, action: `STATUS_${toStatus}`, before: { status: item.status }, after: { status: toStatus }, reason: note, ip: requestIp(req) });
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: item.id, action: `STATUS_${toStatus}`, before: { status: item.status }, after: { status: toStatus, productionMode: item.production_mode }, reason: note, ip: requestIp(req) });
     })();
 
     const link = `/contents/${item.id}`;
-    if (toStatus === 'ASSIGNED') notifyVendor(item.vendor_id, 'TASK_ASSIGNED', `Tugas baru ${item.content_no}`, item.title, link);
-    if (toStatus === 'REVISION_REQUIRED') notifyVendor(item.vendor_id, 'REVISION_REQUIRED', `Revisi ${item.content_no}`, note, link);
+    if (toStatus === 'ASSIGNED' && !internalProduction) notifyVendor(item.vendor_id, 'TASK_ASSIGNED', `Tugas baru ${item.content_no}`, item.title, link);
+    if (toStatus === 'REVISION_REQUIRED' && !internalProduction) notifyVendor(item.vendor_id, 'REVISION_REQUIRED', `Revisi ${item.content_no}`, note, link);
     if (toStatus === 'APPROVED') {
       if (item.coordinator_id) notifyUser(item.coordinator_id, 'CONTENT_APPROVED', `${item.content_no} disetujui`, item.title, link);
       if (item.uploader_id) notifyUser(item.uploader_id, 'READY_TO_PUBLISH', `${item.content_no} siap tayang`, item.title, link);
@@ -1536,6 +1572,14 @@ app.get('/api/reports/summary', authRequired, permissionRequired('reports.view')
       on_time: Number(row.on_time || 0), revisions: Number(row.revisions || 0), avg_cycle_days: Number(row.avg_cycle_days || 0),
       on_time_percent: Number(row.published || 0) ? Math.round(Number(row.on_time || 0) * 100 / Number(row.published)) : 0
     }));
+  const byProductionMode = db.prepare(`SELECT production_mode,COUNT(*) AS count,
+    SUM(CASE WHEN status='PUBLISHED' THEN 1 ELSE 0 END) AS published
+    FROM contents WHERE date(created_at) BETWEEN ? AND ? GROUP BY production_mode ORDER BY production_mode`).all(from, to)
+    .map(row => ({
+      mode: row.production_mode || 'VENDOR',
+      label: row.production_mode === 'INTERNAL' ? 'Internal Koordinator' : 'Vendor',
+      count: Number(row.count || 0), published: Number(row.published || 0)
+    }));
   const performance = db.prepare(`SELECT
     COALESCE(SUM(CAST(json_extract(metrics_json,'$.reach') AS INTEGER)),0) AS reach,
     COALESCE(SUM(CAST(json_extract(metrics_json,'$.impressions') AS INTEGER)),0) AS impressions,
@@ -1546,7 +1590,7 @@ app.get('/api/reports/summary', authRequired, permissionRequired('reports.view')
   const metrics = Object.fromEntries(Object.entries(performance).map(([key, value]) => [key, Number(value || 0)]));
   metrics.budget = Number(budget || 0);
   metrics.costPerLead = metrics.leads ? Math.round(metrics.budget / metrics.leads) : 0;
-  res.json({ from, to, byStatus, byBrand, vendors, metrics });
+  res.json({ from, to, byStatus, byBrand, byProductionMode, vendors, metrics });
 });
 
 app.get('/api/notifications', authRequired, (req, res) => {

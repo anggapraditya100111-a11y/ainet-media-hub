@@ -483,7 +483,7 @@ async function openPage(pageId) {
       requests: () => renderContentList({ title: 'Permintaan dan Produksi', description: 'Kelola seluruh konten dari permintaan hingga tayang.', create: true }),
       'my-tasks': () => renderContentList({ title: 'Tugas Saya', description: 'Konten aktif yang ditugaskan kepada vendor Anda.', statuses: activeStatuses() }),
       revisions: () => renderContentList({ title: 'Permintaan Revisi', description: 'Draft yang harus diperbaiki.', statuses: ['REVISION_REQUIRED'] }),
-      'review-queue': () => renderContentList({ title: 'Review Hasil', description: 'Hasil akhir vendor yang menunggu keputusan Koordinator.', statuses: ['DRAFT_SUBMITTED', 'IN_REVIEW'] }),
+      'review-queue': () => renderContentList({ title: 'Review Hasil', description: 'Hasil produksi Vendor maupun Internal yang menunggu keputusan Koordinator.', statuses: ['DRAFT_SUBMITTED', 'IN_REVIEW'] }),
       'review-history': () => renderContentList({ title: 'Riwayat Review', description: 'Konten yang sudah melewati pemeriksaan.', statuses: ['APPROVAL_PENDING', 'APPROVED', 'SCHEDULED', 'PUBLISHED', 'REVISION_REQUIRED'] }),
       'approval-queue': () => renderContentList({ title: 'Approval Direksi', description: 'Konten yang sedang menunggu keputusan Direksi.', statuses: ['APPROVAL_PENDING'] }),
       'approval-history': () => renderContentList({ title: 'Riwayat Persetujuan', description: 'Keputusan approval sebelumnya.', statuses: ['APPROVED', 'SCHEDULED', 'PUBLISHED', 'REVISION_REQUIRED'] }),
@@ -633,6 +633,8 @@ async function showContentForm(existing = null) {
     const assignments = await loadAssignments();
     const selectedChannels = new Set(existing?.channelIds || []);
     const selectedVendorPermissions = new Set(existing?.vendorEditPermissions || []);
+    const productionMode = existing?.production_mode || 'VENDOR';
+    const productionModeLocked = existing && !['REQUESTED', 'BRIEFED'].includes(existing.status);
     openModal(existing ? 'Edit Konten' : 'Buat Permintaan Konten', `
       <form id="content-form">
         <section class="form-section"><h3>Identitas Konten</h3><div class="form-grid">
@@ -660,26 +662,37 @@ async function showContentForm(existing = null) {
         </div></section>
         <section class="form-section"><h3>Referensi Konten</h3><div class="form-grid">
           <label class="field full"><span>Link sosial media / web</span><textarea name="referenceUrls" maxlength="10000" placeholder="Satu link per baris, contoh:\nhttps://www.instagram.com/...\nhttps://contoh.com/artikel">${escapeHtml((existing?.referenceUrls || []).join('\n'))}</textarea><small>Maksimal 10 link HTTP/HTTPS.</small></label>
-          <label class="field full"><span>Upload gambar, video, atau PDF</span><input type="file" name="referenceFiles" multiple accept="image/*,video/*,.pdf"><small>File disimpan sebagai lampiran Brief dan dapat dilihat vendor yang ditugaskan.</small></label>
+          <label class="field full"><span>Upload gambar, video, atau PDF</span><input type="file" name="referenceFiles" multiple accept="image/*,video/*,.pdf"><small>File disimpan sebagai lampiran Brief dan dapat dilihat pihak produksi yang ditugaskan.</small></label>
         </div><div id="upload-progress" class="upload-progress" hidden><div><span></span></div><p>Menyiapkan upload referensi…</p></div></section>
-        <section class="form-section"><h3>Akses Edit Vendor</h3>
+        <section id="vendor-access-section" class="form-section" ${productionMode === 'INTERNAL' ? 'hidden' : ''}><h3>Akses Edit Vendor</h3>
           <div class="notice">Vendor hanya dapat menambahkan usulan. Tulisan Koordinator tidak dapat dihapus dan perubahan baru aktif setelah diterima Koordinator.</div>
           <div class="check-row" style="margin-top:14px">${[
             ['brief','Brief Produksi'],['description','Deskripsi'],['caption','Draft Caption'],['hashtags','Hashtag'],['call_to_action','Call to Action'],['attachments','Upload Lampiran Brief']
           ].map(([value, label]) => `<label class="check"><input type="checkbox" name="vendorEditPermissions" value="${value}" ${selectedVendorPermissions.has(value) ? 'checked' : ''}>${label}</label>`).join('')}</div>
         </section>
         <section class="form-section"><h3>Deadline & Penanggung Jawab</h3><div class="form-grid">
+          <label class="field full"><span>Metode Produksi</span><select name="productionMode" ${productionModeLocked ? 'disabled' : ''}>${optionsHtml([['VENDOR','Produksi Vendor'],['INTERNAL','Produksi Internal oleh Koordinator']], productionMode)}</select><small>${productionModeLocked ? 'Metode dikunci karena produksi sudah dimulai.' : 'Produksi internal melewati penugasan Vendor.'}</small></label>
           <label class="field"><span>Deadline Produksi</span><input type="date" name="dueDate" value="${attr(existing?.due_date)}"></label>
           <label class="field"><span>Rencana Tayang</span><input type="datetime-local" name="publishAt" value="${attr(toLocalDateTime(existing?.publish_at))}"></label>
           <label class="field"><span>Anggaran Konten (Rp)</span><input type="number" min="0" step="1000" name="budget" value="${attr(existing?.budget || 0)}"></label>
-          <label class="field"><span>Vendor</span><select name="vendorId"><option value="">Belum ditentukan</option>${assignments.vendors.map(v => `<option value="${attr(v.id)}" ${v.id === existing?.vendor_id ? 'selected' : ''}>${escapeHtml(v.name)}</option>`).join('')}</select></label>
+          <label id="vendor-assignment-field" class="field" ${productionMode === 'INTERNAL' ? 'hidden' : ''}><span>Vendor</span><select name="vendorId"><option value="">Belum ditentukan</option>${assignments.vendors.map(v => `<option value="${attr(v.id)}" ${v.id === existing?.vendor_id ? 'selected' : ''}>${escapeHtml(v.name)}</option>`).join('')}</select></label>
           ${assignmentSelect('coordinatorId', 'Koordinator', 'COORDINATOR', existing?.coordinator_id, assignments.users)}
           <label class="field full"><span>Catatan Internal</span><textarea name="internalNotes" maxlength="2000">${escapeHtml(existing?.internal_notes || '')}</textarea></label>
         </div></section>
         <div class="form-actions"><button class="btn btn-ghost" type="button" data-close-modal>Batal</button><button class="btn btn-primary" type="submit">${existing ? 'Simpan Perubahan' : 'Buat Permintaan'}</button></div>
       </form>`, existing ? existing.content_no : 'Workflow terarah');
-    $('#content-form').querySelector('[data-close-modal]').addEventListener('click', closeModal);
-    $('#content-form').addEventListener('submit', async event => {
+    const contentForm = $('#content-form');
+    const syncProductionMode = () => {
+      const internal = contentForm.elements.productionMode.value === 'INTERNAL';
+      $('#vendor-assignment-field').hidden = internal;
+      $('#vendor-access-section').hidden = internal;
+      contentForm.elements.vendorId.disabled = internal;
+      contentForm.querySelectorAll('input[name="vendorEditPermissions"]').forEach(input => { input.disabled = internal; });
+    };
+    syncProductionMode();
+    contentForm.elements.productionMode.addEventListener('change', syncProductionMode);
+    contentForm.querySelector('[data-close-modal]').addEventListener('click', closeModal);
+    contentForm.addEventListener('submit', async event => {
       event.preventDefault(); setLoading(true);
       try {
         const form = new FormData(event.currentTarget);
@@ -759,7 +772,7 @@ async function showContentDetail(id) {
         </div>
         <div>
           <section class="card detail-section"><h3>Penugasan</h3><dl class="detail-list">
-            ${detailItem('Vendor', item.vendor_name)}${detailItem('Koordinator', item.coordinator_name)}
+            ${detailItem('Metode Produksi', item.productionModeLabel)}${item.production_mode === 'VENDOR' ? detailItem('Vendor', item.vendor_name) : ''}${detailItem('Koordinator', item.coordinator_name)}
             ${detailItem('Direksi Terpilih', item.approver_name)}${detailItem('Dibuat oleh', item.created_by_name)}
             ${detailItem('Deadline', dateOnly(item.due_date))}${detailItem('Rencana tayang', dateTime(item.publish_at))}
           </dl></section>
@@ -804,15 +817,18 @@ function contentActions(item) {
   if ((state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN') && !['CANCELLED', 'PUBLISHED'].includes(item.status)) buttons.push(`<button class="btn btn-soft" data-content-action="share">Salin Link Ringkasan</button>`);
   if (state.user.role === 'VENDOR' && ['ASSIGNED', 'IN_PRODUCTION', 'REVISION_REQUIRED'].includes(item.status) && (item.vendorEditPermissions || []).some(permission => permission !== 'attachments')) buttons.push(`<button class="btn btn-ghost" data-content-action="vendor-edit">Usulkan Edit Materi</button>`);
   if (item.status === 'IN_PRODUCTION' && state.user.role === 'VENDOR') buttons.push(`<button class="btn btn-primary" data-content-action="submit-result">Kirim Hasil ke Koordinator</button>`);
+  if (item.status === 'IN_PRODUCTION' && item.production_mode === 'INTERNAL' && (state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-primary" data-content-action="submit-result">Selesaikan Produksi Internal</button>`);
   if (['DRAFT_SUBMITTED', 'IN_REVIEW'].includes(item.status) && (state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-primary" data-content-action="director">Kirim ke Direksi</button>`);
   if (item.status === 'APPROVED' && (has('content.schedule') || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-success" data-content-action="schedule">Buat Jadwal Platform</button>`);
   if (['APPROVED', 'SCHEDULED', 'PUBLISHED'].includes(item.status) && has('library.manage')) buttons.push(`<button class="btn btn-soft" data-content-action="promote">Jadikan Aset Resmi</button>`);
   for (const next of state.transitions[item.status] || []) {
     if (item.status === 'APPROVAL_PENDING') continue;
     if (['DRAFT_SUBMITTED', 'APPROVAL_PENDING', 'SCHEDULED', 'PUBLISHED'].includes(next)) continue;
+    if (item.status === 'BRIEFED' && item.production_mode === 'INTERNAL' && next === 'ASSIGNED') continue;
+    if (item.status === 'BRIEFED' && item.production_mode !== 'INTERNAL' && next === 'IN_PRODUCTION') continue;
     const permission = transitionPermission(item, next);
     if (!has(permission)) continue;
-    buttons.push(`<button class="btn ${transitionTone(next)}" data-transition="${next}">${transitionLabel(next)}</button>`);
+    buttons.push(`<button class="btn ${transitionTone(next)}" data-transition="${next}">${transitionLabel(next, item)}</button>`);
   }
   return buttons.join('');
 }
@@ -894,7 +910,7 @@ function showVendorEditForm(item) {
 
 function transitionPermission(item, next) {
   const map = {
-    BRIEFED: 'content.edit', ASSIGNED: 'content.assign', IN_PRODUCTION: item.status === 'REVISION_REQUIRED' ? 'content.production' : 'content.approve_production',
+    BRIEFED: 'content.edit', ASSIGNED: 'content.assign', IN_PRODUCTION: item.status === 'REVISION_REQUIRED' && item.production_mode !== 'INTERNAL' ? 'content.production' : 'content.approve_production',
     IN_REVIEW: 'content.review', REVISION_REQUIRED: 'content.review', APPROVAL_PENDING: 'content.review',
     APPROVED: 'content.review',
     SCHEDULED: 'content.schedule', CANCELLED: 'content.edit'
@@ -902,7 +918,8 @@ function transitionPermission(item, next) {
   return map[next];
 }
 
-function transitionLabel(status) {
+function transitionLabel(status, item = null) {
+  if (status === 'IN_PRODUCTION' && item?.production_mode === 'INTERNAL') return item.status === 'REVISION_REQUIRED' ? 'Mulai Revisi Internal' : 'Mulai Produksi Internal';
   return ({ BRIEFED: 'Brief Siap', ASSIGNED: 'Kirim ke Pra-Produksi', IN_PRODUCTION: 'Lanjut Produksi', IN_REVIEW: 'Mulai Review', REVISION_REQUIRED: 'Kirim Revisi', APPROVAL_PENDING: 'Kirim ke Direksi', APPROVED: 'Setujui Tanpa Direksi', SCHEDULED: 'Jadwalkan', CANCELLED: 'Batalkan' })[status] || (state.statusLabels[status] || status);
 }
 
@@ -914,7 +931,7 @@ function transitionTone(status) {
 
 function showTransitionForm(item, toStatus) {
   const requiresNote = toStatus === 'REVISION_REQUIRED';
-  openModal(transitionLabel(toStatus), `<form id="transition-form">
+  openModal(transitionLabel(toStatus, item), `<form id="transition-form">
     <div class="notice ${requiresNote ? 'warn' : ''}">Status akan berubah dari <strong>${escapeHtml(item.statusLabel)}</strong> menjadi <strong>${escapeHtml(state.statusLabels[toStatus] || toStatus)}</strong>.</div>
     <label class="field" style="margin-top:16px"><span>${requiresNote ? 'Catatan revisi *' : 'Catatan keputusan'}</span><textarea name="note" maxlength="2000" ${requiresNote ? 'required' : ''} placeholder="Tuliskan catatan yang membantu tahap berikutnya"></textarea></label>
     <div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn ${transitionTone(toStatus)}">Konfirmasi</button></div>
@@ -1024,8 +1041,9 @@ async function uploadCollaborativeFile(contentId, phase, file, message) {
 }
 
 function submitProductionResult(item) {
-  openModal('Kirim Hasil ke Koordinator', `<form id="submit-result-form">
-    <div class="notice warn">Pastikan hasil final sudah diunggah pada tahap <strong>Hasil Produksi</strong>. Setelah dikirim, Koordinator akan melakukan review.</div>
+  const internal = item.production_mode === 'INTERNAL';
+  openModal(internal ? 'Selesaikan Produksi Internal' : 'Kirim Hasil ke Koordinator', `<form id="submit-result-form">
+    <div class="notice warn">Pastikan hasil final sudah diunggah pada tahap <strong>Hasil Produksi</strong>. ${internal ? 'Konten akan masuk ke tahap keputusan approval.' : 'Setelah dikirim, Koordinator akan melakukan review.'}</div>
     <label class="field" style="margin-top:16px"><span>Catatan hasil</span><textarea name="note" maxlength="2000" placeholder="Versi final, perubahan terakhir, atau hal yang perlu diperiksa"></textarea></label>
     <div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn btn-primary">Kirim untuk Review</button></div>
   </form>`, item.content_no);
@@ -1034,7 +1052,7 @@ function submitProductionResult(item) {
     event.preventDefault(); setLoading(true);
     try {
       await api(`/api/contents/${item.id}/submit-result`, { method: 'POST', body: { note: new FormData(event.currentTarget).get('note') } });
-      toast('Hasil produksi dikirim ke Koordinator.');
+      toast(internal ? 'Produksi internal selesai dan siap diproses untuk approval.' : 'Hasil produksi dikirim ke Koordinator.');
       await showContentDetail(item.id);
     } catch (error) { toast(error.message, true); }
     finally { setLoading(false); }
@@ -1471,7 +1489,7 @@ async function renderReports() {
 
 function renderReportData(data) {
   const maxStatus = Math.max(1, ...data.byStatus.map(item => item.count));
-  page.innerHTML = `<div class="page-head"><div><h2>Laporan & Performa</h2><p>Output konten, ketepatan waktu, SLA vendor, engagement, leads, dan efisiensi biaya.</p></div></div>
+  page.innerHTML = `<div class="page-head"><div><h2>Laporan & Performa</h2><p>Output konten internal dan vendor, ketepatan waktu, engagement, leads, serta efisiensi biaya.</p></div></div>
     <form id="report-filter" class="card toolbar"><label class="field"><span>Dari</span><input type="date" name="from" value="${attr(data.from)}"></label><label class="field"><span>Sampai</span><input type="date" name="to" value="${attr(data.to)}"></label><button class="btn btn-primary" type="submit">Terapkan</button></form>
     <div class="grid-4">
       ${reportMetric('Total Reach', number(data.metrics.reach), '↗')}${reportMetric('Engagement', number(data.metrics.engagement), '◎', 'orange')}
@@ -1481,6 +1499,7 @@ function renderReportData(data) {
       <section class="card"><div class="card-head"><h3>Output per Status</h3></div><div class="card-body bar-chart">${data.byStatus.map(item => `<div class="bar-row"><span>${escapeHtml(item.label)}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.max(3, item.count * 100 / maxStatus)}%"></div></div><strong>${number(item.count)}</strong></div>`).join('') || emptyInline('Belum ada data')}</div></section>
       <section class="card"><div class="card-head"><h3>Output per Brand</h3></div><div class="card-body">${data.byBrand.map(brand => `<div class="calendar-row" style="grid-template-columns:70px 1fr auto"><span class="brand-chip" style="background:${safeColor(brand.color)}">${escapeHtml(brand.code)}</span><div><strong>${escapeHtml(brand.name)}</strong><span class="cell-meta">${number(brand.published)} sudah tayang</span></div><strong>${number(brand.count)}</strong></div>`).join('')}</div></section>
     </div>
+    <section class="card" style="margin-top:16px"><div class="card-head"><h3>Metode Produksi</h3></div><div class="card-body">${(data.byProductionMode || []).map(method => `<div class="calendar-row" style="grid-template-columns:1fr auto"><div><strong>${escapeHtml(method.label)}</strong><span class="cell-meta">${number(method.published)} sudah tayang</span></div><strong>${number(method.count)} konten</strong></div>`).join('') || emptyInline('Belum ada data produksi')}</div></section>
     <section class="card" style="margin-top:16px"><div class="card-head"><h3>SLA & Kinerja Vendor</h3></div><div class="table-wrap"><table><thead><tr><th>Vendor</th><th>Ditugaskan</th><th>Tayang</th><th>Tepat Waktu</th><th>Revisi Aktif</th><th>Siklus Rata-rata</th></tr></thead><tbody>
       ${data.vendors.map(vendor => `<tr><td><span class="cell-title">${escapeHtml(vendor.name)}</span></td><td>${number(vendor.assigned)}</td><td>${number(vendor.published)}</td><td>${vendor.on_time_percent}%</td><td>${number(vendor.revisions)}</td><td>${vendor.avg_cycle_days || 0} hari</td></tr>`).join('') || `<tr><td colspan="6">${emptyInline('Belum ada data vendor')}</td></tr>`}
     </tbody></table></div></section>`;

@@ -73,9 +73,19 @@ test('koordinator dapat menambah channel serta mengubah jadwal dan petugas sebel
   assert.match(app, /Channel, jadwal, dan petugas upload berhasil diperbarui/);
 });
 
+test('produksi internal melewati vendor dan diselesaikan oleh koordinator', () => {
+  assert.match(app, /name="productionMode"/);
+  assert.match(app, /Produksi Internal oleh Koordinator/);
+  assert.match(app, /id="vendor-access-section"/);
+  assert.match(app, /id="vendor-assignment-field"/);
+  assert.match(app, /Selesaikan Produksi Internal/);
+  assert.match(app, /Mulai Produksi Internal/);
+  assert.match(app, /byProductionMode/);
+});
+
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.4\.4/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.5\.0/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);

@@ -239,7 +239,14 @@ function installWorkflowV4(app, options) {
   app.post('/api/contents/:id/submit-result', authRequired, (req, res, next) => {
     try {
       const item = getContent(req.params.id, req.user);
-      if (req.user.role !== 'VENDOR' || item.vendor_id !== req.user.vendorId) throw new AppError('Hanya vendor yang ditugaskan dapat mengirim hasil.', 403);
+      const internalProduction = item.production_mode === 'INTERNAL';
+      if (internalProduction) {
+        if (!isCoordinator(req.user) || (req.user.role === 'COORDINATOR' && item.coordinator_id !== req.user.id)) {
+          throw new AppError('Hanya Koordinator yang ditugaskan dapat menyelesaikan produksi internal.', 403);
+        }
+      } else if (req.user.role !== 'VENDOR' || item.vendor_id !== req.user.vendorId) {
+        throw new AppError('Hanya vendor yang ditugaskan dapat mengirim hasil.', 403);
+      }
       if (item.status !== 'IN_PRODUCTION') throw new AppError('Hasil hanya dapat dikirim saat tahap Produksi.', 409);
       const productionStartedAt = db.prepare("SELECT created_at FROM workflow_events WHERE content_id=? AND to_status='IN_PRODUCTION' ORDER BY created_at DESC LIMIT 1").get(item.id)?.created_at || '';
       if (!db.prepare("SELECT id FROM collaboration_files WHERE content_id=? AND phase='PRODUCTION_RESULT' AND created_at>=? LIMIT 1").get(item.id, productionStartedAt)) throw new AppError('Upload minimal satu hasil produksi baru untuk siklus ini.', 409);
@@ -247,11 +254,15 @@ function installWorkflowV4(app, options) {
       const timestamp = nowIso();
       db.transaction(() => {
         db.prepare("UPDATE contents SET status='DRAFT_SUBMITTED',updated_at=? WHERE id=?").run(timestamp, item.id);
-        db.prepare("INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at) VALUES(?,?,?,'DRAFT_SUBMITTED','SUBMIT_RESULT',?,?,?)")
-          .run(newId('evt'), item.id, item.status, note, req.user.id, timestamp);
-        recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: item.id, action: 'SUBMIT_RESULT', reason: note, ip: requestIp(req) });
+        const action = internalProduction ? 'SUBMIT_INTERNAL_RESULT' : 'SUBMIT_RESULT';
+        db.prepare("INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at) VALUES(?,?,?,'DRAFT_SUBMITTED',?,?,?,?)")
+          .run(newId('evt'), item.id, item.status, action, note, req.user.id, timestamp);
+        recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: item.id, action, reason: note,
+          after: { productionMode: item.production_mode }, ip: requestIp(req) });
       })();
-      notifyUser(item.coordinator_id, 'RESULT_SUBMITTED', `Hasil ${item.content_no} siap direview`, item.title, `/contents/${item.id}`);
+      if (!internalProduction || item.coordinator_id !== req.user.id) {
+        notifyUser(item.coordinator_id, 'RESULT_SUBMITTED', `Hasil ${item.content_no} siap direview`, item.title, `/contents/${item.id}`);
+      }
       res.json({ item: getContent(item.id, req.user) });
     } catch (error) { next(error); }
   });

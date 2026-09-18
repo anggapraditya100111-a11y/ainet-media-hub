@@ -126,6 +126,7 @@ function initDatabase() {
       category TEXT NOT NULL DEFAULT 'EDUCATION',
       content_type TEXT NOT NULL DEFAULT 'SOCIAL_POST',
       approval_level TEXT NOT NULL DEFAULT 'REGULAR' CHECK(approval_level IN ('REGULAR','SENSITIVE')),
+      production_mode TEXT NOT NULL DEFAULT 'VENDOR' CHECK(production_mode IN ('VENDOR','INTERNAL')),
       status TEXT NOT NULL DEFAULT 'REQUESTED' CHECK(status IN ('REQUESTED','BRIEFED','ASSIGNED','IN_PRODUCTION','DRAFT_SUBMITTED','IN_REVIEW','REVISION_REQUIRED','APPROVAL_PENDING','APPROVED','SCHEDULED','PUBLISHED','CANCELLED')),
       priority TEXT NOT NULL DEFAULT 'NORMAL' CHECK(priority IN ('LOW','NORMAL','HIGH','URGENT')),
       due_date TEXT,
@@ -484,6 +485,7 @@ function migrateApprovalSecurityAndReferences() {
   const contentColumns = new Set(db.prepare('PRAGMA table_info(contents)').all().map(column => column.name));
   if (!contentColumns.has('reference_urls_json')) db.exec("ALTER TABLE contents ADD COLUMN reference_urls_json TEXT NOT NULL DEFAULT '[]'");
   if (!contentColumns.has('vendor_edit_permissions_json')) db.exec("ALTER TABLE contents ADD COLUMN vendor_edit_permissions_json TEXT NOT NULL DEFAULT '[]'");
+  if (!contentColumns.has('production_mode')) db.exec("ALTER TABLE contents ADD COLUMN production_mode TEXT NOT NULL DEFAULT 'VENDOR' CHECK(production_mode IN ('VENDOR','INTERNAL'))");
 
   db.exec(`
     CREATE TABLE IF NOT EXISTS vendor_content_edits (

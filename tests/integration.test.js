@@ -237,4 +237,35 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
     detail = await request(baseUrl, `/api/contents/${contentId}`, {}, adminCookie);
     assert.equal(detail.payload.item.status, index === remainingSchedules.length - 1 ? 'PUBLISHED' : 'SCHEDULED');
   }
+
+  const internalCreated = await request(baseUrl, '/api/contents', { method: 'POST', body: {
+    title: 'Konten Internal Koordinator', brandId: 'brand-ainet', channelIds: ['channel-instagram'],
+    contentType: 'SOCIAL_POST', brief: 'Materi dibuat langsung oleh Koordinator.',
+    coordinatorId: byRole('COORDINATOR'), productionMode: 'INTERNAL', vendorId,
+    vendorEditPermissions: ['brief', 'attachments']
+  } }, adminCookie);
+  assert.equal(internalCreated.response.status, 201, JSON.stringify(internalCreated.payload));
+  const internalId = internalCreated.payload.item.id;
+  assert.equal(internalCreated.payload.item.production_mode, 'INTERNAL');
+  assert.equal(internalCreated.payload.item.vendor_id, null);
+  assert.deepEqual(internalCreated.payload.item.vendorEditPermissions, []);
+  await transition(baseUrl, internalId, 'BRIEFED', coordinatorCookie);
+  result = await request(baseUrl, `/api/contents/${internalId}/transition`, { method: 'POST', body: { toStatus: 'ASSIGNED' } }, coordinatorCookie);
+  assert.equal(result.response.status, 409, 'produksi internal tidak boleh dikirim ke Vendor');
+  await transition(baseUrl, internalId, 'IN_PRODUCTION', coordinatorCookie);
+  result = await request(baseUrl, `/api/contents/${internalId}`, {}, vendorCookie);
+  assert.equal(result.response.status, 404, 'konten internal tidak boleh terlihat oleh Vendor');
+  result = await request(baseUrl, `/api/contents/${internalId}`, { method: 'PATCH', body: { productionMode: 'VENDOR' } }, coordinatorCookie);
+  assert.equal(result.response.status, 409, 'metode produksi terkunci setelah produksi dimulai');
+  const internalFileId = await chunkUpload(baseUrl, internalId, coordinatorCookie, 'hasil-internal.pdf', '%PDF-1.4 hasil internal', 'Hasil produksi internal.');
+  assert.ok(internalFileId);
+  result = await request(baseUrl, `/api/contents/${internalId}/submit-result`, { method: 'POST', body: { note: 'Produksi internal selesai.' } }, coordinatorCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  assert.equal(result.payload.item.status, 'DRAFT_SUBMITTED');
+  result = await request(baseUrl, `/api/contents/${internalId}/transition`, { method: 'POST', body: { toStatus: 'APPROVED', note: 'Disetujui Koordinator.' } }, coordinatorCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  assert.equal(result.payload.item.status, 'APPROVED');
+  const report = await request(baseUrl, '/api/reports/summary?from=2026-01-01&to=2026-12-31', {}, adminCookie);
+  assert.equal(report.response.status, 200, JSON.stringify(report.payload));
+  assert.ok(report.payload.byProductionMode.some(row => row.mode === 'INTERNAL' && row.count >= 1));
 });
