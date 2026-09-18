@@ -2,7 +2,7 @@
 
 AXINDO Media Hub adalah aplikasi internal PT Axindo Infinitas Network untuk mengelola produksi konten AINET dan IMAS dari permintaan sampai bukti tayang. Aplikasi berjalan mandiri di server Ubuntu menggunakan Docker Compose, database SQLite, dan penyimpanan berkas lokal server.
 
-Versi: **0.4.3 — Edit dan Tambah Channel Upload**
+Versi: **0.4.4 — Dua Pilihan Keluar**
 
 ## Fitur yang sudah berfungsi
 
@@ -29,6 +29,7 @@ Versi: **0.4.3 — Edit dan Tambah Channel Upload**
 - Backup database manual dari UI dan backup lengkap volume melalui script server.
 - SSO pengguna melalui AXINDO Access; Authentik tetap menjadi backend AXINDO ID dan grup, dengan Authorization Code Flow, PKCE, state, dan nonce.
 - Login dibuka sebagai popup halaman `akses.axindo.my.id`; sesi Access yang masih aktif langsung dipakai dan popup tertutup otomatis.
+- Tombol keluar menawarkan dua pilihan: hanya keluar dari Media Hub atau sekaligus mengakhiri sesi AXINDO Access.
 - Akun operasional dibuat serta diperbarui otomatis dari klaim OIDC; role mengikuti grup Authentik.
 - Login Personal dibatasi untuk akun lokal Super Admin dan Vendor saat OIDC aktif; pengguna internal lainnya wajib memakai AXINDO ID.
 - Mode mobile bergaya aplikasi Android dengan app bar, navigasi bawah berbasis role, bottom sheet, tombol sentuh, safe-area, dan dukungan instalasi PWA.
