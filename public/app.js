@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', init);
 $('#login-form').addEventListener('submit', login);
 $('#oidc-login-button').addEventListener('click', startAccessPopupLogin);
 $('#local-login-toggle').addEventListener('click', () => setLocalLoginVisible(true));
-$('#logout-button').addEventListener('click', logout);
+$('#logout-button').addEventListener('click', openLogoutChoices);
 $('#menu-toggle').addEventListener('click', () => document.body.classList.add('nav-open'));
 $('#nav-close').addEventListener('click', closeNavigation);
 $('#nav-backdrop').addEventListener('click', closeNavigation);
@@ -149,16 +149,35 @@ async function login(event) {
   finally { setLoading(false); }
 }
 
-async function logout() {
+function openLogoutChoices() {
+  openModal('Pilih cara keluar', `
+    <section class="logout-choice-list">
+      <p class="muted">Pilih apakah sesi AXINDO Access juga ingin diakhiri.</p>
+      <button class="logout-choice logout-choice-primary" type="button" data-logout-scope="axindo">
+        <span class="logout-choice-icon">⇥</span><span><strong>Keluar dari AXINDO</strong><small>Keluar dari Media Hub dan akhiri sesi AXINDO Access.</small></span>
+      </button>
+      <button class="logout-choice" type="button" data-logout-scope="local">
+        <span class="logout-choice-icon">↪</span><span><strong>Keluar dari aplikasi ini saja</strong><small>Sesi aplikasi AXINDO lain tetap aktif.</small></span>
+      </button>
+    </section>
+  `, 'Keamanan akun');
+  document.querySelectorAll('[data-logout-scope]').forEach(button => {
+    button.addEventListener('click', () => logout(button.dataset.logoutScope));
+  });
+}
+
+async function logout(scope = 'local') {
+  closeModal();
   setLoading(true);
   let result = null;
-  try { result = await api('/api/auth/logout', { method: 'POST' }); } catch {}
+  try { result = await api('/api/auth/logout', { method: 'POST', body: { scope } }); } catch {}
   state.user = null;
   if (result?.logoutUrl) {
     window.location.assign(result.logoutUrl);
     return;
   }
   showLogin();
+  toast('Anda telah keluar dari Media Hub.');
   setLoading(false);
 }
 
