@@ -47,7 +47,7 @@ services:
     volumes:
       - ${DATA_ROOT:-./runtime}/database:/app/data
       - ${DATA_ROOT:-./runtime}/uploads:/app/uploads
-      - ${DATA_ROOT:-./runtime}/backups:/app/backups
+      - ${BACKUP_ROOT:-./runtime/backups}:/app/backups
     extra_hosts:
       - "host.docker.internal:host-gateway"
     healthcheck:
