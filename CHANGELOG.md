@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.4 — 2026-09-18
+
+- Menambahkan dua pilihan keluar: hanya dari Media Hub atau sekaligus dari AXINDO Access.
+- Menampilkan tombol keluar yang tetap mudah dijangkau pada mode mobile.
+- Mengarahkan logout terpusat melalui endpoint aman AXINDO Access dengan `return_to` yang tervalidasi.
+
 ## 0.4.3 — 2026-09-17
 
 - Mengizinkan Koordinator menambahkan channel upload baru setelah jadwal awal dikirim.
