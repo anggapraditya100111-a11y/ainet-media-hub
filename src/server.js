@@ -26,7 +26,7 @@ const {
 } = require('./oidc');
 const { installWorkflowV4 } = require('./workflow-v4');
 
-const APP_VERSION = '0.4.3';
+const APP_VERSION = '0.4.4';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';
@@ -647,24 +647,20 @@ app.post('/api/auth/login', loginLimiter, (req, res, next) => {
 });
 
 app.post('/api/auth/logout', authRequired, asyncRoute(async (req, res) => {
+  const scope = String(req.body?.scope || 'local').trim().toLowerCase();
+  if (!['local', 'axindo'].includes(scope)) throw new AppError('Pilihan keluar tidak valid.', 400);
   db.prepare('DELETE FROM sessions WHERE id=?').run(req.sessionId);
-  recordAudit({ actorId: req.user.id, entityType: 'AUTH', entityId: req.user.id, action: 'LOGOUT', ip: requestIp(req) });
+  recordAudit({ actorId: req.user.id, entityType: 'AUTH', entityId: req.user.id, action: scope === 'axindo' ? 'LOGOUT_AXINDO' : 'LOGOUT', ip: requestIp(req) });
   res.clearCookie(COOKIE_NAME, { path: '/' });
   let logoutUrl = '';
-  if (req.user.authSource === 'OIDC' && OIDC.ready) {
-    try {
-      const configuration = await oidcConfiguration();
-      if (configuration.serverMetadata().end_session_endpoint) {
-        logoutUrl = oidc.buildEndSessionUrl(configuration, {
-          post_logout_redirect_uri: OIDC.postLogoutRedirectUri,
-          client_id: OIDC.clientId
-        }).href;
-      }
-    } catch (error) {
-      console.error('Logout OIDC provider gagal:', error.message);
-    }
+  if (scope === 'axindo') {
+    const returnTo = new URL(accessManifest().url);
+    returnTo.searchParams.set('logout', 'axindo');
+    const accessLogout = new URL('/logout', ACCESS_PORTAL_URL);
+    accessLogout.searchParams.set('return_to', returnTo.href);
+    logoutUrl = accessLogout.href;
   }
-  res.json({ ok: true, logoutUrl });
+  res.json({ ok: true, scope, logoutUrl });
 }));
 
 app.get('/api/bootstrap', authRequired, (req, res) => {
