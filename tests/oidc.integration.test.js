@@ -257,7 +257,7 @@ test('login OIDC membuat akun, role, sesi, dan logout AXINDO ID', { timeout: 30_
 
   const popupPage = await fetch(popupTarget).then(response => response.text());
   assert.match(popupPage, /Popup akan tertutup otomatis/);
-  assert.match(popupPage, /popup\.js\?v=0\.4\.3/);
+  assert.match(popupPage, /popup\.js\?v=0\.4\.4/);
 
   const vendorLogin = await fetch(`${appUrl}/api/auth/login`, {
     method: 'POST', headers: { 'content-type': 'application/json' },
@@ -317,5 +317,17 @@ test('login OIDC membuat akun, role, sesi, dan logout AXINDO ID', { timeout: 30_
   });
   const logout = await logoutResponse.json();
   assert.equal(logoutResponse.status, 200);
-  assert.equal(new URL(logout.logoutUrl).origin, new URL(issuer).origin);
+  assert.equal(logout.scope, 'local');
+  assert.equal(logout.logoutUrl, '');
+
+  const axindoLogoutResponse = await fetch(`${appUrl}/api/auth/logout`, {
+    method: 'POST', headers: { cookie: handoffSession, 'content-type': 'application/json' }, body: JSON.stringify({ scope: 'axindo' })
+  });
+  const axindoLogout = await axindoLogoutResponse.json();
+  const axindoLogoutUrl = new URL(axindoLogout.logoutUrl);
+  assert.equal(axindoLogoutResponse.status, 200);
+  assert.equal(axindoLogout.scope, 'axindo');
+  assert.equal(axindoLogoutUrl.origin, 'https://akses.axindo.my.id');
+  assert.equal(axindoLogoutUrl.pathname, '/logout');
+  assert.equal(new URL(axindoLogoutUrl.searchParams.get('return_to')).searchParams.get('logout'), 'axindo');
 });
