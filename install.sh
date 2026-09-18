@@ -32,8 +32,14 @@ fi
 
 data_root="$(sed -n 's/^DATA_ROOT=//p' .env | tail -n 1)"
 data_root="${data_root:-./runtime}"
+backup_root="$(sed -n 's/^BACKUP_ROOT=//p' .env | tail -n 1)"
+backup_root="${backup_root:-./runtime/backups}"
 if [ "$data_root" = "/" ] || [ "$data_root" = "." ] || [ "$data_root" = "./" ]; then
   echo "DATA_ROOT tidak aman. Gunakan folder khusus seperti ./runtime atau /var/lib/axindo-media-hub."
+  exit 1
+fi
+if [ "$backup_root" = "/" ] || [ "$backup_root" = "." ] || [ "$backup_root" = "./" ]; then
+  echo "BACKUP_ROOT tidak aman. Gunakan folder khusus seperti ./runtime/backups atau /srv/storage/axindo-media-hub/backups."
   exit 1
 fi
 mkdir -p "$data_root/database" \
@@ -41,8 +47,8 @@ mkdir -p "$data_root/database" \
   "$data_root/uploads/library" \
   "$data_root/uploads/proofs" \
   "$data_root/uploads/branding" \
-  "$data_root/backups"
-chown -R 1000:1000 "$data_root/database" "$data_root/uploads" "$data_root/backups"
+  "$backup_root"
+chown -R 1000:1000 "$data_root/database" "$data_root/uploads" "$backup_root"
 
 docker compose up -d --build
 
