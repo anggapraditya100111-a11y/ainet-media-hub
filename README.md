@@ -73,7 +73,7 @@ Simpan password yang ditampilkan installer, login menggunakan username `admin`, 
 | Source dan `.env` | `/opt/axindo-media-hub` |
 | Database SQLite | `/opt/axindo-media-hub/runtime/database` |
 | Draft, aset, bukti, logo | `/opt/axindo-media-hub/runtime/uploads` |
-| Backup | `/opt/axindo-media-hub/runtime/backups` |
+| Backup | `BACKUP_ROOT` (bawaan `/opt/axindo-media-hub/runtime/backups`; produksi disarankan HDD seperti `/srv/storage/axindo-media-hub/backups`) |
 
 Jangan menaruh `.env`, database, upload, atau backup di dalam Git.
 
@@ -94,7 +94,7 @@ Backup database dapat dibuat melalui menu **Backup Data**. Untuk backup lengkap 
 ./backup.sh
 ```
 
-Script backup lengkap membuat snapshot SQLite konsisten dengan `VACUUM INTO`, memvalidasinya dengan `PRAGMA quick_check`, lalu mengarsipkan snapshot database bersama seluruh folder upload. Media Hub tetap dapat berjalan selama proses ini. Arsip lengkap disimpan di `runtime/backups` (atau lokasi `DATA_ROOT/backups`) dan sebaiknya ikut disalin ke NAS atau media cadangan lain. Backup otomatis/full yang lebih tua dari 30 hari dibersihkan; backup manual dari UI tidak ikut dihapus.
+Script backup lengkap membuat snapshot SQLite konsisten dengan `VACUUM INTO`, memvalidasinya dengan `PRAGMA quick_check`, lalu mengarsipkan snapshot database bersama seluruh folder upload. Media Hub tetap dapat berjalan selama proses ini. Lokasi backup diatur terpisah melalui `BACKUP_ROOT`, sehingga database aktif dapat tetap berada di SSD sementara backup ditempatkan di HDD. Contoh produksi: `BACKUP_ROOT=/srv/storage/axindo-media-hub/backups`. Backup otomatis/full yang lebih tua dari 30 hari dibersihkan; backup manual dari UI tidak ikut dihapus.
 
 ## AXINDO Access dan Authentik
 
