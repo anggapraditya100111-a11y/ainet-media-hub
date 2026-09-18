@@ -6,14 +6,20 @@ cd "$(dirname "$0")"
 timestamp="$(date +%Y%m%d-%H%M%S)"
 data_root="$(sed -n 's/^DATA_ROOT=//p' .env 2>/dev/null | tail -n 1)"
 data_root="${data_root:-./runtime}"
+backup_root="$(sed -n 's/^BACKUP_ROOT=//p' .env 2>/dev/null | tail -n 1)"
+backup_root="${backup_root:-./runtime/backups}"
 
 if [ "$data_root" = "/" ] || [ "$data_root" = "." ] || [ "$data_root" = "./" ]; then
   echo "DATA_ROOT tidak aman; backup dibatalkan."
   exit 1
 fi
+if [ "$backup_root" = "/" ] || [ "$backup_root" = "." ] || [ "$backup_root" = "./" ]; then
+  echo "BACKUP_ROOT tidak aman; backup dibatalkan."
+  exit 1
+fi
 
 data_root="$(realpath -m "$data_root")"
-backup_dir="$data_root/backups"
+backup_dir="$(realpath -m "$backup_root")"
 target="$backup_dir/media-hub-full-$timestamp.tar.gz"
 partial="$target.partial"
 stage_dir="$(mktemp -d)"
