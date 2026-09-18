@@ -75,13 +75,21 @@ test('koordinator dapat menambah channel serta mengubah jadwal dan petugas sebel
 
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.4\.3/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.4\.4/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);
   assert.match(css, /@media \(display-mode: standalone\)/);
   assert.equal(manifest.display, 'standalone');
   assert.equal(manifest.start_url, '/');
+});
+
+test('logout menawarkan keluar lokal atau AXINDO pada desktop dan mobile', () => {
+  assert.match(html, /id="logout-button"/);
+  assert.match(app, /Keluar dari AXINDO/);
+  assert.match(app, /Keluar dari aplikasi ini saja/);
+  assert.match(app, /body: \{ scope \}/);
+  assert.match(css, /\.logout-choice/);
 });
 
 test('workflow kolaborasi v0.4.0 tersedia di desktop dan mobile', () => {
