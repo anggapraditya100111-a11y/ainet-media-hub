@@ -2,13 +2,16 @@
 
 AXINDO Media Hub adalah aplikasi internal PT Axindo Infinitas Network untuk mengelola produksi konten AINET dan IMAS dari permintaan sampai bukti tayang. Aplikasi berjalan mandiri di server Ubuntu menggunakan Docker Compose, database SQLite, dan penyimpanan berkas lokal server.
 
-Versi: **0.5.0 — Produksi Internal Koordinator**
+Versi: **0.6.0 — Usulan Brief dari Vendor**
 
 ## Fitur yang sudah berfungsi
 
 - Workflow terkunci dengan pilihan produksi Vendor atau produksi Internal oleh Koordinator, kemudian Review/Approval → Terjadwal → Selesai Tayang.
 - Lima role operasional: Super Admin, Koordinator Media, Vendor/Kreator, Direksi, dan Petugas Upload.
 - Vendor hanya melihat konten yang ditugaskan kepada vendornya dan tidak menyimpan kredensial media sosial.
+- Vendor dapat mengajukan seluruh ide konten, memilih Koordinator, melengkapi brief, caption, CTA, channel, link, serta lampiran sebelum produksi.
+- Koordinator yang dipilih dapat menyetujui brief Vendor, meminta revisi dengan catatan, atau menolak; produksi Vendor baru dimulai setelah brief disetujui.
+- Setiap pengiriman ulang brief disimpan sebagai versi snapshot sehingga isi dan keputusan sebelumnya tetap dapat ditelusuri.
 - Konten Internal melewati penugasan Vendor; Koordinator mengunggah hasil sendiri lalu dapat menyetujui langsung atau mengirimkannya ke Direksi.
 - Diskusi dan lampiran dipisahkan untuk Brief, Pra-Produksi, dan Hasil Produksi.
 - Permintaan konten mendukung referensi berupa URL sosial media/web dan banyak lampiran gambar, video, atau PDF.
@@ -41,7 +44,7 @@ Versi: **0.5.0 — Produksi Internal Koordinator**
 |---|---|
 | Super Admin | Dashboard, Kalender, Pipeline, Permintaan, Review Hasil, Approval Direksi, Siap Tayang, Media Library, Vendor, Laporan, Pengguna, Audit, Pengaturan, Backup |
 | Koordinator Media | Dashboard, Kalender, Pipeline, Permintaan, Review Hasil, Approval Direksi, Siap Tayang, Media Library, Vendor, Laporan |
-| Vendor / Kreator | Dashboard, Tugas Saya, Jadwal, Permintaan Revisi, Media Library, Riwayat Tugas |
+| Vendor / Kreator | Dashboard, Tugas & Usulan Saya, Jadwal, Permintaan Revisi, Media Library, Riwayat Tugas |
 | Direksi | Approval Saya, Dashboard Executive, Kalender, Ringkasan Progres, Performa Konten, Media Library |
 | Petugas Upload | Dashboard, Konten Siap Tayang, Jadwal Upload, Riwayat Publikasi, Media Library |
 

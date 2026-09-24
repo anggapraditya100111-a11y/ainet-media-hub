@@ -83,9 +83,19 @@ test('produksi internal melewati vendor dan diselesaikan oleh koordinator', () =
   assert.match(app, /byProductionMode/);
 });
 
+test('Vendor membuat usulan brief dan Koordinator memberi keputusan', () => {
+  assert.match(app, /Buat Usulan Konten/);
+  assert.match(app, /vendor-brief\/submit/);
+  assert.match(app, /vendor-brief\/review/);
+  assert.match(app, /Setujui Brief/);
+  assert.match(app, /Minta Revisi/);
+  assert.match(app, /Tolak Usulan/);
+  assert.match(app, /Review Brief Vendor/);
+});
+
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.5\.0/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.6\.0/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);

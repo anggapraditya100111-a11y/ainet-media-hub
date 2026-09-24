@@ -47,7 +47,7 @@ const ROLE_MENUS = {
     ['Analitik', 'reports', 'Laporan', 'report'], ['Akun', 'profile', 'Profil & Password', 'profile']
   ],
   VENDOR: [
-    ['Utama', 'dashboard', 'Dashboard', 'dashboard'], ['Konten', 'my-tasks', 'Tugas Saya', 'task'],
+    ['Utama', 'dashboard', 'Dashboard', 'dashboard'], ['Konten', 'my-tasks', 'Tugas & Usulan Saya', 'task'],
     ['Konten', 'calendar', 'Jadwal', 'calendar'], ['Konten', 'revisions', 'Permintaan Revisi', 'review'],
     ['Sumber Daya', 'library', 'Media Library', 'library'], ['Riwayat', 'content-history', 'Riwayat Tugas', 'history'],
     ['Akun', 'profile', 'Profil', 'profile']
@@ -68,7 +68,7 @@ const ROLE_MENUS = {
 const PAGE_META = {
   dashboard: ['Dashboard', 'Ringkasan kerja media'], calendar: ['Kalender Konten', 'Rencana publikasi'],
   pipeline: ['Pipeline Konten', 'Alur produksi end-to-end'], requests: ['Permintaan Konten', 'Ide dan brief'],
-  'my-tasks': ['Tugas Saya', 'Produksi vendor'], revisions: ['Permintaan Revisi', 'Perbaikan yang harus dikerjakan'],
+  'my-tasks': ['Tugas & Usulan Saya', 'Ide dan produksi Vendor'], revisions: ['Permintaan Revisi', 'Perbaikan yang harus dikerjakan'],
   'review-queue': ['Review Hasil', 'Pemeriksaan hasil produksi oleh Koordinator'], 'review-history': ['Riwayat Review', 'Jejak pemeriksaan'],
   'approval-queue': ['Approval Direksi', 'Persetujuan final melalui link dan PIN'], 'approval-history': ['Riwayat Persetujuan', 'Jejak keputusan'],
   ready: ['Konten Siap Tayang', 'Penjadwalan dan publikasi'], 'publication-history': ['Riwayat Publikasi', 'Bukti konten tayang'],
@@ -481,7 +481,7 @@ async function openPage(pageId) {
     const renderer = {
       dashboard: renderDashboard, calendar: renderCalendar, pipeline: renderPipeline,
       requests: () => renderContentList({ title: 'Permintaan dan Produksi', description: 'Kelola seluruh konten dari permintaan hingga tayang.', create: true }),
-      'my-tasks': () => renderContentList({ title: 'Tugas Saya', description: 'Konten aktif yang ditugaskan kepada vendor Anda.', statuses: activeStatuses() }),
+      'my-tasks': () => renderContentList({ title: 'Tugas & Usulan Saya', description: 'Usulan brief dan pekerjaan produksi Vendor.', statuses: activeStatuses(), create: true }),
       revisions: () => renderContentList({ title: 'Permintaan Revisi', description: 'Draft yang harus diperbaiki.', statuses: ['REVISION_REQUIRED'] }),
       'review-queue': () => renderContentList({ title: 'Review Hasil', description: 'Hasil produksi Vendor maupun Internal yang menunggu keputusan Koordinator.', statuses: ['DRAFT_SUBMITTED', 'IN_REVIEW'] }),
       'review-history': () => renderContentList({ title: 'Riwayat Review', description: 'Konten yang sudah melewati pemeriksaan.', statuses: ['APPROVAL_PENDING', 'APPROVED', 'SCHEDULED', 'PUBLISHED', 'REVISION_REQUIRED'] }),
@@ -520,7 +520,7 @@ async function renderDashboard() {
   const maxPipeline = Math.max(1, ...data.pipeline.map(item => item.count));
   page.innerHTML = `
     <div class="page-head"><div><h2>Halo, ${escapeHtml(firstName(state.user.name))}</h2><p>${dashboardGreeting()}</p></div>
-      ${has('content.create') ? '<button id="dashboard-create" class="btn btn-primary">＋ Buat Permintaan</button>' : ''}</div>
+      ${has('content.create') ? `<button id="dashboard-create" class="btn btn-primary">＋ ${state.user.role === 'VENDOR' ? 'Buat Usulan Konten' : 'Buat Permintaan'}</button>` : ''}</div>
     ${state.user.mustChangePassword && !isAxindoIdUser(state.user) ? '<div class="notice warn" style="margin-bottom:16px">Password akun ini masih merupakan password awal. Ubah melalui menu Profil & Password.</div>' : ''}
     ${state.user.role === 'VENDOR' && !state.user.vendorId ? '<div class="notice warn" style="margin-bottom:16px">Akun Vendor Anda belum dipasangkan dengan data vendor. Hubungi Super Admin agar tugas produksi dapat ditampilkan.</div>' : ''}
     <div class="grid-3">${metricCards.map(([label, value, icon, tone]) => `<article class="card metric ${tone}"><div class="metric-icon">${icons[icon]}</div><span>${label}</span><strong>${number(value)}</strong></article>`).join('')}</div>
@@ -573,7 +573,7 @@ async function renderContentList(options = {}) {
   const data = await api(`/api/contents?${params}`);
   page.innerHTML = `
     <div class="page-head"><div><h2>${escapeHtml(options.title || 'Konten')}</h2><p>${escapeHtml(options.description || '')}</p></div>
-      ${options.create && has('content.create') ? '<button id="content-create" class="btn btn-primary">＋ Buat Permintaan</button>' : ''}</div>
+      ${options.create && has('content.create') ? `<button id="content-create" class="btn btn-primary">＋ ${state.user.role === 'VENDOR' ? 'Buat Usulan Konten' : 'Buat Permintaan'}</button>` : ''}</div>
     <form id="content-filter" class="card toolbar">
       <label class="field search-field"><span>Cari</span><input name="q" placeholder="Nomor, judul, atau kampanye"></label>
       <label class="field"><span>Brand</span><select name="brandId"><option value="">Semua brand</option>${brandOptions()}</select></label>
@@ -628,7 +628,81 @@ async function loadAssignments() {
   return state.assignments;
 }
 
+async function showVendorProposalForm(existing = null) {
+  try {
+    if (existing && (existing.proposal_origin !== 'VENDOR' || existing.created_by !== state.user.id ||
+      existing.status !== 'REQUESTED' || !['DRAFT', 'REVISION'].includes(existing.brief_review_status))) {
+      throw new Error('Usulan ini sedang direview atau sudah diputuskan.');
+    }
+    const assignments = await loadAssignments();
+    const selectedChannels = new Set(existing?.channelIds || []);
+    openModal(existing ? 'Edit Usulan Konten' : 'Buat Usulan Konten', `
+      <form id="vendor-proposal-form">
+        <div class="notice">Tuliskan seluruh ide dan rencana produksi. Koordinator akan menyetujui, meminta revisi, atau menolak brief sebelum produksi dimulai.</div>
+        <section class="form-section"><h3>Identitas Konten</h3><div class="form-grid">
+          <label class="field full"><span>Judul *</span><input name="title" maxlength="200" required value="${attr(existing?.title)}" placeholder="Judul ide konten"></label>
+          <label class="field"><span>Brand *</span><select name="brandId" required><option value="">Pilih brand</option>${brandOptions(existing?.brand_id)}</select></label>
+          <label class="field"><span>Kampanye</span><input name="campaign" maxlength="150" value="${attr(existing?.campaign)}"></label>
+          <label class="field"><span>Kategori</span><select name="category">${optionsHtml([
+            ['EDUCATION','Edukasi'],['PROMOTION','Promosi'],['INFORMATION','Informasi'],['ENGAGEMENT','Engagement'],['CORPORATE','Korporat'],['EVENT','Event']
+          ], existing?.category || 'EDUCATION')}</select></label>
+          <label class="field"><span>Format</span><select name="contentType">${optionsHtml([
+            ['SOCIAL_POST','Social Post'],['CAROUSEL','Carousel'],['REELS','Reels / Short Video'],['STORY','Story'],['LONG_VIDEO','Video Panjang'],['BANNER','Banner'],['ARTICLE','Artikel'],['WHATSAPP','WhatsApp Broadcast']
+          ], existing?.content_type || 'SOCIAL_POST')}</select></label>
+          <div class="field full"><span>Channel *</span><div class="check-row">${state.channels.map(channel => `<label class="check"><input type="checkbox" name="channelIds" value="${attr(channel.id)}" ${selectedChannels.has(channel.id) ? 'checked' : ''}>${escapeHtml(channel.name)}</label>`).join('')}</div></div>
+        </div></section>
+        <section class="form-section"><h3>Ide & Brief Produksi</h3><div class="form-grid">
+          <label class="field"><span>Tujuan</span><textarea name="objective" maxlength="1000">${escapeHtml(existing?.objective || '')}</textarea></label>
+          <label class="field"><span>Target Audiens</span><textarea name="audience" maxlength="1000">${escapeHtml(existing?.audience || '')}</textarea></label>
+          <label class="field full"><span>Brief Produksi *</span><textarea name="brief" maxlength="5000" required placeholder="Konsep, pesan utama, storyline atau draft script...">${escapeHtml(existing?.brief || '')}</textarea></label>
+          <label class="field full"><span>Deskripsi</span><textarea name="description" maxlength="2000">${escapeHtml(existing?.description || '')}</textarea></label>
+          <label class="field full"><span>Draft Caption</span><textarea name="caption" maxlength="5000">${escapeHtml(existing?.caption || '')}</textarea></label>
+          <label class="field"><span>Hashtag</span><input name="hashtags" maxlength="1000" value="${attr(existing?.hashtags)}"></label>
+          <label class="field"><span>Call to Action</span><input name="callToAction" maxlength="1000" value="${attr(existing?.call_to_action)}"></label>
+        </div></section>
+        <section class="form-section"><h3>Referensi</h3><div class="form-grid">
+          <label class="field full"><span>Link sosial media / web</span><textarea name="referenceUrls" maxlength="10000" placeholder="Satu link per baris">${escapeHtml((existing?.referenceUrls || []).join('\n'))}</textarea></label>
+          <label class="field full"><span>Upload gambar, video, atau PDF</span><input type="file" name="referenceFiles" multiple accept="image/*,video/*,.pdf"><small>Lampiran masuk ke versi brief Vendor.</small></label>
+        </div><div id="upload-progress" class="upload-progress" hidden><div><span></span></div><p>Menyiapkan upload referensi…</p></div></section>
+        <section class="form-section"><h3>Rencana & Koordinator</h3><div class="form-grid">
+          <label class="field"><span>Deadline Produksi</span><input type="date" name="dueDate" value="${attr(existing?.due_date)}"></label>
+          <label class="field"><span>Rencana Tayang</span><input type="datetime-local" name="publishAt" value="${attr(toLocalDateTime(existing?.publish_at))}"></label>
+          ${assignmentSelect('coordinatorId', 'Koordinator Reviewer', 'COORDINATOR', existing?.coordinator_id, assignments.users, true)}
+        </div></section>
+        <div class="form-actions"><button class="btn btn-ghost" type="button" data-close-modal>Batal</button><button class="btn btn-primary" type="submit">Simpan Draft</button></div>
+      </form>`, existing?.content_no || 'Ide konten dari Vendor');
+    const formNode = $('#vendor-proposal-form');
+    formNode.querySelector('[data-close-modal]').addEventListener('click', closeModal);
+    formNode.addEventListener('submit', async event => {
+      event.preventDefault();
+      setLoading(true);
+      try {
+        const form = new FormData(event.currentTarget);
+        const body = {};
+        for (const [key, value] of form.entries()) if (!['channelIds', 'referenceFiles'].includes(key)) body[key] = value;
+        body.channelIds = form.getAll('channelIds');
+        if (!body.channelIds.length) throw new Error('Pilih minimal satu channel.');
+        if (!existing) body.productionMode = 'VENDOR';
+        const result = await api(existing ? `/api/contents/${existing.id}/vendor-brief` : '/api/contents',
+          { method: existing ? 'PATCH' : 'POST', body });
+        const contentId = existing?.id || result.item.id;
+        const files = form.getAll('referenceFiles').filter(file => file instanceof File && file.size);
+        let uploadError = null;
+        for (const file of files) {
+          try { await uploadCollaborativeFile(contentId, 'BRIEF', file, 'Lampiran usulan brief Vendor'); }
+          catch (error) { uploadError = error; break; }
+        }
+        closeModal();
+        toast(uploadError ? `Draft tersimpan, tetapi upload gagal: ${uploadError.message}` : 'Draft usulan tersimpan. Kirim brief dari halaman detail setelah siap.', Boolean(uploadError));
+        await showContentDetail(contentId);
+      } catch (error) { toast(error.message, true); }
+      finally { setLoading(false); }
+    });
+  } catch (error) { toast(error.message, true); }
+}
+
 async function showContentForm(existing = null) {
+  if (state.user.role === 'VENDOR') return showVendorProposalForm(existing);
   try {
     const assignments = await loadAssignments();
     const selectedChannels = new Set(existing?.channelIds || []);
@@ -718,9 +792,9 @@ async function showContentForm(existing = null) {
   } catch (error) { toast(error.message, true); }
 }
 
-function assignmentSelect(name, label, role, selected, users) {
+function assignmentSelect(name, label, role, selected, users, required = false) {
   const rows = users.filter(user => user.role === role);
-  return `<label class="field"><span>${escapeHtml(label)}</span><select name="${name}"><option value="">Belum ditentukan</option>${rows.map(user => `<option value="${attr(user.id)}" ${user.id === selected ? 'selected' : ''}>${escapeHtml(user.name)}</option>`).join('')}</select></label>`;
+  return `<label class="field"><span>${escapeHtml(label)}${required ? ' *' : ''}</span><select name="${name}" ${required ? 'required' : ''}><option value="">Belum ditentukan</option>${rows.map(user => `<option value="${attr(user.id)}" ${user.id === selected ? 'selected' : ''}>${escapeHtml(user.name)}</option>`).join('')}</select></label>`;
 }
 
 async function showContentDetail(id) {
@@ -731,7 +805,7 @@ async function showContentDetail(id) {
     const actions = contentActions(item);
     openModal('Detail Konten', `
       <section class="card detail-hero">
-        <div class="actions"><span class="brand-chip" style="background:${safeColor(item.brand_color)}">${escapeHtml(item.brand_code)}</span>${statusHtml(item.status)}${priorityHtml(item.priority)}</div>
+        <div class="actions"><span class="brand-chip" style="background:${safeColor(item.brand_color)}">${escapeHtml(item.brand_code)}</span>${statusHtml(item.status, item.statusLabel)}${priorityHtml(item.priority)}</div>
         <h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.content_no)} · ${escapeHtml(item.channels.join(', ') || 'Belum ada channel')}</p>
       </section>
       ${actions ? `<div class="actions" style="margin:16px 0">${actions}</div>` : ''}
@@ -749,6 +823,7 @@ async function showContentDetail(id) {
             <h3 style="margin-top:20px">Hashtag</h3>${vendorEditBadge(data, 'hashtags')}<div class="rich-text muted">${escapeHtml(item.hashtags || 'Belum diisi.')}</div>
             <h3 style="margin-top:20px">Call to Action</h3>${vendorEditBadge(data, 'call_to_action')}<div class="rich-text muted">${escapeHtml(item.call_to_action || 'Belum diisi.')}</div>
           </section>
+          ${item.proposal_origin === 'VENDOR' ? vendorBriefReviewSection(item, data.briefVersions || []) : ''}
           ${vendorEditReviewSection(data.vendorEdits || [])}
           <section class="card detail-section" style="margin-top:16px"><div class="card-head"><h3>Diskusi Produksi</h3><button class="btn btn-primary btn-small" data-content-action="discuss">＋ Pesan / File</button></div>
             ${(data.discussions || []).length ? `<div class="discussion-list">${data.discussions.map(message => `<article class="discussion-item"><div class="avatar">${escapeHtml(message.sender_name.slice(0, 1))}</div><div><strong>${escapeHtml(message.sender_name)}</strong><span class="tag">${phaseLabel(message.phase)}</span><p>${escapeHtml(message.message || '')}</p><small>${dateTime(message.created_at)}</small></div></article>`).join('')}</div>` : emptyInline('Belum ada diskusi. Koordinator dan vendor dapat membahas script, storyboard, materi, serta revisi di sini.')}
@@ -811,8 +886,21 @@ function vendorEditReviewSection(edits) {
 
 function contentActions(item) {
   const buttons = [];
-  if (has('content.edit') && !['PUBLISHED', 'CANCELLED'].includes(item.status)) buttons.push(`<button class="btn btn-ghost" data-content-action="edit">Edit & Penugasan</button>`);
-  if (has('content.edit') && !['PUBLISHED', 'CANCELLED'].includes(item.status)) buttons.push(`<button class="btn btn-ghost" data-content-action="assets">Aset Referensi</button>`);
+  const vendorBriefPending = item.proposal_origin === 'VENDOR' && item.brief_review_status !== 'APPROVED';
+  if (item.proposal_origin === 'VENDOR' && state.user.role === 'VENDOR' && item.created_by === state.user.id &&
+    item.status === 'REQUESTED' && ['DRAFT', 'REVISION'].includes(item.brief_review_status)) {
+    buttons.push('<button class="btn btn-ghost" data-content-action="edit">Edit Usulan</button>');
+    buttons.push('<button class="btn btn-primary" data-content-action="submit-vendor-brief">Kirim Brief ke Koordinator</button>');
+  } else if (has('content.edit') && item.proposal_origin !== 'VENDOR' && !['PUBLISHED', 'CANCELLED'].includes(item.status)) {
+    buttons.push('<button class="btn btn-ghost" data-content-action="edit">Edit & Penugasan</button>');
+  }
+  if (item.proposal_origin === 'VENDOR' && item.status === 'REQUESTED' && item.brief_review_status === 'SUBMITTED' &&
+    (state.user.role === 'SUPER_ADMIN' || (state.user.role === 'COORDINATOR' && item.coordinator_id === state.user.id))) {
+    buttons.push('<button class="btn btn-success" data-brief-decision="APPROVED">Setujui Brief</button>');
+    buttons.push('<button class="btn btn-soft" data-brief-decision="REVISION">Minta Revisi</button>');
+    buttons.push('<button class="btn btn-danger" data-brief-decision="REJECTED">Tolak Usulan</button>');
+  }
+  if (has('content.edit') && item.proposal_origin !== 'VENDOR' && !['PUBLISHED', 'CANCELLED'].includes(item.status)) buttons.push(`<button class="btn btn-ghost" data-content-action="assets">Aset Referensi</button>`);
   if ((has('content.discuss') || state.user.role === 'SUPER_ADMIN') && !['CANCELLED'].includes(item.status)) buttons.push(`<button class="btn btn-ghost" data-content-action="discuss">Diskusi & Upload</button>`);
   if ((state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN') && !['CANCELLED', 'PUBLISHED'].includes(item.status)) buttons.push(`<button class="btn btn-soft" data-content-action="share">Salin Link Ringkasan</button>`);
   if (state.user.role === 'VENDOR' && ['ASSIGNED', 'IN_PRODUCTION', 'REVISION_REQUIRED'].includes(item.status) && (item.vendorEditPermissions || []).some(permission => permission !== 'attachments')) buttons.push(`<button class="btn btn-ghost" data-content-action="vendor-edit">Usulkan Edit Materi</button>`);
@@ -821,7 +909,7 @@ function contentActions(item) {
   if (['DRAFT_SUBMITTED', 'IN_REVIEW'].includes(item.status) && (state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-primary" data-content-action="director">Kirim ke Direksi</button>`);
   if (item.status === 'APPROVED' && (has('content.schedule') || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-success" data-content-action="schedule">Buat Jadwal Platform</button>`);
   if (['APPROVED', 'SCHEDULED', 'PUBLISHED'].includes(item.status) && has('library.manage')) buttons.push(`<button class="btn btn-soft" data-content-action="promote">Jadikan Aset Resmi</button>`);
-  for (const next of state.transitions[item.status] || []) {
+  for (const next of vendorBriefPending ? [] : state.transitions[item.status] || []) {
     if (item.status === 'APPROVAL_PENDING') continue;
     if (['DRAFT_SUBMITTED', 'APPROVAL_PENDING', 'SCHEDULED', 'PUBLISHED'].includes(next)) continue;
     if (item.status === 'BRIEFED' && item.production_mode === 'INTERNAL' && next === 'ASSIGNED') continue;
@@ -835,6 +923,7 @@ function contentActions(item) {
 
 function bindDetailActions(item, data = {}) {
   $('[data-content-action="edit"]')?.addEventListener('click', () => showContentForm(item));
+  $('[data-content-action="submit-vendor-brief"]')?.addEventListener('click', () => submitVendorBrief(item));
   $('[data-content-action="vendor-edit"]')?.addEventListener('click', () => showVendorEditForm(item));
   document.querySelectorAll('[data-content-action="discuss"]').forEach(button => button.addEventListener('click', () => showDiscussionForm(item)));
   $('[data-content-action="share"]')?.addEventListener('click', () => showShareForm(item, data.collaborationFiles || []));
@@ -867,7 +956,48 @@ function bindDetailActions(item, data = {}) {
     } catch (error) { toast(error.message, true); }
     finally { setLoading(false); }
   }));
+  document.querySelectorAll('[data-brief-decision]').forEach(button => button.addEventListener('click', () => reviewVendorBrief(item, button.dataset.briefDecision)));
   document.querySelectorAll('[data-transition]').forEach(button => button.addEventListener('click', () => showTransitionForm(item, button.dataset.transition)));
+}
+
+function vendorBriefReviewSection(item, versions) {
+  const labels = { DRAFT: 'Draft Vendor', SUBMITTED: 'Menunggu review Koordinator', REVISION: 'Perlu revisi', APPROVED: 'Brief disetujui', REJECTED: 'Usulan ditolak' };
+  return `<section class="card detail-section" style="margin-top:16px"><div class="card-head"><div><h3>Review Brief Vendor</h3><p class="muted">${escapeHtml(labels[item.brief_review_status] || item.brief_review_status)}</p></div></div>
+    ${versions.length ? `<div class="table-wrap"><table><thead><tr><th>Versi</th><th>Dikirim</th><th>Keputusan</th><th>Catatan Koordinator</th></tr></thead><tbody>
+      ${versions.map(version => `<tr><td>v${version.version_number}</td><td>${escapeHtml(version.submitted_by_name)}<span class="cell-meta">${dateTime(version.submitted_at)}</span></td><td>${statusHtml(version.decision)}</td><td>${escapeHtml(version.review_note || '-')}</td></tr>`).join('')}
+    </tbody></table></div>` : '<p class="muted">Brief belum pernah dikirim untuk review.</p>'}</section>`;
+}
+
+async function submitVendorBrief(item) {
+  if (!window.confirm('Kirim brief ini kepada Koordinator? Materi akan terkunci selama proses review.')) return;
+  setLoading(true);
+  try {
+    await api(`/api/contents/${item.id}/vendor-brief/submit`, { method: 'POST', body: {} });
+    toast('Brief dikirim kepada Koordinator.');
+    await showContentDetail(item.id);
+  } catch (error) { toast(error.message, true); }
+  finally { setLoading(false); }
+}
+
+function reviewVendorBrief(item, decision) {
+  const title = ({ APPROVED: 'Setujui Brief Vendor', REVISION: 'Minta Revisi Brief', REJECTED: 'Tolak Usulan Vendor' })[decision];
+  const requiresNote = decision !== 'APPROVED';
+  openModal(title, `<form id="brief-review-form">
+    <div class="notice ${requiresNote ? 'warn' : 'success'}">${decision === 'APPROVED' ? 'Brief yang disetujui langsung masuk ke tahap Produksi Vendor.' : 'Keputusan dan catatan akan dikirim kepada Vendor.'}</div>
+    <label class="field" style="margin-top:16px"><span>Catatan ${requiresNote ? '*' : '(opsional)'}</span><textarea name="note" maxlength="2000" ${requiresNote ? 'required' : ''}></textarea></label>
+    <div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn ${decision === 'APPROVED' ? 'btn-success' : decision === 'REJECTED' ? 'btn-danger' : 'btn-primary'}">Konfirmasi</button></div>
+  </form>`, item.content_no);
+  $('#brief-review-form [data-close-modal]').addEventListener('click', closeModal);
+  $('#brief-review-form').addEventListener('submit', async event => {
+    event.preventDefault();
+    setLoading(true);
+    try {
+      await api(`/api/contents/${item.id}/vendor-brief/review`, { method: 'POST', body: { decision, note: new FormData(event.currentTarget).get('note') } });
+      toast(decision === 'APPROVED' ? 'Brief disetujui dan Produksi Vendor dimulai.' : decision === 'REVISION' ? 'Brief dikembalikan untuk revisi.' : 'Usulan Vendor ditolak.');
+      await showContentDetail(item.id);
+    } catch (error) { toast(error.message, true); }
+    finally { setLoading(false); }
+  });
 }
 
 function showVendorEditForm(item) {
@@ -1678,17 +1808,17 @@ function updateNotificationCount(count) {
 
 function contentTable(items) {
   if (!items.length) return emptyState('Belum ada konten', 'Data yang sesuai filter belum tersedia.');
-  return `<div class="table-wrap"><table><thead><tr><th>Konten</th><th>Brand / Channel</th><th>Status</th><th>Vendor</th><th>Deadline</th><th>Prioritas</th></tr></thead><tbody>${items.map(item => `<tr data-content-id="${attr(item.id)}"><td><span class="cell-title truncate">${escapeHtml(item.title)}</span><span class="cell-meta">${escapeHtml(item.content_no)} · ${escapeHtml(item.campaign || labelize(item.content_type))}</span></td><td><span class="brand-chip" style="background:${safeColor(item.brand_color)}">${escapeHtml(item.brand_code)}</span><span class="cell-meta truncate">${escapeHtml(item.channels.join(', ') || '-')}</span></td><td>${statusHtml(item.status)}</td><td>${escapeHtml(item.vendor_name || '-')}</td><td>${dateOnly(item.due_date)}<span class="cell-meta">${item.publish_at ? 'Tayang ' + dateTime(item.publish_at) : ''}</span></td><td>${priorityHtml(item.priority)}</td></tr>`).join('')}</tbody></table></div>`;
+  return `<div class="table-wrap"><table><thead><tr><th>Konten</th><th>Brand / Channel</th><th>Status</th><th>Vendor</th><th>Deadline</th><th>Prioritas</th></tr></thead><tbody>${items.map(item => `<tr data-content-id="${attr(item.id)}"><td><span class="cell-title truncate">${escapeHtml(item.title)}</span><span class="cell-meta">${escapeHtml(item.content_no)} · ${escapeHtml(item.campaign || labelize(item.content_type))}</span></td><td><span class="brand-chip" style="background:${safeColor(item.brand_color)}">${escapeHtml(item.brand_code)}</span><span class="cell-meta truncate">${escapeHtml(item.channels.join(', ') || '-')}</span></td><td>${statusHtml(item.status, item.statusLabel)}</td><td>${escapeHtml(item.vendor_name || '-')}</td><td>${dateOnly(item.due_date)}<span class="cell-meta">${item.publish_at ? 'Tayang ' + dateTime(item.publish_at) : ''}</span></td><td>${priorityHtml(item.priority)}</td></tr>`).join('')}</tbody></table></div>`;
 }
 
 function pipelineCard(item) {
-  return `<article class="pipeline-card" data-content-id="${attr(item.id)}"><div class="actions"><span class="brand-chip" style="background:${safeColor(item.brand_color)}">${escapeHtml(item.brand_code)}</span>${priorityHtml(item.priority)}</div><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.content_no)} · ${escapeHtml(item.vendor_name || 'Belum ada vendor')}</p><div class="pipeline-card-foot"><span>${statusHtml(item.status)}</span><span>${dateOnly(item.due_date)}</span></div></article>`;
+  return `<article class="pipeline-card" data-content-id="${attr(item.id)}"><div class="actions"><span class="brand-chip" style="background:${safeColor(item.brand_color)}">${escapeHtml(item.brand_code)}</span>${priorityHtml(item.priority)}</div><h4>${escapeHtml(item.title)}</h4><p>${escapeHtml(item.content_no)} · ${escapeHtml(item.vendor_name || 'Belum ada vendor')}</p><div class="pipeline-card-foot"><span>${statusHtml(item.status, item.statusLabel)}</span><span>${dateOnly(item.due_date)}</span></div></article>`;
 }
 
 function contentMiniRow(item) {
   const date = item.publish_at || item.due_date;
   const parsed = date ? new Date(date) : null;
-  return `<article class="calendar-row" data-content-id="${attr(item.id)}"><div class="calendar-date"><strong>${parsed && !Number.isNaN(parsed) ? String(parsed.getDate()).padStart(2, '0') : '--'}</strong><span>${parsed && !Number.isNaN(parsed) ? parsed.toLocaleDateString('id-ID', { month: 'short' }) : 'TBD'}</span></div><div><strong>${escapeHtml(item.title)}</strong><p class="cell-meta">${escapeHtml(item.content_no)} · ${escapeHtml(item.vendor_name || 'Belum ditugaskan')}</p></div>${statusHtml(item.status)}</article>`;
+  return `<article class="calendar-row" data-content-id="${attr(item.id)}"><div class="calendar-date"><strong>${parsed && !Number.isNaN(parsed) ? String(parsed.getDate()).padStart(2, '0') : '--'}</strong><span>${parsed && !Number.isNaN(parsed) ? parsed.toLocaleDateString('id-ID', { month: 'short' }) : 'TBD'}</span></div><div><strong>${escapeHtml(item.title)}</strong><p class="cell-meta">${escapeHtml(item.content_no)} · ${escapeHtml(item.vendor_name || 'Belum ditugaskan')}</p></div>${statusHtml(item.status, item.statusLabel)}</article>`;
 }
 
 function calendarRows(items) {
@@ -1780,7 +1910,7 @@ function fileSize(value) {
 }
 function labelize(value) { return String(value || '-').toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, char => char.toUpperCase()); }
 function statusClass(value) { return String(value || '').toLowerCase().replace(/_/g, '-'); }
-function statusHtml(value) { return `<span class="status ${statusClass(value)}">${escapeHtml(state.statusLabels[value] || assetStatusLabel(value) || labelize(value))}</span>`; }
+function statusHtml(value, customLabel = '') { return `<span class="status ${statusClass(value)}">${escapeHtml(customLabel || state.statusLabels[value] || assetStatusLabel(value) || labelize(value))}</span>`; }
 function priorityHtml(value) { return `<span class="priority ${statusClass(value)}">${escapeHtml(({ LOW: 'Rendah', NORMAL: 'Normal', HIGH: 'Tinggi', URGENT: 'Mendesak' })[value] || value)}</span>`; }
 function safeColor(value) { return /^#[0-9a-f]{6}$/i.test(String(value || '')) ? value : '#2563eb'; }
 function brandColor(code) { return code === 'IMAS' ? 'var(--secondary)' : 'var(--primary)'; }

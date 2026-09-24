@@ -26,7 +26,7 @@ const {
 } = require('./oidc');
 const { installWorkflowV4 } = require('./workflow-v4');
 
-const APP_VERSION = '0.5.0';
+const APP_VERSION = '0.6.0';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';
@@ -338,6 +338,10 @@ function serializeContent(row) {
   if (!row) return null;
   const productionMode = row.production_mode || 'VENDOR';
   let statusLabel = STATUS_LABELS[row.status] || row.status;
+  if (row.proposal_origin === 'VENDOR' && row.status === 'REQUESTED') {
+    statusLabel = ({ DRAFT: 'Draft Usulan Vendor', SUBMITTED: 'Review Brief Vendor', REVISION: 'Revisi Brief Vendor' })[row.brief_review_status] || statusLabel;
+  }
+  if (row.proposal_origin === 'VENDOR' && row.brief_review_status === 'REJECTED') statusLabel = 'Usulan Ditolak';
   if (productionMode === 'INTERNAL' && row.status === 'IN_PRODUCTION') statusLabel = 'Produksi Internal';
   if (productionMode === 'INTERNAL' && row.status === 'REVISION_REQUIRED') statusLabel = 'Revisi Internal';
   return {
@@ -776,6 +780,13 @@ app.get('/api/contents', authRequired, (req, res) => {
 
 app.post('/api/contents', authRequired, permissionRequired('content.create'), (req, res, next) => {
   try {
+    const vendorProposal = req.user.role === 'VENDOR';
+    if (vendorProposal && !req.user.vendorId) throw new AppError('Akun Vendor belum terhubung ke data Vendor.', 403);
+    if (vendorProposal && req.body.productionMode && req.body.productionMode !== 'VENDOR') throw new AppError('Usulan Vendor wajib memakai produksi Vendor.', 403);
+    const coordinatorId = vendorProposal ? cleanText(req.body.coordinatorId, 100) : cleanText(req.body.coordinatorId, 100) || req.user.id;
+    if (vendorProposal && !db.prepare("SELECT id FROM users WHERE id=? AND role='COORDINATOR' AND active=1").get(coordinatorId)) {
+      throw new AppError('Pilih Koordinator aktif untuk menerima usulan Vendor.');
+    }
     const id = newId('cnt');
     const timestamp = nowIso();
     const channelIds = arrayValue(req.body.channelIds);
@@ -792,7 +803,7 @@ app.post('/api/contents', authRequired, permissionRequired('content.create'), (r
       category: cleanText(req.body.category || 'EDUCATION', 50),
       contentType: cleanText(req.body.contentType || 'SOCIAL_POST', 50),
       approvalLevel: String(req.body.approvalLevel || 'REGULAR') === 'SENSITIVE' ? 'SENSITIVE' : 'REGULAR',
-      productionMode,
+      productionMode: vendorProposal ? 'VENDOR' : productionMode,
       priority: ['LOW', 'NORMAL', 'HIGH', 'URGENT'].includes(req.body.priority) ? req.body.priority : 'NORMAL',
       dueDate: cleanText(req.body.dueDate, 20) || null,
       publishAt: cleanText(req.body.publishAt, 40) || null,
@@ -802,19 +813,20 @@ app.post('/api/contents', authRequired, permissionRequired('content.create'), (r
       hashtags: cleanText(req.body.hashtags, 1000),
       callToAction: cleanText(req.body.callToAction, 1000),
       referenceUrls: referenceUrls(req.body.referenceUrls),
-      vendorEditPermissions: productionMode === 'VENDOR' ? vendorEditPermissions(req.body.vendorEditPermissions) : [],
+      vendorEditPermissions: !vendorProposal && productionMode === 'VENDOR' ? vendorEditPermissions(req.body.vendorEditPermissions) : [],
       internalNotes: cleanText(req.body.internalNotes, 2000),
-      coordinatorId: cleanText(req.body.coordinatorId, 100) || req.user.id,
-      vendorId: productionMode === 'VENDOR' ? cleanText(req.body.vendorId, 100) || null : null,
+      coordinatorId,
+      vendorId: vendorProposal ? req.user.vendorId : productionMode === 'VENDOR' ? cleanText(req.body.vendorId, 100) || null : null,
       reviewerId: cleanText(req.body.reviewerId, 100) || null,
       approverId: cleanText(req.body.approverId, 100) || null,
       uploaderId: cleanText(req.body.uploaderId, 100) || null
     };
     db.transaction(() => {
-      db.prepare(`INSERT INTO contents(id,content_no,title,description,objective,audience,brand_id,campaign,category,content_type,approval_level,production_mode,status,priority,due_date,publish_at,budget,brief,caption,hashtags,call_to_action,reference_urls_json,vendor_edit_permissions_json,internal_notes,coordinator_id,vendor_id,reviewer_id,approver_id,uploader_id,created_by,created_at,updated_at)
-        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,'REQUESTED',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
+      db.prepare(`INSERT INTO contents(id,content_no,title,description,objective,audience,brand_id,campaign,category,content_type,approval_level,production_mode,proposal_origin,brief_review_status,status,priority,due_date,publish_at,budget,brief,caption,hashtags,call_to_action,reference_urls_json,vendor_edit_permissions_json,internal_notes,coordinator_id,vendor_id,reviewer_id,approver_id,uploader_id,created_by,created_at,updated_at)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,'REQUESTED',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
         payload.id, payload.contentNo, payload.title, payload.description, payload.objective, payload.audience,
         payload.brandId, payload.campaign, payload.category, payload.contentType, payload.approvalLevel, payload.productionMode,
+        vendorProposal ? 'VENDOR' : 'COORDINATOR', vendorProposal ? 'DRAFT' : 'NONE',
         payload.priority, payload.dueDate, payload.publishAt, payload.budget, payload.brief, payload.caption,
         payload.hashtags, payload.callToAction, JSON.stringify(payload.referenceUrls), JSON.stringify(payload.vendorEditPermissions), payload.internalNotes, payload.coordinatorId, payload.vendorId,
         payload.reviewerId, payload.approverId, payload.uploaderId, req.user.id, timestamp, timestamp
@@ -823,10 +835,10 @@ app.post('/api/contents', authRequired, permissionRequired('content.create'), (r
         db.prepare('INSERT OR IGNORE INTO content_channels(content_id,channel_id) VALUES(?,?)').run(id, channelId);
       }
       db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
-        VALUES(?,?,NULL,'REQUESTED','CREATE',?,?,?)`).run(newId('evt'), id, 'Permintaan konten dibuat', req.user.id, timestamp);
+        VALUES(?,?,NULL,'REQUESTED','CREATE',?,?,?)`).run(newId('evt'), id, vendorProposal ? 'Draft usulan Vendor dibuat' : 'Permintaan konten dibuat', req.user.id, timestamp);
       recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: id, action: 'CREATE', after: payload, ip: requestIp(req) });
     })();
-    notifyRole('COORDINATOR', 'CONTENT_CREATED', `Permintaan baru ${payload.contentNo}`, payload.title, `/contents/${id}`);
+    if (!vendorProposal) notifyRole('COORDINATOR', 'CONTENT_CREATED', `Permintaan baru ${payload.contentNo}`, payload.title, `/contents/${id}`);
     res.status(201).json({ item: getContent(id, req.user) });
   } catch (error) { next(error); }
 });
@@ -869,12 +881,141 @@ app.get('/api/contents/:id', authRequired, (req, res) => {
       const { link_token_ciphertext, ...safe } = row;
       return { ...safe, url: token ? `/approval.html?token=${token}` : null };
     });
-  res.json({ item, versions, events, proofs, assets, discussions, vendorEdits, vendorEditAttributions, collaborationFiles, schedules, directorApprovals });
+  const briefVersions = db.prepare(`SELECT vbv.*,u.name AS submitted_by_name,r.name AS reviewed_by_name FROM vendor_brief_versions vbv
+    JOIN users u ON u.id=vbv.submitted_by LEFT JOIN users r ON r.id=vbv.reviewed_by
+    WHERE vbv.content_id=? ORDER BY vbv.version_number DESC`).all(item.id)
+    .map(row => ({ ...row, snapshot: jsonObject(row.snapshot_json, {}), snapshot_json: undefined }));
+  res.json({ item, versions, events, proofs, assets, discussions, vendorEdits, vendorEditAttributions, collaborationFiles, schedules, directorApprovals, briefVersions });
+});
+
+const VENDOR_BRIEF_FIELDS = Object.freeze({
+  title: ['title', 200], description: ['description', 2000], objective: ['objective', 1000],
+  audience: ['audience', 1000], brandId: ['brand_id', 100], campaign: ['campaign', 150],
+  category: ['category', 50], contentType: ['content_type', 50], brief: ['brief', 5000],
+  caption: ['caption', 5000], hashtags: ['hashtags', 1000], callToAction: ['call_to_action', 1000],
+  dueDate: ['due_date', 20], publishAt: ['publish_at', 40]
+});
+
+app.patch('/api/contents/:id/vendor-brief', authRequired, (req, res, next) => {
+  try {
+    const item = getContent(req.params.id, req.user);
+    if (item.proposal_origin !== 'VENDOR' || req.user.role !== 'VENDOR' || item.created_by !== req.user.id || item.vendor_id !== req.user.vendorId) {
+      throw new AppError('Hanya pembuat usulan Vendor yang dapat mengubah brief.', 403);
+    }
+    if (item.status !== 'REQUESTED' || !['DRAFT', 'REVISION'].includes(item.brief_review_status)) {
+      throw new AppError('Brief sedang direview atau sudah diputuskan.', 409);
+    }
+    const sets = [];
+    const values = [];
+    for (const [input, [column, max]] of Object.entries(VENDOR_BRIEF_FIELDS)) {
+      if (!Object.hasOwn(req.body, input)) continue;
+      const value = input === 'title' ? requiredText(req.body[input], 'Judul', max) : cleanText(req.body[input], max);
+      sets.push(`${column}=?`);
+      values.push(value || null);
+    }
+    if (Object.hasOwn(req.body, 'referenceUrls')) {
+      sets.push('reference_urls_json=?');
+      values.push(JSON.stringify(referenceUrls(req.body.referenceUrls)));
+    }
+    if (Object.hasOwn(req.body, 'coordinatorId')) {
+      const coordinatorId = cleanText(req.body.coordinatorId, 100);
+      if (!db.prepare("SELECT id FROM users WHERE id=? AND role='COORDINATOR' AND active=1").get(coordinatorId)) {
+        throw new AppError('Pilih Koordinator aktif untuk menerima usulan Vendor.');
+      }
+      sets.push('coordinator_id=?');
+      values.push(coordinatorId);
+    }
+    const channelIds = Object.hasOwn(req.body, 'channelIds') ? arrayValue(req.body.channelIds) : null;
+    if (channelIds && !channelIds.length) throw new AppError('Pilih minimal satu channel.');
+    if (!sets.length && !channelIds) throw new AppError('Tidak ada perubahan yang dikirim.');
+    const timestamp = nowIso();
+    db.transaction(() => {
+      if (sets.length) db.prepare(`UPDATE contents SET ${sets.join(',')},updated_at=? WHERE id=?`).run(...values, timestamp, item.id);
+      if (channelIds) {
+        db.prepare('DELETE FROM content_channels WHERE content_id=?').run(item.id);
+        for (const channelId of channelIds) db.prepare('INSERT INTO content_channels(content_id,channel_id) VALUES(?,?)').run(item.id, channelId);
+      }
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: item.id, action: 'VENDOR_BRIEF_EDIT',
+        after: { fields: Object.keys(req.body) }, ip: requestIp(req) });
+    })();
+    res.json({ item: getContent(item.id, req.user) });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/contents/:id/vendor-brief/submit', authRequired, (req, res, next) => {
+  try {
+    const item = getContent(req.params.id, req.user);
+    if (item.proposal_origin !== 'VENDOR' || req.user.role !== 'VENDOR' || item.created_by !== req.user.id || item.vendor_id !== req.user.vendorId) {
+      throw new AppError('Hanya pembuat usulan Vendor yang dapat mengirim brief.', 403);
+    }
+    if (item.status !== 'REQUESTED' || !['DRAFT', 'REVISION'].includes(item.brief_review_status)) {
+      throw new AppError('Brief sedang direview atau sudah diputuskan.', 409);
+    }
+    if (!item.brief?.trim()) throw new AppError('Brief Produksi wajib diisi sebelum dikirim.');
+    if (!item.channelIds.length) throw new AppError('Pilih minimal satu channel sebelum mengirim.');
+    const timestamp = nowIso();
+    const version = Number(db.prepare('SELECT COALESCE(MAX(version_number),0)+1 AS n FROM vendor_brief_versions WHERE content_id=?').get(item.id).n);
+    const snapshot = {
+      title: item.title, description: item.description, objective: item.objective, audience: item.audience,
+      brandId: item.brand_id, campaign: item.campaign, category: item.category, contentType: item.content_type,
+      brief: item.brief, caption: item.caption, hashtags: item.hashtags, callToAction: item.call_to_action,
+      dueDate: item.due_date, publishAt: item.publish_at, referenceUrls: item.referenceUrls, channelIds: item.channelIds,
+      files: db.prepare("SELECT id,original_name,mime_type,file_size FROM collaboration_files WHERE content_id=? AND phase='BRIEF'").all(item.id)
+    };
+    db.transaction(() => {
+      db.prepare('INSERT INTO vendor_brief_versions(id,content_id,version_number,snapshot_json,submitted_by,submitted_at) VALUES(?,?,?,?,?,?)')
+        .run(newId('vbv'), item.id, version, JSON.stringify(snapshot), req.user.id, timestamp);
+      db.prepare("UPDATE contents SET brief_review_status='SUBMITTED',updated_at=? WHERE id=?").run(timestamp, item.id);
+      db.prepare("INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at) VALUES(?,?,'REQUESTED','REQUESTED','VENDOR_BRIEF_SUBMIT',?,?,?)")
+        .run(newId('evt'), item.id, `Usulan brief versi ${version} dikirim`, req.user.id, timestamp);
+      recordAudit({ actorId: req.user.id, entityType: 'VENDOR_BRIEF', entityId: item.id, action: 'SUBMIT',
+        after: { version }, ip: requestIp(req) });
+    })();
+    notifyUser(item.coordinator_id, 'VENDOR_BRIEF_SUBMITTED', `Review brief ${item.content_no}`, item.title, `/contents/${item.id}`);
+    res.json({ item: getContent(item.id, req.user), version });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/contents/:id/vendor-brief/review', authRequired, (req, res, next) => {
+  try {
+    const item = getContent(req.params.id, req.user);
+    if (item.proposal_origin !== 'VENDOR' || !['COORDINATOR', 'SUPER_ADMIN'].includes(req.user.role) ||
+      (req.user.role === 'COORDINATOR' && item.coordinator_id !== req.user.id)) {
+      throw new AppError('Review brief hanya untuk Koordinator yang ditugaskan.', 403);
+    }
+    if (item.status !== 'REQUESTED' || item.brief_review_status !== 'SUBMITTED') throw new AppError('Tidak ada brief yang menunggu review.', 409);
+    const decision = String(req.body.decision || '');
+    if (!['APPROVED', 'REVISION', 'REJECTED'].includes(decision)) throw new AppError('Keputusan brief tidak valid.');
+    const note = cleanText(req.body.note, 2000);
+    if (decision !== 'APPROVED' && !note) throw new AppError('Alasan revisi atau penolakan wajib diisi.');
+    const briefVersion = db.prepare("SELECT id,version_number FROM vendor_brief_versions WHERE content_id=? AND decision='PENDING' ORDER BY version_number DESC LIMIT 1").get(item.id);
+    if (!briefVersion) throw new AppError('Versi brief belum ditemukan.', 409);
+    const timestamp = nowIso();
+    const nextStatus = decision === 'APPROVED' ? 'IN_PRODUCTION' : decision === 'REJECTED' ? 'CANCELLED' : 'REQUESTED';
+    db.transaction(() => {
+      db.prepare('UPDATE vendor_brief_versions SET decision=?,reviewed_by=?,review_note=?,reviewed_at=? WHERE id=?')
+        .run(decision, req.user.id, note, timestamp, briefVersion.id);
+      db.prepare('UPDATE contents SET status=?,brief_review_status=?,updated_at=? WHERE id=?').run(nextStatus, decision, timestamp, item.id);
+      db.prepare('INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at) VALUES(?,?,?,?,?,?,?,?)')
+        .run(newId('evt'), item.id, 'REQUESTED', nextStatus, `VENDOR_BRIEF_${decision}`, note, req.user.id, timestamp);
+      recordAudit({ actorId: req.user.id, entityType: 'VENDOR_BRIEF', entityId: item.id, action: decision,
+        after: { version: briefVersion.version_number, status: nextStatus }, reason: note, ip: requestIp(req) });
+    })();
+    notifyUser(item.created_by, 'VENDOR_BRIEF_REVIEW', `Brief ${item.content_no}: ${decision}`,
+      note || 'Brief disetujui Koordinator dan produksi dapat dimulai.', `/contents/${item.id}`);
+    res.json({ item: getContent(item.id, req.user) });
+  } catch (error) { next(error); }
 });
 
 app.patch('/api/contents/:id', authRequired, permissionRequired('content.edit'), (req, res, next) => {
   try {
     const current = getContent(req.params.id, req.user);
+    if (current.proposal_origin === 'VENDOR') {
+      const protectedFields = [...Object.keys(VENDOR_BRIEF_FIELDS), 'referenceUrls', 'channelIds', 'vendorId', 'productionMode', 'vendorEditPermissions'];
+      if (protectedFields.some(field => Object.hasOwn(req.body, field))) {
+        throw new AppError('Materi usulan Vendor hanya dapat diedit pembuatnya sebelum disetujui.', 403);
+      }
+    }
     if (['PUBLISHED', 'CANCELLED'].includes(current.status)) throw new AppError('Konten yang tayang atau dibatalkan tidak dapat diedit.', 409);
     if (current.status === 'APPROVAL_PENDING') throw new AppError('Batalkan link approval Direksi sebelum mengubah materi.', 409);
     const allowed = {
@@ -1056,6 +1197,9 @@ app.post('/api/contents/:id/transition', authRequired, (req, res, next) => {
     const item = getContent(req.params.id, req.user);
     const toStatus = String(req.body.toStatus || '');
     assertTransition(item.status, toStatus);
+    if (item.proposal_origin === 'VENDOR' && item.brief_review_status !== 'APPROVED') {
+      throw new AppError('Gunakan keputusan review brief untuk usulan Vendor.', 409);
+    }
     if (toStatus === 'DRAFT_SUBMITTED') throw new AppError('Gunakan tombol Kirim Hasil ke Koordinator.', 409);
     if (toStatus === 'PUBLISHED') throw new AppError('Gunakan menu Bukti Tayang untuk menandai konten sebagai tayang.', 409);
     const internalProduction = item.production_mode === 'INTERNAL';

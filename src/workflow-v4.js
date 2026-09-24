@@ -137,8 +137,14 @@ function installWorkflowV4(app, options) {
       const phase = String(req.body.phase || 'PRE_PRODUCTION');
       if (!PHASES.has(phase)) throw new AppError('Tahap berkas tidak valid.');
       if (req.user.role === 'VENDOR' && phase === 'BRIEF') {
-        if (!(item.vendorEditPermissions || []).includes('attachments')) throw new AppError('Koordinator belum memberikan akses upload lampiran Brief.', 403);
-        if (!['ASSIGNED', 'IN_PRODUCTION', 'REVISION_REQUIRED'].includes(item.status)) throw new AppError('Lampiran Brief hanya dapat ditambah vendor saat Pra-Produksi, Produksi, atau Revisi.', 409);
+        if (item.proposal_origin === 'VENDOR') {
+          if (item.created_by !== req.user.id || item.status !== 'REQUESTED' || !['DRAFT', 'REVISION'].includes(item.brief_review_status)) {
+            throw new AppError('Lampiran usulan hanya dapat ditambah sebelum brief dikirim.', 409);
+          }
+        } else {
+          if (!(item.vendorEditPermissions || []).includes('attachments')) throw new AppError('Koordinator belum memberikan akses upload lampiran Brief.', 403);
+          if (!['ASSIGNED', 'IN_PRODUCTION', 'REVISION_REQUIRED'].includes(item.status)) throw new AppError('Lampiran Brief hanya dapat ditambah vendor saat Pra-Produksi, Produksi, atau Revisi.', 409);
+        }
       }
       if (req.user.role === 'VENDOR' && phase === 'PRE_PRODUCTION' && item.status !== 'ASSIGNED') throw new AppError('Draft pra-produksi diunggah saat tahap Pra-Produksi.', 409);
       if (req.user.role === 'VENDOR' && phase === 'PRODUCTION_RESULT' && item.status !== 'IN_PRODUCTION') throw new AppError('Hasil produksi diunggah saat tahap Produksi.', 409);
@@ -187,6 +193,11 @@ function installWorkflowV4(app, options) {
     try {
       const upload = db.prepare('SELECT * FROM chunk_upload_sessions WHERE id=?').get(req.params.id);
       if (!upload || upload.created_by !== req.user.id || upload.status !== 'ACTIVE') throw new AppError('Sesi upload tidak ditemukan.', 404);
+      const item = getContent(upload.content_id, req.user);
+      if (item.proposal_origin === 'VENDOR' && upload.phase === 'BRIEF' && req.user.role === 'VENDOR' &&
+        (item.created_by !== req.user.id || item.status !== 'REQUESTED' || !['DRAFT', 'REVISION'].includes(item.brief_review_status))) {
+        throw new AppError('Brief sudah dikirim untuk review; lampiran terkunci.', 409);
+      }
       if (upload.received_size !== upload.total_size) throw new AppError('Upload belum lengkap.', 409);
       const source = absoluteUpload(upload.temp_path);
       const extension = path.extname(upload.original_name).replace(/[^.a-z0-9]/gi, '').slice(0, 12);

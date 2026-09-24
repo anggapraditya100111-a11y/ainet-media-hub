@@ -268,4 +268,51 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   const report = await request(baseUrl, '/api/reports/summary?from=2026-01-01&to=2026-12-31', {}, adminCookie);
   assert.equal(report.response.status, 200, JSON.stringify(report.payload));
   assert.ok(report.payload.byProductionMode.some(row => row.mode === 'INTERNAL' && row.count >= 1));
+
+  const vendorProposal = await request(baseUrl, '/api/contents', { method: 'POST', body: {
+    title: 'Ide Konten dari Vendor', brandId: 'brand-ainet', channelIds: ['channel-tiktok'],
+    contentType: 'REELS', objective: 'Meningkatkan engagement.', audience: 'Keluarga muda.',
+    brief: 'Video singkat dengan alur edukasi dan penutup CTA.', caption: 'Internet lancar untuk keluarga.',
+    hashtags: '#AINET', callToAction: 'Cek jangkauan sekarang.', coordinatorId: byRole('COORDINATOR'),
+    productionMode: 'VENDOR', vendorId: 'vendor-yang-tidak-valid'
+  } }, vendorCookie);
+  assert.equal(vendorProposal.response.status, 201, JSON.stringify(vendorProposal.payload));
+  const proposalId = vendorProposal.payload.item.id;
+  assert.equal(vendorProposal.payload.item.proposal_origin, 'VENDOR');
+  assert.equal(vendorProposal.payload.item.brief_review_status, 'DRAFT');
+  assert.equal(vendorProposal.payload.item.vendor_id, vendorId, 'Vendor harus otomatis mengikuti akun pembuat');
+  await chunkUpload(baseUrl, proposalId, vendorCookie, 'referensi-usulan.pdf', '%PDF-1.4 referensi usulan', 'Referensi ide Vendor.', 'BRIEF');
+
+  result = await request(baseUrl, `/api/contents/${proposalId}/transition`, { method: 'POST', body: { toStatus: 'BRIEFED' } }, coordinatorCookie);
+  assert.equal(result.response.status, 409, 'usulan Vendor wajib melalui review brief');
+  result = await request(baseUrl, `/api/contents/${proposalId}/vendor-brief/submit`, { method: 'POST', body: {} }, vendorCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  assert.equal(result.payload.item.brief_review_status, 'SUBMITTED');
+  result = await request(baseUrl, `/api/contents/${proposalId}/vendor-brief`, { method: 'PATCH', body: { brief: 'Edit saat direview.' } }, vendorCookie);
+  assert.equal(result.response.status, 409, 'brief harus terkunci selama review');
+
+  result = await request(baseUrl, `/api/contents/${proposalId}/vendor-brief/review`, {
+    method: 'POST', body: { decision: 'REVISION', note: 'Tambahkan penjelasan manfaat utama.' }
+  }, coordinatorCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  assert.equal(result.payload.item.brief_review_status, 'REVISION');
+  result = await request(baseUrl, `/api/contents/${proposalId}/vendor-brief`, {
+    method: 'PATCH', body: { brief: 'Video edukasi dengan tiga manfaat utama dan penutup CTA.', channelIds: ['channel-tiktok'] }
+  }, vendorCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  await request(baseUrl, `/api/contents/${proposalId}/vendor-brief/submit`, { method: 'POST', body: {} }, vendorCookie);
+
+  result = await request(baseUrl, `/api/contents/${proposalId}`, { method: 'PATCH', body: { brief: 'Diubah Koordinator.' } }, coordinatorCookie);
+  assert.equal(result.response.status, 403, 'Koordinator tidak boleh mengubah materi usulan Vendor');
+  result = await request(baseUrl, `/api/contents/${proposalId}/vendor-brief/review`, {
+    method: 'POST', body: { decision: 'APPROVED', note: 'Konsep sesuai.' }
+  }, coordinatorCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  assert.equal(result.payload.item.status, 'IN_PRODUCTION', 'brief disetujui langsung membuka Produksi Vendor');
+  assert.equal(result.payload.item.brief_review_status, 'APPROVED');
+  const proposalDetail = await request(baseUrl, `/api/contents/${proposalId}`, {}, coordinatorCookie);
+  assert.equal(proposalDetail.response.status, 200);
+  assert.equal(proposalDetail.payload.briefVersions.length, 2);
+  assert.equal(proposalDetail.payload.briefVersions[0].decision, 'APPROVED');
+  assert.equal(proposalDetail.payload.briefVersions[1].decision, 'REVISION');
 });

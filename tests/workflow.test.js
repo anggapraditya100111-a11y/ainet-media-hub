@@ -21,6 +21,7 @@ test('produksi internal dapat dimulai langsung setelah brief siap', () => {
 });
 
 test('vendor hanya memiliki izin produksi dan library baca', () => {
+  assert.equal(hasPermission('VENDOR', 'content.create'), true);
   assert.equal(hasPermission('VENDOR', 'content.upload_draft'), true);
   assert.equal(hasPermission('VENDOR', 'library.download'), true);
   assert.equal(hasPermission('VENDOR', 'content.approve_production'), false);

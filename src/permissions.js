@@ -16,7 +16,7 @@ const ROLE_PERMISSIONS = Object.freeze({
     'vendor.view', 'vendor.manage', 'reports.view', 'notifications.view'
   ],
   VENDOR: [
-    'dashboard.view', 'calendar.view', 'content.view_assigned', 'content.production',
+    'dashboard.view', 'calendar.view', 'content.view_assigned', 'content.create', 'content.production',
     'content.upload_draft', 'content.discuss', 'library.view', 'library.download', 'notifications.view'
   ],
   UPLOADER: [

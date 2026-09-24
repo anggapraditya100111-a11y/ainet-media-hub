@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.0 — 2026-09-24
+
+- Menambahkan alur usulan konten yang seluruh ide dan brief awalnya dibuat oleh Vendor.
+- Vendor dapat menyimpan draft, memilih Koordinator reviewer, mengisi materi lengkap, serta mengunggah gambar, video, dan PDF referensi.
+- Koordinator dapat menyetujui brief, meminta revisi dengan catatan wajib, atau menolak usulan tanpa mengubah materi milik Vendor.
+- Mengunci brief Vendor selama menunggu review dan memulai produksi Vendor secara otomatis setelah brief disetujui.
+- Menyimpan snapshot setiap versi brief beserta lampiran, pengirim, keputusan, reviewer, catatan, dan waktu review.
+- Menambahkan status khusus Draft Usulan, Menunggu Review Brief, Revisi Brief, dan Usulan Ditolak pada daftar serta detail konten.
+- Mempertahankan alur permintaan oleh Koordinator dan pilihan Produksi Internal sebagai alur terpisah.
+
 ## 0.5.0 — 2026-09-18
 
 - Menambahkan pilihan metode **Produksi Vendor** atau **Produksi Internal oleh Koordinator** pada permintaan konten.

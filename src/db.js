@@ -127,6 +127,8 @@ function initDatabase() {
       content_type TEXT NOT NULL DEFAULT 'SOCIAL_POST',
       approval_level TEXT NOT NULL DEFAULT 'REGULAR' CHECK(approval_level IN ('REGULAR','SENSITIVE')),
       production_mode TEXT NOT NULL DEFAULT 'VENDOR' CHECK(production_mode IN ('VENDOR','INTERNAL')),
+      proposal_origin TEXT NOT NULL DEFAULT 'COORDINATOR' CHECK(proposal_origin IN ('COORDINATOR','VENDOR')),
+      brief_review_status TEXT NOT NULL DEFAULT 'NONE' CHECK(brief_review_status IN ('NONE','DRAFT','SUBMITTED','REVISION','APPROVED','REJECTED')),
       status TEXT NOT NULL DEFAULT 'REQUESTED' CHECK(status IN ('REQUESTED','BRIEFED','ASSIGNED','IN_PRODUCTION','DRAFT_SUBMITTED','IN_REVIEW','REVISION_REQUIRED','APPROVAL_PENDING','APPROVED','SCHEDULED','PUBLISHED','CANCELLED')),
       priority TEXT NOT NULL DEFAULT 'NORMAL' CHECK(priority IN ('LOW','NORMAL','HIGH','URGENT')),
       due_date TEXT,
@@ -486,8 +488,24 @@ function migrateApprovalSecurityAndReferences() {
   if (!contentColumns.has('reference_urls_json')) db.exec("ALTER TABLE contents ADD COLUMN reference_urls_json TEXT NOT NULL DEFAULT '[]'");
   if (!contentColumns.has('vendor_edit_permissions_json')) db.exec("ALTER TABLE contents ADD COLUMN vendor_edit_permissions_json TEXT NOT NULL DEFAULT '[]'");
   if (!contentColumns.has('production_mode')) db.exec("ALTER TABLE contents ADD COLUMN production_mode TEXT NOT NULL DEFAULT 'VENDOR' CHECK(production_mode IN ('VENDOR','INTERNAL'))");
+  if (!contentColumns.has('proposal_origin')) db.exec("ALTER TABLE contents ADD COLUMN proposal_origin TEXT NOT NULL DEFAULT 'COORDINATOR' CHECK(proposal_origin IN ('COORDINATOR','VENDOR'))");
+  if (!contentColumns.has('brief_review_status')) db.exec("ALTER TABLE contents ADD COLUMN brief_review_status TEXT NOT NULL DEFAULT 'NONE' CHECK(brief_review_status IN ('NONE','DRAFT','SUBMITTED','REVISION','APPROVED','REJECTED'))");
 
   db.exec(`
+    CREATE TABLE IF NOT EXISTS vendor_brief_versions (
+      id TEXT PRIMARY KEY,
+      content_id TEXT NOT NULL REFERENCES contents(id) ON DELETE CASCADE,
+      version_number INTEGER NOT NULL,
+      snapshot_json TEXT NOT NULL,
+      submitted_by TEXT NOT NULL REFERENCES users(id),
+      submitted_at TEXT NOT NULL,
+      decision TEXT NOT NULL DEFAULT 'PENDING' CHECK(decision IN ('PENDING','REVISION','APPROVED','REJECTED')),
+      reviewed_by TEXT REFERENCES users(id),
+      review_note TEXT,
+      reviewed_at TEXT,
+      UNIQUE(content_id,version_number)
+    );
+    CREATE INDEX IF NOT EXISTS idx_vendor_brief_versions_content ON vendor_brief_versions(content_id,version_number DESC);
     CREATE TABLE IF NOT EXISTS vendor_content_edits (
       id TEXT PRIMARY KEY,
       content_id TEXT NOT NULL,
