@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.1 — 2026-09-24
+
+- Memperjelas setiap judul materi dengan header, garis aksen, dan jarak yang konsisten.
+- Memperkecil tipografi isi agar judul dan materi lebih mudah dibedakan.
+- Menampilkan usulan Vendor yang masih menunggu sebagai kartu review khusus.
+- Merapikan usulan yang sudah diterima atau ditolak ke dalam bagian Riwayat Usulan yang dapat dibuka saat diperlukan.
+- Menyederhanakan label atribusi menjadi Diedit oleh [nama vendor].
+
 ## 0.7.0 — 2026-09-24
 
 - Menyederhanakan alur menjadi lima tahap utama: Brief & Diskusi, Produksi, Review Hasil, Approval Direksi opsional, serta Jadwal & Tayang.

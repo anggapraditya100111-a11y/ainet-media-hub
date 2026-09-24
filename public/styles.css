@@ -182,7 +182,9 @@ tbody tr:last-child td { border-bottom: 0; }
 .status.in-production, .status.draft-submitted { color: #8552ad; background: #f3eafb; }
 .status.in-review, .status.approval-pending { color: #a36008; background: #fff2d9; }
 .status.revision-required, .status.cancelled, .status.expired { color: var(--danger); background: var(--danger-soft); }
-.status.approved, .status.scheduled, .status.active { color: var(--success); background: var(--success-soft); }
+.status.approved, .status.scheduled, .status.active, .status.accepted { color: var(--success); background: var(--success-soft); }
+.status.pending { color: var(--warning); background: var(--warning-soft); }
+.status.rejected { color: var(--danger); background: var(--danger-soft); }
 .status.published { color: #1762b0; background: #e5f2ff; }
 .status.archived { color: #68758b; background: #edf0f4; }
 .priority { color: #5d6a80; background: #eef1f6; }
@@ -274,18 +276,33 @@ tbody tr:last-child td { border-bottom: 0; }
 .reference-link span { font-weight: 700; font-size: 12px; }
 .reference-link small { margin-top: 3px; color: var(--muted); font-size: 10px; }
 .pin-profile-input { letter-spacing: .2em; }
-.vendor-edit-badge { display: inline-flex; margin: 5px 0 8px; padding: 5px 9px; border-radius: 999px; color: var(--success); background: var(--success-soft); font-size: 10px; font-weight: 800; }
+.vendor-edit-badge { display: inline-flex; align-items: center; margin: 0; padding: 5px 9px; border-radius: 999px; color: var(--success); background: var(--success-soft); font-size: 9px; font-weight: 800; white-space: nowrap; }
 .readonly-material { min-height: 74px; max-height: 180px; overflow: auto; padding: 12px; border: 1px dashed var(--line); border-radius: 12px; color: var(--muted); background: var(--canvas); white-space: pre-wrap; }
 .vendor-edit-list { display: grid; gap: 10px; margin-top: 12px; }
 .vendor-edit-row { padding: 13px; border: 1px solid var(--line); border-radius: 13px; background: var(--canvas); }
 .vendor-edit-row p { margin: 10px 0; white-space: pre-wrap; }
 .vendor-edit-row small { display: block; color: var(--muted); }
 .vendor-edit-row .actions { margin-top: 10px; }
-.vendor-material-section { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
+.vendor-material-section { overflow: hidden; margin-top: 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+.vendor-material-section:first-child { margin-top: 0; }
+.vendor-material-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px; padding: 11px 13px; border-bottom: 1px solid var(--line); background: var(--canvas); box-shadow: inset 4px 0 0 var(--primary); }
+.vendor-material-header h3 { margin: 0; color: var(--ink); font-size: 14px; font-weight: 850; letter-spacing: -.01em; }
+.vendor-material-body { padding: 13px 14px 15px; }
+.vendor-material-body > .rich-text { color: var(--muted); font-size: 12px; line-height: 1.65; }
 .inline-vendor-edit, .inline-brief-upload { display: grid; gap: 10px; margin-top: 13px; padding: 13px; border: 1px solid var(--line); border-radius: 13px; background: var(--canvas); }
 .inline-vendor-edit textarea { min-height: 92px; }
 .inline-review-list { margin-top: 10px; }
 .inline-brief-upload { margin-bottom: 14px; }
+.vendor-edit-pending { margin-top: 13px; padding: 12px 13px; border: 1px solid color-mix(in srgb, var(--warning) 30%, var(--line)); border-radius: 12px; background: color-mix(in srgb, var(--warning-soft) 65%, var(--surface)); }
+.vendor-edit-pending .card-head, .vendor-edit-history-row .card-head { padding: 0; border: 0; background: transparent; }
+.vendor-edit-pending .card-head strong, .vendor-edit-history-row .card-head strong { font-size: 12px; }
+.vendor-edit-pending p, .vendor-edit-history-row p { margin: 10px 0; font-size: 12px; line-height: 1.55; white-space: pre-wrap; }
+.vendor-edit-pending small, .vendor-edit-history-row small { display: block; color: var(--muted); font-size: 10px; }
+.vendor-edit-pending .actions { margin-top: 10px; }
+.vendor-edit-history { margin-top: 12px; border-top: 1px solid var(--line); }
+.vendor-edit-history summary { padding-top: 11px; color: var(--primary); cursor: pointer; font-size: 11px; font-weight: 800; list-style-position: inside; }
+.vendor-edit-history .vendor-edit-list { margin-top: 10px; }
+.vendor-edit-history-row { padding: 11px 12px; border-radius: 10px; background: var(--canvas); }
 .platform-plan { padding: 15px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); }
 .platform-plan .form-grid { margin-top: 12px; }
 

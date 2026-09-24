@@ -60,7 +60,10 @@ test('kolaborasi brief vendor tampil langsung di bawah setiap materi', () => {
   assert.match(app, /inlineBriefUpload/);
   assert.match(app, /\/vendor-edits/);
   assert.doesNotMatch(app, /data-content-action="vendor-edit"/);
-  assert.match(app, /Diedit oleh Vendor/);
+  assert.match(app, /Diedit oleh/);
+  assert.match(app, /vendor-material-header/);
+  assert.match(app, /vendor-edit-pending/);
+  assert.match(app, /Riwayat Usulan/);
   assert.match(app, /data-review-vendor-edit/);
 });
 
@@ -104,7 +107,7 @@ test('Vendor membuat usulan brief dan Koordinator memberi keputusan', () => {
 
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.7\.0/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.7\.1/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);

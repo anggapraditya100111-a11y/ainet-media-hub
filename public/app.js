@@ -869,12 +869,18 @@ async function showContentDetail(id) {
 
 function vendorEditBadge(data, field) {
   const attribution = data.vendorEditAttributions?.[field];
-  return attribution ? `<p class="vendor-edit-badge">Diedit oleh Vendor: ${escapeHtml(attribution.vendorName)}</p>` : '';
+  return attribution ? `<span class="vendor-edit-badge">✓ Diedit oleh ${escapeHtml(attribution.vendorName)}</span>` : '';
+}
+
+function vendorEditStatus(edit) {
+  const label = ({ PENDING: 'Menunggu Review', ACCEPTED: 'Diterima', REJECTED: 'Ditolak' })[edit.status] || labelize(edit.status);
+  return `<span class="status ${statusClass(edit.status)}">${escapeHtml(label)}</span>`;
 }
 
 function vendorMaterialSection(item, data, field, label, value) {
   const edits = (data.vendorEdits || []).filter(edit => edit.field_name === field);
   const pending = edits.find(edit => edit.status === 'PENDING');
+  const completed = edits.filter(edit => edit.status !== 'PENDING').slice(0, 5);
   const mayPropose = state.user.role === 'VENDOR' && item.proposal_origin !== 'VENDOR' &&
     (item.vendorEditPermissions || []).includes(field) && ['REQUESTED', 'BRIEFED', 'ASSIGNED', 'REVISION_REQUIRED'].includes(item.status);
   const mayReview = state.user.role === 'SUPER_ADMIN' ||
@@ -882,13 +888,16 @@ function vendorMaterialSection(item, data, field, label, value) {
   const max = ({ brief: 5000, description: 2000, caption: 5000, hashtags: 1000, call_to_action: 1000 })[field] || 2000;
   const remaining = Math.max(0, max - String(value || '').length - (value ? (field === 'hashtags' ? 1 : 2) : 0));
   return `<section class="vendor-material-section">
-    <h3>${escapeHtml(label)}</h3>${vendorEditBadge(data, field)}
-    <div class="rich-text muted">${escapeHtml(value || 'Belum diisi.')}</div>
-    ${mayPropose && remaining ? `<form class="inline-vendor-edit" data-inline-vendor-edit="${attr(field)}">
-      <label class="field"><span>Usulan Vendor</span><textarea name="addedValue" maxlength="${remaining}" required placeholder="Tambahkan usulan tanpa menghapus materi Koordinator">${escapeHtml(pending?.added_value || '')}</textarea><small>Usulan baru aktif setelah diterima Koordinator · maksimal ${number(remaining)} karakter.</small></label>
-      <div class="actions"><button class="btn btn-primary btn-small" type="submit">${pending ? 'Perbarui Usulan' : 'Kirim Usulan'}</button>${pending ? '<span class="status pending">Menunggu Review</span>' : ''}</div>
-    </form>` : mayPropose ? '<div class="notice warn">Kolom ini sudah mencapai batas karakter dan belum dapat menerima tambahan.</div>' : ''}
-    ${edits.length ? `<div class="vendor-edit-list inline-review-list">${edits.slice(0, 5).map(edit => `<article class="vendor-edit-row"><div class="card-head"><div><strong>Usulan ${escapeHtml(edit.vendor_name)}</strong><small>${dateTime(edit.created_at)}</small></div>${statusHtml(edit.status)}</div><p>${escapeHtml(edit.added_value)}</p>${edit.review_note ? `<small>Catatan Koordinator: ${escapeHtml(edit.review_note)}</small>` : ''}${mayReview && edit.status === 'PENDING' ? `<div class="actions"><button class="btn btn-success btn-small" data-review-vendor-edit="${attr(edit.id)}" data-review-action="ACCEPT">Terima</button><button class="btn btn-danger btn-small" data-review-vendor-edit="${attr(edit.id)}" data-review-action="REJECT">Tolak</button></div>` : ''}</article>`).join('')}</div>` : ''}
+    <header class="vendor-material-header"><h3>${escapeHtml(label)}</h3>${vendorEditBadge(data, field)}</header>
+    <div class="vendor-material-body">
+      <div class="rich-text muted">${escapeHtml(value || 'Belum diisi.')}</div>
+      ${mayPropose && remaining ? `<form class="inline-vendor-edit" data-inline-vendor-edit="${attr(field)}">
+        <label class="field"><span>Usulan Vendor</span><textarea name="addedValue" maxlength="${remaining}" required placeholder="Tambahkan usulan tanpa menghapus materi Koordinator">${escapeHtml(pending?.added_value || '')}</textarea><small>Usulan baru aktif setelah diterima Koordinator · maksimal ${number(remaining)} karakter.</small></label>
+        <div class="actions"><button class="btn btn-primary btn-small" type="submit">${pending ? 'Perbarui Usulan' : 'Kirim Usulan'}</button>${pending ? '<span class="status pending">Menunggu Review</span>' : ''}</div>
+      </form>` : mayPropose ? '<div class="notice warn">Kolom ini sudah mencapai batas karakter dan belum dapat menerima tambahan.</div>' : ''}
+      ${pending && !mayPropose ? `<article class="vendor-edit-pending"><div class="card-head"><div><strong>Usulan baru dari ${escapeHtml(pending.vendor_name)}</strong><small>${dateTime(pending.created_at)}</small></div>${vendorEditStatus(pending)}</div><p>${escapeHtml(pending.added_value)}</p>${pending.review_note ? `<small>Catatan Koordinator: ${escapeHtml(pending.review_note)}</small>` : ''}${mayReview ? `<div class="actions"><button class="btn btn-success btn-small" data-review-vendor-edit="${attr(pending.id)}" data-review-action="ACCEPT">Terima</button><button class="btn btn-danger btn-small" data-review-vendor-edit="${attr(pending.id)}" data-review-action="REJECT">Tolak</button></div>` : ''}</article>` : ''}
+      ${completed.length ? `<details class="vendor-edit-history"><summary>Riwayat Usulan (${completed.length})</summary><div class="vendor-edit-list">${completed.map(edit => `<article class="vendor-edit-history-row"><div class="card-head"><div><strong>${escapeHtml(edit.vendor_name)}</strong><small>${dateTime(edit.created_at)}</small></div>${vendorEditStatus(edit)}</div><p>${escapeHtml(edit.added_value)}</p>${edit.review_note ? `<small>Catatan Koordinator: ${escapeHtml(edit.review_note)}</small>` : ''}</article>`).join('')}</div></details>` : ''}
+    </div>
   </section>`;
 }
 
