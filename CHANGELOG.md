@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.7.0 — 2026-09-24
+
+- Menyederhanakan alur menjadi lima tahap utama: Brief & Diskusi, Produksi, Review Hasil, Approval Direksi opsional, serta Jadwal & Tayang.
+- Menghapus tombol Brief Siap dan Pra-Produksi dari alur pengguna; Koordinator kini memakai satu tombol Setujui Brief & Mulai Produksi.
+- Mengganti checklist izin edit per kolom dengan satu pilihan Izinkan Vendor membantu menyusun brief.
+- Menempatkan kolom Usulan Vendor langsung di bawah Brief, Deskripsi, Caption, Hashtag, dan Call to Action.
+- Menempatkan keputusan Terima/Tolak Koordinator pada materi yang sama, lengkap dengan status dan riwayat usulan.
+- Menambahkan upload lampiran Brief langsung pada detail konten untuk Vendor yang diizinkan.
+- Mengunci materi setelah Produksi dimulai; perubahan berikutnya hanya dibuka pada tahap Revisi.
+- Mempertahankan status lama sebagai kompatibilitas database, tetapi menampilkannya sebagai Brief & Diskusi.
+
 ## 0.6.0 — 2026-09-24
 
 - Menambahkan alur usulan konten yang seluruh ide dan brief awalnya dibuat oleh Vendor.

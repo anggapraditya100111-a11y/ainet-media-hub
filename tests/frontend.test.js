@@ -52,14 +52,23 @@ test('permintaan konten menerima URL dan file referensi', () => {
   assert.match(app, /uploadCollaborativeFile\(contentId, 'BRIEF'/);
 });
 
-test('akses edit vendor diatur per kolom dan diproses sebagai usulan', () => {
-  assert.match(app, /name="vendorEditPermissions"/);
-  assert.match(app, /data-content-action="vendor-edit">Usulkan Edit Materi/);
-  assert.match(app, /function showVendorEditForm\(item\)/);
+test('kolaborasi brief vendor tampil langsung di bawah setiap materi', () => {
+  assert.match(app, /name="vendorBriefCollaboration"/);
+  assert.match(app, /Izinkan Vendor membantu menyusun brief/);
+  assert.match(app, /function vendorMaterialSection\(item, data, field/);
+  assert.match(app, /data-inline-vendor-edit/);
+  assert.match(app, /inlineBriefUpload/);
   assert.match(app, /\/vendor-edits/);
-  assert.match(app, /Tulisan Koordinator tetap dipertahankan/);
+  assert.doesNotMatch(app, /data-content-action="vendor-edit"/);
   assert.match(app, /Diedit oleh Vendor/);
   assert.match(app, /data-review-vendor-edit/);
+});
+
+test('alur ringkas langsung dari Brief & Diskusi ke Produksi', () => {
+  assert.match(app, /Setujui Brief & Mulai Produksi/);
+  assert.match(app, /\['Brief & Diskusi', \['REQUESTED', 'BRIEFED', 'ASSIGNED'\]\]/);
+  assert.doesNotMatch(app, />Kirim ke Pra-Produksi</);
+  assert.doesNotMatch(app, /\['PRE_PRODUCTION','Pra-Produksi \/ Script'\]/);
 });
 
 test('koordinator dapat menambah channel serta mengubah jadwal dan petugas sebelum tayang', () => {
@@ -79,7 +88,7 @@ test('produksi internal melewati vendor dan diselesaikan oleh koordinator', () =
   assert.match(app, /id="vendor-access-section"/);
   assert.match(app, /id="vendor-assignment-field"/);
   assert.match(app, /Selesaikan Produksi Internal/);
-  assert.match(app, /Mulai Produksi Internal/);
+  assert.match(app, /Setujui Brief & Mulai Produksi/);
   assert.match(app, /byProductionMode/);
 });
 
@@ -95,7 +104,7 @@ test('Vendor membuat usulan brief dan Koordinator memberi keputusan', () => {
 
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.6\.0/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.7\.0/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);

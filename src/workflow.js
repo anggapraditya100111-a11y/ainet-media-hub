@@ -5,7 +5,7 @@ const STATUSES = Object.freeze([
 ]);
 
 const STATUS_LABELS = Object.freeze({
-  REQUESTED: 'Permintaan', BRIEFED: 'Brief Siap', ASSIGNED: 'Pra-Produksi',
+  REQUESTED: 'Brief & Diskusi', BRIEFED: 'Brief & Diskusi', ASSIGNED: 'Brief & Diskusi',
   IN_PRODUCTION: 'Produksi', DRAFT_SUBMITTED: 'Review Koordinator',
   IN_REVIEW: 'Review Koordinator', REVISION_REQUIRED: 'Revisi Produksi',
   APPROVAL_PENDING: 'Approval Direksi', APPROVED: 'Disetujui',
@@ -13,7 +13,7 @@ const STATUS_LABELS = Object.freeze({
 });
 
 const TRANSITIONS = Object.freeze({
-  REQUESTED: ['BRIEFED', 'CANCELLED'],
+  REQUESTED: ['BRIEFED', 'IN_PRODUCTION', 'CANCELLED'],
   BRIEFED: ['ASSIGNED', 'IN_PRODUCTION', 'CANCELLED'],
   ASSIGNED: ['IN_PRODUCTION', 'CANCELLED'],
   IN_PRODUCTION: ['DRAFT_SUBMITTED', 'CANCELLED'],

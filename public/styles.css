@@ -281,6 +281,11 @@ tbody tr:last-child td { border-bottom: 0; }
 .vendor-edit-row p { margin: 10px 0; white-space: pre-wrap; }
 .vendor-edit-row small { display: block; color: var(--muted); }
 .vendor-edit-row .actions { margin-top: 10px; }
+.vendor-material-section { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
+.inline-vendor-edit, .inline-brief-upload { display: grid; gap: 10px; margin-top: 13px; padding: 13px; border: 1px solid var(--line); border-radius: 13px; background: var(--canvas); }
+.inline-vendor-edit textarea { min-height: 92px; }
+.inline-review-list { margin-top: 10px; }
+.inline-brief-upload { margin-bottom: 14px; }
 .platform-plan { padding: 15px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface); }
 .platform-plan .form-grid { margin-top: 12px; }
 

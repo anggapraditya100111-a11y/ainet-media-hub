@@ -103,8 +103,6 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   } }, adminCookie);
   assert.equal(created.response.status, 201, `${JSON.stringify(created.payload)}\n${stderr}`);
   const contentId = created.payload.item.id;
-  await transition(baseUrl, contentId, 'BRIEFED', adminCookie);
-  await transition(baseUrl, contentId, 'ASSIGNED', adminCookie);
 
   result = await request(baseUrl, `/api/contents/${contentId}`, {}, adminCookie);
   assert.deepEqual(result.payload.item.referenceUrls, ['https://www.instagram.com/contoh/', 'https://example.test/referensi']);
@@ -113,6 +111,8 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   result = await request(baseUrl, `/api/contents/${contentId}/vendor-edits`, { method: 'POST', body: { fieldName: 'brief', addedValue: 'Tambahkan penutup dengan nomor WhatsApp.' } }, vendorCookie);
   assert.equal(result.response.status, 201, JSON.stringify(result.payload));
   const vendorEditId = result.payload.id;
+  result = await request(baseUrl, `/api/contents/${contentId}/transition`, { method: 'POST', body: { toStatus: 'IN_PRODUCTION' } }, adminCookie);
+  assert.equal(result.response.status, 409, 'produksi belum boleh dimulai ketika usulan Vendor masih menunggu review');
   result = await request(baseUrl, `/api/contents/${contentId}`, {}, vendorCookie);
   assert.equal(result.payload.item.brief, 'Video 30 detik dengan script edukasi.', 'usulan belum boleh langsung mengubah materi Koordinator');
   assert.equal(result.payload.vendorEdits[0].status, 'PENDING');
@@ -123,11 +123,13 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   assert.equal(result.payload.item.brief, 'Video 30 detik dengan script edukasi.\n\nTambahkan penutup dengan nomor WhatsApp.');
   result = await request(baseUrl, `/api/contents/${contentId}`, {}, adminCookie);
   assert.equal(result.payload.vendorEditAttributions.brief.vendorName, 'Studio Kreatif Nusantara');
-  result = await request(baseUrl, `/api/contents/${contentId}/messages`, { method: 'POST', body: { phase: 'PRE_PRODUCTION', message: 'Draft script sudah disiapkan untuk dibahas.' } }, vendorCookie);
+  result = await request(baseUrl, `/api/contents/${contentId}/messages`, { method: 'POST', body: { phase: 'BRIEF', message: 'Draft script sudah disiapkan untuk dibahas.' } }, vendorCookie);
   assert.equal(result.response.status, 201);
   result = await request(baseUrl, `/api/contents/${contentId}/transition`, { method: 'POST', body: { toStatus: 'IN_PRODUCTION' } }, vendorCookie);
   assert.equal(result.response.status, 403, 'Vendor tidak boleh menyetujui mulai produksi sendiri');
   await transition(baseUrl, contentId, 'IN_PRODUCTION', adminCookie);
+  result = await request(baseUrl, `/api/contents/${contentId}/vendor-edits`, { method: 'POST', body: { fieldName: 'caption', addedValue: 'Perubahan diam-diam setelah produksi.' } }, vendorCookie);
+  assert.equal(result.response.status, 409, 'brief harus terkunci setelah Produksi dimulai');
 
   const firstFileId = await chunkUpload(baseUrl, contentId, vendorCookie, 'hasil-v1.pdf', '%PDF-1.4 hasil pertama', 'Hasil produksi versi pertama.');
   result = await request(baseUrl, `/api/contents/${contentId}`, {}, vendorCookie);
@@ -249,7 +251,6 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   assert.equal(internalCreated.payload.item.production_mode, 'INTERNAL');
   assert.equal(internalCreated.payload.item.vendor_id, null);
   assert.deepEqual(internalCreated.payload.item.vendorEditPermissions, []);
-  await transition(baseUrl, internalId, 'BRIEFED', coordinatorCookie);
   result = await request(baseUrl, `/api/contents/${internalId}/transition`, { method: 'POST', body: { toStatus: 'ASSIGNED' } }, coordinatorCookie);
   assert.equal(result.response.status, 409, 'produksi internal tidak boleh dikirim ke Vendor');
   await transition(baseUrl, internalId, 'IN_PRODUCTION', coordinatorCookie);

@@ -26,7 +26,7 @@ const {
 } = require('./oidc');
 const { installWorkflowV4 } = require('./workflow-v4');
 
-const APP_VERSION = '0.6.0';
+const APP_VERSION = '0.7.0';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';
@@ -1096,8 +1096,8 @@ app.post('/api/contents/:id/vendor-edits', authRequired, permissionRequired('con
     const current = getContent(req.params.id, req.user);
     if (req.user.role !== 'VENDOR') throw new AppError('Usulan materi hanya dapat dikirim vendor yang ditugaskan.', 403);
     if (current.vendor_id !== req.user.vendorId) throw new AppError('Tugas ini tidak diberikan kepada vendor Anda.', 403);
-    if (!['ASSIGNED', 'IN_PRODUCTION', 'REVISION_REQUIRED'].includes(current.status)) {
-      throw new AppError('Usulan materi hanya dapat dikirim saat Pra-Produksi, Produksi, atau Revisi.', 409);
+    if (!['REQUESTED', 'BRIEFED', 'ASSIGNED', 'REVISION_REQUIRED'].includes(current.status)) {
+      throw new AppError('Usulan materi hanya dapat dikirim saat Brief & Diskusi atau saat Revisi.', 409);
     }
     const fieldName = String(req.body.fieldName || '');
     const definition = VENDOR_EDIT_FIELDS[fieldName];
@@ -1129,7 +1129,7 @@ app.post('/api/contents/:id/vendor-edits/:editId/review', authRequired, (req, re
   try {
     const current = getContent(req.params.id, req.user);
     if (!['SUPER_ADMIN', 'COORDINATOR'].includes(req.user.role)) throw new AppError('Hanya Koordinator yang dapat meninjau usulan vendor.', 403);
-    if (!['ASSIGNED', 'IN_PRODUCTION', 'DRAFT_SUBMITTED', 'IN_REVIEW', 'REVISION_REQUIRED'].includes(current.status)) {
+    if (!['REQUESTED', 'BRIEFED', 'ASSIGNED', 'DRAFT_SUBMITTED', 'IN_REVIEW', 'REVISION_REQUIRED'].includes(current.status)) {
       throw new AppError('Usulan vendor tidak dapat diproses pada tahap ini.', 409);
     }
     const edit = db.prepare("SELECT * FROM vendor_content_edits WHERE id=? AND content_id=? AND status='PENDING'").get(req.params.editId, current.id);
@@ -1158,7 +1158,7 @@ app.post('/api/contents/:id/vendor-edits/:editId/review', authRequired, (req, re
 });
 
 app.patch('/api/contents/:id/vendor-description', authRequired, (_req, _res, next) => {
-  next(new AppError('Endpoint lama dinonaktifkan. Gunakan menu Usulkan Edit Materi.', 410));
+  next(new AppError('Endpoint lama dinonaktifkan. Gunakan kolom Usulan Vendor di bawah materi terkait.', 410));
 });
 
 app.post('/api/contents/:id/version', authRequired, draftUpload.single('file'), (req, res, next) => {
@@ -1215,11 +1215,14 @@ app.post('/api/contents/:id/transition', authRequired, (req, res, next) => {
       if (internalProduction) throw new AppError('Produksi internal tidak memerlukan penugasan Vendor.', 409);
       if (!item.vendor_id) throw new AppError('Pilih vendor sebelum menugaskan konten.', 409);
     }
-    if (item.status === 'BRIEFED' && toStatus === 'IN_PRODUCTION' && !internalProduction) {
-      throw new AppError('Produksi Vendor harus melalui tahap Pra-Produksi.', 409);
+    if (toStatus === 'IN_PRODUCTION' && !internalProduction && !item.vendor_id) {
+      throw new AppError('Pilih vendor sebelum menyetujui brief dan memulai produksi.', 409);
     }
     if (internalProduction && toStatus === 'IN_PRODUCTION' && req.user.role === 'COORDINATOR' && item.coordinator_id !== req.user.id) {
       throw new AppError('Produksi internal hanya dapat diproses Koordinator yang ditugaskan.', 403);
+    }
+    if (toStatus === 'IN_PRODUCTION' && db.prepare("SELECT id FROM vendor_content_edits WHERE content_id=? AND status='PENDING' LIMIT 1").get(item.id)) {
+      throw new AppError('Masih ada usulan Vendor yang belum diterima atau ditolak.', 409);
     }
     if (['APPROVAL_PENDING', 'APPROVED'].includes(toStatus) && !latestVersion(item.id)
       && !db.prepare("SELECT id FROM collaboration_files WHERE content_id=? AND phase='PRODUCTION_RESULT' LIMIT 1").get(item.id)) throw new AppError('Hasil produksi belum tersedia.', 409);
@@ -1251,6 +1254,9 @@ app.post('/api/contents/:id/transition', authRequired, (req, res, next) => {
 
     const link = `/contents/${item.id}`;
     if (toStatus === 'ASSIGNED' && !internalProduction) notifyVendor(item.vendor_id, 'TASK_ASSIGNED', `Tugas baru ${item.content_no}`, item.title, link);
+    if (toStatus === 'IN_PRODUCTION' && !internalProduction && ['REQUESTED', 'BRIEFED', 'ASSIGNED'].includes(item.status)) {
+      notifyVendor(item.vendor_id, 'PRODUCTION_STARTED', `Produksi dimulai ${item.content_no}`, item.title, link);
+    }
     if (toStatus === 'REVISION_REQUIRED' && !internalProduction) notifyVendor(item.vendor_id, 'REVISION_REQUIRED', `Revisi ${item.content_no}`, note, link);
     if (toStatus === 'APPROVED') {
       if (item.coordinator_id) notifyUser(item.coordinator_id, 'CONTENT_APPROVED', `${item.content_no} disetujui`, item.title, link);

@@ -2,7 +2,7 @@
 
 AXINDO Media Hub adalah aplikasi internal PT Axindo Infinitas Network untuk mengelola produksi konten AINET dan IMAS dari permintaan sampai bukti tayang. Aplikasi berjalan mandiri di server Ubuntu menggunakan Docker Compose, database SQLite, dan penyimpanan berkas lokal server.
 
-Versi: **0.6.0 — Usulan Brief dari Vendor**
+Versi: **0.7.0 — Alur Brief Ringkas & Usulan Inline Vendor**
 
 ## Fitur yang sudah berfungsi
 
@@ -13,7 +13,10 @@ Versi: **0.6.0 — Usulan Brief dari Vendor**
 - Koordinator yang dipilih dapat menyetujui brief Vendor, meminta revisi dengan catatan, atau menolak; produksi Vendor baru dimulai setelah brief disetujui.
 - Setiap pengiriman ulang brief disimpan sebagai versi snapshot sehingga isi dan keputusan sebelumnya tetap dapat ditelusuri.
 - Konten Internal melewati penugasan Vendor; Koordinator mengunggah hasil sendiri lalu dapat menyetujui langsung atau mengirimkannya ke Direksi.
-- Diskusi dan lampiran dipisahkan untuk Brief, Pra-Produksi, dan Hasil Produksi.
+- Alur kerja disederhanakan menjadi Brief & Diskusi → Produksi → Review Hasil → Approval opsional → Jadwal & Tayang.
+- Vendor yang diizinkan dapat mengirim usulan langsung di bawah Brief, Deskripsi, Caption, Hashtag, dan CTA; Koordinator menerima atau menolaknya pada bagian yang sama.
+- Satu pilihan **Izinkan Vendor membantu menyusun brief** menggantikan checklist akses per kolom.
+- Lampiran Brief dapat diunggah Vendor langsung dari detail konten sebelum produksi dimulai atau ketika revisi.
 - Permintaan konten mendukung referensi berupa URL sosial media/web dan banyak lampiran gambar, video, atau PDF.
 - Koordinator mengatur akses edit Vendor per kolom melalui checklist; edit Vendor bersifat usulan tambahan, tidak dapat menghapus materi Koordinator, dan harus diterima sebelum aktif.
 - Materi hasil usulan yang diterima menampilkan atribusi nama Vendor dan seluruh keputusan tersimpan di audit.

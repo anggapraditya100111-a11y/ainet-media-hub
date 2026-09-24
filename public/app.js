@@ -551,8 +551,8 @@ function dashboardGreeting() {
 async function renderPipeline() {
   const data = await api('/api/contents?limit=250');
   const columns = [
-    ['Perencanaan', ['REQUESTED', 'BRIEFED']],
-    ['Produksi', ['ASSIGNED', 'IN_PRODUCTION']],
+    ['Brief & Diskusi', ['REQUESTED', 'BRIEFED', 'ASSIGNED']],
+    ['Produksi', ['IN_PRODUCTION']],
     ['Review', ['DRAFT_SUBMITTED', 'IN_REVIEW', 'REVISION_REQUIRED']],
     ['Persetujuan', ['APPROVAL_PENDING', 'APPROVED']],
     ['Publikasi', ['SCHEDULED', 'PUBLISHED']]
@@ -706,7 +706,7 @@ async function showContentForm(existing = null) {
   try {
     const assignments = await loadAssignments();
     const selectedChannels = new Set(existing?.channelIds || []);
-    const selectedVendorPermissions = new Set(existing?.vendorEditPermissions || []);
+    const vendorBriefCollaboration = Boolean((existing?.vendorEditPermissions || []).length);
     const productionMode = existing?.production_mode || 'VENDOR';
     const productionModeLocked = existing && !['REQUESTED', 'BRIEFED'].includes(existing.status);
     openModal(existing ? 'Edit Konten' : 'Buat Permintaan Konten', `
@@ -738,11 +738,8 @@ async function showContentForm(existing = null) {
           <label class="field full"><span>Link sosial media / web</span><textarea name="referenceUrls" maxlength="10000" placeholder="Satu link per baris, contoh:\nhttps://www.instagram.com/...\nhttps://contoh.com/artikel">${escapeHtml((existing?.referenceUrls || []).join('\n'))}</textarea><small>Maksimal 10 link HTTP/HTTPS.</small></label>
           <label class="field full"><span>Upload gambar, video, atau PDF</span><input type="file" name="referenceFiles" multiple accept="image/*,video/*,.pdf"><small>File disimpan sebagai lampiran Brief dan dapat dilihat pihak produksi yang ditugaskan.</small></label>
         </div><div id="upload-progress" class="upload-progress" hidden><div><span></span></div><p>Menyiapkan upload referensi…</p></div></section>
-        <section id="vendor-access-section" class="form-section" ${productionMode === 'INTERNAL' ? 'hidden' : ''}><h3>Akses Edit Vendor</h3>
-          <div class="notice">Vendor hanya dapat menambahkan usulan. Tulisan Koordinator tidak dapat dihapus dan perubahan baru aktif setelah diterima Koordinator.</div>
-          <div class="check-row" style="margin-top:14px">${[
-            ['brief','Brief Produksi'],['description','Deskripsi'],['caption','Draft Caption'],['hashtags','Hashtag'],['call_to_action','Call to Action'],['attachments','Upload Lampiran Brief']
-          ].map(([value, label]) => `<label class="check"><input type="checkbox" name="vendorEditPermissions" value="${value}" ${selectedVendorPermissions.has(value) ? 'checked' : ''}>${label}</label>`).join('')}</div>
+        <section id="vendor-access-section" class="form-section" ${productionMode === 'INTERNAL' ? 'hidden' : ''}><h3>Kolaborasi Brief Vendor</h3>
+          <label class="check"><input type="checkbox" name="vendorBriefCollaboration" ${vendorBriefCollaboration ? 'checked' : ''}><span><strong>Izinkan Vendor membantu menyusun brief</strong><br><small>Vendor dapat memberi usulan langsung di bawah Brief, Deskripsi, Caption, Hashtag, CTA, serta menambah lampiran. Materi Koordinator tidak dapat dihapus.</small></span></label>
         </section>
         <section class="form-section"><h3>Deadline & Penanggung Jawab</h3><div class="form-grid">
           <label class="field full"><span>Metode Produksi</span><select name="productionMode" ${productionModeLocked ? 'disabled' : ''}>${optionsHtml([['VENDOR','Produksi Vendor'],['INTERNAL','Produksi Internal oleh Koordinator']], productionMode)}</select><small>${productionModeLocked ? 'Metode dikunci karena produksi sudah dimulai.' : 'Produksi internal melewati penugasan Vendor.'}</small></label>
@@ -761,7 +758,7 @@ async function showContentForm(existing = null) {
       $('#vendor-assignment-field').hidden = internal;
       $('#vendor-access-section').hidden = internal;
       contentForm.elements.vendorId.disabled = internal;
-      contentForm.querySelectorAll('input[name="vendorEditPermissions"]').forEach(input => { input.disabled = internal; });
+      contentForm.elements.vendorBriefCollaboration.disabled = internal;
     };
     syncProductionMode();
     contentForm.elements.productionMode.addEventListener('change', syncProductionMode);
@@ -771,9 +768,10 @@ async function showContentForm(existing = null) {
       try {
         const form = new FormData(event.currentTarget);
         const body = {};
-        for (const [key, value] of form.entries()) if (!['channelIds', 'referenceFiles', 'vendorEditPermissions'].includes(key)) body[key] = value;
+        for (const [key, value] of form.entries()) if (!['channelIds', 'referenceFiles', 'vendorBriefCollaboration'].includes(key)) body[key] = value;
         body.channelIds = form.getAll('channelIds');
-        body.vendorEditPermissions = form.getAll('vendorEditPermissions');
+        body.vendorEditPermissions = form.get('vendorBriefCollaboration')
+          ? ['brief', 'description', 'caption', 'hashtags', 'call_to_action', 'attachments'] : [];
         if (!body.channelIds.length) throw new Error('Pilih minimal satu channel.');
         const result = await api(existing ? `/api/contents/${existing.id}` : '/api/contents', { method: existing ? 'PATCH' : 'POST', body });
         const contentId = existing?.id || result.item.id;
@@ -817,19 +815,19 @@ async function showContentDetail(id) {
               ${detailItem('Kampanye', item.campaign)}${detailItem('Format', labelize(item.content_type))}
               ${detailItem('Tingkat Persetujuan', item.approval_level === 'SENSITIVE' ? 'Sensitif' : 'Rutin')}${detailItem('Anggaran', rupiah(item.budget))}
             </dl>
-            <h3 style="margin-top:20px">Brief Produksi</h3>${vendorEditBadge(data, 'brief')}<div class="rich-text muted">${escapeHtml(item.brief || 'Belum diisi.')}</div>
-            <h3 style="margin-top:20px">Deskripsi Produksi</h3>${vendorEditBadge(data, 'description')}<div class="rich-text muted">${escapeHtml(item.description || 'Belum diisi.')}</div>
-            <h3 style="margin-top:20px">Caption</h3>${vendorEditBadge(data, 'caption')}<div class="rich-text muted">${escapeHtml(item.caption || 'Belum diisi.')}</div>
-            <h3 style="margin-top:20px">Hashtag</h3>${vendorEditBadge(data, 'hashtags')}<div class="rich-text muted">${escapeHtml(item.hashtags || 'Belum diisi.')}</div>
-            <h3 style="margin-top:20px">Call to Action</h3>${vendorEditBadge(data, 'call_to_action')}<div class="rich-text muted">${escapeHtml(item.call_to_action || 'Belum diisi.')}</div>
+            ${vendorMaterialSection(item, data, 'brief', 'Brief Produksi', item.brief)}
+            ${vendorMaterialSection(item, data, 'description', 'Deskripsi Produksi', item.description)}
+            ${vendorMaterialSection(item, data, 'caption', 'Caption', item.caption)}
+            ${vendorMaterialSection(item, data, 'hashtags', 'Hashtag', item.hashtags)}
+            ${vendorMaterialSection(item, data, 'call_to_action', 'Call to Action', item.call_to_action)}
           </section>
           ${item.proposal_origin === 'VENDOR' ? vendorBriefReviewSection(item, data.briefVersions || []) : ''}
-          ${vendorEditReviewSection(data.vendorEdits || [])}
           <section class="card detail-section" style="margin-top:16px"><div class="card-head"><h3>Diskusi Produksi</h3><button class="btn btn-primary btn-small" data-content-action="discuss">＋ Pesan / File</button></div>
             ${(data.discussions || []).length ? `<div class="discussion-list">${data.discussions.map(message => `<article class="discussion-item"><div class="avatar">${escapeHtml(message.sender_name.slice(0, 1))}</div><div><strong>${escapeHtml(message.sender_name)}</strong><span class="tag">${phaseLabel(message.phase)}</span><p>${escapeHtml(message.message || '')}</p><small>${dateTime(message.created_at)}</small></div></article>`).join('')}</div>` : emptyInline('Belum ada diskusi. Koordinator dan vendor dapat membahas script, storyboard, materi, serta revisi di sini.')}
           </section>
           <section class="card detail-section" style="margin-top:16px"><h3>Lampiran & Hasil Produksi</h3>
-            ${(data.collaborationFiles || []).length ? `<div class="file-grid">${data.collaborationFiles.map(file => `<article class="file-card"><div class="file-icon">${fileIcon(file.mime_type)}</div><div><span class="tag">${phaseLabel(file.phase)} · v${file.version_number}</span><strong>${escapeHtml(file.original_name)}</strong><small>${fileSize(file.file_size)} · ${escapeHtml(file.uploaded_by_name)}</small></div><div class="actions"><a class="btn btn-ghost btn-small" href="${attr(file.fileUrl)}" target="_blank" rel="noopener">Buka</a><a class="btn btn-ghost btn-small" href="${attr(file.fileUrl)}?download=1">Unduh</a></div></article>`).join('')}</div>` : emptyInline('Belum ada lampiran brief, draft pra-produksi, atau hasil produksi.')}
+            ${inlineBriefUpload(item)}
+            ${(data.collaborationFiles || []).length ? `<div class="file-grid">${data.collaborationFiles.map(file => `<article class="file-card"><div class="file-icon">${fileIcon(file.mime_type)}</div><div><span class="tag">${phaseLabel(file.phase)} · v${file.version_number}</span><strong>${escapeHtml(file.original_name)}</strong><small>${fileSize(file.file_size)} · ${escapeHtml(file.uploaded_by_name)}</small></div><div class="actions"><a class="btn btn-ghost btn-small" href="${attr(file.fileUrl)}" target="_blank" rel="noopener">Buka</a><a class="btn btn-ghost btn-small" href="${attr(file.fileUrl)}?download=1">Unduh</a></div></article>`).join('')}</div>` : emptyInline('Belum ada lampiran Brief & Diskusi atau hasil produksi.')}
           </section>
           <section class="card detail-section" style="margin-top:16px"><h3>Versi Lama</h3>
             ${data.versions.length ? `<div class="table-wrap"><table><thead><tr><th>Versi</th><th>Berkas</th><th>Pengirim</th><th>Waktu</th><th></th></tr></thead><tbody>${data.versions.map(version => `<tr><td>v${version.version_number}${version.is_approved ? ' ✓' : ''}</td><td><span class="cell-title truncate">${escapeHtml(version.original_name)}</span><span class="cell-meta">${fileSize(version.file_size)}</span></td><td>${escapeHtml(version.submitted_by_name)}</td><td>${dateTime(version.created_at)}</td><td><a class="btn btn-ghost btn-small" href="${attr(version.fileUrl)}" target="_blank" rel="noopener">Buka</a></td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">Tidak ada file dari versi aplikasi lama.</p>'}
@@ -869,19 +867,41 @@ async function showContentDetail(id) {
   finally { setLoading(false); }
 }
 
-function vendorFieldLabel(field) {
-  return ({ brief: 'Brief Produksi', description: 'Deskripsi', caption: 'Draft Caption', hashtags: 'Hashtag', call_to_action: 'Call to Action' })[field] || labelize(field);
-}
-
 function vendorEditBadge(data, field) {
   const attribution = data.vendorEditAttributions?.[field];
   return attribution ? `<p class="vendor-edit-badge">Diedit oleh Vendor: ${escapeHtml(attribution.vendorName)}</p>` : '';
 }
 
-function vendorEditReviewSection(edits) {
-  if (!edits.length) return '';
-  const mayReview = state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN';
-  return `<section class="card detail-section" style="margin-top:16px"><h3>Usulan Edit Vendor</h3><div class="vendor-edit-list">${edits.slice(0, 10).map(edit => `<article class="vendor-edit-row"><div class="card-head"><div><strong>${escapeHtml(vendorFieldLabel(edit.field_name))}</strong><small>${escapeHtml(edit.vendor_name)} · ${dateTime(edit.created_at)}</small></div>${statusHtml(edit.status)}</div><p>${escapeHtml(edit.added_value)}</p>${edit.review_note ? `<small>Catatan Koordinator: ${escapeHtml(edit.review_note)}</small>` : ''}${mayReview && edit.status === 'PENDING' ? `<div class="actions"><button class="btn btn-success btn-small" data-review-vendor-edit="${attr(edit.id)}" data-review-action="ACCEPT">Terima</button><button class="btn btn-danger btn-small" data-review-vendor-edit="${attr(edit.id)}" data-review-action="REJECT">Tolak</button></div>` : ''}</article>`).join('')}</div></section>`;
+function vendorMaterialSection(item, data, field, label, value) {
+  const edits = (data.vendorEdits || []).filter(edit => edit.field_name === field);
+  const pending = edits.find(edit => edit.status === 'PENDING');
+  const mayPropose = state.user.role === 'VENDOR' && item.proposal_origin !== 'VENDOR' &&
+    (item.vendorEditPermissions || []).includes(field) && ['REQUESTED', 'BRIEFED', 'ASSIGNED', 'REVISION_REQUIRED'].includes(item.status);
+  const mayReview = state.user.role === 'SUPER_ADMIN' ||
+    (state.user.role === 'COORDINATOR' && item.coordinator_id === state.user.id);
+  const max = ({ brief: 5000, description: 2000, caption: 5000, hashtags: 1000, call_to_action: 1000 })[field] || 2000;
+  const remaining = Math.max(0, max - String(value || '').length - (value ? (field === 'hashtags' ? 1 : 2) : 0));
+  return `<section class="vendor-material-section">
+    <h3>${escapeHtml(label)}</h3>${vendorEditBadge(data, field)}
+    <div class="rich-text muted">${escapeHtml(value || 'Belum diisi.')}</div>
+    ${mayPropose && remaining ? `<form class="inline-vendor-edit" data-inline-vendor-edit="${attr(field)}">
+      <label class="field"><span>Usulan Vendor</span><textarea name="addedValue" maxlength="${remaining}" required placeholder="Tambahkan usulan tanpa menghapus materi Koordinator">${escapeHtml(pending?.added_value || '')}</textarea><small>Usulan baru aktif setelah diterima Koordinator · maksimal ${number(remaining)} karakter.</small></label>
+      <div class="actions"><button class="btn btn-primary btn-small" type="submit">${pending ? 'Perbarui Usulan' : 'Kirim Usulan'}</button>${pending ? '<span class="status pending">Menunggu Review</span>' : ''}</div>
+    </form>` : mayPropose ? '<div class="notice warn">Kolom ini sudah mencapai batas karakter dan belum dapat menerima tambahan.</div>' : ''}
+    ${edits.length ? `<div class="vendor-edit-list inline-review-list">${edits.slice(0, 5).map(edit => `<article class="vendor-edit-row"><div class="card-head"><div><strong>Usulan ${escapeHtml(edit.vendor_name)}</strong><small>${dateTime(edit.created_at)}</small></div>${statusHtml(edit.status)}</div><p>${escapeHtml(edit.added_value)}</p>${edit.review_note ? `<small>Catatan Koordinator: ${escapeHtml(edit.review_note)}</small>` : ''}${mayReview && edit.status === 'PENDING' ? `<div class="actions"><button class="btn btn-success btn-small" data-review-vendor-edit="${attr(edit.id)}" data-review-action="ACCEPT">Terima</button><button class="btn btn-danger btn-small" data-review-vendor-edit="${attr(edit.id)}" data-review-action="REJECT">Tolak</button></div>` : ''}</article>`).join('')}</div>` : ''}
+  </section>`;
+}
+
+function inlineBriefUpload(item) {
+  const allowed = state.user.role === 'VENDOR' && item.proposal_origin !== 'VENDOR' &&
+    (item.vendorEditPermissions || []).includes('attachments') && ['REQUESTED', 'BRIEFED', 'ASSIGNED', 'REVISION_REQUIRED'].includes(item.status);
+  if (!allowed) return '';
+  return `<form id="inline-brief-upload" class="inline-brief-upload">
+    <div class="notice">Tambah lampiran Brief & Diskusi langsung dari sini.</div>
+    <div class="form-grid"><label class="field"><span>Lampiran *</span><input type="file" name="file" required accept="image/*,video/*,audio/*,.pdf,.zip,.doc,.docx,.xls,.xlsx,.ppt,.pptx"></label><label class="field"><span>Catatan</span><input name="message" maxlength="2000" placeholder="Keterangan lampiran"></label></div>
+    <div id="inline-upload-progress" class="upload-progress" hidden><div><span></span></div><p>Menyiapkan upload…</p></div>
+    <button class="btn btn-primary btn-small" type="submit">Upload Lampiran Brief</button>
+  </form>`;
 }
 
 function contentActions(item) {
@@ -896,14 +916,12 @@ function contentActions(item) {
   }
   if (item.proposal_origin === 'VENDOR' && item.status === 'REQUESTED' && item.brief_review_status === 'SUBMITTED' &&
     (state.user.role === 'SUPER_ADMIN' || (state.user.role === 'COORDINATOR' && item.coordinator_id === state.user.id))) {
-    buttons.push('<button class="btn btn-success" data-brief-decision="APPROVED">Setujui Brief</button>');
+    buttons.push('<button class="btn btn-success" data-brief-decision="APPROVED">Setujui Brief & Mulai Produksi</button>');
     buttons.push('<button class="btn btn-soft" data-brief-decision="REVISION">Minta Revisi</button>');
     buttons.push('<button class="btn btn-danger" data-brief-decision="REJECTED">Tolak Usulan</button>');
   }
   if (has('content.edit') && item.proposal_origin !== 'VENDOR' && !['PUBLISHED', 'CANCELLED'].includes(item.status)) buttons.push(`<button class="btn btn-ghost" data-content-action="assets">Aset Referensi</button>`);
-  if ((has('content.discuss') || state.user.role === 'SUPER_ADMIN') && !['CANCELLED'].includes(item.status)) buttons.push(`<button class="btn btn-ghost" data-content-action="discuss">Diskusi & Upload</button>`);
   if ((state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN') && !['CANCELLED', 'PUBLISHED'].includes(item.status)) buttons.push(`<button class="btn btn-soft" data-content-action="share">Salin Link Ringkasan</button>`);
-  if (state.user.role === 'VENDOR' && ['ASSIGNED', 'IN_PRODUCTION', 'REVISION_REQUIRED'].includes(item.status) && (item.vendorEditPermissions || []).some(permission => permission !== 'attachments')) buttons.push(`<button class="btn btn-ghost" data-content-action="vendor-edit">Usulkan Edit Materi</button>`);
   if (item.status === 'IN_PRODUCTION' && state.user.role === 'VENDOR') buttons.push(`<button class="btn btn-primary" data-content-action="submit-result">Kirim Hasil ke Koordinator</button>`);
   if (item.status === 'IN_PRODUCTION' && item.production_mode === 'INTERNAL' && (state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-primary" data-content-action="submit-result">Selesaikan Produksi Internal</button>`);
   if (['DRAFT_SUBMITTED', 'IN_REVIEW'].includes(item.status) && (state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-primary" data-content-action="director">Kirim ke Direksi</button>`);
@@ -911,9 +929,7 @@ function contentActions(item) {
   if (['APPROVED', 'SCHEDULED', 'PUBLISHED'].includes(item.status) && has('library.manage')) buttons.push(`<button class="btn btn-soft" data-content-action="promote">Jadikan Aset Resmi</button>`);
   for (const next of vendorBriefPending ? [] : state.transitions[item.status] || []) {
     if (item.status === 'APPROVAL_PENDING') continue;
-    if (['DRAFT_SUBMITTED', 'APPROVAL_PENDING', 'SCHEDULED', 'PUBLISHED'].includes(next)) continue;
-    if (item.status === 'BRIEFED' && item.production_mode === 'INTERNAL' && next === 'ASSIGNED') continue;
-    if (item.status === 'BRIEFED' && item.production_mode !== 'INTERNAL' && next === 'IN_PRODUCTION') continue;
+    if (['BRIEFED', 'ASSIGNED', 'DRAFT_SUBMITTED', 'APPROVAL_PENDING', 'SCHEDULED', 'PUBLISHED'].includes(next)) continue;
     const permission = transitionPermission(item, next);
     if (!has(permission)) continue;
     buttons.push(`<button class="btn ${transitionTone(next)}" data-transition="${next}">${transitionLabel(next, item)}</button>`);
@@ -924,7 +940,6 @@ function contentActions(item) {
 function bindDetailActions(item, data = {}) {
   $('[data-content-action="edit"]')?.addEventListener('click', () => showContentForm(item));
   $('[data-content-action="submit-vendor-brief"]')?.addEventListener('click', () => submitVendorBrief(item));
-  $('[data-content-action="vendor-edit"]')?.addEventListener('click', () => showVendorEditForm(item));
   document.querySelectorAll('[data-content-action="discuss"]').forEach(button => button.addEventListener('click', () => showDiscussionForm(item)));
   $('[data-content-action="share"]')?.addEventListener('click', () => showShareForm(item, data.collaborationFiles || []));
   $('[data-content-action="submit-result"]')?.addEventListener('click', () => submitProductionResult(item));
@@ -944,6 +959,30 @@ function bindDetailActions(item, data = {}) {
     await navigator.clipboard.writeText(url);
     toast('Link approval disalin. PIN tetap hanya diketahui Direksi.');
   }));
+  document.querySelectorAll('[data-inline-vendor-edit]').forEach(form => form.addEventListener('submit', async event => {
+    event.preventDefault(); setLoading(true);
+    try {
+      const values = new FormData(event.currentTarget);
+      await api(`/api/contents/${item.id}/vendor-edits`, { method: 'POST', body: {
+        fieldName: event.currentTarget.dataset.inlineVendorEdit, addedValue: values.get('addedValue')
+      } });
+      toast('Usulan dikirim kepada Koordinator.');
+      await showContentDetail(item.id);
+    } catch (error) { toast(error.message, true); }
+    finally { setLoading(false); }
+  }));
+  $('#inline-brief-upload')?.addEventListener('submit', async event => {
+    event.preventDefault();
+    const values = new FormData(event.currentTarget);
+    const file = values.get('file');
+    if (!(file instanceof File) || !file.size) return toast('Pilih lampiran Brief.', true);
+    try {
+      event.currentTarget.querySelector('button[type="submit"]').disabled = true;
+      await uploadCollaborativeFile(item.id, 'BRIEF', file, values.get('message'), '#inline-upload-progress');
+      toast('Lampiran Brief berhasil diunggah.');
+      await showContentDetail(item.id);
+    } catch (error) { toast(error.message, true); }
+  });
   document.querySelectorAll('[data-review-vendor-edit]').forEach(button => button.addEventListener('click', async () => {
     const action = button.dataset.reviewAction;
     const note = window.prompt(action === 'ACCEPT' ? 'Catatan penerimaan (opsional):' : 'Alasan penolakan (opsional):', '');
@@ -1000,44 +1039,6 @@ function reviewVendorBrief(item, decision) {
   });
 }
 
-function showVendorEditForm(item) {
-  const definitions = {
-    brief: ['Brief Produksi', item.brief || '', 5000], description: ['Deskripsi', item.description || '', 2000],
-    caption: ['Draft Caption', item.caption || '', 5000], hashtags: ['Hashtag', item.hashtags || '', 1000],
-    call_to_action: ['Call to Action', item.call_to_action || '', 1000]
-  };
-  const allowed = (item.vendorEditPermissions || []).filter(permission => definitions[permission]);
-  if (!allowed.length) return toast('Koordinator belum memberikan akses edit materi.', true);
-  openModal('Usulkan Edit Materi', `<form id="vendor-edit-form">
-    <div class="notice">Tulisan Koordinator tetap dipertahankan. Tambahan Anda dikirim sebagai usulan dan baru aktif setelah diterima Koordinator.</div>
-    <label class="field" style="margin-top:16px"><span>Kolom yang diedit</span><select name="fieldName">${allowed.map(field => `<option value="${field}">${escapeHtml(definitions[field][0])}</option>`).join('')}</select></label>
-    <div class="field" style="margin-top:14px"><span>Isi Koordinator — tidak dapat diubah</span><div id="vendor-edit-base" class="readonly-material"></div></div>
-    <label class="field" style="margin-top:14px"><span>Tambahan / revisi dari Vendor *</span><textarea name="addedValue" required rows="7" placeholder="Tuliskan tambahan tanpa mengulang atau menghapus materi Koordinator"></textarea><small id="vendor-edit-limit"></small></label>
-    <div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn btn-primary">Kirim Usulan</button></div>
-  </form>`, item.content_no);
-  const formNode = $('#vendor-edit-form');
-  const fieldNode = formNode.elements.fieldName;
-  const refresh = () => {
-    const definition = definitions[fieldNode.value];
-    $('#vendor-edit-base').textContent = definition[1] || 'Belum ada tulisan Koordinator.';
-    formNode.elements.addedValue.maxLength = Math.max(1, definition[2] - definition[1].length - (definition[1] ? 2 : 0));
-    $('#vendor-edit-limit').textContent = `Maksimal tambahan ${number(formNode.elements.addedValue.maxLength)} karakter.`;
-  };
-  refresh();
-  fieldNode.addEventListener('change', refresh);
-  formNode.querySelector('[data-close-modal]').addEventListener('click', closeModal);
-  formNode.addEventListener('submit', async event => {
-    event.preventDefault(); setLoading(true);
-    try {
-      const form = new FormData(event.currentTarget);
-      await api(`/api/contents/${item.id}/vendor-edits`, { method: 'POST', body: { fieldName: form.get('fieldName'), addedValue: form.get('addedValue') } });
-      toast('Usulan edit dikirim kepada Koordinator.');
-      await showContentDetail(item.id);
-    } catch (error) { toast(error.message, true); }
-    finally { setLoading(false); }
-  });
-}
-
 function transitionPermission(item, next) {
   const map = {
     BRIEFED: 'content.edit', ASSIGNED: 'content.assign', IN_PRODUCTION: item.status === 'REVISION_REQUIRED' && item.production_mode !== 'INTERNAL' ? 'content.production' : 'content.approve_production',
@@ -1049,8 +1050,9 @@ function transitionPermission(item, next) {
 }
 
 function transitionLabel(status, item = null) {
-  if (status === 'IN_PRODUCTION' && item?.production_mode === 'INTERNAL') return item.status === 'REVISION_REQUIRED' ? 'Mulai Revisi Internal' : 'Mulai Produksi Internal';
-  return ({ BRIEFED: 'Brief Siap', ASSIGNED: 'Kirim ke Pra-Produksi', IN_PRODUCTION: 'Lanjut Produksi', IN_REVIEW: 'Mulai Review', REVISION_REQUIRED: 'Kirim Revisi', APPROVAL_PENDING: 'Kirim ke Direksi', APPROVED: 'Setujui Tanpa Direksi', SCHEDULED: 'Jadwalkan', CANCELLED: 'Batalkan' })[status] || (state.statusLabels[status] || status);
+  if (status === 'IN_PRODUCTION' && item?.status === 'REVISION_REQUIRED') return item.production_mode === 'INTERNAL' ? 'Mulai Revisi Internal' : 'Mulai Revisi Produksi';
+  if (status === 'IN_PRODUCTION') return 'Setujui Brief & Mulai Produksi';
+  return ({ IN_REVIEW: 'Mulai Review', REVISION_REQUIRED: 'Kirim Revisi', APPROVAL_PENDING: 'Kirim ke Direksi', APPROVED: 'Setujui Tanpa Direksi', SCHEDULED: 'Jadwalkan', CANCELLED: 'Batalkan' })[status] || (state.statusLabels[status] || status);
 }
 
 function transitionTone(status) {
@@ -1080,7 +1082,7 @@ function showTransitionForm(item, toStatus) {
 }
 
 function phaseLabel(phase) {
-  return ({ BRIEF: 'Brief', PRE_PRODUCTION: 'Pra-Produksi', PRODUCTION_RESULT: 'Hasil Produksi' })[phase] || phase;
+  return ({ BRIEF: 'Brief & Diskusi', PRE_PRODUCTION: 'Brief & Diskusi (arsip)', PRODUCTION_RESULT: 'Produksi & Hasil' })[phase] || phase;
 }
 
 function fileIcon(mime = '') {
@@ -1092,8 +1094,7 @@ function fileIcon(mime = '') {
 }
 
 function defaultDiscussionPhase(item) {
-  if (['REQUESTED', 'BRIEFED'].includes(item.status)) return 'BRIEF';
-  if (['ASSIGNED'].includes(item.status)) return 'PRE_PRODUCTION';
+  if (['REQUESTED', 'BRIEFED', 'ASSIGNED'].includes(item.status)) return 'BRIEF';
   return 'PRODUCTION_RESULT';
 }
 
@@ -1103,7 +1104,7 @@ function showDiscussionForm(item) {
     <div class="notice">Pesan dan file tersimpan sesuai tahap. Upload file tidak akan mengubah status sebelum tombol proses berikutnya ditekan.</div>
     <div class="form-grid" style="margin-top:16px">
       <label class="field"><span>Tahap</span><select name="phase">${optionsHtml([
-        ['BRIEF','Brief'],['PRE_PRODUCTION','Pra-Produksi / Script'],['PRODUCTION_RESULT','Hasil Produksi / Revisi']
+        ['BRIEF','Brief & Diskusi'],['PRODUCTION_RESULT','Produksi, Hasil & Revisi']
       ], phase)}</select></label>
       <label class="field"><span>Lampiran (opsional)</span><input type="file" name="file" accept="image/*,video/*,audio/*,.pdf,.zip,.doc,.docx,.xls,.xlsx,.ppt,.pptx"></label>
       <label class="field full"><span>Pesan / Catatan</span><textarea name="message" maxlength="5000" placeholder="Bahas script, storyboard, isi materi, hasil, atau revisi..."></textarea></label>
@@ -1138,8 +1139,8 @@ function showDiscussionForm(item) {
   });
 }
 
-async function uploadCollaborativeFile(contentId, phase, file, message) {
-  const progress = $('#upload-progress');
+async function uploadCollaborativeFile(contentId, phase, file, message, progressSelector = '#upload-progress') {
+  const progress = $(progressSelector);
   progress.hidden = false;
   const bar = progress.querySelector('span');
   const label = progress.querySelector('p');
@@ -1919,8 +1920,14 @@ function categoryLabel(value) { return ({ BRAND_CENTER: 'Brand Center', BROCHURE
 function categoryOptions(selected = '') { return optionsHtml([['BRAND_CENTER','Brand Center'],['BROCHURE_PRODUCT','Brosur & Produk'],['CONTENT_TEMPLATE','Template Konten'],['PHOTO_VIDEO','Bank Foto / Video'],['CAMPAIGN','Materi Kampanye'],['ARCHIVE','Arsip']], selected); }
 function brandOptions(selected = '') { return state.brands.map(brand => `<option value="${attr(brand.id)}" ${brand.id === selected ? 'selected' : ''}>${escapeHtml(brand.name)}</option>`).join(''); }
 function statusOptions(allowed = null) {
-  const values = allowed?.length ? allowed : Object.keys(state.statusLabels);
-  return values.map(value => `<option value="${attr(value)}">${escapeHtml(state.statusLabels[value] || labelize(value))}</option>`).join('');
+  if (allowed?.length) return allowed.map(value => `<option value="${attr(value)}">${escapeHtml(state.statusLabels[value] || labelize(value))}</option>`).join('');
+  const stages = [
+    ['REQUESTED,BRIEFED,ASSIGNED', 'Brief & Diskusi'], ['IN_PRODUCTION', 'Produksi'],
+    ['DRAFT_SUBMITTED,IN_REVIEW', 'Review Koordinator'], ['REVISION_REQUIRED', 'Revisi Produksi'],
+    ['APPROVAL_PENDING', 'Approval Direksi'], ['APPROVED', 'Disetujui'],
+    ['SCHEDULED', 'Terjadwal'], ['PUBLISHED', 'Selesai Tayang'], ['CANCELLED', 'Dibatalkan']
+  ];
+  return stages.map(([value, label]) => `<option value="${attr(value)}">${escapeHtml(label)}</option>`).join('');
 }
 function optionsHtml(entries, selected = '') {
   return entries.map(([value, label]) => `<option value="${attr(value)}" ${value === selected ? 'selected' : ''}>${escapeHtml(label)}</option>`).join('');
