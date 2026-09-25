@@ -107,13 +107,32 @@ test('Vendor membuat usulan brief dan Koordinator memberi keputusan', () => {
 
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.7\.1/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.8\.0/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);
   assert.match(css, /@media \(display-mode: standalone\)/);
   assert.equal(manifest.display, 'standalone');
   assert.equal(manifest.start_url, '/');
+});
+
+test('kalender konten memakai tampilan bulanan dan agenda mobile', () => {
+  assert.match(app, /function contentCalendar\(items, cursor, selectedDate, today\)/);
+  assert.match(app, /content-calendar-grid/);
+  assert.match(app, /data-calendar-nav="today"/);
+  assert.match(app, /Agenda terpilih/);
+  assert.match(css, /\.content-calendar-grid/);
+  assert.match(css, /\.content-calendar-event/);
+});
+
+test('lampiran produksi dapat dipreview dan video mendukung layar penuh', () => {
+  assert.match(app, /function openMediaPreview\(url, mime, name\)/);
+  assert.match(app, /<video src=.*controls playsinline preload="metadata"/);
+  assert.match(app, /data-media-fullscreen/);
+  assert.match(app, /requestFullscreen/);
+  assert.match(app, /webkitEnterFullscreen/);
+  assert.match(css, /\.media-preview-overlay/);
+  assert.match(css, /\.media-preview-stage video/);
 });
 
 test('logout menawarkan keluar lokal atau AXINDO pada desktop dan mobile', () => {

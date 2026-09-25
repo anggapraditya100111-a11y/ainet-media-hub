@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.0 — 2026-09-25
+
+- Mengubah Kalender Konten menjadi kalender bulanan dengan navigasi bulan, indikator hari ini, dan agenda tanggal terpilih.
+- Menyederhanakan kalender pada layar mobile menjadi indikator jadwal per tanggal serta daftar agenda yang mudah dibaca.
+- Menambahkan preview gambar dan PDF langsung di dalam aplikasi.
+- Menambahkan player video dan audio tanpa berpindah tab, termasuk kontrol layar penuh untuk video.
+- Mempertahankan tombol unduh sebagai tindakan tambahan dan dukungan streaming video agar durasi dapat digeser.
+
 ## 0.7.1 — 2026-09-24
 
 - Memperjelas setiap judul materi dengan header, garis aksen, dan jarak yang konsisten.

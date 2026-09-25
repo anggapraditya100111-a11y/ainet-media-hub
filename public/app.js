@@ -90,7 +90,11 @@ $('#nav-backdrop').addEventListener('click', closeNavigation);
 $('#theme-toggle').addEventListener('click', toggleTheme);
 $('#notifications-button').addEventListener('click', showNotifications);
 document.querySelectorAll('[data-close-modal]').forEach(button => button.addEventListener('click', closeModal));
-document.addEventListener('keydown', event => { if (event.key === 'Escape') closeModal(); });
+document.addEventListener('keydown', event => {
+  if (event.key !== 'Escape') return;
+  if (document.querySelector('.media-preview-overlay')) closeMediaPreview();
+  else closeModal();
+});
 window.addEventListener('message', handlePopupLoginMessage);
 
 async function init() {
@@ -601,26 +605,45 @@ async function renderContentList(options = {}) {
 }
 
 async function renderCalendar() {
-  const now = new Date();
-  const first = new Date(now.getFullYear(), now.getMonth(), 1);
-  const last = new Date(now.getFullYear(), now.getMonth() + 2, 0);
-  const from = dateInput(first);
-  const to = dateInput(last);
-  const data = await api(`/api/calendar?from=${from}&to=${to}`);
-  page.innerHTML = `<div class="page-head"><div><h2>Kalender Konten</h2><p>Deadline dan jadwal publikasi dua bulan ke depan.</p></div></div>
-    <form id="calendar-filter" class="card toolbar"><label class="field"><span>Dari</span><input type="date" name="from" value="${from}"></label><label class="field"><span>Sampai</span><input type="date" name="to" value="${to}"></label><button class="btn btn-primary" type="submit">Tampilkan</button></form>
-    <section id="calendar-results" class="calendar-list">${calendarRows(data.items)}</section>`;
-  $('#calendar-filter').addEventListener('submit', async event => {
-    event.preventDefault(); setLoading(true);
+  const today = new Date();
+  let cursor = new Date(today.getFullYear(), today.getMonth(), 1);
+  let selectedDate = dateInput(today);
+  page.innerHTML = `<div class="page-head"><div><h2>Kalender Konten</h2><p>Jadwal publikasi dan deadline dalam tampilan kalender bulanan.</p></div></div>
+    <section id="content-calendar"></section>`;
+
+  async function loadMonth() {
+    setLoading(true);
     try {
-      const form = new FormData(event.currentTarget);
-      const result = await api(`/api/calendar?from=${encodeURIComponent(form.get('from'))}&to=${encodeURIComponent(form.get('to'))}`);
-      $('#calendar-results').innerHTML = calendarRows(result.items);
-      bindContentOpeners($('#calendar-results'));
-    } catch (error) { toast(error.message, true); }
+      const first = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
+      const startOffset = (first.getDay() + 6) % 7;
+      const gridStart = new Date(first.getFullYear(), first.getMonth(), 1 - startOffset);
+      const gridEnd = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + 41);
+      if (!selectedDate.startsWith(`${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, '0')}`)) selectedDate = dateInput(first);
+      const data = await api(`/api/calendar?from=${dateInput(gridStart)}&to=${dateInput(gridEnd)}`);
+      const root = $('#content-calendar');
+      root.innerHTML = contentCalendar(data.items, cursor, selectedDate, today);
+      bindCalendarMonthInteractions(root, data.items);
+    } catch (error) { page.innerHTML = errorState(error.message); }
     finally { setLoading(false); }
-  });
-  bindContentOpeners(page);
+  }
+
+  function bindCalendarMonthInteractions(root, items) {
+    bindContentOpeners(root);
+    root.querySelectorAll('[data-calendar-nav]').forEach(button => button.addEventListener('click', async () => {
+      const action = button.dataset.calendarNav;
+      cursor = action === 'today' ? new Date(today.getFullYear(), today.getMonth(), 1) : new Date(cursor.getFullYear(), cursor.getMonth() + Number(action), 1);
+      selectedDate = action === 'today' ? dateInput(today) : dateInput(cursor);
+      await loadMonth();
+    }));
+    root.querySelectorAll('[data-calendar-date]').forEach(cell => cell.addEventListener('click', event => {
+      if (event.target.closest('[data-content-id]')) return;
+      selectedDate = cell.dataset.calendarDate;
+      root.innerHTML = contentCalendar(items, cursor, selectedDate, today);
+      bindCalendarMonthInteractions(root, items);
+    }));
+  }
+
+  await loadMonth();
 }
 
 async function loadAssignments() {
@@ -827,7 +850,7 @@ async function showContentDetail(id) {
           </section>
           <section class="card detail-section" style="margin-top:16px"><h3>Lampiran & Hasil Produksi</h3>
             ${inlineBriefUpload(item)}
-            ${(data.collaborationFiles || []).length ? `<div class="file-grid">${data.collaborationFiles.map(file => `<article class="file-card"><div class="file-icon">${fileIcon(file.mime_type)}</div><div><span class="tag">${phaseLabel(file.phase)} · v${file.version_number}</span><strong>${escapeHtml(file.original_name)}</strong><small>${fileSize(file.file_size)} · ${escapeHtml(file.uploaded_by_name)}</small></div><div class="actions"><a class="btn btn-ghost btn-small" href="${attr(file.fileUrl)}" target="_blank" rel="noopener">Buka</a><a class="btn btn-ghost btn-small" href="${attr(file.fileUrl)}?download=1">Unduh</a></div></article>`).join('')}</div>` : emptyInline('Belum ada lampiran Brief & Diskusi atau hasil produksi.')}
+            ${(data.collaborationFiles || []).length ? `<div class="file-grid">${data.collaborationFiles.map(file => `<article class="file-card"><div class="file-icon">${fileIcon(file.mime_type)}</div><div><span class="tag">${phaseLabel(file.phase)} · v${file.version_number}</span><strong>${escapeHtml(file.original_name)}</strong><small>${fileSize(file.file_size)} · ${escapeHtml(file.uploaded_by_name)}</small></div><div class="actions">${mediaPreviewButton(file)}<a class="btn btn-ghost btn-small" href="${attr(file.fileUrl)}?download=1">Unduh</a></div></article>`).join('')}</div>` : emptyInline('Belum ada lampiran Brief & Diskusi atau hasil produksi.')}
           </section>
           <section class="card detail-section" style="margin-top:16px"><h3>Versi Lama</h3>
             ${data.versions.length ? `<div class="table-wrap"><table><thead><tr><th>Versi</th><th>Berkas</th><th>Pengirim</th><th>Waktu</th><th></th></tr></thead><tbody>${data.versions.map(version => `<tr><td>v${version.version_number}${version.is_approved ? ' ✓' : ''}</td><td><span class="cell-title truncate">${escapeHtml(version.original_name)}</span><span class="cell-meta">${fileSize(version.file_size)}</span></td><td>${escapeHtml(version.submitted_by_name)}</td><td>${dateTime(version.created_at)}</td><td><a class="btn btn-ghost btn-small" href="${attr(version.fileUrl)}" target="_blank" rel="noopener">Buka</a></td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">Tidak ada file dari versi aplikasi lama.</p>'}
@@ -863,6 +886,7 @@ async function showContentDetail(id) {
         </div>
       </div>`, item.content_no);
     bindDetailActions(item, data);
+    bindMediaPreviewers($('#modal-body'));
   } catch (error) { toast(error.message, true); }
   finally { setLoading(false); }
 }
@@ -1835,9 +1859,43 @@ function calendarRows(items) {
   return items.length ? items.map(contentMiniRow).join('') : `<div class="card">${emptyState('Jadwal kosong', 'Belum ada deadline atau rencana tayang pada periode ini.')}</div>`;
 }
 
+function calendarItemDate(item) {
+  return String(item.publish_at || item.due_date || '').slice(0, 10);
+}
+
+function contentCalendar(items, cursor, selectedDate, today) {
+  const first = new Date(cursor.getFullYear(), cursor.getMonth(), 1);
+  const startOffset = (first.getDay() + 6) % 7;
+  const gridStart = new Date(first.getFullYear(), first.getMonth(), 1 - startOffset);
+  const grouped = items.reduce((result, item) => {
+    const key = calendarItemDate(item);
+    if (key) (result[key] ||= []).push(item);
+    return result;
+  }, {});
+  const monthLabel = cursor.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+  const days = Array.from({ length: 42 }, (_, index) => {
+    const date = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + index);
+    const key = dateInput(date);
+    const dayItems = grouped[key] || [];
+    const outside = date.getMonth() !== cursor.getMonth();
+    const classes = ['content-calendar-day', outside ? 'outside' : '', key === dateInput(today) ? 'today' : '', key === selectedDate ? 'selected' : ''].filter(Boolean).join(' ');
+    return `<div class="${classes}" data-calendar-date="${key}"><div class="content-calendar-date"><span>${date.getDate()}</span>${dayItems.length ? `<small>${dayItems.length}</small>` : ''}</div><div class="content-calendar-events">${dayItems.slice(0, 3).map(calendarEvent).join('')}${dayItems.length > 3 ? `<button class="calendar-more" type="button">+${dayItems.length - 3} lainnya</button>` : ''}</div></div>`;
+  }).join('');
+  const selectedItems = grouped[selectedDate] || [];
+  const selectedLabel = new Date(`${selectedDate}T12:00:00`).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  return `<section class="card content-calendar-card"><header class="content-calendar-toolbar"><div><span class="eyebrow">Bulan</span><h3>${escapeHtml(monthLabel)}</h3></div><div class="actions"><button class="btn btn-ghost btn-small" type="button" data-calendar-nav="-1" aria-label="Bulan sebelumnya">‹</button><button class="btn btn-ghost btn-small" type="button" data-calendar-nav="today">Hari Ini</button><button class="btn btn-ghost btn-small" type="button" data-calendar-nav="1" aria-label="Bulan berikutnya">›</button></div></header><div class="content-calendar-weekdays">${['Sen','Sel','Rab','Kam','Jum','Sab','Min'].map(day => `<span>${day}</span>`).join('')}</div><div class="content-calendar-grid">${days}</div></section>
+    <section class="card calendar-agenda"><div class="card-head"><div><span class="eyebrow">Agenda terpilih</span><h3>${escapeHtml(selectedLabel)}</h3></div><span class="tag">${selectedItems.length} konten</span></div><div class="card-body">${selectedItems.length ? `<div class="calendar-list">${selectedItems.map(contentMiniRow).join('')}</div>` : emptyInline('Belum ada deadline atau jadwal publikasi pada tanggal ini.')}</div></section>`;
+}
+
+function calendarEvent(item) {
+  const time = item.publish_at ? new Date(item.publish_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : 'Deadline';
+  return `<button class="content-calendar-event ${statusClass(item.status)}" type="button" data-content-id="${attr(item.id)}" title="${attr(item.title)}"><span class="calendar-event-brand" style="background:${safeColor(item.brand_color)}"></span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(time)} · ${escapeHtml(item.brand_code)}</small></button>`;
+}
+
 function bindContentOpeners(root) {
   root.querySelectorAll('[data-content-id]').forEach(element => element.addEventListener('click', event => {
-    if (event.target.closest('a,button')) return;
+    const interactive = event.target.closest('a,button');
+    if (interactive && interactive !== element) return;
     showContentDetail(element.dataset.contentId);
   }));
 }
@@ -1854,6 +1912,49 @@ function closeModal() {
   $('#modal').hidden = true;
   $('#modal-body').innerHTML = '';
   document.body.style.overflow = '';
+}
+
+function isPreviewableMime(mime) {
+  return /^(image|video|audio)\//.test(String(mime || '')) || mime === 'application/pdf';
+}
+
+function mediaPreviewButton(file) {
+  if (!isPreviewableMime(file.mime_type)) return '<span class="tag">Perlu diunduh</span>';
+  const label = String(file.mime_type || '').startsWith('video/') || String(file.mime_type || '').startsWith('audio/') ? 'Putar' : 'Lihat';
+  return `<button class="btn btn-primary btn-small" type="button" data-media-preview="${attr(file.fileUrl)}" data-media-mime="${attr(file.mime_type)}" data-media-name="${attr(file.original_name)}">${label}</button>`;
+}
+
+function bindMediaPreviewers(root = document) {
+  root.querySelectorAll('[data-media-preview]').forEach(button => button.addEventListener('click', () => {
+    openMediaPreview(button.dataset.mediaPreview, button.dataset.mediaMime, button.dataset.mediaName);
+  }));
+}
+
+function openMediaPreview(url, mime, name) {
+  closeMediaPreview();
+  let media = '';
+  if (String(mime).startsWith('image/')) media = `<img src="${attr(url)}" alt="${attr(name)}">`;
+  else if (String(mime).startsWith('video/')) media = `<video src="${attr(url)}" controls playsinline preload="metadata"></video>`;
+  else if (String(mime).startsWith('audio/')) media = `<audio src="${attr(url)}" controls preload="metadata"></audio>`;
+  else if (mime === 'application/pdf') media = `<iframe src="${attr(url)}" title="${attr(name)}"></iframe>`;
+  const overlay = document.createElement('div');
+  overlay.className = 'media-preview-overlay';
+  overlay.innerHTML = `<button class="media-preview-backdrop" type="button" aria-label="Tutup preview"></button><section class="media-preview-panel" role="dialog" aria-modal="true" aria-label="Preview ${attr(name)}"><header><div><span class="eyebrow">Preview berkas</span><strong>${escapeHtml(name)}</strong></div><div class="actions">${String(mime).startsWith('video/') ? '<button class="btn btn-ghost btn-small" type="button" data-media-fullscreen>Layar penuh</button>' : ''}<a class="btn btn-ghost btn-small" href="${attr(url)}?download=1">Unduh</a><button class="icon-btn" type="button" data-close-media aria-label="Tutup">×</button></div></header><div class="media-preview-stage">${media}</div></section>`;
+  document.body.appendChild(overlay);
+  overlay.querySelector('.media-preview-backdrop').addEventListener('click', closeMediaPreview);
+  overlay.querySelector('[data-close-media]').addEventListener('click', closeMediaPreview);
+  overlay.querySelector('[data-media-fullscreen]')?.addEventListener('click', () => {
+    const video = overlay.querySelector('video');
+    if (video.requestFullscreen) video.requestFullscreen();
+    else if (video.webkitEnterFullscreen) video.webkitEnterFullscreen();
+  });
+}
+
+function closeMediaPreview() {
+  const overlay = document.querySelector('.media-preview-overlay');
+  if (!overlay) return;
+  overlay.querySelectorAll('video,audio').forEach(media => media.pause());
+  overlay.remove();
 }
 
 function closeNavigation() { document.body.classList.remove('nav-open'); }
