@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.2 — 2026-09-29
+
+- Memperbaiki urutan migrasi database lama agar kolom Sampah dibuat sebelum indeksnya sehingga container dapat berjalan setelah pembaruan.
+
 ## 0.8.1 — 2026-09-29
 
 - Menambahkan tindakan hapus pada Ringkasan Progres untuk Super Admin dan Direksi dengan alasan wajib.

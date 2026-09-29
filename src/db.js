@@ -165,7 +165,6 @@ function initDatabase() {
     CREATE INDEX IF NOT EXISTS idx_contents_status ON contents(status, updated_at DESC);
     CREATE INDEX IF NOT EXISTS idx_contents_due ON contents(due_date);
     CREATE INDEX IF NOT EXISTS idx_contents_vendor ON contents(vendor_id, status);
-    CREATE INDEX IF NOT EXISTS idx_contents_deleted ON contents(deleted_at);
 
     CREATE TABLE IF NOT EXISTS content_channels (
       content_id TEXT NOT NULL,

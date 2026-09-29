@@ -107,7 +107,7 @@ test('Vendor membuat usulan brief dan Koordinator memberi keputusan', () => {
 
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.8\.1/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.8\.2/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);
