@@ -25,7 +25,7 @@ const icons = {
   dashboard: '⌂', calendar: '▦', pipeline: '⌘', request: '＋', task: '✓',
   review: '◎', approval: '◆', upload: '↑', library: '▣', vendor: '◇',
   report: '▤', users: '♙', audit: '≡', settings: '⚙', backup: '↻', profile: '○',
-  history: '↺', performance: '↗', progress: '◫'
+  history: '↺', performance: '↗', progress: '◫', trash: '♲'
 };
 
 const ROLE_MENUS = {
@@ -33,7 +33,8 @@ const ROLE_MENUS = {
     ['Utama', 'dashboard', 'Dashboard', 'dashboard'], ['Utama', 'calendar', 'Kalender Konten', 'calendar'],
     ['Konten', 'pipeline', 'Pipeline Konten', 'pipeline'], ['Konten', 'requests', 'Permintaan Konten', 'request'],
     ['Konten', 'review-queue', 'Review Hasil', 'review'], ['Konten', 'approval-queue', 'Approval Direksi', 'approval'],
-    ['Konten', 'ready', 'Siap Tayang', 'upload'], ['Sumber Daya', 'library', 'Media Library', 'library'],
+    ['Konten', 'ready', 'Siap Tayang', 'upload'], ['Konten', 'progress', 'Ringkasan Progres', 'progress'],
+    ['Konten', 'trash', 'Sampah Konten', 'trash'], ['Sumber Daya', 'library', 'Media Library', 'library'],
     ['Sumber Daya', 'vendors', 'Vendor', 'vendor'], ['Analitik', 'reports', 'Laporan & Performa', 'report'],
     ['Administrasi', 'users', 'Pengguna & Akses', 'users'], ['Administrasi', 'audit', 'Audit Log', 'audit'],
     ['Administrasi', 'settings', 'Pengaturan', 'settings'], ['Administrasi', 'backups', 'Backup Data', 'backup'],
@@ -59,7 +60,7 @@ const ROLE_MENUS = {
   ],
   MANAGEMENT: [
     ['Utama', 'dashboard', 'Dashboard Executive', 'dashboard'], ['Utama', 'calendar', 'Kalender', 'calendar'],
-    ['Konten', 'approval-queue', 'Approval Saya', 'approval'], ['Konten', 'progress', 'Ringkasan Progres', 'progress'], ['Analitik', 'reports', 'Performa Konten', 'performance'],
+    ['Konten', 'approval-queue', 'Approval Saya', 'approval'], ['Konten', 'progress', 'Ringkasan Progres', 'progress'], ['Konten', 'trash', 'Sampah Konten', 'trash'], ['Analitik', 'reports', 'Performa Konten', 'performance'],
     ['Analitik', 'vendors', 'Kinerja Vendor', 'vendor'], ['Sumber Daya', 'library', 'Media Library', 'library'],
     ['Akun', 'profile', 'Profil', 'profile']
   ]
@@ -72,7 +73,7 @@ const PAGE_META = {
   'review-queue': ['Review Hasil', 'Pemeriksaan hasil produksi oleh Koordinator'], 'review-history': ['Riwayat Review', 'Jejak pemeriksaan'],
   'approval-queue': ['Approval Direksi', 'Persetujuan final melalui link dan PIN'], 'approval-history': ['Riwayat Persetujuan', 'Jejak keputusan'],
   ready: ['Konten Siap Tayang', 'Penjadwalan dan publikasi'], 'publication-history': ['Riwayat Publikasi', 'Bukti konten tayang'],
-  'content-history': ['Riwayat Tugas', 'Arsip pekerjaan vendor'], progress: ['Ringkasan Progres', 'Pemantauan seluruh pekerjaan'],
+  'content-history': ['Riwayat Tugas', 'Arsip pekerjaan vendor'], progress: ['Ringkasan Progres', 'Pemantauan seluruh pekerjaan'], trash: ['Sampah Konten', 'Data yang dapat dipulihkan'],
   library: ['Media Library', 'Logo, brosur, template, foto, dan materi resmi'], vendors: ['Vendor', 'Mitra produksi konten'],
   reports: ['Laporan & Performa', 'Output, SLA, engagement, leads, dan biaya'], users: ['Pengguna & Akses', 'Role dan akun'],
   audit: ['Audit Log', 'Riwayat aktivitas sistem'], settings: ['Pengaturan', 'Branding dan konfigurasi'],
@@ -494,7 +495,8 @@ async function openPage(pageId) {
       ready: () => renderContentList({ title: 'Siap Tayang', description: 'Konten disetujui untuk dijadwalkan dan dipublikasikan.', statuses: ['APPROVED', 'SCHEDULED'] }),
       'publication-history': () => renderContentList({ title: 'Riwayat Publikasi', description: 'Konten yang sudah tayang beserta bukti.', statuses: ['PUBLISHED'] }),
       'content-history': () => renderContentList({ title: 'Riwayat Tugas', description: 'Tugas yang sudah selesai atau dibatalkan.', statuses: ['PUBLISHED', 'CANCELLED'] }),
-      progress: () => renderContentList({ title: 'Ringkasan Progres', description: 'Status seluruh pekerjaan media.' }),
+      progress: () => renderContentList({ title: 'Ringkasan Progres', description: 'Status seluruh pekerjaan media.', trashActions: true }),
+      trash: renderTrash,
       library: renderLibrary, vendors: renderVendors, reports: renderReports,
       users: renderUsers, audit: renderAudit, settings: renderSettings,
       backups: renderBackups, profile: renderProfile
@@ -584,7 +586,7 @@ async function renderContentList(options = {}) {
       <label class="field"><span>Status</span><select name="status"><option value="">Semua status</option>${statusOptions(options.statuses)}</select></label>
       <button class="btn btn-ghost" type="submit">Terapkan</button>
     </form>
-    <section id="content-results" class="card">${contentTable(data.items)}</section>`;
+    <section id="content-results" class="card">${contentTable(data.items, options.trashActions)}</section>`;
   $('#content-create')?.addEventListener('click', () => showContentForm());
   $('#content-filter').addEventListener('submit', async event => {
     event.preventDefault(); setLoading(true);
@@ -596,12 +598,59 @@ async function renderContentList(options = {}) {
       if (form.get('status')) query.set('status', form.get('status'));
       else if (options.statuses?.length) query.set('status', options.statuses.join(','));
       const result = await api(`/api/contents?${query}`);
-      $('#content-results').innerHTML = contentTable(result.items);
+      $('#content-results').innerHTML = contentTable(result.items, options.trashActions);
       bindContentOpeners($('#content-results'));
+      if (options.trashActions) bindTrashActions($('#content-results'));
     } catch (error) { toast(error.message, true); }
     finally { setLoading(false); }
   });
   bindContentOpeners(page);
+  if (options.trashActions) bindTrashActions(page);
+}
+
+function bindTrashActions(root) {
+  root.querySelectorAll('[data-trash-content]').forEach(button => button.addEventListener('click', event => {
+    event.stopPropagation();
+    showTrashContentForm(button.dataset.trashContent, button.dataset.contentNo, button.dataset.contentTitle);
+  }));
+}
+
+function showTrashContentForm(id, contentNo, title) {
+  openModal('Hapus dari Ringkasan Progres', `<form id="trash-content-form"><div class="notice warn"><strong>${escapeHtml(contentNo)} · ${escapeHtml(title)}</strong><br>Data akan dipindahkan ke Sampah dan tidak tampil pada daftar aktif, kalender, maupun laporan. Data masih dapat dipulihkan.</div><label class="field" style="margin-top:16px"><span>Alasan penghapusan *</span><textarea name="reason" maxlength="1000" required placeholder="Jelaskan alasan data dihapus"></textarea></label><div class="form-actions"><button class="btn btn-ghost" type="button" data-close-modal>Batal</button><button class="btn btn-danger" type="submit">Hapus ke Sampah</button></div></form>`, contentNo);
+  $('#trash-content-form [data-close-modal]').addEventListener('click', closeModal);
+  $('#trash-content-form').addEventListener('submit', async event => {
+    event.preventDefault(); setLoading(true);
+    try {
+      const reason = new FormData(event.currentTarget).get('reason');
+      await api(`/api/contents/${encodeURIComponent(id)}/trash`, { method: 'POST', body: { reason } });
+      closeModal(); toast('Data dipindahkan ke Sampah.'); await openPage('progress');
+    } catch (error) { toast(error.message, true); }
+    finally { setLoading(false); }
+  });
+}
+
+async function renderTrash() {
+  const data = await api('/api/contents/trash');
+  page.innerHTML = `<div class="page-head"><div><h2>Sampah Konten</h2><p>Data dapat dipulihkan. Penghapusan permanen hanya tersedia untuk Super Admin setelah ${number(data.retentionDays)} hari.</p></div></div><section class="card">${trashTable(data.items)}</section>`;
+  page.querySelectorAll('[data-restore-content]').forEach(button => button.addEventListener('click', async () => {
+    if (!confirm(`Pulihkan ${button.dataset.contentNo} ke daftar aktif?`)) return;
+    setLoading(true);
+    try { await api(`/api/contents/${encodeURIComponent(button.dataset.restoreContent)}/restore`, { method: 'POST' }); toast('Data berhasil dipulihkan.'); await renderTrash(); }
+    catch (error) { toast(error.message, true); }
+    finally { setLoading(false); }
+  }));
+  page.querySelectorAll('[data-purge-content]').forEach(button => button.addEventListener('click', async () => {
+    if (!confirm(`Hapus permanen ${button.dataset.contentNo}? Data dan seluruh lampiran tidak dapat dipulihkan.`)) return;
+    setLoading(true);
+    try { await api(`/api/contents/${encodeURIComponent(button.dataset.purgeContent)}/permanent`, { method: 'DELETE' }); toast('Data dihapus permanen.'); await renderTrash(); }
+    catch (error) { toast(error.message, true); }
+    finally { setLoading(false); }
+  }));
+}
+
+function trashTable(items) {
+  if (!items.length) return emptyState('Sampah kosong', 'Belum ada data konten yang dihapus.');
+  return `<div class="table-wrap"><table><thead><tr><th>Konten</th><th>Status terakhir</th><th>Dihapus oleh</th><th>Alasan</th><th>Waktu</th><th></th></tr></thead><tbody>${items.map(item => `<tr><td><span class="cell-title">${escapeHtml(item.title)}</span><span class="cell-meta">${escapeHtml(item.content_no)}</span></td><td>${statusHtml(item.status, item.statusLabel)}</td><td>${escapeHtml(item.deleted_by_name || '-')}</td><td><span class="cell-meta">${escapeHtml(item.delete_reason || '-')}</span></td><td>${dateTime(item.deleted_at)}</td><td><div class="actions"><button class="btn btn-success btn-small" type="button" data-restore-content="${attr(item.id)}" data-content-no="${attr(item.content_no)}">Pulihkan</button>${state.user.role === 'SUPER_ADMIN' ? item.canPurge ? `<button class="btn btn-danger btn-small" type="button" data-purge-content="${attr(item.id)}" data-content-no="${attr(item.content_no)}">Hapus Permanen</button>` : '<span class="tag">Tunggu 30 hari</span>' : ''}</div></td></tr>`).join('')}</tbody></table></div>`;
 }
 
 async function renderCalendar() {
@@ -1840,9 +1889,9 @@ function updateNotificationCount(count) {
   element.hidden = !value;
 }
 
-function contentTable(items) {
+function contentTable(items, trashActions = false) {
   if (!items.length) return emptyState('Belum ada konten', 'Data yang sesuai filter belum tersedia.');
-  return `<div class="table-wrap"><table><thead><tr><th>Konten</th><th>Brand / Channel</th><th>Status</th><th>Vendor</th><th>Deadline</th><th>Prioritas</th></tr></thead><tbody>${items.map(item => `<tr data-content-id="${attr(item.id)}"><td><span class="cell-title truncate">${escapeHtml(item.title)}</span><span class="cell-meta">${escapeHtml(item.content_no)} · ${escapeHtml(item.campaign || labelize(item.content_type))}</span></td><td><span class="brand-chip" style="background:${safeColor(item.brand_color)}">${escapeHtml(item.brand_code)}</span><span class="cell-meta truncate">${escapeHtml(item.channels.join(', ') || '-')}</span></td><td>${statusHtml(item.status, item.statusLabel)}</td><td>${escapeHtml(item.vendor_name || '-')}</td><td>${dateOnly(item.due_date)}<span class="cell-meta">${item.publish_at ? 'Tayang ' + dateTime(item.publish_at) : ''}</span></td><td>${priorityHtml(item.priority)}</td></tr>`).join('')}</tbody></table></div>`;
+  return `<div class="table-wrap"><table><thead><tr><th>Konten</th><th>Brand / Channel</th><th>Status</th><th>Vendor</th><th>Deadline</th><th>Prioritas</th>${trashActions ? '<th></th>' : ''}</tr></thead><tbody>${items.map(item => `<tr data-content-id="${attr(item.id)}"><td><span class="cell-title truncate">${escapeHtml(item.title)}</span><span class="cell-meta">${escapeHtml(item.content_no)} · ${escapeHtml(item.campaign || labelize(item.content_type))}</span></td><td><span class="brand-chip" style="background:${safeColor(item.brand_color)}">${escapeHtml(item.brand_code)}</span><span class="cell-meta truncate">${escapeHtml(item.channels.join(', ') || '-')}</span></td><td>${statusHtml(item.status, item.statusLabel)}</td><td>${escapeHtml(item.vendor_name || '-')}</td><td>${dateOnly(item.due_date)}<span class="cell-meta">${item.publish_at ? 'Tayang ' + dateTime(item.publish_at) : ''}</span></td><td>${priorityHtml(item.priority)}</td>${trashActions ? `<td><button class="btn btn-danger btn-small" type="button" data-trash-content="${attr(item.id)}" data-content-no="${attr(item.content_no)}" data-content-title="${attr(item.title)}">Hapus</button></td>` : ''}</tr>`).join('')}</tbody></table></div>`;
 }
 
 function pipelineCard(item) {

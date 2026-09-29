@@ -150,17 +150,22 @@ function initDatabase() {
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL,
       locked_at TEXT,
+      deleted_at TEXT,
+      deleted_by TEXT,
+      delete_reason TEXT,
       FOREIGN KEY(brand_id) REFERENCES brands(id),
       FOREIGN KEY(coordinator_id) REFERENCES users(id),
       FOREIGN KEY(vendor_id) REFERENCES vendors(id),
       FOREIGN KEY(reviewer_id) REFERENCES users(id),
       FOREIGN KEY(approver_id) REFERENCES users(id),
       FOREIGN KEY(uploader_id) REFERENCES users(id),
-      FOREIGN KEY(created_by) REFERENCES users(id)
+      FOREIGN KEY(created_by) REFERENCES users(id),
+      FOREIGN KEY(deleted_by) REFERENCES users(id)
     );
     CREATE INDEX IF NOT EXISTS idx_contents_status ON contents(status, updated_at DESC);
     CREATE INDEX IF NOT EXISTS idx_contents_due ON contents(due_date);
     CREATE INDEX IF NOT EXISTS idx_contents_vendor ON contents(vendor_id, status);
+    CREATE INDEX IF NOT EXISTS idx_contents_deleted ON contents(deleted_at);
 
     CREATE TABLE IF NOT EXISTS content_channels (
       content_id TEXT NOT NULL,
@@ -490,6 +495,10 @@ function migrateApprovalSecurityAndReferences() {
   if (!contentColumns.has('production_mode')) db.exec("ALTER TABLE contents ADD COLUMN production_mode TEXT NOT NULL DEFAULT 'VENDOR' CHECK(production_mode IN ('VENDOR','INTERNAL'))");
   if (!contentColumns.has('proposal_origin')) db.exec("ALTER TABLE contents ADD COLUMN proposal_origin TEXT NOT NULL DEFAULT 'COORDINATOR' CHECK(proposal_origin IN ('COORDINATOR','VENDOR'))");
   if (!contentColumns.has('brief_review_status')) db.exec("ALTER TABLE contents ADD COLUMN brief_review_status TEXT NOT NULL DEFAULT 'NONE' CHECK(brief_review_status IN ('NONE','DRAFT','SUBMITTED','REVISION','APPROVED','REJECTED'))");
+  if (!contentColumns.has('deleted_at')) db.exec('ALTER TABLE contents ADD COLUMN deleted_at TEXT');
+  if (!contentColumns.has('deleted_by')) db.exec('ALTER TABLE contents ADD COLUMN deleted_by TEXT REFERENCES users(id)');
+  if (!contentColumns.has('delete_reason')) db.exec('ALTER TABLE contents ADD COLUMN delete_reason TEXT');
+  db.exec('CREATE INDEX IF NOT EXISTS idx_contents_deleted ON contents(deleted_at)');
 
   db.exec(`
     CREATE TABLE IF NOT EXISTS vendor_brief_versions (

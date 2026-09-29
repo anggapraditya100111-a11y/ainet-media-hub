@@ -316,4 +316,49 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   assert.equal(proposalDetail.payload.briefVersions.length, 2);
   assert.equal(proposalDetail.payload.briefVersions[0].decision, 'APPROVED');
   assert.equal(proposalDetail.payload.briefVersions[1].decision, 'REVISION');
+
+  const trashCreated = await request(baseUrl, '/api/contents', { method: 'POST', body: {
+    title: 'Konten Uji Sampah', brandId: 'brand-ainet', channelIds: ['channel-instagram'],
+    contentType: 'SOCIAL_POST', brief: 'Konten khusus pengujian Sampah.',
+    coordinatorId: byRole('COORDINATOR'), productionMode: 'INTERNAL'
+  } }, adminCookie);
+  assert.equal(trashCreated.response.status, 201, JSON.stringify(trashCreated.payload));
+  const trashContentId = trashCreated.payload.item.id;
+
+  result = await request(baseUrl, `/api/contents/${trashContentId}/trash`, {
+    method: 'POST', body: { reason: 'Tidak berwenang.' }
+  }, coordinatorCookie);
+  assert.equal(result.response.status, 403, 'Koordinator tidak boleh menghapus data progres');
+  result = await request(baseUrl, `/api/contents/${trashContentId}/trash`, {
+    method: 'POST', body: { reason: '' }
+  }, managementCookie);
+  assert.equal(result.response.status, 400, 'alasan penghapusan wajib diisi');
+  result = await request(baseUrl, `/api/contents/${trashContentId}/trash`, {
+    method: 'POST', body: { reason: 'Data duplikat untuk pengujian.' }
+  }, managementCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+
+  result = await request(baseUrl, `/api/contents/${trashContentId}`, {}, adminCookie);
+  assert.equal(result.response.status, 404, 'konten di Sampah tidak boleh tampil sebagai data aktif');
+  const activeContents = await request(baseUrl, '/api/contents', {}, adminCookie);
+  assert.equal(activeContents.payload.items.some(item => item.id === trashContentId), false);
+  const trashContents = await request(baseUrl, '/api/contents/trash', {}, managementCookie);
+  const trashedItem = trashContents.payload.items.find(item => item.id === trashContentId);
+  assert.ok(trashedItem);
+  assert.equal(trashedItem.delete_reason, 'Data duplikat untuk pengujian.');
+  assert.ok(trashedItem.deleted_by_name);
+
+  result = await request(baseUrl, `/api/contents/${trashContentId}/permanent`, { method: 'DELETE' }, managementCookie);
+  assert.equal(result.response.status, 403, 'Direksi tidak boleh menghapus permanen');
+  result = await request(baseUrl, `/api/contents/${trashContentId}/restore`, { method: 'POST' }, managementCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  result = await request(baseUrl, `/api/contents/${trashContentId}`, {}, adminCookie);
+  assert.equal(result.response.status, 200, 'konten yang dipulihkan harus kembali aktif');
+
+  result = await request(baseUrl, `/api/contents/${trashContentId}/trash`, {
+    method: 'POST', body: { reason: 'Uji masa retensi.' }
+  }, adminCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  result = await request(baseUrl, `/api/contents/${trashContentId}/permanent`, { method: 'DELETE' }, adminCookie);
+  assert.equal(result.response.status, 409, 'Super Admin harus menunggu masa retensi 30 hari');
 });

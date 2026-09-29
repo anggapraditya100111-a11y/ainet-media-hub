@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.1 — 2026-09-29
+
+- Menambahkan tindakan hapus pada Ringkasan Progres untuk Super Admin dan Direksi dengan alasan wajib.
+- Memindahkan data yang dihapus ke Sampah sehingga tidak tampil pada daftar aktif, kalender, tautan publik, dan laporan.
+- Memungkinkan Super Admin dan Direksi memulihkan data beserta seluruh riwayat dan lampirannya.
+- Membatasi penghapusan permanen untuk Super Admin setelah masa retensi 30 hari.
+- Mencatat pemindahan, pemulihan, dan penghapusan permanen pada Audit Log.
+
 ## 0.8.0 — 2026-09-25
 
 - Mengubah Kalender Konten menjadi kalender bulanan dengan navigasi bulan, indikator hari ini, dan agenda tanggal terpilih.

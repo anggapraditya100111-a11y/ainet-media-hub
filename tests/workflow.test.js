@@ -36,3 +36,11 @@ test('super admin memiliki wildcard permission', () => {
   assert.deepEqual(permissionsForRole('SUPER_ADMIN'), ['*']);
   assert.equal(hasPermission('SUPER_ADMIN', 'anything.manage'), true);
 });
+
+test('hanya Super Admin dan Direksi memiliki akses pengelolaan Sampah', () => {
+  assert.equal(hasPermission('SUPER_ADMIN', 'content.trash'), true);
+  assert.equal(hasPermission('MANAGEMENT', 'content.trash'), true);
+  assert.equal(hasPermission('COORDINATOR', 'content.trash'), false);
+  assert.equal(hasPermission('VENDOR', 'content.trash'), false);
+  assert.equal(hasPermission('UPLOADER', 'content.trash'), false);
+});

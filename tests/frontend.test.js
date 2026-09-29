@@ -107,7 +107,7 @@ test('Vendor membuat usulan brief dan Koordinator memberi keputusan', () => {
 
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.8\.0/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.8\.1/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);
@@ -133,6 +133,18 @@ test('lampiran produksi dapat dipreview dan video mendukung layar penuh', () => 
   assert.match(app, /webkitEnterFullscreen/);
   assert.match(css, /\.media-preview-overlay/);
   assert.match(css, /\.media-preview-stage video/);
+});
+
+test('Super Admin dan Direksi dapat memindahkan data progres ke Sampah', () => {
+  assert.match(app, /SUPER_ADMIN:[\s\S]*Ringkasan Progres/);
+  assert.match(app, /MANAGEMENT:[\s\S]*Ringkasan Progres/);
+  assert.match(app, /Sampah Konten/);
+  assert.match(app, /trashActions: true/);
+  assert.match(app, /Alasan penghapusan \*/);
+  assert.match(app, /Hapus ke Sampah/);
+  assert.match(app, /data-restore-content/);
+  assert.match(app, /Hapus Permanen/);
+  assert.match(app, /Tunggu 30 hari/);
 });
 
 test('logout menawarkan keluar lokal atau AXINDO pada desktop dan mobile', () => {

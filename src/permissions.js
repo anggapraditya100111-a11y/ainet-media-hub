@@ -25,6 +25,7 @@ const ROLE_PERMISSIONS = Object.freeze({
   ],
   MANAGEMENT: [
     'dashboard.executive', 'calendar.view', 'content.view_all', 'content.director_approve', 'reports.view',
+    'content.trash',
     'vendor.view', 'vendor.performance', 'library.view', 'library.download',
     'notifications.view'
   ]

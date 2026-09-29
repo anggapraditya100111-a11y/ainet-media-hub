@@ -326,7 +326,8 @@ function installWorkflowV4(app, options) {
   });
 
   function publicShare(token) {
-    return db.prepare('SELECT * FROM material_share_links WHERE token_hash=?').get(hashToken('MATERIAL_SHARE', token));
+    return db.prepare(`SELECT msl.* FROM material_share_links msl JOIN contents c ON c.id=msl.content_id
+      WHERE msl.token_hash=? AND c.deleted_at IS NULL`).get(hashToken('MATERIAL_SHARE', token));
   }
 
   app.get('/api/public/shares/:token', (req, res, next) => {
@@ -422,7 +423,7 @@ function installWorkflowV4(app, options) {
       c.coordinator_id,c.vendor_id,b.name AS brand_name,u.name AS director_name,u.active AS director_active,
       u.approval_pin_hash AS director_pin_hash,u.approval_pin_salt AS director_pin_salt FROM director_approval_requests dar
       JOIN contents c ON c.id=dar.content_id JOIN brands b ON b.id=c.brand_id JOIN users u ON u.id=dar.director_id
-      WHERE dar.token_hash=?`).get(hashToken('DIRECTOR_LINK', token));
+      WHERE dar.token_hash=? AND c.deleted_at IS NULL`).get(hashToken('DIRECTOR_LINK', token));
   }
 
   function approvalSession(req, approval) {

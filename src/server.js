@@ -26,7 +26,7 @@ const {
 } = require('./oidc');
 const { installWorkflowV4 } = require('./workflow-v4');
 
-const APP_VERSION = '0.8.0';
+const APP_VERSION = '0.8.1';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';
@@ -363,7 +363,7 @@ const CONTENT_SELECT = `
   SELECT c.*, b.code AS brand_code, b.name AS brand_name, b.color AS brand_color,
     v.name AS vendor_name, creator.name AS created_by_name,
     coordinator.name AS coordinator_name, reviewer.name AS reviewer_name,
-    approver.name AS approver_name, uploader.name AS uploader_name,
+    approver.name AS approver_name, uploader.name AS uploader_name, deleted_user.name AS deleted_by_name,
     (SELECT group_concat(ch.name, '||') FROM content_channels cc JOIN channels ch ON ch.id=cc.channel_id WHERE cc.content_id=c.id) AS channel_names,
     (SELECT group_concat(cc.channel_id, '||') FROM content_channels cc WHERE cc.content_id=c.id) AS channel_ids,
     (SELECT COUNT(*) FROM content_versions cv WHERE cv.content_id=c.id) AS version_count,
@@ -375,13 +375,16 @@ const CONTENT_SELECT = `
   LEFT JOIN users coordinator ON coordinator.id=c.coordinator_id
   LEFT JOIN users reviewer ON reviewer.id=c.reviewer_id
   LEFT JOIN users approver ON approver.id=c.approver_id
-  LEFT JOIN users uploader ON uploader.id=c.uploader_id`;
+  LEFT JOIN users uploader ON uploader.id=c.uploader_id
+  LEFT JOIN users deleted_user ON deleted_user.id=c.deleted_by`;
 
-function contentVisibility(user, alias = 'c') {
-  if (hasPermission(user, 'content.view_all') || user.role === 'SUPER_ADMIN') return { sql: '1=1', params: [] };
-  if (user.role === 'VENDOR') return { sql: `${alias}.vendor_id=?`, params: [user.vendorId || '__none__'] };
-  if (user.role === 'UPLOADER') return { sql: `(${alias}.uploader_id=? OR EXISTS (SELECT 1 FROM publication_schedules ps WHERE ps.content_id=${alias}.id AND ps.uploader_id=?))`, params: [user.id, user.id] };
-  return { sql: `${alias}.created_by=?`, params: [user.id] };
+function contentVisibility(user, alias = 'c', includeDeleted = false) {
+  let access;
+  if (hasPermission(user, 'content.view_all') || user.role === 'SUPER_ADMIN') access = { sql: '1=1', params: [] };
+  else if (user.role === 'VENDOR') access = { sql: `${alias}.vendor_id=?`, params: [user.vendorId || '__none__'] };
+  else if (user.role === 'UPLOADER') access = { sql: `(${alias}.uploader_id=? OR EXISTS (SELECT 1 FROM publication_schedules ps WHERE ps.content_id=${alias}.id AND ps.uploader_id=?))`, params: [user.id, user.id] };
+  else access = { sql: `${alias}.created_by=?`, params: [user.id] };
+  return includeDeleted ? access : { sql: `(${access.sql}) AND ${alias}.deleted_at IS NULL`, params: access.params };
 }
 
 function getContent(id, user) {
@@ -840,6 +843,73 @@ app.post('/api/contents', authRequired, permissionRequired('content.create'), (r
     })();
     if (!vendorProposal) notifyRole('COORDINATOR', 'CONTENT_CREATED', `Permintaan baru ${payload.contentNo}`, payload.title, `/contents/${id}`);
     res.status(201).json({ item: getContent(id, req.user) });
+  } catch (error) { next(error); }
+});
+
+app.get('/api/contents/trash', authRequired, permissionRequired('content.trash'), (req, res) => {
+  const visibility = contentVisibility(req.user, 'c', true);
+  const rows = db.prepare(`${CONTENT_SELECT} WHERE ${visibility.sql} AND c.deleted_at IS NOT NULL ORDER BY c.deleted_at DESC LIMIT 250`)
+    .all(...visibility.params).map(row => ({
+      ...serializeContent(row),
+      canPurge: req.user.role === 'SUPER_ADMIN' && Boolean(db.prepare("SELECT 1 FROM contents WHERE id=? AND datetime(deleted_at)<=datetime('now','-30 days')").get(row.id))
+    }));
+  res.json({ items: rows, retentionDays: 30 });
+});
+
+app.post('/api/contents/:id/trash', authRequired, permissionRequired('content.trash'), (req, res, next) => {
+  try {
+    const item = getContent(req.params.id, req.user);
+    const reason = requiredText(req.body.reason, 'Alasan penghapusan', 1000);
+    const timestamp = nowIso();
+    db.transaction(() => {
+      db.prepare('UPDATE contents SET deleted_at=?,deleted_by=?,delete_reason=?,updated_at=? WHERE id=? AND deleted_at IS NULL')
+        .run(timestamp, req.user.id, reason, timestamp, item.id);
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: item.id, action: 'MOVE_TO_TRASH', before: { status: item.status, title: item.title }, after: { deletedAt: timestamp }, reason, ip: requestIp(req) });
+    })();
+    res.json({ ok: true });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/contents/:id/restore', authRequired, permissionRequired('content.trash'), (req, res, next) => {
+  try {
+    const visibility = contentVisibility(req.user, 'c', true);
+    const item = db.prepare(`${CONTENT_SELECT} WHERE c.id=? AND ${visibility.sql} AND c.deleted_at IS NOT NULL`).get(req.params.id, ...visibility.params);
+    if (!item) throw new AppError('Data di Sampah tidak ditemukan atau tidak dapat diakses.', 404);
+    const timestamp = nowIso();
+    db.transaction(() => {
+      db.prepare('UPDATE contents SET deleted_at=NULL,deleted_by=NULL,delete_reason=NULL,updated_at=? WHERE id=?').run(timestamp, item.id);
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: item.id, action: 'RESTORE_FROM_TRASH', before: { deletedAt: item.deleted_at, reason: item.delete_reason }, after: { restoredAt: timestamp }, ip: requestIp(req) });
+    })();
+    res.json({ ok: true });
+  } catch (error) { next(error); }
+});
+
+app.delete('/api/contents/:id/permanent', authRequired, (req, res, next) => {
+  try {
+    if (req.user.role !== 'SUPER_ADMIN') throw new AppError('Hanya Super Admin yang dapat menghapus permanen.', 403);
+    const item = db.prepare(`${CONTENT_SELECT} WHERE c.id=? AND c.deleted_at IS NOT NULL`).get(req.params.id);
+    if (!item) throw new AppError('Data di Sampah tidak ditemukan.', 404);
+    if (!db.prepare("SELECT 1 FROM contents WHERE id=? AND datetime(deleted_at)<=datetime('now','-30 days')").get(item.id)) {
+      throw new AppError('Data baru dapat dihapus permanen setelah berada di Sampah selama 30 hari.', 409);
+    }
+    const filePaths = [
+      ...db.prepare('SELECT file_path AS value FROM content_versions WHERE content_id=?').all(item.id),
+      ...db.prepare('SELECT file_path AS value FROM collaboration_files WHERE content_id=?').all(item.id),
+      ...db.prepare('SELECT file_path AS value FROM publication_proofs WHERE content_id=? AND file_path IS NOT NULL').all(item.id),
+      ...db.prepare('SELECT proof_path AS value FROM publication_schedules WHERE content_id=? AND proof_path IS NOT NULL').all(item.id),
+      ...db.prepare('SELECT temp_path AS value FROM chunk_upload_sessions WHERE content_id=?').all(item.id)
+    ].map(row => row.value).filter(Boolean);
+    db.transaction(() => {
+      db.prepare('DELETE FROM contents WHERE id=?').run(item.id);
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: item.id, action: 'PERMANENT_DELETE', before: { contentNo: item.content_no, title: item.title, deletedAt: item.deleted_at, reason: item.delete_reason }, ip: requestIp(req) });
+    })();
+    const root = path.resolve(UPLOAD_DIR);
+    for (const storedPath of filePaths) {
+      const absolute = path.resolve(root, storedPath);
+      if (!absolute.startsWith(`${root}${path.sep}`)) continue;
+      try { fs.unlinkSync(absolute); } catch {}
+    }
+    res.json({ ok: true });
   } catch (error) { next(error); }
 });
 
@@ -1562,7 +1632,7 @@ app.get('/api/vendors', authRequired, (req, res, next) => {
       COUNT(c.id) AS content_count,
       SUM(CASE WHEN c.status='PUBLISHED' THEN 1 ELSE 0 END) AS published_count,
       SUM(CASE WHEN c.due_date<date('now') AND c.status NOT IN ('PUBLISHED','CANCELLED') THEN 1 ELSE 0 END) AS overdue_count
-      FROM vendors v LEFT JOIN contents c ON c.vendor_id=v.id GROUP BY v.id ORDER BY v.status,v.name`).all()
+      FROM vendors v LEFT JOIN contents c ON c.vendor_id=v.id AND c.deleted_at IS NULL GROUP BY v.id ORDER BY v.status,v.name`).all()
       .map(row => ({ ...row, content_count: Number(row.content_count || 0), published_count: Number(row.published_count || 0), overdue_count: Number(row.overdue_count || 0) }));
     res.json({ items: rows });
   } catch (error) { next(error); }
@@ -1704,11 +1774,11 @@ app.get('/api/reports/summary', authRequired, permissionRequired('reports.view')
   const from = cleanText(req.query.from, 20) || new Date(new Date().getFullYear(), 0, 1).toISOString().slice(0, 10);
   const to = cleanText(req.query.to, 20) || new Date().toISOString().slice(0, 10);
   const byStatus = db.prepare(`SELECT status,COUNT(*) AS count FROM contents
-    WHERE date(created_at) BETWEEN ? AND ? GROUP BY status ORDER BY count DESC`).all(from, to)
+    WHERE deleted_at IS NULL AND date(created_at) BETWEEN ? AND ? GROUP BY status ORDER BY count DESC`).all(from, to)
     .map(row => ({ status: row.status, label: STATUS_LABELS[row.status] || row.status, count: Number(row.count) }));
   const byBrand = db.prepare(`SELECT b.code,b.name,b.color,COUNT(c.id) AS count,
     SUM(CASE WHEN c.status='PUBLISHED' THEN 1 ELSE 0 END) AS published
-    FROM brands b LEFT JOIN contents c ON c.brand_id=b.id AND date(c.created_at) BETWEEN ? AND ?
+    FROM brands b LEFT JOIN contents c ON c.brand_id=b.id AND c.deleted_at IS NULL AND date(c.created_at) BETWEEN ? AND ?
     GROUP BY b.id ORDER BY count DESC`).all(from, to)
     .map(row => ({ ...row, count: Number(row.count || 0), published: Number(row.published || 0) }));
   const vendors = db.prepare(`SELECT v.id,v.name,COUNT(c.id) AS assigned,
@@ -1716,7 +1786,7 @@ app.get('/api/reports/summary', authRequired, permissionRequired('reports.view')
     SUM(CASE WHEN c.status='PUBLISHED' AND (c.due_date IS NULL OR date(c.locked_at)<=c.due_date) THEN 1 ELSE 0 END) AS on_time,
     SUM(CASE WHEN c.status='REVISION_REQUIRED' THEN 1 ELSE 0 END) AS revisions,
     ROUND(AVG(CASE WHEN c.status='PUBLISHED' THEN julianday(c.locked_at)-julianday(c.created_at) END),1) AS avg_cycle_days
-    FROM vendors v LEFT JOIN contents c ON c.vendor_id=v.id AND date(c.created_at) BETWEEN ? AND ?
+    FROM vendors v LEFT JOIN contents c ON c.vendor_id=v.id AND c.deleted_at IS NULL AND date(c.created_at) BETWEEN ? AND ?
     GROUP BY v.id ORDER BY published DESC,assigned DESC`).all(from, to).map(row => ({
       ...row, assigned: Number(row.assigned || 0), published: Number(row.published || 0),
       on_time: Number(row.on_time || 0), revisions: Number(row.revisions || 0), avg_cycle_days: Number(row.avg_cycle_days || 0),
@@ -1724,7 +1794,7 @@ app.get('/api/reports/summary', authRequired, permissionRequired('reports.view')
     }));
   const byProductionMode = db.prepare(`SELECT production_mode,COUNT(*) AS count,
     SUM(CASE WHEN status='PUBLISHED' THEN 1 ELSE 0 END) AS published
-    FROM contents WHERE date(created_at) BETWEEN ? AND ? GROUP BY production_mode ORDER BY production_mode`).all(from, to)
+    FROM contents WHERE deleted_at IS NULL AND date(created_at) BETWEEN ? AND ? GROUP BY production_mode ORDER BY production_mode`).all(from, to)
     .map(row => ({
       mode: row.production_mode || 'VENDOR',
       label: row.production_mode === 'INTERNAL' ? 'Internal Koordinator' : 'Vendor',
@@ -1735,8 +1805,9 @@ app.get('/api/reports/summary', authRequired, permissionRequired('reports.view')
     COALESCE(SUM(CAST(json_extract(metrics_json,'$.impressions') AS INTEGER)),0) AS impressions,
     COALESCE(SUM(CAST(json_extract(metrics_json,'$.engagement') AS INTEGER)),0) AS engagement,
     COALESCE(SUM(CAST(json_extract(metrics_json,'$.leads') AS INTEGER)),0) AS leads
-    FROM publication_proofs WHERE date(published_at) BETWEEN ? AND ?`).get(from, to);
-  const budget = db.prepare(`SELECT COALESCE(SUM(budget),0) AS total FROM contents WHERE date(created_at) BETWEEN ? AND ?`).get(from, to).total;
+    FROM publication_proofs pp JOIN contents c ON c.id=pp.content_id
+    WHERE c.deleted_at IS NULL AND date(pp.published_at) BETWEEN ? AND ?`).get(from, to);
+  const budget = db.prepare(`SELECT COALESCE(SUM(budget),0) AS total FROM contents WHERE deleted_at IS NULL AND date(created_at) BETWEEN ? AND ?`).get(from, to).total;
   const metrics = Object.fromEntries(Object.entries(performance).map(([key, value]) => [key, Number(value || 0)]));
   metrics.budget = Number(budget || 0);
   metrics.costPerLead = metrics.leads ? Math.round(metrics.budget / metrics.leads) : 0;
