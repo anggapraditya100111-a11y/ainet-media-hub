@@ -37,10 +37,27 @@ test('super admin memiliki wildcard permission', () => {
   assert.equal(hasPermission('SUPER_ADMIN', 'anything.manage'), true);
 });
 
+test('Asisten Koordinator memiliki Video Instan dan dapat menjadi petugas upload tanpa hak approval global', () => {
+  assert.equal(hasPermission('ASSISTANT_COORDINATOR', 'content.instant_create'), true);
+  assert.equal(hasPermission('ASSISTANT_COORDINATOR', 'content.publish'), true);
+  assert.equal(hasPermission('ASSISTANT_COORDINATOR', 'content.review'), false);
+  assert.equal(hasPermission('ASSISTANT_COORDINATOR', 'content.schedule'), false);
+});
+
 test('hanya Super Admin dan Direksi memiliki akses pengelolaan Sampah', () => {
   assert.equal(hasPermission('SUPER_ADMIN', 'content.trash'), true);
   assert.equal(hasPermission('MANAGEMENT', 'content.trash'), true);
   assert.equal(hasPermission('COORDINATOR', 'content.trash'), false);
   assert.equal(hasPermission('VENDOR', 'content.trash'), false);
   assert.equal(hasPermission('UPLOADER', 'content.trash'), false);
+});
+
+test('akses Raw Footage dibedakan dari Media Library', () => {
+  assert.equal(hasPermission('SUPER_ADMIN', 'footage.manage'), true);
+  assert.equal(hasPermission('COORDINATOR', 'footage.manage'), true);
+  assert.equal(hasPermission('VENDOR', 'footage.view'), true);
+  assert.equal(hasPermission('VENDOR', 'footage.download'), true);
+  assert.equal(hasPermission('VENDOR', 'footage.manage'), false);
+  assert.equal(hasPermission('MANAGEMENT', 'footage.view'), true);
+  assert.equal(hasPermission('UPLOADER', 'footage.view'), false);
 });

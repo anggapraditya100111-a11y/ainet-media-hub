@@ -1,8 +1,8 @@
 # Matriks Implementasi Konsep AXINDO Media Hub
 
-Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implementasi repository versi 0.8.2.
+Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implementasi repository versi 0.10.0.
 
-| Area konsep | Implementasi 0.8.2 | Status |
+| Area konsep | Implementasi 0.10.0 | Status |
 |---|---|---|
 | Dual brand AINET / IMAS | Master brand, warna, filter, badge, dan branding UI | Selesai |
 | Permintaan dan brief | Form tujuan, audiens, kampanye, format, channel, CTA, deadline, anggaran | Selesai |
@@ -17,7 +17,9 @@ Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implem
 | Ringkasan materi | Snapshot read-only, lampiran terpilih, masa berlaku 12 jam, dan pencabutan | Selesai |
 | Jadwal | Channel, waktu, dan Petugas Upload terpisah per platform; dapat ditambah atau diedit Koordinator sebelum tayang | Selesai |
 | Bukti tayang | URL, screenshot/PDF, waktu, channel, dan metrik | Selesai |
-| Media Library | Enam kategori, versi, masa berlaku, checksum, status, owner | Selesai |
+| Raw Footage | Galeri foto/video mentah terpisah, kategori, metadata, preview, dan pengaitan ke Brief Produksi | Selesai |
+| Akses Raw Footage Vendor | Vendor hanya melihat serta mengunduh footage yang ditautkan ke tugasnya | Selesai |
+| Media Library | Aset final dalam enam kategori, versi, masa berlaku, checksum, status, owner | Selesai |
 | Akses vendor ke Library | Baca/unduh aset aktif tanpa hak kelola | Selesai |
 | Aset kedaluwarsa | Otomatis berstatus kedaluwarsa dan terkunci untuk non-pengelola | Selesai |
 | Promosi draft menjadi aset | Versi disetujui dapat disalin ke Media Library | Selesai |
@@ -40,9 +42,10 @@ Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implem
 2. Vendor tidak memiliki menu approval, pengguna, pengaturan, atau kredensial sosial.
 3. Vendor hanya melihat konten yang terhubung ke vendornya.
 4. Seluruh pengguna dapat membuka Media Library, tetapi hanya Admin/Koordinator yang dapat mengelola versi dan status.
-5. Aset kedaluwarsa/arsip tidak dapat diunduh oleh vendor maupun user baca-saja.
-6. Koordinator memilih apakah hasil disetujui langsung atau dikirim kepada satu Direksi tertentu melalui link; PIN pribadi hanya dibuat dan diketahui Direksi.
-7. Perubahan substansial setelah approval membuka kembali proses review.
+5. Raw Footage terpisah dari Media Library; Vendor hanya dapat membukanya setelah ditautkan ke tugas produksi.
+6. Aset kedaluwarsa/arsip tidak dapat diunduh oleh vendor maupun user baca-saja.
+7. Koordinator memilih apakah hasil disetujui langsung atau dikirim kepada satu Direksi tertentu melalui link; PIN pribadi hanya dibuat dan diketahui Direksi.
+8. Perubahan substansial setelah approval membuka kembali proses review.
 8. Konten tayang tidak dapat diedit atau dihapus permanen.
 9. Setiap platform wajib memiliki URL atau bukti; konten selesai setelah seluruh jadwal dipublikasikan.
 10. Seluruh tindakan penting tersimpan dalam audit log.

@@ -495,12 +495,14 @@ function installWorkflowV4(app, options) {
       if (decision === 'REVISION' && !note) throw new AppError('Catatan revisi wajib diisi.');
       const timestamp = nowIso();
       const status = decision === 'APPROVED' ? 'APPROVED' : 'REVISION_REQUIRED';
+      const version = db.prepare('SELECT id FROM content_versions WHERE content_id=? ORDER BY version_number DESC LIMIT 1').get(approval.content_id);
       db.transaction(() => {
         db.prepare('UPDATE director_approval_requests SET status=?,note=?,decided_at=? WHERE id=?').run(decision, note, timestamp, approval.id);
         db.prepare('DELETE FROM approval_access_sessions WHERE request_id=?').run(approval.id);
         db.prepare('UPDATE contents SET status=?,locked_at=?,updated_at=? WHERE id=?').run(status, decision === 'APPROVED' ? timestamp : null, timestamp, approval.content_id);
-        db.prepare('INSERT INTO approvals(id,content_id,version_id,decision,note,approver_id,created_at) VALUES(?,?,NULL,?,?,?,?)')
-          .run(newId('apr'), approval.content_id, decision, note, approval.director_id, timestamp);
+        db.prepare('INSERT INTO approvals(id,content_id,version_id,decision,note,approver_id,created_at) VALUES(?,?,?,?,?,?,?)')
+          .run(newId('apr'), approval.content_id, version?.id || null, decision, note, approval.director_id, timestamp);
+        if (decision === 'APPROVED' && version) db.prepare('UPDATE content_versions SET is_approved=1 WHERE id=?').run(version.id);
         db.prepare('INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at) VALUES(?,?,?,?,?,?,?,?)')
           .run(newId('evt'), approval.content_id, 'APPROVAL_PENDING', status, 'DIRECTOR_DECISION', note, approval.director_id, timestamp);
         recordAudit({ actorId: approval.director_id, entityType: 'DIRECTOR_APPROVAL', entityId: approval.id, action: decision, reason: note, ip: requestIp(req) });
@@ -538,7 +540,7 @@ function installWorkflowV4(app, options) {
       const requestedChannels = new Set();
       for (const plan of plans) {
         const channel = db.prepare('SELECT id,name FROM channels WHERE id=? AND active=1').get(String(plan.channelId || ''));
-        const uploader = db.prepare("SELECT id,name FROM users WHERE id=? AND role='UPLOADER' AND active=1").get(String(plan.uploaderId || ''));
+        const uploader = db.prepare("SELECT id,name FROM users WHERE id=? AND role IN ('UPLOADER','ASSISTANT_COORDINATOR') AND active=1").get(String(plan.uploaderId || ''));
         const scheduledAt = cleanText(plan.scheduledAt, 40);
         if (!channel || !uploader || !scheduledAt) throw new AppError('Platform, waktu, dan petugas upload wajib valid.');
         if (requestedChannels.has(channel.id)) throw new AppError(`Platform ${channel.name} dipilih lebih dari satu kali.`, 409);
@@ -589,7 +591,7 @@ function installWorkflowV4(app, options) {
       if (schedule.status !== 'SCHEDULED') throw new AppError('Jadwal yang sudah tayang tidak dapat diedit.', 409);
       const channel = db.prepare('SELECT id,name FROM channels WHERE id=? AND active=1').get(String(req.body.channelId || ''));
       const scheduledAt = cleanText(req.body.scheduledAt, 40);
-      const uploader = db.prepare("SELECT id,name FROM users WHERE id=? AND role='UPLOADER' AND active=1")
+      const uploader = db.prepare("SELECT id,name FROM users WHERE id=? AND role IN ('UPLOADER','ASSISTANT_COORDINATOR') AND active=1")
         .get(String(req.body.uploaderId || ''));
       if (!channel || !scheduledAt || !uploader) throw new AppError('Platform, waktu, dan petugas upload wajib valid.');
       const duplicate = db.prepare("SELECT id FROM publication_schedules WHERE content_id=? AND channel_id=? AND id!=? AND status!='CANCELLED'")
@@ -649,7 +651,7 @@ function installWorkflowV4(app, options) {
       const schedule = db.prepare('SELECT * FROM publication_schedules WHERE id=?').get(req.params.id);
       if (!schedule) throw new AppError('Jadwal tidak ditemukan.', 404);
       const item = getContent(schedule.content_id, req.user);
-      if (req.user.role !== 'SUPER_ADMIN' && (req.user.role !== 'UPLOADER' || schedule.uploader_id !== req.user.id)) throw new AppError('Jadwal ini bukan tugas Anda.', 403);
+      if (req.user.role !== 'SUPER_ADMIN' && (!['UPLOADER', 'ASSISTANT_COORDINATOR'].includes(req.user.role) || schedule.uploader_id !== req.user.id)) throw new AppError('Jadwal ini bukan tugas Anda.', 403);
       if (schedule.status !== 'SCHEDULED') throw new AppError('Jadwal sudah diproses.', 409);
       const platformUrl = cleanText(req.body.platformUrl, 1000);
       if (!platformUrl && !req.file) throw new AppError('URL atau bukti tayang wajib diisi.');

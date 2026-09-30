@@ -46,6 +46,7 @@ test('grup Authentik dipetakan dengan role paling berwenang', () => {
   assert.deepEqual(groups, ['Penyetuju', 'Tim Media', 'Vendor Eksternal']);
   assert.equal(roleForGroups(groups, mapping), 'COORDINATOR');
   assert.equal(roleForGroups(['Tidak Dikenal'], mapping), null);
+  assert.equal(roleForGroups(['AXINDO - MEDIA HUB - ASISTEN KOORDINATOR']), 'ASSISTANT_COORDINATOR');
 });
 
 test('identitas dan return URL dibersihkan', () => {

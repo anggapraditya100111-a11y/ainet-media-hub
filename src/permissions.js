@@ -1,6 +1,7 @@
 const ROLE_LABELS = Object.freeze({
   SUPER_ADMIN: 'Super Admin',
   COORDINATOR: 'Koordinator Media',
+  ASSISTANT_COORDINATOR: 'Asisten Koordinator',
   VENDOR: 'Vendor / Kreator',
   UPLOADER: 'Petugas Upload',
   MANAGEMENT: 'Direksi'
@@ -13,11 +14,18 @@ const ROLE_PERMISSIONS = Object.freeze({
     'content.edit', 'content.assign', 'content.discuss', 'content.review',
     'content.approve_production', 'content.request_director_approval', 'content.schedule',
     'library.view', 'library.download', 'library.manage',
+    'footage.view', 'footage.download', 'footage.manage',
     'vendor.view', 'vendor.manage', 'reports.view', 'notifications.view'
+  ],
+  ASSISTANT_COORDINATOR: [
+    'dashboard.view', 'calendar.view', 'content.view_assigned', 'content.instant_create',
+    'content.publish', 'library.view', 'library.download',
+    'footage.view', 'footage.download', 'notifications.view'
   ],
   VENDOR: [
     'dashboard.view', 'calendar.view', 'content.view_assigned', 'content.create', 'content.production',
-    'content.upload_draft', 'content.discuss', 'library.view', 'library.download', 'notifications.view'
+    'content.upload_draft', 'content.discuss', 'library.view', 'library.download',
+    'footage.view', 'footage.download', 'notifications.view'
   ],
   UPLOADER: [
     'dashboard.view', 'calendar.view', 'content.view_approved', 'content.publish',
@@ -27,6 +35,7 @@ const ROLE_PERMISSIONS = Object.freeze({
     'dashboard.executive', 'calendar.view', 'content.view_all', 'content.director_approve', 'reports.view',
     'content.trash',
     'vendor.view', 'vendor.performance', 'library.view', 'library.download',
+    'footage.view', 'footage.download',
     'notifications.view'
   ]
 });

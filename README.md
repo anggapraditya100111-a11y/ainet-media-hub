@@ -2,12 +2,14 @@
 
 AXINDO Media Hub adalah aplikasi internal PT Axindo Infinitas Network untuk mengelola produksi konten AINET dan IMAS dari permintaan sampai bukti tayang. Aplikasi berjalan mandiri di server Ubuntu menggunakan Docker Compose, database SQLite, dan penyimpanan berkas lokal server.
 
-Versi: **0.8.2 — Sampah dan Pemulihan Konten**
+Versi: **0.10.0 — Video Instan & Asisten Koordinator**
 
 ## Fitur yang sudah berfungsi
 
 - Workflow terkunci dengan pilihan produksi Vendor atau produksi Internal oleh Koordinator, kemudian Review/Approval → Terjadwal → Selesai Tayang.
-- Lima role operasional: Super Admin, Koordinator Media, Vendor/Kreator, Direksi, dan Petugas Upload.
+- Enam role operasional: Super Admin, Koordinator Media, Asisten Koordinator, Vendor/Kreator, Direksi, dan Petugas Upload.
+- Video Instan memungkinkan Asisten mengunggah video internal langsung ke approval Koordinator tanpa pencatatan tahap permintaan, brief, dan produksi.
+- Koordinator dapat memberi atau mencabut delegasi Asisten untuk membuat permintaan konten dan mereview proses Vendor; Asisten tidak dapat menyetujui unggahannya sendiri.
 - Vendor hanya melihat konten yang ditugaskan kepada vendornya dan tidak menyimpan kredensial media sosial.
 - Vendor dapat mengajukan seluruh ide konten, memilih Koordinator, melengkapi brief, caption, CTA, channel, link, serta lampiran sebelum produksi.
 - Koordinator yang dipilih dapat menyetujui brief Vendor, meminta revisi dengan catatan, atau menolak; produksi Vendor baru dimulai setelah brief disetujui.
@@ -26,7 +28,9 @@ Versi: **0.8.2 — Sampah dan Pemulihan Konten**
 - Link Ringkasan Materi berupa snapshot read-only, dapat dibuka tanpa login selama 12 jam, dan hanya memuat lampiran terpilih.
 - Jadwal publikasi dan bukti tayang terpisah per platform serta petugas upload; Koordinator dapat menambah channel serta mengubah channel, waktu, atau petugas selama jadwal belum tayang.
 - Pencatatan reach, impressions, engagement, leads/PSB, anggaran, dan biaya per lead.
-- Media Library bersama untuk logo, brosur, template, foto/video, materi kampanye, dan arsip.
+- Raw Footage terpisah untuk foto/video mentah, lengkap dengan kategori, brand, tanggal pengambilan, lokasi, tag, galeri preview, dan layar penuh.
+- Koordinator dapat memilih Raw Footage untuk Brief Produksi; Vendor hanya dapat membuka footage yang ditautkan ke tugasnya.
+- Media Library bersama untuk logo, brosur, template, foto/video final, materi kampanye, dan arsip.
 - Media Library memiliki versi aktif, tanggal berlaku, tanggal kedaluwarsa, checksum, pemilik, serta status.
 - Seluruh user termasuk vendor dapat membaca/mengunduh aset aktif; aset kedaluwarsa atau diarsipkan dikunci untuk non-pengelola.
 - Draft yang sudah disetujui dapat dipromosikan menjadi aset resmi Media Library.
@@ -45,10 +49,11 @@ Versi: **0.8.2 — Sampah dan Pemulihan Konten**
 
 | Role | Menu utama |
 |---|---|
-| Super Admin | Dashboard, Kalender, Pipeline, Permintaan, Review Hasil, Approval Direksi, Siap Tayang, Media Library, Vendor, Laporan, Pengguna, Audit, Pengaturan, Backup |
-| Koordinator Media | Dashboard, Kalender, Pipeline, Permintaan, Review Hasil, Approval Direksi, Siap Tayang, Media Library, Vendor, Laporan |
-| Vendor / Kreator | Dashboard, Tugas & Usulan Saya, Jadwal, Permintaan Revisi, Media Library, Riwayat Tugas |
-| Direksi | Approval Saya, Dashboard Executive, Kalender, Ringkasan Progres, Performa Konten, Media Library |
+| Super Admin | Dashboard, Kalender, Pipeline, Permintaan, Review Hasil, Approval Direksi, Siap Tayang, Raw Footage, Media Library, Vendor, Laporan, Pengguna, Audit, Pengaturan, Backup |
+| Koordinator Media | Dashboard, Kalender, Pipeline, Permintaan, Review Hasil, Approval Direksi, Siap Tayang, Raw Footage, Media Library, Vendor, Laporan |
+| Asisten Koordinator | Dashboard, Video Instan, Kalender, Tugas Upload, Raw Footage, Media Library, serta Permintaan/Review Vendor bila didelegasikan |
+| Vendor / Kreator | Dashboard, Tugas & Usulan Saya, Jadwal, Permintaan Revisi, Raw Footage tertaut, Media Library, Riwayat Tugas |
+| Direksi | Approval Saya, Dashboard Executive, Kalender, Ringkasan Progres, Performa Konten, Raw Footage, Media Library |
 | Petugas Upload | Dashboard, Konten Siap Tayang, Jadwal Upload, Riwayat Publikasi, Media Library |
 
 ## Instalasi di Ubuntu
@@ -131,6 +136,7 @@ Pastikan scope Provider mencakup `openid`, `profile`, dan `email`, serta klaim `
 |---|---|
 | `AXINDO - MEDIA HUB - SUPER ADMIN` | Super Admin |
 | `AXINDO - MEDIA HUB - KOORDINATOR` | Koordinator Media |
+| `AXINDO - MEDIA HUB - ASISTEN KOORDINATOR` | Asisten Koordinator |
 | `AXINDO - MEDIA HUB - VENDOR` | Vendor/Kreator |
 | `AXINDO - MEDIA HUB - REVIEWER` | Koordinator Media (alias lama) |
 | `AXINDO - MEDIA HUB - APPROVER` | Direksi (alias lama) |
@@ -182,6 +188,7 @@ Untuk menampilkan data dan akun demo, set `SEED_DEMO=true`. Password semua akun 
 | Username demo | Role |
 |---|---|
 | `koordinator` | Koordinator Media |
+| `asisten` | Asisten Koordinator |
 | `vendor` | Vendor / Kreator |
 | `uploader` | Petugas Upload |
 | `manajemen` | Direksi |

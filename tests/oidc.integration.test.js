@@ -200,6 +200,7 @@ test('login OIDC membuat akun, role, sesi, dan logout AXINDO ID', { timeout: 30_
   const accessManifest = await accessManifestResponse.json();
   assert.equal(accessManifest.id, 'media-hub');
   assert.ok(accessManifest.roles.some(role => role.code === 'COORDINATOR' && role.assignment === 'OIDC'));
+  assert.ok(accessManifest.roles.some(role => role.code === 'ASSISTANT_COORDINATOR' && role.assignment === 'OIDC'));
   assert.ok(accessManifest.roles.some(role => role.code === 'VENDOR' && role.assignment === 'PERSONAL'));
 
   const handoffResponse = await fetch(`${appUrl}/api/auth/access/complete`, {
@@ -257,7 +258,7 @@ test('login OIDC membuat akun, role, sesi, dan logout AXINDO ID', { timeout: 30_
 
   const popupPage = await fetch(popupTarget).then(response => response.text());
   assert.match(popupPage, /Popup akan tertutup otomatis/);
-  assert.match(popupPage, /popup\.js\?v=0\.8\.2/);
+  assert.match(popupPage, /popup\.js\?v=0\.10\.0/);
 
   const vendorLogin = await fetch(`${appUrl}/api/auth/login`, {
     method: 'POST', headers: { 'content-type': 'application/json' },

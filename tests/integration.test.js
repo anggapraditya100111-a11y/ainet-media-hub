@@ -77,6 +77,7 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
 
   const adminCookie = await login(baseUrl, 'admin', 'Admin12345');
   const coordinatorCookie = await login(baseUrl, 'koordinator', 'Demo12345');
+  const assistantCookie = await login(baseUrl, 'asisten', 'Demo12345');
   const vendorCookie = await login(baseUrl, 'vendor', 'Demo12345');
   const uploaderCookie = await login(baseUrl, 'uploader', 'Demo12345');
   const managementCookie = await login(baseUrl, 'manajemen', 'Demo12345');
@@ -90,10 +91,57 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   result = await request(baseUrl, '/api/profile/approval-pin', { method: 'POST', body: { newPin: directorPin, confirmPin: directorPin } }, managementCookie);
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   const assignments = await request(baseUrl, '/api/meta/assignments', {}, adminCookie);
-  assert.deepEqual([...new Set(assignments.payload.users.map(user => user.role))].sort(), ['COORDINATOR', 'MANAGEMENT', 'UPLOADER']);
+  assert.deepEqual([...new Set(assignments.payload.users.map(user => user.role))].sort(), ['ASSISTANT_COORDINATOR', 'COORDINATOR', 'MANAGEMENT', 'UPLOADER']);
   assert.equal(assignments.payload.users.find(user => user.role === 'MANAGEMENT').approval_pin_set, 1);
   const vendorId = assignments.payload.vendors[0].id;
   const byRole = role => assignments.payload.users.find(user => user.role === role).id;
+
+  result = await request(baseUrl, '/api/assistant-delegations', { method: 'POST', body: {
+    assistantId: byRole('ASSISTANT_COORDINATOR'), permissions: ['CREATE_REQUEST', 'REVIEW_VENDOR'], active: true
+  } }, coordinatorCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  result = await request(baseUrl, '/api/bootstrap', {}, assistantCookie);
+  assert.deepEqual(result.payload.assistantDelegations[0].permissions.sort(), ['CREATE_REQUEST', 'REVIEW_VENDOR']);
+
+  const delegatedRequest = await request(baseUrl, '/api/contents', { method: 'POST', body: {
+    title: 'Permintaan oleh Asisten', brandId: 'brand-ainet', channelIds: ['channel-instagram'],
+    contentType: 'SOCIAL_POST', brief: 'Permintaan atas delegasi Koordinator.', coordinatorId: byRole('COORDINATOR'), productionMode: 'INTERNAL'
+  } }, assistantCookie);
+  assert.equal(delegatedRequest.response.status, 201, JSON.stringify(delegatedRequest.payload));
+
+  let instantForm = new FormData();
+  instantForm.set('title', 'Video Instan Internal');
+  instantForm.set('brandId', 'brand-ainet');
+  instantForm.set('coordinatorId', byRole('COORDINATOR'));
+  instantForm.append('channelIds', 'channel-youtube');
+  instantForm.set('caption', 'Caption video instan.');
+  instantForm.set('file', new Blob([Buffer.from('video-instan-v1')], { type: 'video/mp4' }), 'video-instan-v1.mp4');
+  result = await request(baseUrl, '/api/instant-videos', { method: 'POST', body: instantForm }, assistantCookie);
+  assert.equal(result.response.status, 201, JSON.stringify(result.payload));
+  const instantId = result.payload.item.id;
+  assert.equal(result.payload.item.workflow_type, 'INSTANT');
+  assert.equal(result.payload.item.status, 'DRAFT_SUBMITTED');
+  result = await request(baseUrl, `/api/contents/${instantId}/transition`, { method: 'POST', body: { toStatus: 'APPROVED' } }, assistantCookie);
+  assert.equal(result.response.status, 403, 'Asisten tidak dapat menyetujui unggahan Video Instan sendiri');
+  result = await request(baseUrl, `/api/contents/${instantId}/transition`, { method: 'POST', body: { toStatus: 'REVISION_REQUIRED', note: 'Perbaiki intro.' } }, coordinatorCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  instantForm = new FormData();
+  instantForm.set('changeNote', 'Intro sudah diperbaiki.');
+  instantForm.set('file', new Blob([Buffer.from('video-instan-v2')], { type: 'video/mp4' }), 'video-instan-v2.mp4');
+  result = await request(baseUrl, `/api/instant-videos/${instantId}/revision`, { method: 'POST', body: instantForm }, assistantCookie);
+  assert.equal(result.response.status, 201, JSON.stringify(result.payload));
+  assert.equal(result.payload.versionNumber, 2);
+  await transition(baseUrl, instantId, 'APPROVED', coordinatorCookie);
+  result = await request(baseUrl, `/api/contents/${instantId}/schedules`, { method: 'POST', body: { plans: [
+    { channelId: 'channel-youtube', scheduledAt: '2026-10-01T10:00', uploaderId: byRole('ASSISTANT_COORDINATOR') }
+  ] } }, coordinatorCookie);
+  assert.equal(result.response.status, 201, JSON.stringify(result.payload));
+  let instantSchedules = await request(baseUrl, `/api/contents/${instantId}/schedules`, {}, assistantCookie);
+  assert.equal(instantSchedules.payload.items.length, 1);
+  instantForm = new FormData();
+  instantForm.set('platformUrl', 'https://example.test/video-instan');
+  result = await request(baseUrl, `/api/schedules/${instantSchedules.payload.items[0].id}/publish`, { method: 'POST', body: instantForm }, assistantCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
 
   const created = await request(baseUrl, '/api/contents', { method: 'POST', body: {
     title: 'Video Edukasi AINET', brandId: 'brand-ainet', channelIds: ['channel-instagram', 'channel-tiktok'],
@@ -118,7 +166,7 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   assert.equal(result.payload.vendorEdits[0].status, 'PENDING');
   result = await request(baseUrl, `/api/contents/${contentId}/vendor-description`, { method: 'PATCH', body: { description: 'hapus materi lama' } }, vendorCookie);
   assert.equal(result.response.status, 410, 'endpoint edit langsung lama harus dinonaktifkan');
-  result = await request(baseUrl, `/api/contents/${contentId}/vendor-edits/${vendorEditId}/review`, { method: 'POST', body: { action: 'ACCEPT', note: 'Tambahan diterima.' } }, adminCookie);
+  result = await request(baseUrl, `/api/contents/${contentId}/vendor-edits/${vendorEditId}/review`, { method: 'POST', body: { action: 'ACCEPT', note: 'Tambahan diterima.' } }, assistantCookie);
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   assert.equal(result.payload.item.brief, 'Video 30 detik dengan script edukasi.\n\nTambahkan penutup dengan nomor WhatsApp.');
   result = await request(baseUrl, `/api/contents/${contentId}`, {}, adminCookie);
@@ -361,4 +409,47 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   result = await request(baseUrl, `/api/contents/${trashContentId}/permanent`, { method: 'DELETE' }, adminCookie);
   assert.equal(result.response.status, 409, 'Super Admin harus menunggu masa retensi 30 hari');
+
+  const rawForm = new FormData();
+  rawForm.set('title', 'Teknisi memasang ODP');
+  rawForm.set('category', 'INFRASTRUCTURE');
+  rawForm.set('brandId', 'brand-ainet');
+  rawForm.set('capturedAt', '2026-09-29');
+  rawForm.set('location', 'POP Pringsewu');
+  rawForm.set('tags', 'teknisi, odp, instalasi');
+  rawForm.set('description', 'Video mentah untuk bahan produksi konten edukasi.');
+  rawForm.set('file', new Blob(['raw-video-test'], { type: 'video/mp4' }), 'teknisi-odp.mp4');
+  const rawCreated = await request(baseUrl, '/api/raw-footage', { method: 'POST', body: rawForm }, coordinatorCookie);
+  assert.equal(rawCreated.response.status, 201, JSON.stringify(rawCreated.payload));
+  const rawFootageId = rawCreated.payload.id;
+
+  result = await request(baseUrl, '/api/raw-footage', {}, uploaderCookie);
+  assert.equal(result.response.status, 403, 'Petugas Upload tidak memiliki menu Raw Footage');
+  result = await request(baseUrl, '/api/raw-footage', {}, managementCookie);
+  assert.equal(result.response.status, 200, 'Direksi dapat melihat Raw Footage');
+  result = await request(baseUrl, '/api/raw-footage', {}, vendorCookie);
+  assert.equal(result.payload.items.some(item => item.id === rawFootageId), false, 'Vendor belum dapat melihat footage yang belum ditautkan');
+
+  result = await request(baseUrl, `/api/contents/${contentId}/raw-footage`, {
+    method: 'POST', body: { footageIds: [rawFootageId] }
+  }, coordinatorCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  result = await request(baseUrl, '/api/raw-footage', {}, vendorCookie);
+  const linkedFootage = result.payload.items.find(item => item.id === rawFootageId);
+  assert.ok(linkedFootage, 'Vendor dapat melihat footage yang ditautkan ke tugasnya');
+  assert.equal(linkedFootage.mediaType, 'VIDEO');
+  assert.deepEqual(linkedFootage.tags, ['teknisi', 'odp', 'instalasi']);
+  result = await request(baseUrl, linkedFootage.fileUrl, {}, vendorCookie);
+  assert.equal(result.response.status, 200, 'Vendor dapat membuka file mentah yang ditautkan');
+
+  const uploaderDetail = await request(baseUrl, `/api/contents/${contentId}`, {}, uploaderCookie);
+  assert.deepEqual(uploaderDetail.payload.rawFootage, [], 'Petugas Upload tidak melihat Raw Footage pada detail konten');
+  result = await request(baseUrl, `/api/raw-footage/${rawFootageId}`, { method: 'DELETE' }, coordinatorCookie);
+  assert.equal(result.response.status, 403, 'Koordinator tidak dapat menghapus permanen Raw Footage');
+  result = await request(baseUrl, `/api/raw-footage/${rawFootageId}`, { method: 'PATCH', body: { status: 'ARCHIVED' } }, coordinatorCookie);
+  assert.equal(result.response.status, 200);
+  result = await request(baseUrl, `/api/raw-footage/${rawFootageId}`, {}, vendorCookie);
+  assert.equal(result.response.status, 404, 'Vendor tidak dapat membuka footage yang sudah diarsipkan');
+  result = await request(baseUrl, `/api/raw-footage/${rawFootageId}`, { method: 'DELETE' }, adminCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
 });

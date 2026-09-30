@@ -107,7 +107,7 @@ test('Vendor membuat usulan brief dan Koordinator memberi keputusan', () => {
 
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.8\.2/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.10\.0/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);
@@ -145,6 +145,32 @@ test('Super Admin dan Direksi dapat memindahkan data progres ke Sampah', () => {
   assert.match(app, /data-restore-content/);
   assert.match(app, /Hapus Permanen/);
   assert.match(app, /Tunggu 30 hari/);
+});
+
+test('Raw Footage terpisah dari Media Library dan dapat dipilih untuk produksi', () => {
+  assert.match(app, /'raw-footage', 'Raw Footage'/);
+  assert.match(app, /function renderRawFootage\(\)/);
+  assert.match(app, /Tambah Raw Footage/);
+  assert.match(app, /accept="image\/\*,video\/\*"/);
+  assert.match(app, /Pilih Raw Footage/);
+  assert.match(app, /\/api\/contents\/\$\{item\.id\}\/raw-footage/);
+  assert.match(app, /Vendor hanya dapat membuka footage yang ditautkan ke tugasnya/);
+  assert.match(app, /Terpisah dari Media Library/);
+  assert.match(css, /\.raw-footage-preview/);
+  assert.match(css, /\.raw-footage-detail-preview/);
+});
+
+test('Asisten Koordinator memiliki alur Video Instan, revisi, delegasi, dan tugas upload', () => {
+  assert.match(app, /ASSISTANT_COORDINATOR:/);
+  assert.match(app, /'instant-videos', 'Video Instan'/);
+  assert.match(app, /function renderInstantVideos\(\)/);
+  assert.match(app, /Upload Video Instan/);
+  assert.match(app, /\/api\/instant-videos/);
+  assert.match(app, /Kirim Revisi Video Instan/);
+  assert.match(app, /Delegasi Asisten/);
+  assert.match(app, /CREATE_REQUEST/);
+  assert.match(app, /REVIEW_VENDOR/);
+  assert.match(app, /\['UPLOADER', 'ASSISTANT_COORDINATOR'\]/);
 });
 
 test('logout menawarkan keluar lokal atau AXINDO pada desktop dan mobile', () => {

@@ -8,7 +8,7 @@ const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(process.cwd(), 'uploads')
 const BACKUP_DIR = process.env.BACKUP_DIR || path.join(process.cwd(), 'backups');
 
 for (const directory of [DATA_DIR, UPLOAD_DIR, BACKUP_DIR]) fs.mkdirSync(directory, { recursive: true });
-for (const directory of ['drafts', 'library', 'proofs', 'branding', 'collaboration', 'chunks']) {
+for (const directory of ['drafts', 'library', 'raw-footage', 'proofs', 'branding', 'collaboration', 'chunks']) {
   fs.mkdirSync(path.join(UPLOAD_DIR, directory), { recursive: true });
 }
 
@@ -61,7 +61,7 @@ function initDatabase() {
       username TEXT NOT NULL UNIQUE COLLATE NOCASE,
       password_hash TEXT NOT NULL,
       password_salt TEXT NOT NULL,
-      role TEXT NOT NULL CHECK(role IN ('SUPER_ADMIN','COORDINATOR','VENDOR','REVIEWER','APPROVER','UPLOADER','MANAGEMENT')),
+      role TEXT NOT NULL CHECK(role IN ('SUPER_ADMIN','COORDINATOR','ASSISTANT_COORDINATOR','VENDOR','REVIEWER','APPROVER','UPLOADER','MANAGEMENT')),
       vendor_id TEXT,
       active INTEGER NOT NULL DEFAULT 1,
       must_change_password INTEGER NOT NULL DEFAULT 1,
@@ -127,6 +127,7 @@ function initDatabase() {
       content_type TEXT NOT NULL DEFAULT 'SOCIAL_POST',
       approval_level TEXT NOT NULL DEFAULT 'REGULAR' CHECK(approval_level IN ('REGULAR','SENSITIVE')),
       production_mode TEXT NOT NULL DEFAULT 'VENDOR' CHECK(production_mode IN ('VENDOR','INTERNAL')),
+      workflow_type TEXT NOT NULL DEFAULT 'STANDARD' CHECK(workflow_type IN ('STANDARD','INSTANT')),
       proposal_origin TEXT NOT NULL DEFAULT 'COORDINATOR' CHECK(proposal_origin IN ('COORDINATOR','VENDOR')),
       brief_review_status TEXT NOT NULL DEFAULT 'NONE' CHECK(brief_review_status IN ('NONE','DRAFT','SUBMITTED','REVISION','APPROVED','REJECTED')),
       status TEXT NOT NULL DEFAULT 'REQUESTED' CHECK(status IN ('REQUESTED','BRIEFED','ASSIGNED','IN_PRODUCTION','DRAFT_SUBMITTED','IN_REVIEW','REVISION_REQUIRED','APPROVAL_PENDING','APPROVED','SCHEDULED','PUBLISHED','CANCELLED')),
@@ -165,6 +166,22 @@ function initDatabase() {
     CREATE INDEX IF NOT EXISTS idx_contents_status ON contents(status, updated_at DESC);
     CREATE INDEX IF NOT EXISTS idx_contents_due ON contents(due_date);
     CREATE INDEX IF NOT EXISTS idx_contents_vendor ON contents(vendor_id, status);
+
+    CREATE TABLE IF NOT EXISTS coordinator_assistant_delegations (
+      id TEXT PRIMARY KEY,
+      coordinator_id TEXT NOT NULL,
+      assistant_id TEXT NOT NULL,
+      permissions_json TEXT NOT NULL DEFAULT '[]',
+      active INTEGER NOT NULL DEFAULT 1,
+      expires_at TEXT,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      UNIQUE(coordinator_id,assistant_id),
+      FOREIGN KEY(coordinator_id) REFERENCES users(id) ON DELETE CASCADE,
+      FOREIGN KEY(assistant_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    CREATE INDEX IF NOT EXISTS idx_assistant_delegations_assistant
+      ON coordinator_assistant_delegations(assistant_id,active,expires_at);
 
     CREATE TABLE IF NOT EXISTS content_channels (
       content_id TEXT NOT NULL,
@@ -440,6 +457,38 @@ function initDatabase() {
       FOREIGN KEY(asset_id) REFERENCES media_assets(id)
     );
 
+    CREATE TABLE IF NOT EXISTS raw_footage (
+      id TEXT PRIMARY KEY,
+      code TEXT NOT NULL UNIQUE,
+      title TEXT NOT NULL,
+      description TEXT,
+      category TEXT NOT NULL CHECK(category IN ('VIDEO_RAW','PHOTO_RAW','DRONE','EVENT_DOCUMENTATION','INFRASTRUCTURE','PRODUCT_SERVICE','TALENT_TESTIMONIAL','LOCATION_AMBIENCE','OTHER')),
+      brand_id TEXT,
+      captured_at TEXT,
+      location TEXT,
+      tags_json TEXT NOT NULL DEFAULT '[]',
+      file_path TEXT NOT NULL,
+      original_name TEXT NOT NULL,
+      mime_type TEXT NOT NULL,
+      file_size INTEGER NOT NULL,
+      checksum TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'ACTIVE' CHECK(status IN ('ACTIVE','ARCHIVED')),
+      uploaded_by TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL,
+      FOREIGN KEY(brand_id) REFERENCES brands(id),
+      FOREIGN KEY(uploaded_by) REFERENCES users(id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_raw_footage_category ON raw_footage(category,status,updated_at DESC);
+
+    CREATE TABLE IF NOT EXISTS content_raw_footage (
+      content_id TEXT NOT NULL,
+      footage_id TEXT NOT NULL,
+      PRIMARY KEY(content_id,footage_id),
+      FOREIGN KEY(content_id) REFERENCES contents(id) ON DELETE CASCADE,
+      FOREIGN KEY(footage_id) REFERENCES raw_footage(id) ON DELETE CASCADE
+    );
+
     CREATE TABLE IF NOT EXISTS notifications (
       id TEXT PRIMARY KEY,
       user_id TEXT NOT NULL,
@@ -477,6 +526,7 @@ function initDatabase() {
   migrateUsersForOidc();
   migrateOidcAttemptsForPopup();
   migrateApprovalSecurityAndReferences();
+  migrateAssistantCoordinatorRole();
   migrateWorkflowV4();
 
   seedBaseData();
@@ -492,6 +542,7 @@ function migrateApprovalSecurityAndReferences() {
   if (!contentColumns.has('reference_urls_json')) db.exec("ALTER TABLE contents ADD COLUMN reference_urls_json TEXT NOT NULL DEFAULT '[]'");
   if (!contentColumns.has('vendor_edit_permissions_json')) db.exec("ALTER TABLE contents ADD COLUMN vendor_edit_permissions_json TEXT NOT NULL DEFAULT '[]'");
   if (!contentColumns.has('production_mode')) db.exec("ALTER TABLE contents ADD COLUMN production_mode TEXT NOT NULL DEFAULT 'VENDOR' CHECK(production_mode IN ('VENDOR','INTERNAL'))");
+  if (!contentColumns.has('workflow_type')) db.exec("ALTER TABLE contents ADD COLUMN workflow_type TEXT NOT NULL DEFAULT 'STANDARD' CHECK(workflow_type IN ('STANDARD','INSTANT'))");
   if (!contentColumns.has('proposal_origin')) db.exec("ALTER TABLE contents ADD COLUMN proposal_origin TEXT NOT NULL DEFAULT 'COORDINATOR' CHECK(proposal_origin IN ('COORDINATOR','VENDOR'))");
   if (!contentColumns.has('brief_review_status')) db.exec("ALTER TABLE contents ADD COLUMN brief_review_status TEXT NOT NULL DEFAULT 'NONE' CHECK(brief_review_status IN ('NONE','DRAFT','SUBMITTED','REVISION','APPROVED','REJECTED'))");
   if (!contentColumns.has('deleted_at')) db.exec('ALTER TABLE contents ADD COLUMN deleted_at TEXT');
@@ -550,6 +601,66 @@ function migrateApprovalSecurityAndReferences() {
       DELETE FROM approval_access_sessions;
     `);
   }
+}
+
+function migrateAssistantCoordinatorRole() {
+  const schema = String(db.prepare("SELECT sql FROM sqlite_master WHERE type='table' AND name='users'").get()?.sql || '');
+  if (schema.includes('ASSISTANT_COORDINATOR')) return;
+
+  db.exec('PRAGMA foreign_keys=OFF');
+  try {
+    db.exec(`
+      BEGIN IMMEDIATE;
+      CREATE TABLE users_new (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        username TEXT NOT NULL UNIQUE COLLATE NOCASE,
+        password_hash TEXT NOT NULL,
+        password_salt TEXT NOT NULL,
+        role TEXT NOT NULL CHECK(role IN ('SUPER_ADMIN','COORDINATOR','ASSISTANT_COORDINATOR','VENDOR','REVIEWER','APPROVER','UPLOADER','MANAGEMENT')),
+        vendor_id TEXT,
+        active INTEGER NOT NULL DEFAULT 1,
+        must_change_password INTEGER NOT NULL DEFAULT 1,
+        approval_pin_hash TEXT,
+        approval_pin_salt TEXT,
+        last_login TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        email TEXT,
+        auth_source TEXT NOT NULL DEFAULT 'LOCAL',
+        oidc_issuer TEXT,
+        oidc_subject TEXT,
+        oidc_groups_json TEXT,
+        oidc_last_sync_at TEXT,
+        FOREIGN KEY(vendor_id) REFERENCES vendors(id)
+      );
+      INSERT INTO users_new(
+        id,name,username,password_hash,password_salt,role,vendor_id,active,must_change_password,
+        approval_pin_hash,approval_pin_salt,last_login,created_at,updated_at,email,auth_source,
+        oidc_issuer,oidc_subject,oidc_groups_json,oidc_last_sync_at
+      ) SELECT
+        id,name,username,password_hash,password_salt,role,vendor_id,active,must_change_password,
+        approval_pin_hash,approval_pin_salt,last_login,created_at,updated_at,email,auth_source,
+        oidc_issuer,oidc_subject,oidc_groups_json,oidc_last_sync_at
+      FROM users;
+      DROP TABLE users;
+      ALTER TABLE users_new RENAME TO users;
+      COMMIT;
+    `);
+  } catch (error) {
+    try { db.exec('ROLLBACK'); } catch {}
+    throw error;
+  } finally {
+    db.exec('PRAGMA foreign_keys=ON');
+  }
+  db.exec(`
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_users_oidc_identity
+      ON users(oidc_issuer,oidc_subject)
+      WHERE oidc_issuer IS NOT NULL AND oidc_subject IS NOT NULL;
+    CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+  `);
+  const violation = db.prepare('PRAGMA foreign_key_check').get();
+  if (violation) throw new Error(`Migrasi role Asisten Koordinator melanggar foreign key pada ${violation.table}.`);
 }
 
 function migrateWorkflowV4() {
@@ -654,6 +765,7 @@ function seedDemoData() {
 
   const demoUsers = [
     ['Koordinator Media', 'koordinator', 'COORDINATOR', null],
+    ['Asisten Koordinator', 'asisten', 'ASSISTANT_COORDINATOR', null],
     ['Kreator Vendor', 'vendor', 'VENDOR', vendor.id],
     ['Petugas Upload', 'uploader', 'UPLOADER', null],
     ['Direksi', 'manajemen', 'MANAGEMENT', null]

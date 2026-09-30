@@ -243,6 +243,15 @@ tbody tr:last-child td { border-bottom: 0; }
 .asset-card h3 { margin: 10px 0 6px; font-size: 15px; }
 .asset-card p { min-height: 34px; margin: 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
 .asset-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 15px; color: var(--muted); font-size: 10px; }
+.raw-footage-card { cursor: pointer; }
+.raw-footage-preview { position: relative; height: 176px; overflow: hidden; background: #071020; }
+.raw-footage-preview img, .raw-footage-preview video { width: 100%; height: 100%; object-fit: cover; }
+.raw-footage-play { position: absolute; inset: 50% auto auto 50%; width: 46px; height: 46px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.35); border-radius: 50%; color: white; background: rgba(3,8,19,.68); transform: translate(-50%,-50%); font-size: 16px; backdrop-filter: blur(5px); }
+.raw-footage-type { position: absolute; right: 10px; bottom: 10px; padding: 4px 8px; border-radius: 999px; color: white; background: rgba(3,8,19,.72); font-size: 9px; font-weight: 800; }
+.raw-footage-tags { min-height: 24px; display: flex; flex-wrap: wrap; gap: 5px; }
+.raw-footage-tags .tag { padding: 3px 7px; font-size: 8px; }
+.raw-footage-detail-preview { height: min(52vh, 520px); display: grid; place-items: center; margin-top: 16px; overflow: hidden; border-radius: 16px; background: #030813; }
+.raw-footage-detail-preview img, .raw-footage-detail-preview video { width: 100%; height: 100%; object-fit: contain; }
 
 .empty { padding: 55px 24px; text-align: center; }
 .empty-icon { width: 56px; height: 56px; display: grid; place-items: center; margin: 0 auto 15px; border-radius: 18px; color: var(--primary); background: var(--blue-soft); font-size: 24px; }

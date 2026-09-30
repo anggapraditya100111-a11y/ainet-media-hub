@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.10.0 — 2026-09-30
+
+- Menambahkan role Asisten Koordinator dan pemetaan grup AXINDO ID terkait.
+- Menambahkan menu Video Instan untuk mengunggah video internal langsung ke review Koordinator tanpa tahap permintaan, brief, atau produksi.
+- Menyimpan setiap revisi Video Instan sebagai versi baru dan melarang Asisten menyetujui unggahannya sendiri.
+- Memungkinkan Koordinator menyetujui langsung, meminta revisi, atau meneruskan Video Instan kepada Direksi sebelum penjadwalan.
+- Memungkinkan Asisten Koordinator dipilih sebagai Petugas Upload per platform.
+- Menambahkan delegasi granular dan dapat dicabut untuk pembuatan permintaan konten serta review proses Vendor, lengkap dengan Audit Log.
+- Menambahkan migrasi aman untuk memperluas role SQLite lama tanpa kehilangan akun maupun relasi data.
+
+## 0.9.0 — 2026-09-30
+
+- Menambahkan menu Raw Footage yang terpisah dari Media Library untuk menyimpan foto dan video mentah.
+- Menambahkan kategori, brand, tanggal pengambilan, lokasi, tag, deskripsi, pencarian, filter, galeri thumbnail, dan preview layar penuh.
+- Memungkinkan Super Admin dan Koordinator mengunggah, mengedit, mengarsipkan, dan memilih Raw Footage untuk Brief Produksi.
+- Membatasi Vendor agar hanya dapat melihat dan mengunduh footage yang ditautkan ke tugasnya.
+- Memberikan akses lihat kepada Direksi serta membatasi penghapusan permanen hanya untuk Super Admin.
+- Memperjelas Media Library sebagai penyimpanan aset final dan materi resmi siap digunakan.
+
 ## 0.8.2 — 2026-09-29
 
 - Memperbaiki urutan migrasi database lama agar kolom Sampah dibuat sebelum indeksnya sehingga container dapat berjalan setelah pembaruan.
