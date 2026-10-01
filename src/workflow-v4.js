@@ -488,17 +488,12 @@ function installWorkflowV4(app, options) {
 
   function coordinatorApprovalByToken(token) {
     return db.prepare(`SELECT car.*,c.content_no,c.title,c.description,c.objective,c.audience,c.brief,c.caption,c.hashtags,c.call_to_action,c.status AS content_status,
-      c.coordinator_id,c.vendor_id,b.name AS brand_name,u.name AS coordinator_name,u.active AS coordinator_active,
+      c.coordinator_id,c.vendor_id,c.publish_at,c.category,c.created_at AS content_created_at,b.name AS brand_name,
+      u.name AS coordinator_name,u.active AS coordinator_active,creator.name AS submitted_by_name,
       u.approval_pin_hash AS coordinator_pin_hash,u.approval_pin_salt AS coordinator_pin_salt
-      FROM coordinator_approval_requests car JOIN contents c ON c.id=car.content_id JOIN brands b ON b.id=c.brand_id JOIN users u ON u.id=car.coordinator_id
+      FROM coordinator_approval_requests car JOIN contents c ON c.id=car.content_id JOIN brands b ON b.id=c.brand_id
+      JOIN users u ON u.id=car.coordinator_id JOIN users creator ON creator.id=car.created_by
       WHERE car.token_hash=? AND c.deleted_at IS NULL`).get(hashToken('COORDINATOR_LINK', token));
-  }
-
-  function coordinatorApprovalSession(req, approval) {
-    const raw = req.cookies?.mh_coordinator_approval;
-    if (!raw) return false;
-    return Boolean(db.prepare('SELECT id FROM coordinator_approval_access_sessions WHERE request_id=? AND token_hash=? AND expires_at>?')
-      .get(approval.id, hashToken('COORDINATOR_APPROVAL_SESSION', raw), nowIso()));
   }
 
   app.get('/api/public/coordinator-approvals/:token', (req, res, next) => {
@@ -506,47 +501,26 @@ function installWorkflowV4(app, options) {
       const approval = coordinatorApprovalByToken(req.params.token);
       if (!approval) throw new AppError('Link approval tidak ditemukan.', 404);
       if (approval.status !== 'ACTIVE' || !approval.coordinator_active || approval.content_status !== 'DRAFT_SUBMITTED') throw new AppError('Link approval sudah tidak aktif.', 410);
-      if (!coordinatorApprovalSession(req, approval)) return res.status(401).json({ requiresPin: true, locked: Boolean(approval.locked_at), recipient: approval.coordinator_name, kind: 'COORDINATOR' });
       const ids = json(approval.attachment_ids_json);
       const files = ids.length ? db.prepare(`SELECT id,original_name,mime_type,file_size,phase,version_number FROM collaboration_files WHERE content_id=? AND id IN (${ids.map(() => '?').join(',')})`).all(approval.content_id, ...ids) : [];
+      const channels = db.prepare(`SELECT ch.name FROM content_channels cc JOIN channels ch ON ch.id=cc.channel_id
+        WHERE cc.content_id=? ORDER BY ch.name`).all(approval.content_id).map(row => row.name);
       const directors = db.prepare("SELECT id,name FROM users WHERE role='MANAGEMENT' AND active=1 AND approval_pin_hash IS NOT NULL AND approval_pin_salt IS NOT NULL ORDER BY name").all();
       res.set('Cache-Control', 'no-store').set('X-Robots-Tag', 'noindex, nofollow');
-      res.json({ kind: 'COORDINATOR', content: {
+      res.json({ kind: 'COORDINATOR', locked: Boolean(approval.locked_at), content: {
         id: approval.id, content_no: approval.content_no, title: approval.title, description: approval.description,
         objective: approval.objective, audience: approval.audience, brief: approval.brief, caption: approval.caption,
         hashtags: approval.hashtags, call_to_action: approval.call_to_action, brand_name: approval.brand_name,
-        coordinator_name: approval.coordinator_name
+        coordinator_name: approval.coordinator_name, submitted_by_name: approval.submitted_by_name,
+        publish_at: approval.publish_at, category: approval.category, created_at: approval.content_created_at, channels
       }, directors, files: files.map(file => ({ ...file, fileUrl: `/api/public/coordinator-approvals/${req.params.token}/files/${file.id}` })) });
-    } catch (error) { next(error); }
-  });
-
-  app.post('/api/public/coordinator-approvals/:token/unlock', (req, res, next) => {
-    try {
-      const approval = coordinatorApprovalByToken(req.params.token);
-      if (!approval || approval.status !== 'ACTIVE' || !approval.coordinator_active || approval.content_status !== 'DRAFT_SUBMITTED') throw new AppError('Link approval sudah tidak aktif.', 410);
-      if (!approval.coordinator_pin_hash || !approval.coordinator_pin_salt) throw new AppError('Koordinator belum membuat PIN approval.', 409);
-      if (approval.locked_at || approval.attempt_count >= 5) throw new AppError('PIN terkunci. Koordinator dapat mengatur ulang PIN melalui menu Profil.', 423);
-      if (!verifyApprovalPin(String(req.body.pin || ''), approval.coordinator_pin_salt, approval.coordinator_pin_hash)) {
-        const attempts = approval.attempt_count + 1;
-        db.prepare('UPDATE coordinator_approval_requests SET attempt_count=?,locked_at=? WHERE id=?').run(attempts, attempts >= 5 ? nowIso() : null, approval.id);
-        recordAudit({ actorId: approval.coordinator_id, entityType: 'COORDINATOR_APPROVAL', entityId: approval.id, action: 'PIN_FAILED', after: { attempts }, ip: requestIp(req) });
-        throw new AppError(attempts >= 5 ? 'PIN terkunci. Atur ulang PIN melalui menu Profil.' : `PIN salah. Sisa percobaan ${5 - attempts}.`, attempts >= 5 ? 423 : 401);
-      }
-      const session = randomToken(32);
-      const timestamp = nowIso();
-      db.prepare('INSERT INTO coordinator_approval_access_sessions(id,request_id,token_hash,expires_at,created_at) VALUES(?,?,?,?,?)')
-        .run(newId('caps'), approval.id, hashToken('COORDINATOR_APPROVAL_SESSION', session), new Date(Date.now() + 2 * 3600000).toISOString(), timestamp);
-      db.prepare('UPDATE coordinator_approval_requests SET opened_at=COALESCE(opened_at,?) WHERE id=?').run(timestamp, approval.id);
-      recordAudit({ actorId: approval.coordinator_id, entityType: 'COORDINATOR_APPROVAL', entityId: approval.id, action: 'OPEN', ip: requestIp(req) });
-      res.cookie('mh_coordinator_approval', session, { httpOnly: true, secure: options.cookieSecure, sameSite: 'strict', maxAge: 2 * 3600000, path: '/api/public/coordinator-approvals' });
-      res.json({ ok: true });
     } catch (error) { next(error); }
   });
 
   app.get('/api/public/coordinator-approvals/:token/files/:fileId', (req, res, next) => {
     try {
       const approval = coordinatorApprovalByToken(req.params.token);
-      if (!approval || approval.status !== 'ACTIVE' || !coordinatorApprovalSession(req, approval)) throw new AppError('Akses approval tidak berlaku.', 401);
+      if (!approval || approval.status !== 'ACTIVE' || !approval.coordinator_active || approval.content_status !== 'DRAFT_SUBMITTED') throw new AppError('Akses approval tidak berlaku.', 401);
       if (!json(approval.attachment_ids_json).includes(req.params.fileId)) throw new AppError('Berkas tidak termasuk approval.', 404);
       const file = db.prepare('SELECT * FROM collaboration_files WHERE id=? AND content_id=?').get(req.params.fileId, approval.content_id);
       if (!file) throw new AppError('Berkas tidak ditemukan.', 404);
@@ -558,7 +532,15 @@ function installWorkflowV4(app, options) {
   app.post('/api/public/coordinator-approvals/:token/decision', (req, res, next) => {
     try {
       const approval = coordinatorApprovalByToken(req.params.token);
-      if (!approval || approval.status !== 'ACTIVE' || !coordinatorApprovalSession(req, approval) || approval.content_status !== 'DRAFT_SUBMITTED') throw new AppError('Akses approval tidak berlaku.', 401);
+      if (!approval || approval.status !== 'ACTIVE' || !approval.coordinator_active || approval.content_status !== 'DRAFT_SUBMITTED') throw new AppError('Akses approval tidak berlaku.', 401);
+      if (!approval.coordinator_pin_hash || !approval.coordinator_pin_salt) throw new AppError('Koordinator belum membuat PIN approval.', 409);
+      if (approval.locked_at || approval.attempt_count >= 5) throw new AppError('PIN terkunci. Koordinator dapat mengatur ulang PIN melalui menu Profil.', 423);
+      if (!verifyApprovalPin(String(req.body.pin || ''), approval.coordinator_pin_salt, approval.coordinator_pin_hash)) {
+        const attempts = approval.attempt_count + 1;
+        db.prepare('UPDATE coordinator_approval_requests SET attempt_count=?,locked_at=? WHERE id=?').run(attempts, attempts >= 5 ? nowIso() : null, approval.id);
+        recordAudit({ actorId: approval.coordinator_id, entityType: 'COORDINATOR_APPROVAL', entityId: approval.id, action: 'PIN_FAILED', after: { attempts }, ip: requestIp(req) });
+        throw new AppError(attempts >= 5 ? 'PIN terkunci. Atur ulang PIN melalui menu Profil.' : `PIN salah. Sisa percobaan ${5 - attempts}.`, attempts >= 5 ? 423 : 401);
+      }
       const decision = String(req.body.decision || '');
       if (!['APPROVED', 'REVISION', 'DIRECTOR'].includes(decision)) throw new AppError('Keputusan tidak valid.');
       const note = cleanText(req.body.note, 2000);
@@ -574,7 +556,7 @@ function installWorkflowV4(app, options) {
       let directorUrl = null;
       db.transaction(() => {
         const requestStatus = decision;
-        db.prepare('UPDATE coordinator_approval_requests SET status=?,note=?,decided_at=? WHERE id=?').run(requestStatus, note, timestamp, approval.id);
+        db.prepare('UPDATE coordinator_approval_requests SET status=?,note=?,opened_at=COALESCE(opened_at,?),decided_at=? WHERE id=?').run(requestStatus, note, timestamp, timestamp, approval.id);
         db.prepare('DELETE FROM coordinator_approval_access_sessions WHERE request_id=?').run(approval.id);
         if (decision === 'DIRECTOR') {
           const directorToken = randomToken(32);

@@ -7,6 +7,7 @@ const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
 const app = fs.readFileSync(path.join(root, 'public', 'app.js'), 'utf8');
 const popup = fs.readFileSync(path.join(root, 'public', 'popup.js'), 'utf8');
+const approval = fs.readFileSync(path.join(root, 'public', 'approval.js'), 'utf8');
 const css = fs.readFileSync(path.join(root, 'public', 'styles.css'), 'utf8');
 const manifest = JSON.parse(fs.readFileSync(path.join(root, 'public', 'manifest.webmanifest'), 'utf8'));
 
@@ -44,6 +45,18 @@ test('PIN approval pribadi dikelola Direksi dan Koordinator tanpa dibagikan ke p
   assert.match(app, /data-copy-approval/);
   assert.match(app, />Salin Link</);
   assert.doesNotMatch(app, /Salin Link \+ PIN|id="approval-pin"/);
+});
+
+test('link approval Koordinator langsung menampilkan materi dan memakai PIN saat keputusan', () => {
+  assert.match(approval, /const mediaSections/);
+  assert.match(approval, /Channel/);
+  assert.match(approval, /Rencana Tayang/);
+  assert.match(approval, /Pengunggah/);
+  assert.match(approval, /Tanggal Dikirim/);
+  assert.match(approval, /PIN persetujuan Koordinator/);
+  assert.match(approval, /PIN hanya digunakan untuk mengesahkan keputusan/);
+  assert.match(approval, /data-fullscreen/);
+  assert.match(approval, /body: \{ decision, note, directorId, pin \}/);
 });
 
 test('permintaan konten menerima URL dan file referensi', () => {
@@ -107,7 +120,7 @@ test('Vendor membuat usulan brief dan Koordinator memberi keputusan', () => {
 
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.11\.0/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.11\.1/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);

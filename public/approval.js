@@ -5,6 +5,8 @@ const coordinatorMode = params.get('kind') === 'coordinator';
 const endpoint = coordinatorMode ? '/api/public/coordinator-approvals' : '/api/public/approvals';
 const roleLabel = coordinatorMode ? 'Koordinator' : 'Direksi';
 const esc = value => String(value ?? '').replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char]);
+const formatDate = value => value ? new Intl.DateTimeFormat('id-ID', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value)) : '-';
+const formatSize = value => Number(value || 0) >= 1048576 ? `${(Number(value) / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(Number(value || 0) / 1024))} KB`;
 
 async function request(url, options = {}) {
   const response = await fetch(url, {
@@ -57,19 +59,24 @@ function approvalView(data) {
   const content = data.content;
   const recipient = coordinatorMode ? content.coordinator_name : content.director_name;
   const directors = (data.directors || []).map(item => `<option value="${esc(item.id)}">${esc(item.name)}</option>`).join('');
-  root.innerHTML = `<section class="card hero"><p class="eyebrow">${esc(content.content_no)} · ${esc(content.brand_name)}</p><h1>${esc(content.title)}</h1><p>Ditujukan kepada ${esc(recipient)}</p></section>
-    <section class="card"><h2>Ringkasan Final</h2>
-      ${coordinatorMode ? '' : `<div class="detail-grid"><div><span>Tujuan</span><p>${esc(content.objective || '-')}</p></div><div><span>Audiens</span><p>${esc(content.audience || '-')}</p></div></div><h3>Brief / Script</h3><p class="rich">${esc(content.brief || '-')}</p><h3>Deskripsi</h3><p class="rich">${esc(content.description || '-')}</p>`}
-      <h3>Caption / Isi Materi</h3><p class="rich">${esc(content.caption || '-')}</p>
-      <div class="detail-grid"><div><span>Hashtag</span><p class="rich">${esc(content.hashtags || '-')}</p></div><div><span>CTA</span><p class="rich">${esc(content.call_to_action || '-')}</p></div></div>
-    </section>
-    ${data.files.map((file, index) => `<section class="card"><div class="media" data-media-wrap="${index}">${media(file)}<div class="media-meta"><div><strong>${esc(file.original_name)}</strong><small>Versi ${file.version_number}</small></div><div class="actions">${String(file.mime_type || '').startsWith('video/') ? `<button class="btn btn-ghost" type="button" data-fullscreen="${index}">Layar Penuh</button>` : ''}<a class="btn btn-ghost" href="${esc(file.fileUrl)}?download=1">Unduh</a></div></div></div></section>`).join('')}
-    <section class="card"><h2>Keputusan ${roleLabel}</h2><form id="decision-form" class="decision">
+  const mediaSections = data.files.map((file, index) => `<section class="card"><div class="media" data-media-wrap="${index}">${media(file)}<div class="media-meta"><div><strong>${esc(file.original_name)}</strong><small>Versi ${file.version_number} · ${formatSize(file.file_size)}</small></div><div class="actions">${String(file.mime_type || '').startsWith('video/') ? `<button class="btn btn-ghost" type="button" data-fullscreen="${index}">Layar Penuh</button>` : ''}<a class="btn btn-ghost" href="${esc(file.fileUrl)}?download=1">Unduh</a></div></div></div></section>`).join('');
+  const decisionSection = coordinatorMode && data.locked
+    ? '<section class="card"><h2>Keputusan Koordinator</h2><div class="notice error">PIN terkunci setelah lima percobaan. Atur ulang PIN melalui menu Profil Media Hub untuk membuka kembali keputusan.</div></section>'
+    : `<section class="card"><h2>Keputusan ${roleLabel}</h2><form id="decision-form" class="decision">
+      ${coordinatorMode ? '<label class="field"><span>PIN persetujuan Koordinator *</span><input class="pin-input decision-pin" type="password" name="pin" inputmode="numeric" pattern="[0-9]{8}" maxlength="8" autocomplete="one-time-code" required placeholder="••••••••"><small>PIN hanya digunakan untuk mengesahkan keputusan.</small></label>' : ''}
       <textarea name="note" maxlength="2000" placeholder="Catatan keputusan. Wajib diisi jika meminta revisi."></textarea>
       ${coordinatorMode ? `<label class="field"><span>Direksi tujuan (jika diteruskan)</span><select name="directorId"><option value="">Pilih Direksi</option>${directors}</select></label>` : ''}
       <div class="actions"><button class="btn btn-danger" type="submit" name="decision" value="REVISION">Minta Revisi</button>${coordinatorMode ? '<button class="btn" type="submit" name="decision" value="DIRECTOR">Teruskan ke Direksi</button>' : ''}<button class="btn btn-success" type="submit" name="decision" value="APPROVED">Setujui</button></div>
       <p id="decision-error" class="notice error" hidden></p></form></section>`;
-  document.querySelector('#decision-form').addEventListener('submit', decide);
+  root.innerHTML = `<section class="card hero"><p class="eyebrow">${esc(content.content_no)} · ${esc(content.brand_name)}</p><h1>${esc(content.title)}</h1><p>Ditujukan kepada ${esc(recipient)}</p></section>
+    ${mediaSections}
+    <section class="card"><h2>Ringkasan Final</h2>
+      ${coordinatorMode ? `<div class="detail-grid"><div><span>Channel</span><p>${esc((content.channels || []).join(', ') || '-')}</p></div><div><span>Rencana Tayang</span><p>${esc(formatDate(content.publish_at))}</p></div><div><span>Pengunggah</span><p>${esc(content.submitted_by_name || '-')}</p></div><div><span>Tanggal Dikirim</span><p>${esc(formatDate(content.created_at))}</p></div><div><span>Kategori</span><p>${esc(content.category || '-')}</p></div></div>` : `<div class="detail-grid"><div><span>Tujuan</span><p>${esc(content.objective || '-')}</p></div><div><span>Audiens</span><p>${esc(content.audience || '-')}</p></div></div><h3>Brief / Script</h3><p class="rich">${esc(content.brief || '-')}</p><h3>Deskripsi</h3><p class="rich">${esc(content.description || '-')}</p>`}
+      <h3>Caption / Isi Materi</h3><p class="rich">${esc(content.caption || '-')}</p>
+      <div class="detail-grid"><div><span>Hashtag</span><p class="rich">${esc(content.hashtags || '-')}</p></div><div><span>CTA</span><p class="rich">${esc(content.call_to_action || '-')}</p></div></div>
+    </section>
+    ${decisionSection}`;
+  document.querySelector('#decision-form')?.addEventListener('submit', decide);
   document.querySelectorAll('[data-fullscreen]').forEach(button => button.addEventListener('click', async () => {
     const video = document.querySelector(`[data-media-wrap="${button.dataset.fullscreen}"] video`);
     if (video?.requestFullscreen) await video.requestFullscreen();
@@ -84,7 +91,11 @@ async function decide(event) {
   const values = new FormData(event.currentTarget);
   const note = values.get('note');
   const directorId = values.get('directorId');
+  const pin = values.get('pin');
   const errorNode = document.querySelector('#decision-error');
+  if (coordinatorMode && !/^\d{8}$/.test(String(pin || ''))) {
+    errorNode.hidden = false; errorNode.textContent = 'Masukkan PIN Koordinator tepat 8 digit.'; return;
+  }
   if (decision === 'REVISION' && !String(note).trim()) {
     errorNode.hidden = false; errorNode.textContent = 'Catatan revisi wajib diisi.'; return;
   }
@@ -93,7 +104,7 @@ async function decide(event) {
   }
   submitter.disabled = true;
   try {
-    const result = await request(`${endpoint}/${encodeURIComponent(token)}/decision`, { method: 'POST', body: { decision, note, directorId } });
+    const result = await request(`${endpoint}/${encodeURIComponent(token)}/decision`, { method: 'POST', body: { decision, note, directorId, pin } });
     const message = decision === 'APPROVED' ? 'Konten disetujui dan dapat dijadwalkan.' : decision === 'REVISION' ? 'Permintaan revisi sudah dikirim.' : `Konten diteruskan kepada ${result.directorName}.`;
     root.innerHTML = `<section class="card pin-card"><div class="notice success"><strong>Keputusan tersimpan</strong><br>${esc(message)}</div>${result.directorApprovalUrl ? `<p class="muted">Salin link berikut untuk dikirim kepada Direksi.</p><button id="copy-director-link" class="btn" type="button">Salin Link Approval Direksi</button>` : ''}</section>`;
     document.querySelector('#copy-director-link')?.addEventListener('click', async event => {

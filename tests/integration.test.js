@@ -131,11 +131,16 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   result = await request(baseUrl, `/api/contents/${instantId}/transition`, { method: 'POST', body: { toStatus: 'REVISION_REQUIRED', note: 'Perbaiki intro.' } }, coordinatorCookie);
   assert.equal(result.response.status, 409, 'Koordinator wajib menggunakan link dan PIN');
   result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}`);
-  assert.equal(result.response.status, 401);
-  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/unlock`, { method: 'POST', body: { pin: coordinatorPin } });
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  let coordinatorApprovalCookie = result.response.headers.get('set-cookie').split(';')[0];
-  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/decision`, { method: 'POST', body: { decision: 'REVISION', note: 'Perbaiki intro.' } }, coordinatorApprovalCookie);
+  assert.equal(result.payload.content.caption, 'Caption video instan.');
+  assert.deepEqual(result.payload.content.channels, ['YouTube']);
+  assert.equal(result.payload.content.submitted_by_name, 'Asisten Koordinator');
+  assert.equal(result.payload.files[0].mime_type, 'video/mp4');
+  result = await request(baseUrl, result.payload.files[0].fileUrl);
+  assert.equal(result.response.status, 200, 'Video pada link Koordinator dapat diputar tanpa login');
+  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/decision`, { method: 'POST', body: { decision: 'REVISION', note: 'Perbaiki intro.', pin: '00000000' } });
+  assert.equal(result.response.status, 401, 'PIN yang salah ditolak saat keputusan dikirim');
+  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/decision`, { method: 'POST', body: { decision: 'REVISION', note: 'Perbaiki intro.', pin: coordinatorPin } });
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   assert.equal(result.payload.status, 'REVISION_REQUIRED');
   instantForm = new FormData();
@@ -145,10 +150,7 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   assert.equal(result.response.status, 201, JSON.stringify(result.payload));
   assert.equal(result.payload.versionNumber, 2);
   coordinatorToken = new URL(result.payload.approvalUrl, baseUrl).searchParams.get('token');
-  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/unlock`, { method: 'POST', body: { pin: coordinatorPin } });
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  coordinatorApprovalCookie = result.response.headers.get('set-cookie').split(';')[0];
-  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/decision`, { method: 'POST', body: { decision: 'APPROVED' } }, coordinatorApprovalCookie);
+  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/decision`, { method: 'POST', body: { decision: 'APPROVED', pin: coordinatorPin } });
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   assert.equal(result.payload.status, 'APPROVED');
   result = await request(baseUrl, `/api/contents/${instantId}/schedules`, { method: 'POST', body: { plans: [
@@ -172,12 +174,9 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   assert.equal(result.response.status, 201, JSON.stringify(result.payload));
   const directorInstantId = result.payload.item.id;
   coordinatorToken = new URL(result.payload.approvalUrl, baseUrl).searchParams.get('token');
-  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/unlock`, { method: 'POST', body: { pin: coordinatorPin } });
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  coordinatorApprovalCookie = result.response.headers.get('set-cookie').split(';')[0];
   result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/decision`, { method: 'POST', body: {
-    decision: 'DIRECTOR', directorId: byRole('MANAGEMENT'), note: 'Mohon persetujuan Direksi.'
-  } }, coordinatorApprovalCookie);
+    decision: 'DIRECTOR', directorId: byRole('MANAGEMENT'), note: 'Mohon persetujuan Direksi.', pin: coordinatorPin
+  } });
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   assert.equal(result.payload.status, 'APPROVAL_PENDING');
   assert.match(result.payload.directorApprovalUrl, /^\/approval\.html\?token=/);

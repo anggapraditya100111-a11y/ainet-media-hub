@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.11.1 — 2026-10-01
+
+- Menampilkan video Video Instan langsung saat link approval Koordinator dibuka, lengkap dengan kontrol putar dan layar penuh.
+- Menampilkan nomor konten, brand, channel, rencana tayang, pengunggah, tanggal kirim, versi file, caption, hashtag, dan CTA pada halaman approval.
+- Memindahkan input PIN Koordinator ke formulir keputusan sehingga PIN berfungsi sebagai pengesahan Setujui, Minta Revisi, atau Teruskan ke Direksi.
+- Tetap membatasi keputusan maksimal lima kegagalan PIN serta menutup link setelah keputusan, pembatalan, atau penerbitan ulang.
+
 ## 0.11.0 — 2026-10-01
 
 - Memberikan izin kepada Asisten Koordinator untuk mengunggah foto dan video Raw Footage serta mengubah metadata unggahannya sendiri.
