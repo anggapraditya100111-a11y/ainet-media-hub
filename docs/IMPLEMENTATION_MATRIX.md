@@ -1,8 +1,8 @@
 # Matriks Implementasi Konsep AXINDO Media Hub
 
-Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implementasi repository versi 0.10.0.
+Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implementasi repository versi 0.11.0.
 
-| Area konsep | Implementasi 0.10.0 | Status |
+| Area konsep | Implementasi 0.11.0 | Status |
 |---|---|---|
 | Dual brand AINET / IMAS | Master brand, warna, filter, badge, dan branding UI | Selesai |
 | Permintaan dan brief | Form tujuan, audiens, kampanye, format, channel, CTA, deadline, anggaran | Selesai |
@@ -13,11 +13,14 @@ Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implem
 | Produksi dan draft | Vendor atau Koordinator dapat mengunggah hasil sesuai mode; upload besar bertahap, berversi, dan ber-checksum | Selesai |
 | Review dan revisi | Keputusan Koordinator, catatan revisi wajib, diskusi vendor, dan jejak workflow | Selesai |
 | Persetujuan | Direksi tertentu, link tanpa kedaluwarsa, PIN pribadi Direksi 8 digit, versi final terikat, salin link, dan pencabutan | Selesai |
+| Video Instan | Asisten mengunggah video internal tanpa proses produksi panjang; approval Koordinator melalui link dan PIN pribadi | Selesai |
+| Keputusan Video Instan | Koordinator menyetujui, meminta revisi, atau meneruskan video kepada Direksi dari halaman link | Selesai |
 | Edit materi Vendor | Akses per kolom dari Koordinator, usulan tambahan non-destruktif, review terima/tolak, atribusi nama Vendor | Selesai |
 | Ringkasan materi | Snapshot read-only, lampiran terpilih, masa berlaku 12 jam, dan pencabutan | Selesai |
 | Jadwal | Channel, waktu, dan Petugas Upload terpisah per platform; dapat ditambah atau diedit Koordinator sebelum tayang | Selesai |
 | Bukti tayang | URL, screenshot/PDF, waktu, channel, dan metrik | Selesai |
 | Raw Footage | Galeri foto/video mentah terpisah, kategori, metadata, preview, dan pengaitan ke Brief Produksi | Selesai |
+| Raw Footage Asisten | Asisten dapat upload serta mengubah metadata miliknya tanpa hak arsip, hapus, atau mengubah footage pengguna lain | Selesai |
 | Akses Raw Footage Vendor | Vendor hanya melihat serta mengunduh footage yang ditautkan ke tugasnya | Selesai |
 | Media Library | Aset final dalam enam kategori, versi, masa berlaku, checksum, status, owner | Selesai |
 | Akses vendor ke Library | Baca/unduh aset aktif tanpa hak kelola | Selesai |
@@ -44,10 +47,11 @@ Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implem
 4. Seluruh pengguna dapat membuka Media Library, tetapi hanya Admin/Koordinator yang dapat mengelola versi dan status.
 5. Raw Footage terpisah dari Media Library; Vendor hanya dapat membukanya setelah ditautkan ke tugas produksi.
 6. Aset kedaluwarsa/arsip tidak dapat diunduh oleh vendor maupun user baca-saja.
-7. Koordinator memilih apakah hasil disetujui langsung atau dikirim kepada satu Direksi tertentu melalui link; PIN pribadi hanya dibuat dan diketahui Direksi.
-8. Perubahan substansial setelah approval membuka kembali proses review.
-8. Konten tayang tidak dapat diedit atau dihapus permanen.
-9. Setiap platform wajib memiliki URL atau bukti; konten selesai setelah seluruh jadwal dipublikasikan.
-10. Seluruh tindakan penting tersimpan dalam audit log.
-11. Pengguna internal masuk melalui AXINDO ID; Login Personal hanya tersedia untuk Super Admin dan Vendor.
-12. Akun tanpa grup Authentik yang dipetakan tidak memperoleh akses Media Hub.
+7. Video Instan diputuskan Koordinator melalui link dan PIN pribadi, bukan tombol approval di dalam aplikasi.
+8. Koordinator dapat meneruskan Video Instan kepada satu Direksi tertentu; PIN setiap approver hanya diketahui pemiliknya.
+9. Perubahan substansial setelah approval membuka kembali proses review.
+10. Konten tayang tidak dapat diedit atau dihapus permanen.
+11. Setiap platform wajib memiliki URL atau bukti; konten selesai setelah seluruh jadwal dipublikasikan.
+12. Seluruh tindakan penting tersimpan dalam audit log.
+13. Pengguna internal masuk melalui AXINDO ID; Login Personal hanya tersedia untuk Super Admin dan Vendor.
+14. Akun tanpa grup Authentik yang dipetakan tidak memperoleh akses Media Hub.

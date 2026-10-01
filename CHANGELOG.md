@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.11.0 — 2026-10-01
+
+- Memberikan izin kepada Asisten Koordinator untuk mengunggah foto dan video Raw Footage serta mengubah metadata unggahannya sendiri.
+- Tetap membatasi arsip, aktivasi ulang, perubahan footage pengguna lain, dan penghapusan sesuai kewenangan Koordinator atau Super Admin.
+- Membuat link approval Koordinator secara otomatis untuk setiap Video Instan dan revisinya.
+- Memungkinkan Koordinator membuka link tanpa menavigasi aplikasi, melakukan preview video termasuk layar penuh, lalu memasukkan PIN pribadi 8 digit.
+- Menambahkan keputusan Setujui, Minta Revisi dengan catatan wajib, atau Teruskan ke Direksi dari halaman link approval.
+- Mengunci link setelah lima kegagalan PIN, keputusan, pembatalan, penggantian file, atau penerbitan link baru serta mencatat seluruh aktivitas pada Audit Log.
+- Memungkinkan Asisten, Koordinator terkait, dan Super Admin menyalin, membatalkan, atau menerbitkan ulang link sesuai konteks Video Instan.
+
 ## 0.10.0 — 2026-09-30
 
 - Menambahkan role Asisten Koordinator dan pemetaan grup AXINDO ID terkait.

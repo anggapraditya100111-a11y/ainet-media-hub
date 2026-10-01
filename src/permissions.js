@@ -20,7 +20,7 @@ const ROLE_PERMISSIONS = Object.freeze({
   ASSISTANT_COORDINATOR: [
     'dashboard.view', 'calendar.view', 'content.view_assigned', 'content.instant_create',
     'content.publish', 'library.view', 'library.download',
-    'footage.view', 'footage.download', 'notifications.view'
+    'footage.view', 'footage.download', 'footage.upload', 'notifications.view'
   ],
   VENDOR: [
     'dashboard.view', 'calendar.view', 'content.view_assigned', 'content.create', 'content.production',

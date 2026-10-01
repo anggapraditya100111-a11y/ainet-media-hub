@@ -42,6 +42,8 @@ test('Asisten Koordinator memiliki Video Instan dan dapat menjadi petugas upload
   assert.equal(hasPermission('ASSISTANT_COORDINATOR', 'content.publish'), true);
   assert.equal(hasPermission('ASSISTANT_COORDINATOR', 'content.review'), false);
   assert.equal(hasPermission('ASSISTANT_COORDINATOR', 'content.schedule'), false);
+  assert.equal(hasPermission('ASSISTANT_COORDINATOR', 'footage.upload'), true);
+  assert.equal(hasPermission('ASSISTANT_COORDINATOR', 'footage.manage'), false);
 });
 
 test('hanya Super Admin dan Direksi memiliki akses pengelolaan Sampah', () => {

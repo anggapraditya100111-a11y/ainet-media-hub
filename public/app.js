@@ -634,7 +634,7 @@ async function showInstantVideoForm() {
     openModal('Upload Video Instan', `<form id="instant-video-form"><div class="notice success">Video langsung dikirim ke Koordinator untuk approval. Tahap permintaan, brief, dan produksi tidak dibuat.</div><div class="form-grid" style="margin-top:16px">
       <label class="field full"><span>Judul video *</span><input name="title" maxlength="200" required placeholder="Contoh: Tips cek koneksi WiFi"></label>
       <label class="field"><span>Brand *</span><select name="brandId" required><option value="">Pilih brand</option>${brandOptions()}</select></label>
-      <label class="field"><span>Koordinator approver *</span><select name="coordinatorId" required><option value="">Pilih Koordinator</option>${coordinators.map(user => `<option value="${attr(user.id)}">${escapeHtml(user.name)}</option>`).join('')}</select></label>
+      <label class="field"><span>Koordinator approver *</span><select name="coordinatorId" required><option value="">Pilih Koordinator</option>${coordinators.map(user => `<option value="${attr(user.id)}" ${user.approval_pin_set ? '' : 'disabled'}>${escapeHtml(user.name)}${user.approval_pin_set ? '' : ' · PIN belum dibuat'}</option>`).join('')}</select><small>Link approval otomatis dibuat dan hanya dapat dibuka dengan PIN pribadi Koordinator.</small></label>
       <div class="field full"><span>Channel *</span><div class="check-row">${state.channels.map(channel => `<label class="check"><input type="checkbox" name="channelIds" value="${attr(channel.id)}">${escapeHtml(channel.name)}</label>`).join('')}</div></div>
       <label class="field full"><span>Video final *</span><input type="file" name="file" required accept="video/*"><small>Maksimal ${number(state.config.maxCollaborationUploadMb || 500)} MB.</small></label>
       <label class="field full"><span>Caption (opsional)</span><textarea name="caption" maxlength="5000"></textarea></label>
@@ -1047,6 +1047,9 @@ async function showContentDetail(id) {
             <h3 style="margin-top:18px">Link Referensi</h3>
             ${(item.referenceUrls || []).length ? `<div class="reference-list">${item.referenceUrls.map(referenceLink).join('')}</div>` : '<p class="muted">Belum ada link sosial media atau web.</p>'}
           </section>
+          ${item.workflow_type === 'INSTANT' ? `<section class="card detail-section" style="margin-top:16px"><div class="card-head"><h3>Approval Koordinator</h3>${item.status === 'DRAFT_SUBMITTED' && !(data.coordinatorApprovals || []).some(row => row.status === 'ACTIVE') ? '<button class="btn btn-primary btn-small" data-reissue-coordinator-approval>Buat Ulang Link</button>' : ''}</div>
+            ${(data.coordinatorApprovals || []).length ? data.coordinatorApprovals.map(approval => `<div class="approval-row"><div><strong>${escapeHtml(approval.coordinator_name)}</strong><small>${dateTime(approval.created_at)}</small></div>${statusHtml(approval.status)}${approval.status === 'ACTIVE' && approval.url ? `<div class="actions"><button class="btn btn-ghost btn-small" data-copy-coordinator-approval="${attr(approval.url)}">Salin Link</button><button class="btn btn-danger btn-small" data-cancel-coordinator-approval="${attr(approval.id)}">Batalkan</button></div>` : ''}</div>`).join('') : '<p class="muted">Link approval belum dibuat.</p>'}
+          </section>` : ''}
           <section class="card detail-section" style="margin-top:16px"><h3>Approval Direksi</h3>
             ${(data.directorApprovals || []).length ? data.directorApprovals.map(approval => `<div class="approval-row"><div><strong>${escapeHtml(approval.director_name)}</strong><small>${dateTime(approval.created_at)}</small></div>${statusHtml(approval.status)}${approval.status === 'ACTIVE' && (state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN') ? `<div class="actions">${approval.url ? `<button class="btn btn-ghost btn-small" data-copy-approval="${attr(approval.url)}">Salin Link</button>` : ''}<button class="btn btn-danger btn-small" data-cancel-approval="${attr(approval.id)}">Batalkan</button></div>` : ''}</div>`).join('') : '<p class="muted">Belum pernah dikirim ke Direksi.</p>'}
           </section>
@@ -1129,7 +1132,7 @@ function contentActions(item) {
   if (item.status === 'IN_PRODUCTION' && state.user.role === 'VENDOR') buttons.push(`<button class="btn btn-primary" data-content-action="submit-result">Kirim Hasil ke Koordinator</button>`);
   if (item.status === 'IN_PRODUCTION' && item.production_mode === 'INTERNAL' && (state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-primary" data-content-action="submit-result">Selesaikan Produksi Internal</button>`);
   if (item.workflow_type === 'INSTANT' && item.status === 'REVISION_REQUIRED' && item.created_by === state.user.id && has('content.instant_create')) buttons.push('<button class="btn btn-primary" data-content-action="instant-revision">Upload Versi Revisi</button>');
-  if (['DRAFT_SUBMITTED', 'IN_REVIEW'].includes(item.status) && (state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-primary" data-content-action="director">Kirim ke Direksi</button>`);
+  if (item.workflow_type !== 'INSTANT' && ['DRAFT_SUBMITTED', 'IN_REVIEW'].includes(item.status) && (state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-primary" data-content-action="director">Kirim ke Direksi</button>`);
   if (item.status === 'APPROVED' && (has('content.schedule') || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-success" data-content-action="schedule">Buat Jadwal Platform</button>`);
   if (['APPROVED', 'SCHEDULED', 'PUBLISHED'].includes(item.status) && has('library.manage')) buttons.push(`<button class="btn btn-soft" data-content-action="promote">Jadikan Aset Resmi</button>`);
   for (const next of vendorBriefPending ? [] : state.transitions[item.status] || []) {
@@ -1137,6 +1140,7 @@ function contentActions(item) {
     if (['BRIEFED', 'ASSIGNED', 'DRAFT_SUBMITTED', 'APPROVAL_PENDING', 'SCHEDULED', 'PUBLISHED'].includes(next)) continue;
     const permission = transitionPermission(item, next);
     const delegatedReview = item.production_mode === 'VENDOR' && hasAssistantDelegation('REVIEW_VENDOR', item.coordinator_id) && ['REVISION_REQUIRED', 'APPROVED'].includes(next);
+    if (item.workflow_type === 'INSTANT' && ['REVISION_REQUIRED', 'APPROVED', 'APPROVAL_PENDING'].includes(next)) continue;
     if (!has(permission) && !delegatedReview) continue;
     buttons.push(`<button class="btn ${transitionTone(next)}" data-transition="${next}">${transitionLabel(next, item)}</button>`);
   }
@@ -1167,6 +1171,21 @@ function bindDetailActions(item, data = {}) {
     await navigator.clipboard.writeText(url);
     toast('Link approval disalin. PIN tetap hanya diketahui Direksi.');
   }));
+  document.querySelectorAll('[data-copy-coordinator-approval]').forEach(button => button.addEventListener('click', async () => {
+    const url = new URL(button.dataset.copyCoordinatorApproval, window.location.origin).href;
+    await navigator.clipboard.writeText(url);
+    toast('Link approval disalin. Koordinator cukup membukanya dan memasukkan PIN pribadi.');
+  }));
+  document.querySelectorAll('[data-cancel-coordinator-approval]').forEach(button => button.addEventListener('click', async () => {
+    if (!confirm('Batalkan link approval Koordinator ini?')) return;
+    await api(`/api/contents/${item.id}/coordinator-approvals/${button.dataset.cancelCoordinatorApproval}/cancel`, { method: 'POST', body: {} });
+    toast('Link approval dibatalkan.'); await showContentDetail(item.id);
+  }));
+  $('[data-reissue-coordinator-approval]')?.addEventListener('click', async () => {
+    const result = await api(`/api/contents/${item.id}/coordinator-approvals`, { method: 'POST', body: {} });
+    await navigator.clipboard.writeText(new URL(result.url, window.location.origin).href);
+    toast('Link baru dibuat dan disalin.'); await showContentDetail(item.id);
+  });
   document.querySelectorAll('[data-inline-vendor-edit]').forEach(form => form.addEventListener('submit', async event => {
     event.preventDefault(); setLoading(true);
     try {
@@ -1677,7 +1696,7 @@ function showPromoteForm(item) {
 async function renderRawFootage() {
   const data = await api('/api/raw-footage');
   page.innerHTML = `<div class="page-head"><div><h2>Raw Footage</h2><p>Penyimpanan foto dan video mentah untuk bahan produksi. Terpisah dari Media Library yang berisi aset final.</p></div>
-    ${has('footage.manage') ? '<button id="raw-footage-create" class="btn btn-primary">＋ Tambah Footage</button>' : ''}</div>
+    ${has('footage.manage') || has('footage.upload') ? '<button id="raw-footage-create" class="btn btn-primary">＋ Tambah Footage</button>' : ''}</div>
     <form id="raw-footage-filter" class="card toolbar">
       <label class="field search-field"><span>Cari footage</span><input name="q" placeholder="Judul, kode, lokasi, atau tag"></label>
       <label class="field"><span>Jenis</span><select name="mediaType"><option value="">Foto & video</option>${optionsHtml([['VIDEO','Video'],['PHOTO','Foto']])}</select></label>
@@ -1735,7 +1754,7 @@ async function showRawFootageDetail(id) {
     <div class="raw-footage-detail-preview">${String(item.mime_type).startsWith('image/') ? `<img src="${attr(item.fileUrl)}" alt="${attr(item.title)}">` : `<video src="${attr(item.fileUrl)}" controls playsinline preload="metadata"></video>`}</div>
     <div class="actions" style="margin:16px 0">
       ${mediaPreviewButton(item)}<a class="btn btn-primary" href="${attr(item.fileUrl)}?download=1">↓ Unduh File Asli</a>
-      ${has('footage.manage') ? '<button class="btn btn-ghost" data-raw-footage-action="edit">Edit Metadata</button>' : ''}
+      ${has('footage.manage') || (has('footage.upload') && item.uploaded_by === state.user.id) ? '<button class="btn btn-ghost" data-raw-footage-action="edit">Edit Metadata</button>' : ''}
       ${has('footage.manage') && item.status === 'ACTIVE' ? '<button class="btn btn-ghost" data-raw-footage-status="ARCHIVED">Arsipkan</button>' : ''}
       ${has('footage.manage') && item.status === 'ARCHIVED' ? '<button class="btn btn-success" data-raw-footage-status="ACTIVE">Aktifkan</button>' : ''}
       ${state.user.role === 'SUPER_ADMIN' ? '<button class="btn btn-danger" data-raw-footage-action="delete">Hapus Permanen</button>' : ''}
@@ -2132,9 +2151,10 @@ async function renderProfile() {
   const accountSecurity = usesAxindoId
     ? '<section class="card detail-section"><h3>Keamanan AXINDO ID</h3><div class="notice success">Akun ini masuk melalui Single Sign-On. Password, MFA, dan pemulihan akun dikelola terpusat di AXINDO ID.</div></section>'
     : '<form id="password-form" class="card detail-section"><h3>Ubah Password</h3><div class="field"><span>Password saat ini</span><input type="password" name="currentPassword" required autocomplete="current-password"></div><div class="field" style="margin-top:13px"><span>Password baru</span><input type="password" name="newPassword" required minlength="8" autocomplete="new-password"><small>Minimal 8 karakter, mengandung huruf dan angka.</small></div><button class="btn btn-primary" style="margin-top:16px" type="submit">Ubah Password</button></form>';
-  const approvalPin = state.user.role === 'MANAGEMENT' ? `<form id="approval-pin-form" class="card detail-section"><h3>${state.user.approvalPinSet ? 'Ubah' : 'Buat'} PIN Approval</h3><div class="notice">PIN 8 digit ini milik pribadi Direksi dan digunakan pada semua link approval yang ditujukan kepada Anda. Koordinator tidak dapat melihatnya.</div>
+  const approvalPinRole = state.user.role === 'MANAGEMENT' ? 'Direksi' : 'Koordinator';
+  const approvalPin = ['MANAGEMENT', 'COORDINATOR'].includes(state.user.role) ? `<form id="approval-pin-form" class="card detail-section"><h3>${state.user.approvalPinSet ? 'Ubah' : 'Buat'} PIN Approval</h3><div class="notice">PIN 8 digit ini milik pribadi ${approvalPinRole} dan digunakan pada semua link approval yang ditujukan kepada Anda. Pengirim link tidak dapat melihatnya.</div>
     ${state.user.approvalPinSet ? '<div class="field" style="margin-top:13px"><span>PIN saat ini</span><input class="pin-profile-input" type="password" name="currentPin" required inputmode="numeric" pattern="[0-9]{8}" maxlength="8" autocomplete="off"></div>' : ''}
-    <div class="field" style="margin-top:13px"><span>PIN baru</span><input class="pin-profile-input" type="password" name="newPin" required inputmode="numeric" pattern="[0-9]{8}" maxlength="8" autocomplete="new-password"><small>Tepat 8 angka. Jangan berikan PIN kepada Koordinator atau vendor.</small></div>
+    <div class="field" style="margin-top:13px"><span>PIN baru</span><input class="pin-profile-input" type="password" name="newPin" required inputmode="numeric" pattern="[0-9]{8}" maxlength="8" autocomplete="new-password"><small>Tepat 8 angka. Jangan berikan PIN kepada pengirim link atau pihak lain.</small></div>
     <div class="field" style="margin-top:13px"><span>Ulangi PIN baru</span><input class="pin-profile-input" type="password" name="confirmPin" required inputmode="numeric" pattern="[0-9]{8}" maxlength="8" autocomplete="new-password"></div>
     <button class="btn btn-primary" style="margin-top:16px" type="submit">Simpan PIN Approval</button></form>` : '';
   page.innerHTML = `<div class="page-head"><div><h2>Profil & Password</h2><p>Kelola keamanan akun Anda.</p></div></div>

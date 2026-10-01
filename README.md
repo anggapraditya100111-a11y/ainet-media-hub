@@ -2,13 +2,14 @@
 
 AXINDO Media Hub adalah aplikasi internal PT Axindo Infinitas Network untuk mengelola produksi konten AINET dan IMAS dari permintaan sampai bukti tayang. Aplikasi berjalan mandiri di server Ubuntu menggunakan Docker Compose, database SQLite, dan penyimpanan berkas lokal server.
 
-Versi: **0.10.0 — Video Instan & Asisten Koordinator**
+Versi: **0.11.0 — Approval Koordinator via Link & Raw Footage Asisten**
 
 ## Fitur yang sudah berfungsi
 
 - Workflow terkunci dengan pilihan produksi Vendor atau produksi Internal oleh Koordinator, kemudian Review/Approval → Terjadwal → Selesai Tayang.
 - Enam role operasional: Super Admin, Koordinator Media, Asisten Koordinator, Vendor/Kreator, Direksi, dan Petugas Upload.
 - Video Instan memungkinkan Asisten mengunggah video internal langsung ke approval Koordinator tanpa pencatatan tahap permintaan, brief, dan produksi.
+- Link approval Video Instan otomatis dibuat untuk Koordinator; keputusan dilakukan tanpa login aplikasi menggunakan PIN pribadi 8 digit, dengan pilihan setujui, revisi, atau teruskan ke Direksi.
 - Koordinator dapat memberi atau mencabut delegasi Asisten untuk membuat permintaan konten dan mereview proses Vendor; Asisten tidak dapat menyetujui unggahannya sendiri.
 - Vendor hanya melihat konten yang ditugaskan kepada vendornya dan tidak menyimpan kredensial media sosial.
 - Vendor dapat mengajukan seluruh ide konten, memilih Koordinator, melengkapi brief, caption, CTA, channel, link, serta lampiran sebelum produksi.
@@ -28,7 +29,7 @@ Versi: **0.10.0 — Video Instan & Asisten Koordinator**
 - Link Ringkasan Materi berupa snapshot read-only, dapat dibuka tanpa login selama 12 jam, dan hanya memuat lampiran terpilih.
 - Jadwal publikasi dan bukti tayang terpisah per platform serta petugas upload; Koordinator dapat menambah channel serta mengubah channel, waktu, atau petugas selama jadwal belum tayang.
 - Pencatatan reach, impressions, engagement, leads/PSB, anggaran, dan biaya per lead.
-- Raw Footage terpisah untuk foto/video mentah, lengkap dengan kategori, brand, tanggal pengambilan, lokasi, tag, galeri preview, dan layar penuh.
+- Raw Footage terpisah untuk foto/video mentah, lengkap dengan kategori, brand, tanggal pengambilan, lokasi, tag, galeri preview, dan layar penuh; Asisten dapat mengunggah serta mengubah metadata footage miliknya sendiri.
 - Koordinator dapat memilih Raw Footage untuk Brief Produksi; Vendor hanya dapat membuka footage yang ditautkan ke tugasnya.
 - Media Library bersama untuk logo, brosur, template, foto/video final, materi kampanye, dan arsip.
 - Media Library memiliki versi aktif, tanggal berlaku, tanggal kedaluwarsa, checksum, pemilik, serta status.

@@ -15,7 +15,7 @@ const {
 } = require('./db');
 const {
   newId, randomToken, hashToken, hashPassword, verifyPassword, assertPassword,
-  assertApprovalPin, hashApprovalPin, verifyApprovalPin, decryptSecret,
+  assertApprovalPin, hashApprovalPin, verifyApprovalPin, encryptSecret, decryptSecret,
   cleanText, cleanUsername, safeFilename, checksum
 } = require('./security');
 const { ROLE_LABELS, permissionsForRole, hasPermission } = require('./permissions');
@@ -26,7 +26,7 @@ const {
 } = require('./oidc');
 const { installWorkflowV4 } = require('./workflow-v4');
 
-const APP_VERSION = '0.10.0';
+const APP_VERSION = '0.11.0';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';
@@ -441,6 +441,20 @@ function latestVersion(contentId) {
   return db.prepare('SELECT * FROM content_versions WHERE content_id=? ORDER BY version_number DESC LIMIT 1').get(contentId);
 }
 
+function replaceCoordinatorApprovalLink({ contentId, coordinatorId, fileIds, createdBy, reason }) {
+  const active = db.prepare("SELECT id FROM coordinator_approval_requests WHERE content_id=? AND status='ACTIVE'").all(contentId);
+  const timestamp = nowIso();
+  for (const request of active) db.prepare('DELETE FROM coordinator_approval_access_sessions WHERE request_id=?').run(request.id);
+  db.prepare("UPDATE coordinator_approval_requests SET status='CANCELLED',cancelled_at=?,note=COALESCE(note,?) WHERE content_id=? AND status='ACTIVE'")
+    .run(timestamp, reason || 'Diganti dengan link approval baru.', contentId);
+  const token = randomToken(32);
+  const id = newId('capr');
+  db.prepare(`INSERT INTO coordinator_approval_requests(id,content_id,coordinator_id,token_hash,link_token_ciphertext,attachment_ids_json,created_by,created_at)
+    VALUES(?,?,?,?,?,?,?,?)`).run(id, contentId, coordinatorId, hashToken('COORDINATOR_LINK', token), encryptSecret('COORDINATOR_LINK_TOKEN', token), JSON.stringify(fileIds), createdBy, timestamp);
+  recordAudit({ actorId: createdBy, entityType: 'COORDINATOR_APPROVAL', entityId: id, action: 'CREATE', after: { contentId, coordinatorId, fileIds } });
+  return { id, token, url: `/approval.html?kind=coordinator&token=${token}` };
+}
+
 function notifyVendor(vendorId, type, title, body, link) {
   if (!vendorId) return;
   for (const row of db.prepare("SELECT id FROM users WHERE vendor_id=? AND role='VENDOR' AND active=1").all(vendorId)) {
@@ -753,7 +767,7 @@ app.post('/api/profile/password', authRequired, (req, res, next) => {
 
 app.post('/api/profile/approval-pin', authRequired, (req, res, next) => {
   try {
-    if (req.user.role !== 'MANAGEMENT') throw new AppError('PIN approval hanya tersedia untuk akun Direksi.', 403);
+    if (!['MANAGEMENT', 'COORDINATOR'].includes(req.user.role)) throw new AppError('PIN approval hanya tersedia untuk akun Direksi dan Koordinator.', 403);
     const row = db.prepare('SELECT * FROM users WHERE id=?').get(req.user.id);
     const newPin = String(req.body.newPin || '');
     if (newPin !== String(req.body.confirmPin || '')) throw new AppError('Konfirmasi PIN tidak sama.');
@@ -767,6 +781,7 @@ app.post('/api/profile/approval-pin', authRequired, (req, res, next) => {
       db.prepare('UPDATE users SET approval_pin_hash=?,approval_pin_salt=?,updated_at=? WHERE id=?')
         .run(credentials.hash, credentials.salt, timestamp, req.user.id);
       db.prepare("UPDATE director_approval_requests SET attempt_count=0,locked_at=NULL WHERE director_id=? AND status='ACTIVE'").run(req.user.id);
+      db.prepare("UPDATE coordinator_approval_requests SET attempt_count=0,locked_at=NULL WHERE coordinator_id=? AND status='ACTIVE'").run(req.user.id);
       recordAudit({ actorId: req.user.id, entityType: 'USER', entityId: req.user.id, action: row.approval_pin_hash ? 'APPROVAL_PIN_CHANGED' : 'APPROVAL_PIN_CREATED', ip: requestIp(req) });
     })();
     res.json({ ok: true, approvalPinSet: true });
@@ -897,8 +912,12 @@ app.post('/api/instant-videos', authRequired, instantVideoUpload.single('file'),
     if (!hasPermission(req.user, 'content.instant_create')) throw new AppError('Menu Video Instan hanya untuk Asisten Koordinator.', 403);
     if (!req.file) throw new AppError('File video final wajib dipilih.');
     const coordinatorId = requiredText(req.body.coordinatorId, 'Koordinator', 100);
-    if (!db.prepare("SELECT id FROM users WHERE id=? AND role='COORDINATOR' AND active=1").get(coordinatorId)) {
+    const coordinator = db.prepare("SELECT id,name,approval_pin_hash,approval_pin_salt FROM users WHERE id=? AND role='COORDINATOR' AND active=1").get(coordinatorId);
+    if (!coordinator) {
       throw new AppError('Pilih Koordinator aktif untuk melakukan approval.');
+    }
+    if (!coordinator.approval_pin_hash || !coordinator.approval_pin_salt) {
+      throw new AppError(`${coordinator.name} belum membuat PIN approval. Minta Koordinator mengaturnya melalui menu Profil.`, 409);
     }
     const brandId = requiredText(req.body.brandId, 'Brand', 100);
     if (!db.prepare('SELECT id FROM brands WHERE id=? AND active=1').get(brandId)) throw new AppError('Brand tidak valid.');
@@ -916,6 +935,7 @@ app.post('/api/instant-videos', authRequired, instantVideoUpload.single('file'),
     const relativePath = path.join('drafts', req.file.filename);
     const originalName = safeFilename(req.file.originalname);
     const digest = checksum(fs.readFileSync(req.file.path));
+    let coordinatorApproval;
     db.transaction(() => {
       db.prepare(`INSERT INTO contents(
         id,content_no,title,brand_id,category,content_type,approval_level,production_mode,workflow_type,
@@ -932,13 +952,14 @@ app.post('/api/instant-videos', authRequired, instantVideoUpload.single('file'),
         cleanText(req.body.caption, 5000), 'Video Instan versi 1', req.user.id, timestamp);
       db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,checksum,uploaded_by,is_final,created_at)
         VALUES(?,?,'PRODUCTION_RESULT',1,?,?,?,?,?,?,1,?)`).run(fileId, id, relativePath, originalName, req.file.mimetype, req.file.size, digest, req.user.id, timestamp);
+      coordinatorApproval = replaceCoordinatorApprovalLink({ contentId: id, coordinatorId, fileIds: [fileId], createdBy: req.user.id });
       db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
         VALUES(?,?,NULL,'DRAFT_SUBMITTED','CREATE_INSTANT_VIDEO','Video internal langsung dikirim untuk approval Koordinator',?,?)`).run(newId('evt'), id, req.user.id, timestamp);
       recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: id, action: 'CREATE_INSTANT_VIDEO',
         after: { contentNo, title, coordinatorId, channelIds, originalName, size: req.file.size }, ip: requestIp(req) });
     })();
     notifyUser(coordinatorId, 'INSTANT_VIDEO_SUBMITTED', `Video Instan ${contentNo}`, `${req.user.name} mengirim ${title} untuk approval.`, `/contents/${id}`);
-    res.status(201).json({ item: getContent(id, req.user) });
+    res.status(201).json({ item: getContent(id, req.user), approvalUrl: coordinatorApproval.url });
   } catch (error) { removeUpload(req.file); next(error); }
 });
 
@@ -954,24 +975,29 @@ app.post('/api/instant-videos/:id/revision', authRequired, instantVideoUpload.si
     const originalName = safeFilename(req.file.originalname);
     const timestamp = nowIso();
     const digest = checksum(fs.readFileSync(req.file.path));
+    const coordinator = db.prepare("SELECT id,name,approval_pin_hash,approval_pin_salt FROM users WHERE id=? AND role='COORDINATOR' AND active=1").get(item.coordinator_id);
+    if (!coordinator?.approval_pin_hash || !coordinator?.approval_pin_salt) throw new AppError('Koordinator belum memiliki PIN approval aktif.', 409);
+    const fileId = newId('file');
+    let coordinatorApproval;
     db.transaction(() => {
       db.prepare(`INSERT INTO content_versions(id,content_id,version_number,file_path,original_name,mime_type,file_size,caption,change_note,submitted_by,created_at)
         VALUES(?,?,?,?,?,?,?,?,?,?,?)`).run(newId('ver'), item.id, versionNumber, relativePath, originalName, req.file.mimetype, req.file.size,
         cleanText(req.body.caption, 5000) || item.caption, cleanText(req.body.changeNote, 1000) || `Revisi Video Instan versi ${versionNumber}`, req.user.id, timestamp);
       db.prepare('UPDATE collaboration_files SET is_final=0 WHERE content_id=?').run(item.id);
       db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,checksum,uploaded_by,is_final,created_at)
-        VALUES(?,?,'PRODUCTION_RESULT',?,?,?,?,?,?,?,1,?)`).run(newId('file'), item.id, versionNumber, relativePath, originalName,
+        VALUES(?,?,'PRODUCTION_RESULT',?,?,?,?,?,?,?,1,?)`).run(fileId, item.id, versionNumber, relativePath, originalName,
         req.file.mimetype, req.file.size, digest, req.user.id, timestamp);
       db.prepare("UPDATE contents SET status='DRAFT_SUBMITTED',caption=COALESCE(NULLIF(?,''),caption),updated_at=? WHERE id=?")
         .run(cleanText(req.body.caption, 5000), timestamp, item.id);
       db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
         VALUES(?,?,'REVISION_REQUIRED','DRAFT_SUBMITTED','SUBMIT_INSTANT_REVISION',?,?,?)`).run(newId('evt'), item.id,
         cleanText(req.body.changeNote, 1000) || `Versi ${versionNumber}`, req.user.id, timestamp);
+      coordinatorApproval = replaceCoordinatorApprovalLink({ contentId: item.id, coordinatorId: item.coordinator_id, fileIds: [fileId], createdBy: req.user.id, reason: 'Diganti oleh revisi Video Instan.' });
       recordAudit({ actorId: req.user.id, entityType: 'CONTENT_VERSION', entityId: item.id, action: 'SUBMIT_INSTANT_REVISION',
         after: { versionNumber, originalName, size: req.file.size }, ip: requestIp(req) });
     })();
     notifyUser(item.coordinator_id, 'INSTANT_VIDEO_RESUBMITTED', `Revisi ${item.content_no}`, `${req.user.name} mengirim versi ${versionNumber}.`, `/contents/${item.id}`);
-    res.status(201).json({ item: getContent(item.id, req.user), versionNumber });
+    res.status(201).json({ item: getContent(item.id, req.user), versionNumber, approvalUrl: coordinatorApproval.url });
   } catch (error) { removeUpload(req.file); next(error); }
 });
 
@@ -1088,11 +1114,19 @@ app.get('/api/contents/:id', authRequired, (req, res) => {
       const { link_token_ciphertext, ...safe } = row;
       return { ...safe, url: token ? `/approval.html?token=${token}` : null };
     });
+  const coordinatorApprovals = db.prepare(`SELECT car.id,car.status,car.note,car.link_token_ciphertext,car.opened_at,car.decided_at,car.cancelled_at,car.created_at,u.name AS coordinator_name
+    FROM coordinator_approval_requests car JOIN users u ON u.id=car.coordinator_id WHERE car.content_id=? ORDER BY car.created_at DESC`).all(item.id)
+    .map(row => {
+      const mayManageLink = req.user.role === 'SUPER_ADMIN' || req.user.id === item.created_by || req.user.id === item.coordinator_id;
+      const token = mayManageLink && row.status === 'ACTIVE' ? decryptSecret('COORDINATOR_LINK_TOKEN', row.link_token_ciphertext) : null;
+      const { link_token_ciphertext, ...safe } = row;
+      return { ...safe, url: token ? `/approval.html?kind=coordinator&token=${token}` : null };
+    });
   const briefVersions = db.prepare(`SELECT vbv.*,u.name AS submitted_by_name,r.name AS reviewed_by_name FROM vendor_brief_versions vbv
     JOIN users u ON u.id=vbv.submitted_by LEFT JOIN users r ON r.id=vbv.reviewed_by
     WHERE vbv.content_id=? ORDER BY vbv.version_number DESC`).all(item.id)
     .map(row => ({ ...row, snapshot: jsonObject(row.snapshot_json, {}), snapshot_json: undefined }));
-  res.json({ item, versions, events, proofs, assets, rawFootage, discussions, vendorEdits, vendorEditAttributions, collaborationFiles, schedules, directorApprovals, briefVersions });
+  res.json({ item, versions, events, proofs, assets, rawFootage, discussions, vendorEdits, vendorEditAttributions, collaborationFiles, schedules, coordinatorApprovals, directorApprovals, briefVersions });
 });
 
 const VENDOR_BRIEF_FIELDS = Object.freeze({
@@ -1417,8 +1451,8 @@ app.post('/api/contents/:id/transition', authRequired, (req, res, next) => {
     const delegatedVendorReview = ['content.review', 'content.approve_production'].includes(permission) && item.production_mode === 'VENDOR' &&
       hasAssistantDelegation(req.user, item.coordinator_id, 'REVIEW_VENDOR');
     if (!delegatedVendorReview) ensurePermission(req.user, permission);
-    if (item.workflow_type === 'INSTANT' && req.user.id === item.created_by && ['APPROVED', 'REVISION_REQUIRED', 'APPROVAL_PENDING'].includes(toStatus)) {
-      throw new AppError('Asisten tidak dapat menyetujui atau mereview Video Instan yang diunggah sendiri.', 403);
+    if (item.workflow_type === 'INSTANT' && ['APPROVED', 'REVISION_REQUIRED', 'APPROVAL_PENDING'].includes(toStatus)) {
+      throw new AppError('Keputusan Video Instan hanya dapat dilakukan Koordinator melalui link approval dan PIN.', 409);
     }
     if (item.workflow_type === 'INSTANT' && req.user.role === 'COORDINATOR' && item.coordinator_id !== req.user.id) {
       throw new AppError('Video Instan hanya dapat direview Koordinator yang dipilih.', 403);
@@ -1606,8 +1640,11 @@ app.get('/api/raw-footage/:id', authRequired, permissionRequired('footage.view')
   } catch (error) { next(error); }
 });
 
-app.post('/api/raw-footage', authRequired, permissionRequired('footage.manage'), rawFootageUpload.single('file'), (req, res, next) => {
+app.post('/api/raw-footage', authRequired, rawFootageUpload.single('file'), (req, res, next) => {
   try {
+    if (!hasPermission(req.user, 'footage.manage') && !hasPermission(req.user, 'footage.upload')) {
+      throw new AppError('Anda tidak memiliki hak akses untuk mengunggah Raw Footage.', 403);
+    }
     if (!req.file) throw new AppError('File foto atau video mentah wajib dipilih.');
     const category = String(req.body.category || (String(req.file.mimetype).startsWith('video/') ? 'VIDEO_RAW' : 'PHOTO_RAW'));
     if (!RAW_FOOTAGE_CATEGORIES.includes(category)) throw new AppError('Kategori Raw Footage tidak valid.');
@@ -1636,10 +1673,13 @@ app.post('/api/raw-footage', authRequired, permissionRequired('footage.manage'),
   } catch (error) { removeUpload(req.file); next(error); }
 });
 
-app.patch('/api/raw-footage/:id', authRequired, permissionRequired('footage.manage'), (req, res, next) => {
+app.patch('/api/raw-footage/:id', authRequired, (req, res, next) => {
   try {
     const item = db.prepare('SELECT * FROM raw_footage WHERE id=?').get(req.params.id);
     if (!item) throw new AppError('Raw Footage tidak ditemukan.', 404);
+    const managesAll = hasPermission(req.user, 'footage.manage');
+    const ownsUpload = hasPermission(req.user, 'footage.upload') && item.uploaded_by === req.user.id;
+    if (!managesAll && !ownsUpload) throw new AppError('Asisten hanya dapat mengubah metadata Raw Footage yang diunggah sendiri.', 403);
     const sets = [];
     const values = [];
     const fields = {
@@ -1658,6 +1698,7 @@ app.patch('/api/raw-footage/:id', authRequired, permissionRequired('footage.mana
     }
     if (Object.hasOwn(req.body, 'tags')) { sets.push('tags_json=?'); values.push(JSON.stringify(footageTags(req.body.tags))); }
     if (Object.hasOwn(req.body, 'status')) {
+      if (!managesAll) throw new AppError('Hanya Koordinator yang dapat mengarsipkan atau mengaktifkan Raw Footage.', 403);
       const status = String(req.body.status);
       if (!['ACTIVE', 'ARCHIVED'].includes(status)) throw new AppError('Status Raw Footage tidak valid.');
       sets.push('status=?'); values.push(status);
@@ -2133,6 +2174,13 @@ app.patch('/api/users/:id', authRequired, (req, res, next) => {
           db.prepare("UPDATE director_approval_requests SET status='CANCELLED',cancelled_at=?,note='Direksi dinonaktifkan' WHERE id=?").run(nowIso(), approval.id);
           db.prepare('DELETE FROM approval_access_sessions WHERE request_id=?').run(approval.id);
           db.prepare("UPDATE contents SET status='DRAFT_SUBMITTED',updated_at=? WHERE id=? AND status='APPROVAL_PENDING'").run(nowIso(), approval.content_id);
+        }
+      }
+      if (Object.hasOwn(req.body, 'active') && !toBoolean(req.body.active) && user.role === 'COORDINATOR') {
+        const approvals = db.prepare("SELECT id FROM coordinator_approval_requests WHERE coordinator_id=? AND status='ACTIVE'").all(user.id);
+        for (const approval of approvals) {
+          db.prepare("UPDATE coordinator_approval_requests SET status='CANCELLED',cancelled_at=?,note='Koordinator dinonaktifkan' WHERE id=?").run(nowIso(), approval.id);
+          db.prepare('DELETE FROM coordinator_approval_access_sessions WHERE request_id=?').run(approval.id);
         }
       }
       db.prepare('DELETE FROM sessions WHERE user_id=? AND id<>?').run(user.id, user.id === req.user.id ? req.sessionId : '');

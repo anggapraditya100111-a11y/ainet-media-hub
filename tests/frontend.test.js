@@ -38,7 +38,7 @@ test('akun AXINDO ID dari OIDC maupun AXINDO Access tidak mendapat form ubah pas
   assert.match(app, /\$\('#password-form'\)\?\.addEventListener/);
 });
 
-test('PIN approval hanya dikelola Direksi dan koordinator hanya menyalin link', () => {
+test('PIN approval pribadi dikelola Direksi dan Koordinator tanpa dibagikan ke pengirim link', () => {
   assert.match(app, /id="approval-pin-form"/);
   assert.match(app, /PIN approval pribadi/);
   assert.match(app, /data-copy-approval/);
@@ -107,7 +107,7 @@ test('Vendor membuat usulan brief dan Koordinator memberi keputusan', () => {
 
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.10\.0/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.11\.0/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);
@@ -166,6 +166,9 @@ test('Asisten Koordinator memiliki alur Video Instan, revisi, delegasi, dan tuga
   assert.match(app, /function renderInstantVideos\(\)/);
   assert.match(app, /Upload Video Instan/);
   assert.match(app, /\/api\/instant-videos/);
+  assert.match(app, /data-copy-coordinator-approval/);
+  assert.match(app, /Koordinator cukup membukanya dan memasukkan PIN pribadi/);
+  assert.match(app, /has\('footage\.upload'\)/);
   assert.match(app, /Kirim Revisi Video Instan/);
   assert.match(app, /Delegasi Asisten/);
   assert.match(app, /CREATE_REQUEST/);
