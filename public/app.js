@@ -1969,6 +1969,7 @@ async function showAssetDetail(id) {
       ${has('library.manage') && asset.status !== 'ACTIVE' ? '<button class="btn btn-success" data-asset-status="ACTIVE">Aktifkan</button>' : ''}
       ${has('library.manage') && asset.status === 'ACTIVE' ? '<button class="btn btn-danger" data-asset-status="EXPIRED">Tandai Kedaluwarsa</button>' : ''}
       ${has('library.manage') && asset.status !== 'ARCHIVED' ? '<button class="btn btn-ghost" data-asset-status="ARCHIVED">Arsipkan</button>' : ''}
+      ${state.user.role === 'SUPER_ADMIN' ? '<button class="btn btn-danger" data-asset-action="delete">Hapus Permanen</button>' : ''}
     </div>
     <div class="grid-2"><section class="card detail-section"><h3>Informasi</h3><dl class="detail-list">
       ${detailItem('Kategori', categoryLabel(asset.category))}${detailItem('Brand', asset.brand_name)}
@@ -1978,6 +1979,7 @@ async function showAssetDetail(id) {
     <section class="card detail-section"><h3>Riwayat Versi</h3>${data.versions.length ? `<div class="timeline">${data.versions.map(version => `<div class="timeline-item"><strong>Versi ${version.version_number} · ${escapeHtml(version.original_name)}</strong><p>${escapeHtml(version.uploaded_by_name)} · ${dateTime(version.created_at)} · ${fileSize(version.file_size)}${version.fileUrl ? `<br><a href="${attr(version.fileUrl)}" target="_blank" rel="noopener">Buka berkas</a>` : ''}</p></div>`).join('')}</div>` : emptyInline('Belum ada versi')}</section></div>`, asset.code);
     $('[data-asset-action="version"]')?.addEventListener('click', () => showAssetVersionForm(asset));
     $('[data-asset-action="edit"]')?.addEventListener('click', () => showAssetMetadataForm(asset));
+    $('[data-asset-action="delete"]')?.addEventListener('click', () => deleteMediaAsset(asset));
     document.querySelectorAll('[data-asset-status]').forEach(button => button.addEventListener('click', () => updateAssetStatus(asset.id, button.dataset.assetStatus)));
   } catch (error) { toast(error.message, true); }
   finally { setLoading(false); }
@@ -2048,6 +2050,16 @@ async function updateAssetStatus(id, status) {
   setLoading(true);
   try { await api(`/api/library/${id}`, { method: 'PATCH', body: { status } }); toast('Status aset diperbarui.'); await showAssetDetail(id); }
   catch (error) { toast(error.message, true); }
+  finally { setLoading(false); }
+}
+
+async function deleteMediaAsset(asset) {
+  if (!confirm(`Hapus permanen ${asset.code} · ${asset.title}? Seluruh versi file Media Library akan dihapus dan tidak dapat dipulihkan. Konten sumber tetap tersimpan.`)) return;
+  setLoading(true);
+  try {
+    await api(`/api/library/${asset.id}`, { method: 'DELETE' });
+    closeModal(); toast('Aset Media Library dihapus permanen.'); await renderLibrary();
+  } catch (error) { toast(error.message, true); }
   finally { setLoading(false); }
 }
 

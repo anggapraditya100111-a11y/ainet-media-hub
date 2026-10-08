@@ -120,7 +120,7 @@ test('Vendor membuat usulan brief dan Koordinator memberi keputusan', () => {
 
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.12\.2/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.12\.3/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);
@@ -171,6 +171,14 @@ test('Raw Footage terpisah dari Media Library dan dapat dipilih untuk produksi',
   assert.match(app, /Terpisah dari Media Library/);
   assert.match(css, /\.raw-footage-preview/);
   assert.match(css, /\.raw-footage-detail-preview/);
+});
+
+test('Super Admin dapat menghapus aset Media Library secara permanen', () => {
+  assert.match(app, /data-asset-action="delete"/);
+  assert.match(app, /function deleteMediaAsset\(asset\)/);
+  assert.match(app, /Seluruh versi file Media Library akan dihapus/);
+  assert.match(app, /method: 'DELETE'/);
+  assert.match(app, /Konten sumber tetap tersimpan/);
 });
 
 test('alur konten sederhana tersedia untuk internal dan vendor dengan revisi serta delegasi', () => {

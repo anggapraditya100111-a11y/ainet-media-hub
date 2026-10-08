@@ -26,7 +26,7 @@ const {
 } = require('./oidc');
 const { installWorkflowV4 } = require('./workflow-v4');
 
-const APP_VERSION = '0.12.2';
+const APP_VERSION = '0.12.3';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';
@@ -2041,6 +2041,30 @@ app.patch('/api/library/:id', authRequired, permissionRequired('library.manage')
     db.prepare(`UPDATE media_assets SET ${sets.join(',')} WHERE id=?`).run(...values);
     const updated = db.prepare('SELECT * FROM media_assets WHERE id=?').get(asset.id);
     recordAudit({ actorId: req.user.id, entityType: 'MEDIA_ASSET', entityId: asset.id, action: 'UPDATE', before: asset, after: updated, ip: requestIp(req) });
+    res.json({ ok: true });
+  } catch (error) { next(error); }
+});
+
+app.delete('/api/library/:id', authRequired, (req, res, next) => {
+  try {
+    if (req.user.role !== 'SUPER_ADMIN') throw new AppError('Hanya Super Admin yang dapat menghapus aset Media Library secara permanen.', 403);
+    const asset = db.prepare('SELECT * FROM media_assets WHERE id=?').get(req.params.id);
+    if (!asset) throw new AppError('Aset tidak ditemukan.', 404);
+    const versions = db.prepare('SELECT file_path FROM media_asset_versions WHERE asset_id=?').all(asset.id);
+    db.transaction(() => {
+      db.prepare('DELETE FROM content_assets WHERE asset_id=?').run(asset.id);
+      db.prepare('DELETE FROM media_assets WHERE id=?').run(asset.id);
+      recordAudit({
+        actorId: req.user.id, entityType: 'MEDIA_ASSET', entityId: asset.id, action: 'PERMANENT_DELETE',
+        before: { code: asset.code, title: asset.title, versionCount: versions.length, sourceContentId: asset.source_content_id },
+        ip: requestIp(req)
+      });
+    })();
+    const uploadRoot = path.resolve(UPLOAD_DIR);
+    for (const version of versions) {
+      const absolute = path.resolve(uploadRoot, version.file_path);
+      if (absolute.startsWith(`${uploadRoot}${path.sep}`)) { try { fs.unlinkSync(absolute); } catch {} }
+    }
     res.json({ ok: true });
   } catch (error) { next(error); }
 });

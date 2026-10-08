@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.12.3 — 2026-10-08
+
+- Menambahkan tombol Hapus Permanen pada detail aset Media Library khusus Super Admin.
+- Menghapus seluruh versi file dan kaitan aset ketika aset Media Library dihapus.
+- Mempertahankan konten sumber serta riwayat produksinya agar tidak ikut terhapus.
+- Mencatat penghapusan permanen aset pada Audit Log.
+
 ## 0.12.2 — 2026-10-08
 
 - Menampilkan link approval Koordinator kepada Vendor setelah Vendor mengunggah hasil final dari tugas yang diberikan Koordinator.

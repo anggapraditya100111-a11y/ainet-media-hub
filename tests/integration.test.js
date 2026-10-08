@@ -278,6 +278,15 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   result = await request(baseUrl, '/api/library?q=Video%20Tugas%20Singkat%20Vendor', {}, vendorCookie);
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   assert.equal(result.payload.items[0].source_content_id, vendorTaskId);
+  const deletableLibraryAssetId = result.payload.items[0].id;
+  result = await request(baseUrl, `/api/library/${deletableLibraryAssetId}`, { method: 'DELETE' }, vendorCookie);
+  assert.equal(result.response.status, 403, 'Vendor tidak dapat menghapus aset Media Library');
+  result = await request(baseUrl, `/api/library/${deletableLibraryAssetId}`, { method: 'DELETE' }, adminCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  result = await request(baseUrl, `/api/library/${deletableLibraryAssetId}`, {}, adminCookie);
+  assert.equal(result.response.status, 404, 'aset yang dihapus tidak lagi tersedia di Media Library');
+  result = await request(baseUrl, `/api/contents/${vendorTaskId}`, {}, vendorCookie);
+  assert.equal(result.response.status, 200, 'konten sumber tetap tersedia setelah aset Media Library dihapus');
 
   const created = await request(baseUrl, '/api/contents', { method: 'POST', body: {
     title: 'Video Edukasi AINET', brandId: 'brand-ainet', channelIds: ['channel-instagram', 'channel-tiktok'],
