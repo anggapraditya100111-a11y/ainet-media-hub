@@ -2,7 +2,7 @@
 
 AXINDO Media Hub adalah aplikasi internal PT Axindo Infinitas Network untuk menyimpan, mereview, menjadwalkan, dan mempublikasikan konten AINET serta IMAS. Aplikasi berjalan mandiri di server Ubuntu menggunakan Docker Compose, database SQLite, dan penyimpanan berkas lokal server.
 
-Versi: **0.12.1 — Tugas Vendor Sederhana**
+Versi: **0.12.2 — Link Approval untuk Vendor**
 
 ## Fitur yang sudah berfungsi
 

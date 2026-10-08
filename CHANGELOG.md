@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.12.2 — 2026-10-08
+
+- Menampilkan link approval Koordinator kepada Vendor setelah Vendor mengunggah hasil final dari tugas yang diberikan Koordinator.
+- Menambahkan tombol Salin Link Approval pada detail tugas Vendor agar link dapat langsung diteruskan kepada Koordinator.
+- Tetap membatasi pembatalan dan penerbitan ulang link kepada pemilik tugas, Koordinator terkait, atau Super Admin.
+
 ## 0.12.1 — 2026-10-08
 
 - Menambahkan tombol Buat Tugas Vendor pada menu Konten untuk Koordinator dan Super Admin.

@@ -120,7 +120,7 @@ test('Vendor membuat usulan brief dan Koordinator memberi keputusan', () => {
 
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.12\.1/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.12\.2/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);
@@ -188,6 +188,8 @@ test('alur konten sederhana tersedia untuk internal dan vendor dengan revisi ser
   assert.match(app, /Produksi Internal/);
   assert.match(app, /File final \*/);
   assert.match(app, /data-copy-coordinator-approval/);
+  assert.match(app, /Salin Link Approval/);
+  assert.match(app, /approval\.canCancel/);
   assert.match(app, /Koordinator cukup membukanya dan memasukkan PIN pribadi/);
   assert.match(app, /has\('footage\.upload'\)/);
   assert.match(app, /Kirim Revisi Konten/);

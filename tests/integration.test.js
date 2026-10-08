@@ -250,6 +250,10 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   assert.equal(result.response.status, 201, JSON.stringify(result.payload));
   assert.equal(result.payload.item.status, 'DRAFT_SUBMITTED');
   coordinatorToken = new URL(result.payload.approvalUrl, baseUrl).searchParams.get('token');
+  result = await request(baseUrl, `/api/contents/${vendorTaskId}`, {}, vendorCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  assert.equal(result.payload.coordinatorApprovals[0].url, `/approval.html?kind=coordinator&token=${coordinatorToken}`);
+  assert.equal(result.payload.coordinatorApprovals[0].canCancel, false, 'Vendor dapat menyalin link tetapi tidak membatalkannya');
   result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}`);
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   assert.equal(result.payload.content.submitted_by_name, 'Kreator Vendor');

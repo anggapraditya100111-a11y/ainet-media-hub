@@ -26,7 +26,7 @@ const {
 } = require('./oidc');
 const { installWorkflowV4 } = require('./workflow-v4');
 
-const APP_VERSION = '0.12.1';
+const APP_VERSION = '0.12.2';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';
@@ -1234,9 +1234,12 @@ app.get('/api/contents/:id', authRequired, (req, res) => {
     FROM coordinator_approval_requests car JOIN users u ON u.id=car.coordinator_id WHERE car.content_id=? ORDER BY car.created_at DESC`).all(item.id)
     .map(row => {
       const mayManageLink = req.user.role === 'SUPER_ADMIN' || req.user.id === item.created_by || req.user.id === item.coordinator_id;
-      const token = mayManageLink && row.status === 'ACTIVE' ? decryptSecret('COORDINATOR_LINK_TOKEN', row.link_token_ciphertext) : null;
+      const assignedVendor = req.user.role === 'VENDOR' && req.user.vendorId && item.workflow_type === 'INSTANT' &&
+        item.production_mode === 'VENDOR' && item.vendor_id === req.user.vendorId;
+      const token = (mayManageLink || assignedVendor) && row.status === 'ACTIVE'
+        ? decryptSecret('COORDINATOR_LINK_TOKEN', row.link_token_ciphertext) : null;
       const { link_token_ciphertext, ...safe } = row;
-      return { ...safe, url: token ? `/approval.html?kind=coordinator&token=${token}` : null };
+      return { ...safe, canCancel: mayManageLink, url: token ? `/approval.html?kind=coordinator&token=${token}` : null };
     });
   const briefVersions = db.prepare(`SELECT vbv.*,u.name AS submitted_by_name,r.name AS reviewed_by_name FROM vendor_brief_versions vbv
     JOIN users u ON u.id=vbv.submitted_by LEFT JOIN users r ON r.id=vbv.reviewed_by
