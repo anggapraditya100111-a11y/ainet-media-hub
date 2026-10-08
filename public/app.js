@@ -32,10 +32,7 @@ const icons = {
 const ROLE_MENUS = {
   SUPER_ADMIN: [
     ['Utama', 'dashboard', 'Dashboard', 'dashboard'], ['Utama', 'calendar', 'Kalender Konten', 'calendar'],
-    ['Konten', 'pipeline', 'Pipeline Konten', 'pipeline'], ['Konten', 'requests', 'Permintaan Konten', 'request'],
-    ['Konten', 'instant-videos', 'Video Instan', 'video'],
-    ['Konten', 'review-queue', 'Review Hasil', 'review'], ['Konten', 'approval-queue', 'Approval Direksi', 'approval'],
-    ['Konten', 'ready', 'Siap Tayang', 'upload'], ['Konten', 'progress', 'Ringkasan Progres', 'progress'],
+    ['Konten', 'contents', 'Konten', 'video'], ['Konten', 'review-queue', 'Menunggu Review', 'review'],
     ['Konten', 'trash', 'Sampah Konten', 'trash'], ['Sumber Daya', 'raw-footage', 'Raw Footage', 'footage'],
     ['Sumber Daya', 'library', 'Media Library', 'library'],
     ['Sumber Daya', 'vendors', 'Vendor', 'vendor'], ['Analitik', 'reports', 'Laporan & Performa', 'report'],
@@ -45,16 +42,14 @@ const ROLE_MENUS = {
   ],
   COORDINATOR: [
     ['Utama', 'dashboard', 'Dashboard', 'dashboard'], ['Utama', 'calendar', 'Kalender Konten', 'calendar'],
-    ['Konten', 'pipeline', 'Pipeline Konten', 'pipeline'], ['Konten', 'requests', 'Permintaan Konten', 'request'],
-    ['Konten', 'instant-videos', 'Video Instan', 'video'],
-    ['Konten', 'review-queue', 'Review Hasil', 'review'], ['Konten', 'approval-queue', 'Approval Direksi', 'approval'], ['Konten', 'ready', 'Siap Tayang', 'upload'],
+    ['Konten', 'contents', 'Konten', 'video'], ['Konten', 'review-queue', 'Menunggu Review', 'review'],
     ['Sumber Daya', 'raw-footage', 'Raw Footage', 'footage'], ['Sumber Daya', 'library', 'Media Library', 'library'], ['Sumber Daya', 'vendors', 'Vendor', 'vendor'],
     ['Analitik', 'reports', 'Laporan', 'report'], ['Akun', 'profile', 'Profil & Password', 'profile']
   ],
   VENDOR: [
-    ['Utama', 'dashboard', 'Dashboard', 'dashboard'], ['Konten', 'my-tasks', 'Tugas & Usulan Saya', 'task'],
-    ['Konten', 'calendar', 'Jadwal', 'calendar'], ['Konten', 'revisions', 'Permintaan Revisi', 'review'],
-    ['Sumber Daya', 'raw-footage', 'Raw Footage', 'footage'], ['Sumber Daya', 'library', 'Media Library', 'library'], ['Riwayat', 'content-history', 'Riwayat Tugas', 'history'],
+    ['Utama', 'dashboard', 'Dashboard', 'dashboard'], ['Konten', 'contents', 'Konten Saya', 'video'],
+    ['Konten', 'calendar', 'Jadwal', 'calendar'],
+    ['Sumber Daya', 'raw-footage', 'Raw Footage', 'footage'], ['Sumber Daya', 'library', 'Media Library', 'library'],
     ['Akun', 'profile', 'Profil', 'profile']
   ],
   UPLOADER: [
@@ -64,8 +59,7 @@ const ROLE_MENUS = {
   ],
   ASSISTANT_COORDINATOR: [
     ['Utama', 'dashboard', 'Dashboard', 'dashboard'], ['Utama', 'calendar', 'Kalender Konten', 'calendar'],
-    ['Konten', 'instant-videos', 'Video Instan', 'video'], ['Konten', 'requests', 'Permintaan Konten', 'request'],
-    ['Konten', 'review-queue', 'Review Vendor', 'review'], ['Konten', 'ready', 'Tugas Upload', 'upload'],
+    ['Konten', 'contents', 'Konten', 'video'], ['Konten', 'review-queue', 'Review Vendor', 'review'], ['Konten', 'ready', 'Tugas Upload', 'upload'],
     ['Sumber Daya', 'raw-footage', 'Raw Footage', 'footage'], ['Sumber Daya', 'library', 'Media Library', 'library'],
     ['Akun', 'profile', 'Profil', 'profile']
   ],
@@ -79,8 +73,9 @@ const ROLE_MENUS = {
 
 const PAGE_META = {
   dashboard: ['Dashboard', 'Ringkasan kerja media'], calendar: ['Kalender Konten', 'Rencana publikasi'],
+  contents: ['Konten', 'Upload, review, dan riwayat konten dalam satu tempat'],
   pipeline: ['Pipeline Konten', 'Alur produksi end-to-end'], requests: ['Permintaan Konten', 'Ide dan brief'],
-  'instant-videos': ['Video Instan', 'Video internal singkat yang langsung masuk approval Koordinator'],
+  'instant-videos': ['Konten', 'Upload, review, dan riwayat konten dalam satu tempat'],
   'my-tasks': ['Tugas & Usulan Saya', 'Ide dan produksi Vendor'], revisions: ['Permintaan Revisi', 'Perbaikan yang harus dikerjakan'],
   'review-queue': ['Review Hasil', 'Pemeriksaan hasil produksi oleh Koordinator'], 'review-history': ['Riwayat Review', 'Jejak pemeriksaan'],
   'approval-queue': ['Approval Direksi', 'Persetujuan final melalui link dan PIN'], 'approval-history': ['Riwayat Persetujuan', 'Jejak keputusan'],
@@ -473,15 +468,15 @@ function renderNavigation() {
 
 function renderMobileNavigation(menu) {
   const primaryByRole = {
-    SUPER_ADMIN: 'pipeline', COORDINATOR: 'pipeline', VENDOR: 'my-tasks', REVIEWER: 'review-queue',
-    APPROVER: 'approval-queue', UPLOADER: 'ready', ASSISTANT_COORDINATOR: 'instant-videos', MANAGEMENT: 'reports'
+    SUPER_ADMIN: 'contents', COORDINATOR: 'contents', VENDOR: 'contents', REVIEWER: 'review-queue',
+    APPROVER: 'approval-queue', UPLOADER: 'ready', ASSISTANT_COORDINATOR: 'contents', MANAGEMENT: 'reports'
   };
   const preferred = ['dashboard', primaryByRole[state.user.role], 'calendar', 'library'].filter(Boolean);
   const items = preferred.map(id => menu.find(item => item[1] === id)).filter(Boolean)
     .filter((item, index, all) => all.findIndex(candidate => candidate[1] === item[1]) === index);
   const shortLabels = {
     dashboard: 'Beranda', pipeline: 'Pipeline', 'my-tasks': 'Tugas', 'review-queue': 'Review',
-    'approval-queue': 'Approval', 'instant-videos': 'Instan', ready: 'Tayang', reports: 'Laporan', calendar: 'Kalender', library: 'Library'
+    'approval-queue': 'Approval', contents: 'Konten', 'instant-videos': 'Konten', ready: 'Tayang', reports: 'Laporan', calendar: 'Kalender', library: 'Library'
   };
   const nav = $('#mobile-navigation');
   nav.innerHTML = `${items.map(([, id, label, icon]) => `
@@ -504,7 +499,7 @@ async function openPage(pageId) {
   try {
     const renderer = {
       dashboard: renderDashboard, calendar: renderCalendar, pipeline: renderPipeline,
-      'instant-videos': renderInstantVideos,
+      contents: renderContents, 'instant-videos': renderContents,
       requests: () => renderContentList({ title: 'Permintaan dan Produksi', description: 'Kelola seluruh konten dari permintaan hingga tayang.', create: true }),
       'my-tasks': () => renderContentList({ title: 'Tugas & Usulan Saya', description: 'Usulan brief dan pekerjaan produksi Vendor.', statuses: activeStatuses(), create: true }),
       revisions: () => renderContentList({ title: 'Permintaan Revisi', description: 'Draft yang harus diperbaiki.', statuses: ['REVISION_REQUIRED'] }),
@@ -546,7 +541,7 @@ async function renderDashboard() {
   const maxPipeline = Math.max(1, ...data.pipeline.map(item => item.count));
   page.innerHTML = `
     <div class="page-head"><div><h2>Halo, ${escapeHtml(firstName(state.user.name))}</h2><p>${dashboardGreeting()}</p></div>
-      ${has('content.instant_create') ? '<button id="dashboard-create" class="btn btn-primary">＋ Upload Video Instan</button>' : has('content.create') || hasAssistantDelegation('CREATE_REQUEST') ? `<button id="dashboard-create" class="btn btn-primary">＋ ${state.user.role === 'VENDOR' ? 'Buat Usulan Konten' : 'Buat Permintaan'}</button>` : ''}</div>
+      ${has('content.simple_create') ? '<button id="dashboard-create" class="btn btn-primary">＋ Upload Konten</button>' : ''}</div>
     ${state.user.mustChangePassword && !isAxindoIdUser(state.user) ? '<div class="notice warn" style="margin-bottom:16px">Password akun ini masih merupakan password awal. Ubah melalui menu Profil & Password.</div>' : ''}
     ${state.user.role === 'VENDOR' && !state.user.vendorId ? '<div class="notice warn" style="margin-bottom:16px">Akun Vendor Anda belum dipasangkan dengan data vendor. Hubungi Super Admin agar tugas produksi dapat ditampilkan.</div>' : ''}
     <div class="grid-3">${metricCards.map(([label, value, icon, tone]) => `<article class="card metric ${tone}"><div class="metric-icon">${icons[icon]}</div><span>${label}</span><strong>${number(value)}</strong></article>`).join('')}</div>
@@ -558,7 +553,7 @@ async function renderDashboard() {
         ${data.upcoming.length ? `<div class="calendar-list">${data.upcoming.slice(0, 5).map(contentMiniRow).join('')}</div>` : emptyInline('Belum ada deadline aktif')}
       </div></section>
     </div>`;
-  $('#dashboard-create')?.addEventListener('click', () => has('content.instant_create') ? showInstantVideoForm() : showContentForm());
+  $('#dashboard-create')?.addEventListener('click', showSimpleContentForm);
   page.querySelectorAll('[data-go]').forEach(button => button.addEventListener('click', () => openPage(button.dataset.go)));
   bindContentOpeners(page);
 }
@@ -566,32 +561,55 @@ async function renderDashboard() {
 function dashboardGreeting() {
   const messages = {
     SUPER_ADMIN: 'Pantau operasional konten, akses pengguna, aset, dan audit dari satu tempat.',
-    COORDINATOR: 'Prioritaskan pekerjaan, arahkan vendor, dan jaga jadwal publikasi.',
-    ASSISTANT_COORDINATOR: 'Upload video internal singkat, pantau approval, dan selesaikan tugas publikasi Anda.',
-    VENDOR: 'Lihat tugas produksi, referensi resmi, serta catatan revisi terbaru.',
+    COORDINATOR: 'Review konten internal maupun vendor, lalu tentukan apakah perlu persetujuan Direksi.',
+    ASSISTANT_COORDINATOR: 'Upload konten internal, pantau review, dan selesaikan tugas publikasi Anda.',
+    VENDOR: 'Upload hasil jadi, lihat catatan review, dan kirim revisi dari satu tempat.',
     UPLOADER: 'Publikasikan hanya konten yang telah disetujui dan simpan bukti tayang.',
     MANAGEMENT: 'Buka approval yang ditugaskan atau lihat progres dan dampak konten.'
   };
   return messages[state.user.role] || 'Selamat bekerja.';
 }
 
-async function renderInstantVideos() {
+async function renderContents() {
   const [contents, delegations] = await Promise.all([
-    api('/api/contents?workflowType=INSTANT&limit=250'),
+    api('/api/contents?limit=250'),
     ['SUPER_ADMIN', 'COORDINATOR'].includes(state.user.role) ? api('/api/assistant-delegations') : Promise.resolve(null)
   ]);
-  const mayUpload = has('content.instant_create');
-  page.innerHTML = `<div class="page-head"><div><h2>Video Instan</h2><p>Video internal singkat langsung masuk approval Koordinator tanpa tahap permintaan, brief, dan pencatatan produksi.</p></div>
-    ${mayUpload ? '<button id="instant-video-create" class="btn btn-primary">＋ Upload Video Instan</button>' : ''}</div>
+  const mayUpload = has('content.simple_create');
+  page.innerHTML = `<div class="page-head"><div><h2>${state.user.role === 'VENDOR' ? 'Konten Saya' : 'Konten'}</h2><p>Upload hasil jadi, review Koordinator, revisi bila perlu, lalu otomatis tersimpan di Media Library.</p></div>
+    ${mayUpload ? '<button id="simple-content-create" class="btn btn-primary">＋ Upload Konten</button>' : ''}</div>
     ${state.user.role === 'COORDINATOR' ? assistantDelegationSection(delegations) : ''}
     ${state.user.role === 'SUPER_ADMIN' && delegations?.items?.length ? `<section class="card" style="margin-bottom:16px"><div class="card-head"><h3>Delegasi Asisten Aktif</h3></div><div class="card-body"><div class="file-grid">${delegations.items.filter(item => item.active).map(item => `<article class="file-card"><div class="file-icon">♙</div><div><strong>${escapeHtml(item.assistant_name)}</strong><small>${escapeHtml(item.coordinator_name)} · ${item.permissions.map(delegationPermissionLabel).join(', ')}</small></div></article>`).join('') || emptyInline('Belum ada delegasi aktif.')}</div></div></section>` : ''}
-    <section class="card"><div class="card-head"><h3>${state.user.role === 'ASSISTANT_COORDINATOR' ? 'Video Saya' : 'Antrean & Riwayat Video Instan'}</h3><span class="tag">${number(contents.items.length)} video</span></div>${contentTable(contents.items)}</section>`;
-  $('#instant-video-create')?.addEventListener('click', () => showInstantVideoForm());
+    <form id="simple-content-filter" class="card toolbar">
+      <label class="field search-field"><span>Cari</span><input name="q" placeholder="Nomor atau judul konten"></label>
+      <label class="field"><span>Brand</span><select name="brandId"><option value="">Semua brand</option>${brandOptions()}</select></label>
+      <label class="field"><span>Status</span><select name="status"><option value="">Semua status</option>${statusOptions()}</select></label>
+      <button class="btn btn-ghost" type="submit">Terapkan</button>
+    </form>
+    <section class="card"><div class="card-head"><h3>Daftar Konten</h3><span id="simple-content-count" class="tag">${number(contents.items.length)} konten</span></div><div id="simple-content-results">${contentTable(contents.items, has('content.trash'))}</div></section>`;
+  $('#simple-content-create')?.addEventListener('click', showSimpleContentForm);
   $('#assistant-delegation-create')?.addEventListener('click', () => showAssistantDelegationForm(delegations));
   page.querySelectorAll('[data-edit-delegation]').forEach(button => button.addEventListener('click', () => {
     showAssistantDelegationForm(delegations, delegations.items.find(item => item.id === button.dataset.editDelegation));
   }));
+  $('#simple-content-filter').addEventListener('submit', async event => {
+    event.preventDefault(); setLoading(true);
+    try {
+      const form = new FormData(event.currentTarget);
+      const query = new URLSearchParams({ limit: '250' });
+      if (form.get('q')) query.set('q', form.get('q'));
+      if (form.get('brandId')) query.set('brandId', form.get('brandId'));
+      if (form.get('status')) query.set('status', form.get('status'));
+      const result = await api(`/api/contents?${query}`);
+      $('#simple-content-results').innerHTML = contentTable(result.items, has('content.trash'));
+      $('#simple-content-count').textContent = `${number(result.items.length)} konten`;
+      bindContentOpeners($('#simple-content-results'));
+      if (has('content.trash')) bindTrashActions($('#simple-content-results'));
+    } catch (error) { toast(error.message, true); }
+    finally { setLoading(false); }
+  });
   bindContentOpeners(page);
+  if (has('content.trash')) bindTrashActions(page);
 }
 
 function assistantDelegationSection(data) {
@@ -610,7 +628,7 @@ function showAssistantDelegationForm(data, existing = null) {
     <div class="field full"><span>Izin yang diberikan *</span><div class="check-row">${data.permissionOptions.map(option => `<label class="check"><input type="checkbox" name="permissions" value="${attr(option.code)}" ${selected.has(option.code) ? 'checked' : ''}>${escapeHtml(option.label)}</label>`).join('')}</div></div>
     <label class="field"><span>Berlaku sampai (opsional)</span><input type="datetime-local" name="expiresAt" value="${attr(toLocalDateTime(existing?.expires_at))}"></label>
     <label class="check"><input type="checkbox" name="active" ${existing?.active === false ? '' : 'checked'}>Delegasi aktif</label>
-    <div class="notice full">Asisten tidak dapat menyetujui Video Instan yang diunggahnya sendiri. Semua perubahan izin dicatat pada Audit Log.</div>
+    <div class="notice full">Asisten tidak dapat menyetujui konten yang diunggahnya sendiri. Semua perubahan izin dicatat pada Audit Log.</div>
   </div><div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn btn-primary">Simpan Delegasi</button></div></form>`, 'Akses terbatas per Koordinator');
   $('#assistant-delegation-form [data-close-modal]').addEventListener('click', closeModal);
   $('#assistant-delegation-form').addEventListener('submit', async event => {
@@ -621,53 +639,58 @@ function showAssistantDelegationForm(data, existing = null) {
         assistantId: existing?.assistant_id || form.get('assistantId'), permissions: form.getAll('permissions'),
         expiresAt: form.get('expiresAt'), active: form.has('active')
       } });
-      closeModal(); toast('Delegasi Asisten diperbarui.'); await renderInstantVideos();
+      closeModal(); toast('Delegasi Asisten diperbarui.'); await renderContents();
     } catch (error) { toast(error.message, true); }
     finally { setLoading(false); }
   });
 }
 
-async function showInstantVideoForm() {
+async function showSimpleContentForm() {
   try {
     const assignments = await loadAssignments();
     const coordinators = assignments.users.filter(user => user.role === 'COORDINATOR');
-    openModal('Upload Video Instan', `<form id="instant-video-form"><div class="notice success">Video langsung dikirim ke Koordinator untuk approval. Tahap permintaan, brief, dan produksi tidak dibuat.</div><div class="form-grid" style="margin-top:16px">
-      <label class="field full"><span>Judul video *</span><input name="title" maxlength="200" required placeholder="Contoh: Tips cek koneksi WiFi"></label>
+    const uploaders = assignments.users.filter(user => ['UPLOADER', 'ASSISTANT_COORDINATOR'].includes(user.role));
+    const sourceLabel = state.user.role === 'VENDOR' ? 'Produksi Vendor' : 'Produksi Internal';
+    openModal('Upload Konten', `<form id="simple-content-form"><div class="notice success"><strong>Alur sederhana · ${sourceLabel}</strong><br>Upload hasil jadi langsung dikirim ke Koordinator. Setelah disetujui, file otomatis masuk Media Library.</div><div class="form-grid" style="margin-top:16px">
+      <label class="field full"><span>Judul konten *</span><input name="title" maxlength="200" required placeholder="Contoh: Tips menjaga koneksi WiFi tetap stabil"></label>
       <label class="field"><span>Brand *</span><select name="brandId" required><option value="">Pilih brand</option>${brandOptions()}</select></label>
-      <label class="field"><span>Koordinator approver *</span><select name="coordinatorId" required><option value="">Pilih Koordinator</option>${coordinators.map(user => `<option value="${attr(user.id)}" ${user.approval_pin_set ? '' : 'disabled'}>${escapeHtml(user.name)}${user.approval_pin_set ? '' : ' · PIN belum dibuat'}</option>`).join('')}</select><small>Link approval otomatis dibuat dan hanya dapat dibuka dengan PIN pribadi Koordinator.</small></label>
-      <div class="field full"><span>Channel *</span><div class="check-row">${state.channels.map(channel => `<label class="check"><input type="checkbox" name="channelIds" value="${attr(channel.id)}">${escapeHtml(channel.name)}</label>`).join('')}</div></div>
-      <label class="field full"><span>Video final *</span><input type="file" name="file" required accept="video/*"><small>Maksimal ${number(state.config.maxCollaborationUploadMb || 500)} MB.</small></label>
+      <label class="field"><span>Jenis konten *</span><select name="contentType" required><option value="VIDEO">Video</option><option value="PHOTO">Foto</option><option value="DESIGN">Desain</option><option value="DOCUMENT">Dokumen</option></select></label>
+      <label class="field full"><span>Koordinator reviewer *</span><select name="coordinatorId" required><option value="">Pilih Koordinator</option>${coordinators.map(user => `<option value="${attr(user.id)}" ${user.id === state.user.id ? 'selected' : ''} ${user.approval_pin_set ? '' : 'disabled'}>${escapeHtml(user.name)}${user.approval_pin_set ? '' : ' · PIN belum dibuat'}</option>`).join('')}</select><small>Link review otomatis dibuat. Koordinator mengesahkan keputusan dengan PIN pribadi.</small></label>
+      <div class="field full"><span>Channel tujuan (opsional)</span><div class="check-row">${state.channels.map(channel => `<label class="check"><input type="checkbox" name="channelIds" value="${attr(channel.id)}">${escapeHtml(channel.name)}</label>`).join('')}</div></div>
+      <label class="field full"><span>File final *</span><input type="file" name="file" required accept="image/*,video/*,audio/*,.pdf,.zip,.doc,.docx,.xls,.xlsx,.ppt,.pptx"><small>Video, foto, desain, PDF, atau dokumen · maksimal ${number(state.config.maxCollaborationUploadMb || 500)} MB.</small></label>
+      <label class="field full"><span>Keterangan singkat (opsional)</span><textarea name="description" maxlength="2000" placeholder="Keterangan yang membantu Koordinator memahami konten"></textarea></label>
       <label class="field full"><span>Caption (opsional)</span><textarea name="caption" maxlength="5000"></textarea></label>
       <label class="field"><span>Hashtag (opsional)</span><input name="hashtags" maxlength="1000"></label>
       <label class="field"><span>CTA (opsional)</span><input name="callToAction" maxlength="1000"></label>
       <label class="field"><span>Rencana tayang (opsional)</span><input type="datetime-local" name="publishAt"></label>
-    </div><div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn btn-primary">Upload & Kirim Approval</button></div></form>`, 'Alur produksi singkat internal');
-    $('#instant-video-form [data-close-modal]').addEventListener('click', closeModal);
-    $('#instant-video-form').addEventListener('submit', async event => {
+      <label class="field"><span>Petugas upload (opsional)</span><select name="uploaderId"><option value="">Tentukan saat penjadwalan</option>${uploaders.map(user => `<option value="${attr(user.id)}">${escapeHtml(user.name)}</option>`).join('')}</select></label>
+    </div><div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn btn-primary">Upload & Kirim Review</button></div></form>`, sourceLabel);
+    $('#simple-content-form [data-close-modal]').addEventListener('click', closeModal);
+    $('#simple-content-form').addEventListener('submit', async event => {
       event.preventDefault(); setLoading(true);
       try {
         const form = new FormData(event.currentTarget);
-        if (!form.getAll('channelIds').length) throw new Error('Pilih minimal satu channel.');
-        const result = await api('/api/instant-videos', { method: 'POST', body: form });
-        closeModal(); toast('Video Instan berhasil dikirim ke Koordinator.'); await showContentDetail(result.item.id);
+        const result = await api('/api/simple-contents', { method: 'POST', body: form });
+        closeModal(); toast('Konten berhasil dikirim untuk review Koordinator.'); await showContentDetail(result.item.id);
       } catch (error) { toast(error.message, true); }
       finally { setLoading(false); }
     });
   } catch (error) { toast(error.message, true); }
 }
 
-function showInstantRevisionForm(item) {
-  openModal('Kirim Revisi Video Instan', `<form id="instant-revision-form"><div class="notice warn">Versi lama tetap tersimpan. Video baru akan menjadi versi final yang menunggu review Koordinator.</div>
-    <label class="field" style="margin-top:16px"><span>Video revisi *</span><input type="file" name="file" required accept="video/*"></label>
+function showSimpleRevisionForm(item) {
+  openModal('Kirim Revisi Konten', `<form id="simple-revision-form"><div class="notice warn">Versi lama tetap tersimpan. File baru akan menjadi versi final yang menunggu review Koordinator.</div>
+    <label class="field" style="margin-top:16px"><span>File revisi *</span><input type="file" name="file" required accept="image/*,video/*,audio/*,.pdf,.zip,.doc,.docx,.xls,.xlsx,.ppt,.pptx"></label>
     <label class="field" style="margin-top:14px"><span>Caption (opsional)</span><textarea name="caption" maxlength="5000">${escapeHtml(item.caption || '')}</textarea></label>
+    <div class="form-grid" style="margin-top:14px"><label class="field"><span>Hashtag (opsional)</span><input name="hashtags" maxlength="1000" value="${attr(item.hashtags || '')}"></label><label class="field"><span>CTA (opsional)</span><input name="callToAction" maxlength="1000" value="${attr(item.call_to_action || '')}"></label></div>
     <label class="field" style="margin-top:14px"><span>Catatan perubahan *</span><textarea name="changeNote" maxlength="1000" required></textarea></label>
     <div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn btn-primary">Kirim Revisi</button></div></form>`, item.content_no);
-  $('#instant-revision-form [data-close-modal]').addEventListener('click', closeModal);
-  $('#instant-revision-form').addEventListener('submit', async event => {
+  $('#simple-revision-form [data-close-modal]').addEventListener('click', closeModal);
+  $('#simple-revision-form').addEventListener('submit', async event => {
     event.preventDefault(); setLoading(true);
     try {
-      await api(`/api/instant-videos/${item.id}/revision`, { method: 'POST', body: new FormData(event.currentTarget) });
-      toast('Revisi Video Instan dikirim ke Koordinator.'); await showContentDetail(item.id);
+      await api(`/api/simple-contents/${item.id}/revision`, { method: 'POST', body: new FormData(event.currentTarget) });
+      toast('Revisi konten dikirim ke Koordinator.'); await showContentDetail(item.id);
     } catch (error) { toast(error.message, true); }
     finally { setLoading(false); }
   });
@@ -742,7 +765,7 @@ function showTrashContentForm(id, contentNo, title) {
     try {
       const reason = new FormData(event.currentTarget).get('reason');
       await api(`/api/contents/${encodeURIComponent(id)}/trash`, { method: 'POST', body: { reason } });
-      closeModal(); toast('Data dipindahkan ke Sampah.'); await openPage('progress');
+      closeModal(); toast('Data dipindahkan ke Sampah.'); await openPage(state.currentPage);
     } catch (error) { toast(error.message, true); }
     finally { setLoading(false); }
   });
@@ -994,14 +1017,14 @@ async function showContentDetail(id) {
     const actions = contentActions(item);
     openModal('Detail Konten', `
       <section class="card detail-hero">
-        <div class="actions"><span class="brand-chip" style="background:${safeColor(item.brand_color)}">${escapeHtml(item.brand_code)}</span>${item.workflow_type === 'INSTANT' ? '<span class="tag">Video Instan</span>' : ''}${statusHtml(item.status, item.statusLabel)}${priorityHtml(item.priority)}</div>
+        <div class="actions"><span class="brand-chip" style="background:${safeColor(item.brand_color)}">${escapeHtml(item.brand_code)}</span>${item.workflow_type === 'INSTANT' ? '<span class="tag">Alur Sederhana</span>' : ''}${statusHtml(item.status, item.statusLabel)}${priorityHtml(item.priority)}</div>
         <h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.content_no)} · ${escapeHtml(item.channels.join(', ') || 'Belum ada channel')}</p>
       </section>
       ${actions ? `<div class="actions" style="margin:16px 0">${actions}</div>` : ''}
       <div class="detail-grid">
         <div>
-          <section class="card detail-section"><h3>${item.workflow_type === 'INSTANT' ? 'Materi Video Instan' : 'Brief & Materi'}</h3>
-            ${item.workflow_type === 'INSTANT' ? `<div class="notice success"><strong>Alur singkat internal</strong><br>Video langsung masuk review Koordinator tanpa tahap brief dan produksi.</div>` : `<dl class="detail-list">
+          <section class="card detail-section"><h3>${item.workflow_type === 'INSTANT' ? 'Materi Final' : 'Brief & Materi'}</h3>
+            ${item.workflow_type === 'INSTANT' ? `<div class="notice success"><strong>${escapeHtml(item.productionModeLabel)}</strong><br>Hasil jadi langsung masuk review Koordinator dan otomatis menjadi aset Media Library setelah disetujui.</div>${item.description ? `<p class="rich-text">${escapeHtml(item.description)}</p>` : ''}` : `<dl class="detail-list">
               ${detailItem('Tujuan', item.objective)}${detailItem('Audiens', item.audience)}
               ${detailItem('Kampanye', item.campaign)}${detailItem('Format', labelize(item.content_type))}
               ${detailItem('Tingkat Persetujuan', item.approval_level === 'SENSITIVE' ? 'Sensitif' : 'Rutin')}${detailItem('Anggaran', rupiah(item.budget))}
@@ -1012,7 +1035,7 @@ async function showContentDetail(id) {
             ${vendorMaterialSection(item, data, 'hashtags', 'Hashtag', item.hashtags)}
             ${vendorMaterialSection(item, data, 'call_to_action', 'Call to Action', item.call_to_action)}
           </section>
-          ${item.proposal_origin === 'VENDOR' ? vendorBriefReviewSection(item, data.briefVersions || []) : ''}
+          ${item.proposal_origin === 'VENDOR' && item.workflow_type !== 'INSTANT' ? vendorBriefReviewSection(item, data.briefVersions || []) : ''}
           <section class="card detail-section" style="margin-top:16px"><div class="card-head"><h3>Diskusi Produksi</h3><button class="btn btn-primary btn-small" data-content-action="discuss">＋ Pesan / File</button></div>
             ${(data.discussions || []).length ? `<div class="discussion-list">${data.discussions.map(message => `<article class="discussion-item"><div class="avatar">${escapeHtml(message.sender_name.slice(0, 1))}</div><div><strong>${escapeHtml(message.sender_name)}</strong><span class="tag">${phaseLabel(message.phase)}</span><p>${escapeHtml(message.message || '')}</p><small>${dateTime(message.created_at)}</small></div></article>`).join('')}</div>` : emptyInline('Belum ada diskusi. Koordinator dan vendor dapat membahas script, storyboard, materi, serta revisi di sini.')}
           </section>
@@ -1117,7 +1140,7 @@ function contentActions(item) {
     item.status === 'REQUESTED' && ['DRAFT', 'REVISION'].includes(item.brief_review_status)) {
     buttons.push('<button class="btn btn-ghost" data-content-action="edit">Edit Usulan</button>');
     buttons.push('<button class="btn btn-primary" data-content-action="submit-vendor-brief">Kirim Brief ke Koordinator</button>');
-  } else if (has('content.edit') && item.proposal_origin !== 'VENDOR' && !['PUBLISHED', 'CANCELLED'].includes(item.status)) {
+  } else if (item.workflow_type !== 'INSTANT' && has('content.edit') && item.proposal_origin !== 'VENDOR' && !['PUBLISHED', 'CANCELLED'].includes(item.status)) {
     buttons.push('<button class="btn btn-ghost" data-content-action="edit">Edit & Penugasan</button>');
   }
   if (item.proposal_origin === 'VENDOR' && item.status === 'REQUESTED' && item.brief_review_status === 'SUBMITTED' &&
@@ -1126,15 +1149,15 @@ function contentActions(item) {
     buttons.push('<button class="btn btn-soft" data-brief-decision="REVISION">Minta Revisi</button>');
     buttons.push('<button class="btn btn-danger" data-brief-decision="REJECTED">Tolak Usulan</button>');
   }
-  if (has('content.edit') && item.proposal_origin !== 'VENDOR' && !['PUBLISHED', 'CANCELLED'].includes(item.status)) buttons.push(`<button class="btn btn-ghost" data-content-action="assets">Aset Referensi</button>`);
-  if (has('content.edit') && item.proposal_origin !== 'VENDOR' && !['PUBLISHED', 'CANCELLED'].includes(item.status)) buttons.push(`<button class="btn btn-ghost" data-content-action="raw-footage">Pilih Raw Footage</button>`);
+  if (item.workflow_type !== 'INSTANT' && has('content.edit') && item.proposal_origin !== 'VENDOR' && !['PUBLISHED', 'CANCELLED'].includes(item.status)) buttons.push(`<button class="btn btn-ghost" data-content-action="assets">Aset Referensi</button>`);
+  if (item.workflow_type !== 'INSTANT' && has('content.edit') && item.proposal_origin !== 'VENDOR' && !['PUBLISHED', 'CANCELLED'].includes(item.status)) buttons.push(`<button class="btn btn-ghost" data-content-action="raw-footage">Pilih Raw Footage</button>`);
   if ((state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN') && !['CANCELLED', 'PUBLISHED'].includes(item.status)) buttons.push(`<button class="btn btn-soft" data-content-action="share">Salin Link Ringkasan</button>`);
   if (item.status === 'IN_PRODUCTION' && state.user.role === 'VENDOR') buttons.push(`<button class="btn btn-primary" data-content-action="submit-result">Kirim Hasil ke Koordinator</button>`);
   if (item.status === 'IN_PRODUCTION' && item.production_mode === 'INTERNAL' && (state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-primary" data-content-action="submit-result">Selesaikan Produksi Internal</button>`);
-  if (item.workflow_type === 'INSTANT' && item.status === 'REVISION_REQUIRED' && item.created_by === state.user.id && has('content.instant_create')) buttons.push('<button class="btn btn-primary" data-content-action="instant-revision">Upload Versi Revisi</button>');
+  if (item.workflow_type === 'INSTANT' && item.status === 'REVISION_REQUIRED' && item.created_by === state.user.id && has('content.simple_create')) buttons.push('<button class="btn btn-primary" data-content-action="simple-revision">Upload Versi Revisi</button>');
   if (item.workflow_type !== 'INSTANT' && ['DRAFT_SUBMITTED', 'IN_REVIEW'].includes(item.status) && (state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-primary" data-content-action="director">Kirim ke Direksi</button>`);
   if (item.status === 'APPROVED' && (has('content.schedule') || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-success" data-content-action="schedule">Buat Jadwal Platform</button>`);
-  if (['APPROVED', 'SCHEDULED', 'PUBLISHED'].includes(item.status) && has('library.manage')) buttons.push(`<button class="btn btn-soft" data-content-action="promote">Jadikan Aset Resmi</button>`);
+  if (item.workflow_type !== 'INSTANT' && ['APPROVED', 'SCHEDULED', 'PUBLISHED'].includes(item.status) && has('library.manage')) buttons.push(`<button class="btn btn-soft" data-content-action="promote">Jadikan Aset Resmi</button>`);
   for (const next of vendorBriefPending ? [] : state.transitions[item.status] || []) {
     if (item.status === 'APPROVAL_PENDING') continue;
     if (['BRIEFED', 'ASSIGNED', 'DRAFT_SUBMITTED', 'APPROVAL_PENDING', 'SCHEDULED', 'PUBLISHED'].includes(next)) continue;
@@ -1153,7 +1176,7 @@ function bindDetailActions(item, data = {}) {
   document.querySelectorAll('[data-content-action="discuss"]').forEach(button => button.addEventListener('click', () => showDiscussionForm(item)));
   $('[data-content-action="share"]')?.addEventListener('click', () => showShareForm(item, data.collaborationFiles || []));
   $('[data-content-action="submit-result"]')?.addEventListener('click', () => submitProductionResult(item));
-  $('[data-content-action="instant-revision"]')?.addEventListener('click', () => showInstantRevisionForm(item));
+  $('[data-content-action="simple-revision"]')?.addEventListener('click', () => showSimpleRevisionForm(item));
   $('[data-content-action="director"]')?.addEventListener('click', () => showDirectorApprovalForm(item, data.collaborationFiles || []));
   $('[data-content-action="schedule"]')?.addEventListener('click', () => showScheduleForm(item, data.schedules || []));
   $('[data-content-action="add-schedule"]')?.addEventListener('click', () => showScheduleForm(item, data.schedules || []));

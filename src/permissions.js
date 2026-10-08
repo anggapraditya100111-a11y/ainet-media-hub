@@ -11,6 +11,7 @@ const ROLE_PERMISSIONS = Object.freeze({
   SUPER_ADMIN: ['*'],
   COORDINATOR: [
     'dashboard.view', 'calendar.view', 'content.view_all', 'content.create',
+    'content.simple_create',
     'content.edit', 'content.assign', 'content.discuss', 'content.review',
     'content.approve_production', 'content.request_director_approval', 'content.schedule',
     'library.view', 'library.download', 'library.manage',
@@ -18,12 +19,12 @@ const ROLE_PERMISSIONS = Object.freeze({
     'vendor.view', 'vendor.manage', 'reports.view', 'notifications.view'
   ],
   ASSISTANT_COORDINATOR: [
-    'dashboard.view', 'calendar.view', 'content.view_assigned', 'content.instant_create',
+    'dashboard.view', 'calendar.view', 'content.view_assigned', 'content.instant_create', 'content.simple_create',
     'content.publish', 'library.view', 'library.download',
     'footage.view', 'footage.download', 'footage.upload', 'notifications.view'
   ],
   VENDOR: [
-    'dashboard.view', 'calendar.view', 'content.view_assigned', 'content.create', 'content.production',
+    'dashboard.view', 'calendar.view', 'content.view_assigned', 'content.create', 'content.simple_create', 'content.production',
     'content.upload_draft', 'content.discuss', 'library.view', 'library.download',
     'footage.view', 'footage.download', 'notifications.view'
   ],

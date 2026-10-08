@@ -457,10 +457,12 @@ function initDatabase() {
       effective_from TEXT,
       expires_at TEXT,
       owner_id TEXT NOT NULL,
+      source_content_id TEXT,
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL,
       FOREIGN KEY(brand_id) REFERENCES brands(id),
-      FOREIGN KEY(owner_id) REFERENCES users(id)
+      FOREIGN KEY(owner_id) REFERENCES users(id),
+      FOREIGN KEY(source_content_id) REFERENCES contents(id) ON DELETE SET NULL
     );
     CREATE INDEX IF NOT EXISTS idx_assets_category ON media_assets(category, status);
 
@@ -558,11 +560,19 @@ function initDatabase() {
   migrateUsersForOidc();
   migrateOidcAttemptsForPopup();
   migrateApprovalSecurityAndReferences();
+  migrateSimpleContentLibrary();
   migrateAssistantCoordinatorRole();
   migrateWorkflowV4();
 
   seedBaseData();
   if (String(process.env.SEED_DEMO || '').toLowerCase() === 'true') seedDemoData();
+}
+
+function migrateSimpleContentLibrary() {
+  const columns = new Set(db.prepare('PRAGMA table_info(media_assets)').all().map(column => column.name));
+  if (!columns.has('source_content_id')) db.exec('ALTER TABLE media_assets ADD COLUMN source_content_id TEXT REFERENCES contents(id)');
+  db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_assets_source_content
+    ON media_assets(source_content_id) WHERE source_content_id IS NOT NULL`);
 }
 
 function migrateApprovalSecurityAndReferences() {

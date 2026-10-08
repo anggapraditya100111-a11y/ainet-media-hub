@@ -1,15 +1,18 @@
 # AXINDO Media Hub
 
-AXINDO Media Hub adalah aplikasi internal PT Axindo Infinitas Network untuk mengelola produksi konten AINET dan IMAS dari permintaan sampai bukti tayang. Aplikasi berjalan mandiri di server Ubuntu menggunakan Docker Compose, database SQLite, dan penyimpanan berkas lokal server.
+AXINDO Media Hub adalah aplikasi internal PT Axindo Infinitas Network untuk menyimpan, mereview, menjadwalkan, dan mempublikasikan konten AINET serta IMAS. Aplikasi berjalan mandiri di server Ubuntu menggunakan Docker Compose, database SQLite, dan penyimpanan berkas lokal server.
 
-Versi: **0.11.1 — Preview Langsung Approval Koordinator**
+Versi: **0.12.0 — Alur Konten Sederhana**
 
 ## Fitur yang sudah berfungsi
 
-- Workflow terkunci dengan pilihan produksi Vendor atau produksi Internal oleh Koordinator, kemudian Review/Approval → Terjadwal → Selesai Tayang.
+- Alur utama disederhanakan menjadi Upload Konten Jadi → Review Koordinator → Revisi atau Disetujui → Media Library.
 - Enam role operasional: Super Admin, Koordinator Media, Asisten Koordinator, Vendor/Kreator, Direksi, dan Petugas Upload.
-- Video Instan memungkinkan Asisten mengunggah video internal langsung ke approval Koordinator tanpa pencatatan tahap permintaan, brief, dan produksi.
-- Link approval Video Instan otomatis dibuat untuk Koordinator; video dan keterangannya langsung terlihat tanpa login, sedangkan keputusan disahkan menggunakan PIN pribadi 8 digit dengan pilihan setujui, revisi, atau teruskan ke Direksi.
+- Produksi Internal dan Produksi Vendor menggunakan formulir yang sama; pembeda hanya sumber serta pengguna yang mengunggah.
+- Hasil jadi dapat berupa video, foto, desain, atau dokumen. Channel, caption, hashtag, CTA, jadwal, dan Petugas Upload bersifat opsional.
+- Link review otomatis dibuat untuk Koordinator; file dan keterangannya langsung terlihat tanpa login, sedangkan keputusan disahkan menggunakan PIN pribadi 8 digit.
+- Koordinator dapat menyetujui, meminta revisi, atau meneruskan konten tertentu kepada Direksi.
+- Konten yang disetujui otomatis menjadi aset final di Media Library tanpa tindakan tambahan.
 - Koordinator dapat memberi atau mencabut delegasi Asisten untuk membuat permintaan konten dan mereview proses Vendor; Asisten tidak dapat menyetujui unggahannya sendiri.
 - Vendor hanya melihat konten yang ditugaskan kepada vendornya dan tidak menyimpan kredensial media sosial.
 - Vendor dapat mengajukan seluruh ide konten, memilih Koordinator, melengkapi brief, caption, CTA, channel, link, serta lampiran sebelum produksi.
@@ -34,7 +37,7 @@ Versi: **0.11.1 — Preview Langsung Approval Koordinator**
 - Media Library bersama untuk logo, brosur, template, foto/video final, materi kampanye, dan arsip.
 - Media Library memiliki versi aktif, tanggal berlaku, tanggal kedaluwarsa, checksum, pemilik, serta status.
 - Seluruh user termasuk vendor dapat membaca/mengunduh aset aktif; aset kedaluwarsa atau diarsipkan dikunci untuk non-pengelola.
-- Draft yang sudah disetujui dapat dipromosikan menjadi aset resmi Media Library.
+- Workflow lama tetap tersedia untuk membuka dan melanjutkan data historis yang sudah ada.
 - Notifikasi dalam aplikasi untuk tugas, draft, revisi, approval, jadwal, dan publikasi.
 - Audit log untuk login, perubahan data, status workflow, versi berkas, publikasi, pengguna, pengaturan, dan backup.
 - Branding aplikasi, warna AINET/IMAS, logo perusahaan, dark mode, serta tampilan responsif desktop/mobile.
@@ -50,10 +53,10 @@ Versi: **0.11.1 — Preview Langsung Approval Koordinator**
 
 | Role | Menu utama |
 |---|---|
-| Super Admin | Dashboard, Kalender, Pipeline, Permintaan, Review Hasil, Approval Direksi, Siap Tayang, Raw Footage, Media Library, Vendor, Laporan, Pengguna, Audit, Pengaturan, Backup |
-| Koordinator Media | Dashboard, Kalender, Pipeline, Permintaan, Review Hasil, Approval Direksi, Siap Tayang, Raw Footage, Media Library, Vendor, Laporan |
-| Asisten Koordinator | Dashboard, Video Instan, Kalender, Tugas Upload, Raw Footage, Media Library, serta Permintaan/Review Vendor bila didelegasikan |
-| Vendor / Kreator | Dashboard, Tugas & Usulan Saya, Jadwal, Permintaan Revisi, Raw Footage tertaut, Media Library, Riwayat Tugas |
+| Super Admin | Dashboard, Konten, Menunggu Review, Kalender, Sampah, Raw Footage, Media Library, Vendor, Laporan, Pengguna, Audit, Pengaturan, Backup |
+| Koordinator Media | Dashboard, Konten, Menunggu Review, Kalender, Raw Footage, Media Library, Vendor, Laporan |
+| Asisten Koordinator | Dashboard, Konten, Kalender, Tugas Upload, Raw Footage, Media Library, serta Review Vendor bila didelegasikan |
+| Vendor / Kreator | Dashboard, Konten Saya, Jadwal, Raw Footage tertaut, Media Library |
 | Direksi | Approval Saya, Dashboard Executive, Kalender, Ringkasan Progres, Performa Konten, Raw Footage, Media Library |
 | Petugas Upload | Dashboard, Konten Siap Tayang, Jadwal Upload, Riwayat Publikasi, Media Library |
 

@@ -26,7 +26,7 @@ const {
 } = require('./oidc');
 const { installWorkflowV4 } = require('./workflow-v4');
 
-const APP_VERSION = '0.11.1';
+const APP_VERSION = '0.12.0';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';
@@ -186,7 +186,7 @@ function accessManifest() {
     schemaVersion: 1,
     id: 'media-hub',
     name: 'AXINDO Media Hub',
-    description: 'Manajemen produksi dan publikasi konten AINET–IMAS.',
+    description: 'Penyimpanan, review, dan publikasi konten AINET–IMAS.',
     url: publicUrl,
     roles: [
       { code: 'SUPER_ADMIN', label: 'Super Admin', assignment: 'OIDC', group: 'AXINDO - MEDIA HUB - SUPER ADMIN' },
@@ -333,7 +333,7 @@ function createUploader(folder, options = {}) {
 const draftUpload = createUploader('drafts');
 const libraryUpload = createUploader('library');
 const rawFootageUpload = createUploader('raw-footage', { mediaOnly: true, maxSizeMb: MAX_COLLAB_UPLOAD_MB });
-const instantVideoUpload = createUploader('drafts', { videoOnly: true, maxSizeMb: MAX_COLLAB_UPLOAD_MB });
+const simpleContentUpload = createUploader('drafts', { maxSizeMb: MAX_COLLAB_UPLOAD_MB });
 const proofUpload = createUploader('proofs');
 const logoUpload = createUploader('branding', { imagesOnly: true });
 
@@ -352,10 +352,17 @@ function serializeContent(row) {
   if (row.proposal_origin === 'VENDOR' && row.brief_review_status === 'REJECTED') statusLabel = 'Usulan Ditolak';
   if (productionMode === 'INTERNAL' && row.status === 'IN_PRODUCTION') statusLabel = 'Produksi Internal';
   if (productionMode === 'INTERNAL' && row.status === 'REVISION_REQUIRED') statusLabel = 'Revisi Internal';
+  if (row.workflow_type === 'INSTANT') {
+    statusLabel = ({
+      DRAFT_SUBMITTED: 'Menunggu Review', REVISION_REQUIRED: 'Perlu Revisi',
+      APPROVAL_PENDING: 'Menunggu Direksi', APPROVED: 'Disetujui',
+      SCHEDULED: 'Terjadwal', PUBLISHED: 'Sudah Tayang', CANCELLED: 'Dibatalkan'
+    })[row.status] || statusLabel;
+  }
   return {
     ...row,
     production_mode: productionMode,
-    productionModeLabel: productionMode === 'INTERNAL' ? 'Internal oleh Koordinator' : 'Vendor',
+    productionModeLabel: productionMode === 'INTERNAL' ? 'Produksi Internal' : 'Produksi Vendor',
     budget: Number(row.budget || 0),
     channels: row.channel_names ? String(row.channel_names).split('||').filter(Boolean) : [],
     channelIds: row.channel_ids ? String(row.channel_ids).split('||').filter(Boolean) : [],
@@ -907,11 +914,17 @@ app.post('/api/contents', authRequired, (req, res, next) => {
   } catch (error) { next(error); }
 });
 
-app.post('/api/instant-videos', authRequired, instantVideoUpload.single('file'), (req, res, next) => {
+function createSimpleContent(req, res, next) {
   try {
-    if (!hasPermission(req.user, 'content.instant_create')) throw new AppError('Menu Video Instan hanya untuk Asisten Koordinator.', 403);
-    if (!req.file) throw new AppError('File video final wajib dipilih.');
-    const coordinatorId = requiredText(req.body.coordinatorId, 'Koordinator', 100);
+    if (!hasPermission(req.user, 'content.simple_create') && !hasPermission(req.user, 'content.instant_create')) {
+      throw new AppError('Anda tidak dapat mengunggah konten final.', 403);
+    }
+    if (!req.file) throw new AppError('File final wajib dipilih.');
+    const vendorSubmission = req.user.role === 'VENDOR';
+    if (vendorSubmission && !req.user.vendorId) throw new AppError('Akun Vendor belum terhubung ke data Vendor.', 403);
+    const coordinatorId = req.user.role === 'COORDINATOR'
+      ? req.user.id
+      : requiredText(req.body.coordinatorId, 'Koordinator', 100);
     const coordinator = db.prepare("SELECT id,name,approval_pin_hash,approval_pin_salt FROM users WHERE id=? AND role='COORDINATOR' AND active=1").get(coordinatorId);
     if (!coordinator) {
       throw new AppError('Pilih Koordinator aktif untuk melakukan approval.');
@@ -922,9 +935,17 @@ app.post('/api/instant-videos', authRequired, instantVideoUpload.single('file'),
     const brandId = requiredText(req.body.brandId, 'Brand', 100);
     if (!db.prepare('SELECT id FROM brands WHERE id=? AND active=1').get(brandId)) throw new AppError('Brand tidak valid.');
     const channelIds = [...new Set(arrayValue(req.body.channelIds))];
-    if (!channelIds.length) throw new AppError('Pilih minimal satu channel.');
-    const validChannels = db.prepare(`SELECT id FROM channels WHERE active=1 AND id IN (${channelIds.map(() => '?').join(',')})`).all(...channelIds);
-    if (validChannels.length !== channelIds.length) throw new AppError('Ada channel yang tidak valid.');
+    if (channelIds.length) {
+      const validChannels = db.prepare(`SELECT id FROM channels WHERE active=1 AND id IN (${channelIds.map(() => '?').join(',')})`).all(...channelIds);
+      if (validChannels.length !== channelIds.length) throw new AppError('Ada channel yang tidak valid.');
+    }
+    const contentType = ['VIDEO', 'PHOTO', 'DESIGN', 'DOCUMENT'].includes(String(req.body.contentType || '').toUpperCase())
+      ? String(req.body.contentType).toUpperCase()
+      : req.file.mimetype.startsWith('video/') ? 'VIDEO' : req.file.mimetype.startsWith('image/') ? 'PHOTO' : 'DOCUMENT';
+    const uploaderId = cleanText(req.body.uploaderId, 100) || null;
+    if (uploaderId && !db.prepare("SELECT id FROM users WHERE id=? AND role IN ('UPLOADER','ASSISTANT_COORDINATOR') AND active=1").get(uploaderId)) {
+      throw new AppError('Petugas upload tidak valid.');
+    }
 
     const id = newId('cnt');
     const versionId = newId('ver');
@@ -938,38 +959,44 @@ app.post('/api/instant-videos', authRequired, instantVideoUpload.single('file'),
     let coordinatorApproval;
     db.transaction(() => {
       db.prepare(`INSERT INTO contents(
-        id,content_no,title,brand_id,category,content_type,approval_level,production_mode,workflow_type,
+        id,content_no,title,description,brand_id,category,content_type,approval_level,production_mode,workflow_type,
         proposal_origin,brief_review_status,status,priority,publish_at,caption,hashtags,call_to_action,
-        coordinator_id,created_by,created_at,updated_at
-      ) VALUES(?,?,?,?,?,'VIDEO','REGULAR','INTERNAL','INSTANT','COORDINATOR','NONE','DRAFT_SUBMITTED','NORMAL',?,?,?,?,?,?,?,?)`).run(
-        id, contentNo, title, brandId, cleanText(req.body.category || 'INTERNAL', 50),
+        coordinator_id,vendor_id,uploader_id,created_by,created_at,updated_at
+      ) VALUES(?,?,?,?,?,?,?,'REGULAR',?,'INSTANT',?,'NONE','DRAFT_SUBMITTED','NORMAL',?,?,?,?,?,?,?,?,?,?)`).run(
+        id, contentNo, title, cleanText(req.body.description, 2000), brandId, cleanText(req.body.category || 'FINAL_CONTENT', 50), contentType,
+        vendorSubmission ? 'VENDOR' : 'INTERNAL', vendorSubmission ? 'VENDOR' : 'COORDINATOR',
         cleanText(req.body.publishAt, 40) || null, cleanText(req.body.caption, 5000), cleanText(req.body.hashtags, 1000),
-        cleanText(req.body.callToAction, 1000), coordinatorId, req.user.id, timestamp, timestamp
+        cleanText(req.body.callToAction, 1000), coordinatorId, vendorSubmission ? req.user.vendorId : null, uploaderId,
+        req.user.id, timestamp, timestamp
       );
       for (const channelId of channelIds) db.prepare('INSERT INTO content_channels(content_id,channel_id) VALUES(?,?)').run(id, channelId);
       db.prepare(`INSERT INTO content_versions(id,content_id,version_number,file_path,original_name,mime_type,file_size,caption,change_note,submitted_by,created_at)
         VALUES(?,?,1,?,?,?,?,?,?,?,?)`).run(versionId, id, relativePath, originalName, req.file.mimetype, req.file.size,
-        cleanText(req.body.caption, 5000), 'Video Instan versi 1', req.user.id, timestamp);
+        cleanText(req.body.caption, 5000), 'Konten final versi 1', req.user.id, timestamp);
       db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,checksum,uploaded_by,is_final,created_at)
         VALUES(?,?,'PRODUCTION_RESULT',1,?,?,?,?,?,?,1,?)`).run(fileId, id, relativePath, originalName, req.file.mimetype, req.file.size, digest, req.user.id, timestamp);
       coordinatorApproval = replaceCoordinatorApprovalLink({ contentId: id, coordinatorId, fileIds: [fileId], createdBy: req.user.id });
       db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
-        VALUES(?,?,NULL,'DRAFT_SUBMITTED','CREATE_INSTANT_VIDEO','Video internal langsung dikirim untuk approval Koordinator',?,?)`).run(newId('evt'), id, req.user.id, timestamp);
-      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: id, action: 'CREATE_INSTANT_VIDEO',
-        after: { contentNo, title, coordinatorId, channelIds, originalName, size: req.file.size }, ip: requestIp(req) });
+        VALUES(?,?,NULL,'DRAFT_SUBMITTED','CREATE_SIMPLE_CONTENT','Konten final langsung dikirim untuk review Koordinator',?,?)`).run(newId('evt'), id, req.user.id, timestamp);
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: id, action: 'CREATE_SIMPLE_CONTENT',
+        after: { contentNo, title, contentType, source: vendorSubmission ? 'VENDOR' : 'INTERNAL', coordinatorId, channelIds, originalName, size: req.file.size }, ip: requestIp(req) });
     })();
-    notifyUser(coordinatorId, 'INSTANT_VIDEO_SUBMITTED', `Video Instan ${contentNo}`, `${req.user.name} mengirim ${title} untuk approval.`, `/contents/${id}`);
+    notifyUser(coordinatorId, 'SIMPLE_CONTENT_SUBMITTED', `Konten baru ${contentNo}`, `${req.user.name} mengirim ${title} untuk review.`, `/contents/${id}`);
     res.status(201).json({ item: getContent(id, req.user), approvalUrl: coordinatorApproval.url });
   } catch (error) { removeUpload(req.file); next(error); }
-});
+}
 
-app.post('/api/instant-videos/:id/revision', authRequired, instantVideoUpload.single('file'), (req, res, next) => {
+app.post('/api/simple-contents', authRequired, simpleContentUpload.single('file'), createSimpleContent);
+// Endpoint lama dipertahankan agar aplikasi yang belum diperbarui tetap dapat mengirim konten.
+app.post('/api/instant-videos', authRequired, simpleContentUpload.single('file'), createSimpleContent);
+
+function submitSimpleContentRevision(req, res, next) {
   try {
-    if (!hasPermission(req.user, 'content.instant_create')) throw new AppError('Anda tidak dapat mengirim revisi Video Instan.', 403);
+    if (!hasPermission(req.user, 'content.simple_create') && !hasPermission(req.user, 'content.instant_create')) throw new AppError('Anda tidak dapat mengirim revisi konten.', 403);
     const item = getContent(req.params.id, req.user);
-    if (item.workflow_type !== 'INSTANT' || item.created_by !== req.user.id) throw new AppError('Video Instan ini bukan milik Anda.', 403);
+    if (item.workflow_type !== 'INSTANT' || item.created_by !== req.user.id) throw new AppError('Konten ini bukan unggahan Anda.', 403);
     if (item.status !== 'REVISION_REQUIRED') throw new AppError('Revisi hanya dapat dikirim ketika diminta Koordinator.', 409);
-    if (!req.file) throw new AppError('File video revisi wajib dipilih.');
+    if (!req.file) throw new AppError('File revisi wajib dipilih.');
     const versionNumber = Number(db.prepare('SELECT COALESCE(MAX(version_number),0)+1 AS n FROM content_versions WHERE content_id=?').get(item.id).n);
     const relativePath = path.join('drafts', req.file.filename);
     const originalName = safeFilename(req.file.originalname);
@@ -982,24 +1009,27 @@ app.post('/api/instant-videos/:id/revision', authRequired, instantVideoUpload.si
     db.transaction(() => {
       db.prepare(`INSERT INTO content_versions(id,content_id,version_number,file_path,original_name,mime_type,file_size,caption,change_note,submitted_by,created_at)
         VALUES(?,?,?,?,?,?,?,?,?,?,?)`).run(newId('ver'), item.id, versionNumber, relativePath, originalName, req.file.mimetype, req.file.size,
-        cleanText(req.body.caption, 5000) || item.caption, cleanText(req.body.changeNote, 1000) || `Revisi Video Instan versi ${versionNumber}`, req.user.id, timestamp);
+        cleanText(req.body.caption, 5000) || item.caption, cleanText(req.body.changeNote, 1000) || `Revisi konten versi ${versionNumber}`, req.user.id, timestamp);
       db.prepare('UPDATE collaboration_files SET is_final=0 WHERE content_id=?').run(item.id);
       db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,checksum,uploaded_by,is_final,created_at)
         VALUES(?,?,'PRODUCTION_RESULT',?,?,?,?,?,?,?,1,?)`).run(fileId, item.id, versionNumber, relativePath, originalName,
         req.file.mimetype, req.file.size, digest, req.user.id, timestamp);
-      db.prepare("UPDATE contents SET status='DRAFT_SUBMITTED',caption=COALESCE(NULLIF(?,''),caption),updated_at=? WHERE id=?")
-        .run(cleanText(req.body.caption, 5000), timestamp, item.id);
+      db.prepare("UPDATE contents SET status='DRAFT_SUBMITTED',caption=COALESCE(NULLIF(?,''),caption),hashtags=COALESCE(NULLIF(?,''),hashtags),call_to_action=COALESCE(NULLIF(?,''),call_to_action),updated_at=? WHERE id=?")
+        .run(cleanText(req.body.caption, 5000), cleanText(req.body.hashtags, 1000), cleanText(req.body.callToAction, 1000), timestamp, item.id);
       db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
-        VALUES(?,?,'REVISION_REQUIRED','DRAFT_SUBMITTED','SUBMIT_INSTANT_REVISION',?,?,?)`).run(newId('evt'), item.id,
+        VALUES(?,?,'REVISION_REQUIRED','DRAFT_SUBMITTED','SUBMIT_SIMPLE_REVISION',?,?,?)`).run(newId('evt'), item.id,
         cleanText(req.body.changeNote, 1000) || `Versi ${versionNumber}`, req.user.id, timestamp);
-      coordinatorApproval = replaceCoordinatorApprovalLink({ contentId: item.id, coordinatorId: item.coordinator_id, fileIds: [fileId], createdBy: req.user.id, reason: 'Diganti oleh revisi Video Instan.' });
-      recordAudit({ actorId: req.user.id, entityType: 'CONTENT_VERSION', entityId: item.id, action: 'SUBMIT_INSTANT_REVISION',
+      coordinatorApproval = replaceCoordinatorApprovalLink({ contentId: item.id, coordinatorId: item.coordinator_id, fileIds: [fileId], createdBy: req.user.id, reason: 'Diganti oleh revisi konten.' });
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT_VERSION', entityId: item.id, action: 'SUBMIT_SIMPLE_REVISION',
         after: { versionNumber, originalName, size: req.file.size }, ip: requestIp(req) });
     })();
-    notifyUser(item.coordinator_id, 'INSTANT_VIDEO_RESUBMITTED', `Revisi ${item.content_no}`, `${req.user.name} mengirim versi ${versionNumber}.`, `/contents/${item.id}`);
+    notifyUser(item.coordinator_id, 'SIMPLE_CONTENT_RESUBMITTED', `Revisi ${item.content_no}`, `${req.user.name} mengirim versi ${versionNumber}.`, `/contents/${item.id}`);
     res.status(201).json({ item: getContent(item.id, req.user), versionNumber, approvalUrl: coordinatorApproval.url });
   } catch (error) { removeUpload(req.file); next(error); }
-});
+}
+
+app.post('/api/simple-contents/:id/revision', authRequired, simpleContentUpload.single('file'), submitSimpleContentRevision);
+app.post('/api/instant-videos/:id/revision', authRequired, simpleContentUpload.single('file'), submitSimpleContentRevision);
 
 app.get('/api/contents/trash', authRequired, permissionRequired('content.trash'), (req, res) => {
   const visibility = contentVisibility(req.user, 'c', true);
@@ -1452,10 +1482,10 @@ app.post('/api/contents/:id/transition', authRequired, (req, res, next) => {
       hasAssistantDelegation(req.user, item.coordinator_id, 'REVIEW_VENDOR');
     if (!delegatedVendorReview) ensurePermission(req.user, permission);
     if (item.workflow_type === 'INSTANT' && ['APPROVED', 'REVISION_REQUIRED', 'APPROVAL_PENDING'].includes(toStatus)) {
-      throw new AppError('Keputusan Video Instan hanya dapat dilakukan Koordinator melalui link approval dan PIN.', 409);
+      throw new AppError('Keputusan konten sederhana dilakukan Koordinator melalui link review dan PIN.', 409);
     }
     if (item.workflow_type === 'INSTANT' && req.user.role === 'COORDINATOR' && item.coordinator_id !== req.user.id) {
-      throw new AppError('Video Instan hanya dapat direview Koordinator yang dipilih.', 403);
+      throw new AppError('Konten hanya dapat direview Koordinator yang dipilih.', 403);
     }
     if (internalProduction && req.user.role === 'VENDOR') throw new AppError('Konten ini diproduksi secara internal oleh Koordinator.', 403);
     if (req.user.role === 'VENDOR' && item.vendor_id !== req.user.vendorId) throw new AppError('Tugas ini tidak diberikan kepada vendor Anda.', 403);
@@ -1753,6 +1783,44 @@ function nextAssetCode() {
   return `AST-${period}-${String(next).padStart(4, '0')}`;
 }
 
+function autoPromoteSimpleContent(contentId, actorId) {
+  const item = db.prepare(`SELECT id,content_no,title,description,caption,brand_id,workflow_type
+    FROM contents WHERE id=?`).get(contentId);
+  if (!item || item.workflow_type !== 'INSTANT') return null;
+  const existing = db.prepare('SELECT id FROM media_assets WHERE source_content_id=?').get(contentId);
+  if (existing) return existing.id;
+  const version = db.prepare(`SELECT * FROM content_versions WHERE content_id=?
+    ORDER BY is_approved DESC,version_number DESC LIMIT 1`).get(contentId);
+  if (!version) throw new AppError('Versi final tidak ditemukan untuk Media Library.', 409);
+  const root = path.resolve(UPLOAD_DIR);
+  const source = path.resolve(root, version.file_path);
+  if (!source.startsWith(`${root}${path.sep}`) || !fs.existsSync(source)) throw new AppError('Berkas final tidak ditemukan.', 404);
+  const filename = `${crypto.randomUUID()}${path.extname(version.original_name).toLowerCase()}`;
+  const destination = path.join(UPLOAD_DIR, 'library', filename);
+  fs.copyFileSync(source, destination);
+  const assetId = newId('ast');
+  const assetVersionId = newId('av');
+  const timestamp = nowIso();
+  const category = /^(image|video)\//.test(version.mime_type) ? 'PHOTO_VIDEO' : 'CAMPAIGN';
+  db.prepare(`INSERT INTO media_assets(
+    id,code,title,description,category,brand_id,status,active_version_id,owner_id,source_content_id,created_at,updated_at
+  ) VALUES(?,?,?,?,?,?,'ACTIVE',?,?,?,?,?)`).run(
+    assetId, nextAssetCode(), item.title,
+    cleanText(item.description || item.caption || `Konten final dari ${item.content_no}`, 2000),
+    category, item.brand_id, assetVersionId, actorId, contentId, timestamp, timestamp
+  );
+  db.prepare(`INSERT INTO media_asset_versions(
+    id,asset_id,version_number,file_path,original_name,mime_type,file_size,checksum,notes,uploaded_by,created_at
+  ) VALUES(?,?,1,?,?,?,?,?,?,?,?)`).run(
+    assetVersionId, assetId, path.join('library', filename), version.original_name, version.mime_type,
+    version.file_size, checksum(fs.readFileSync(destination)), `Otomatis dari ${item.content_no} versi ${version.version_number}`,
+    actorId, timestamp
+  );
+  recordAudit({ actorId, entityType: 'MEDIA_ASSET', entityId: assetId, action: 'AUTO_PROMOTE_APPROVED_CONTENT',
+    after: { contentId, contentVersionId: version.id } });
+  return assetId;
+}
+
 function serializeAsset(row, user) {
   const canDownload = hasPermission(user, 'library.download') && (row.status === 'ACTIVE' || hasPermission(user, 'library.manage'));
   return {
@@ -1979,7 +2047,7 @@ app.get('/api/files/:kind/:filename', authRequired, (req, res, next) => {
 
 app.get('/api/meta/assignments', authRequired, (req, res, next) => {
   try {
-    if (!hasPermission(req.user, 'content.create') && !hasPermission(req.user, 'content.edit') && !hasPermission(req.user, 'content.instant_create') && req.user.role !== 'SUPER_ADMIN') {
+    if (!hasPermission(req.user, 'content.create') && !hasPermission(req.user, 'content.edit') && !hasPermission(req.user, 'content.simple_create') && !hasPermission(req.user, 'content.instant_create') && req.user.role !== 'SUPER_ADMIN') {
       throw new AppError('Anda tidak dapat melihat daftar penugasan.', 403);
     }
     const users = db.prepare(`SELECT id,name,username,role,active,
@@ -2355,6 +2423,7 @@ installWorkflowV4(app, {
   ensurePermission,
   AppError,
   requestIp,
+  autoPromoteSimpleContent,
   maxUploadMb: MAX_COLLAB_UPLOAD_MB,
   cookieSecure: COOKIE_SECURE
 });

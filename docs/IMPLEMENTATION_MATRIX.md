@@ -1,8 +1,8 @@
 # Matriks Implementasi Konsep AXINDO Media Hub
 
-Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implementasi repository versi 0.11.1.
+Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implementasi repository versi 0.12.0.
 
-| Area konsep | Implementasi 0.11.1 | Status |
+| Area konsep | Implementasi 0.12.0 | Status |
 |---|---|---|
 | Dual brand AINET / IMAS | Master brand, warna, filter, badge, dan branding UI | Selesai |
 | Permintaan dan brief | Form tujuan, audiens, kampanye, format, channel, CTA, deadline, anggaran | Selesai |
@@ -13,8 +13,8 @@ Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implem
 | Produksi dan draft | Vendor atau Koordinator dapat mengunggah hasil sesuai mode; upload besar bertahap, berversi, dan ber-checksum | Selesai |
 | Review dan revisi | Keputusan Koordinator, catatan revisi wajib, diskusi vendor, dan jejak workflow | Selesai |
 | Persetujuan | Direksi tertentu, link tanpa kedaluwarsa, PIN pribadi Direksi 8 digit, versi final terikat, salin link, dan pencabutan | Selesai |
-| Video Instan | Asisten mengunggah video internal tanpa proses produksi panjang; link langsung menampilkan video dan keterangan, sedangkan keputusan disahkan dengan PIN Koordinator | Selesai |
-| Keputusan Video Instan | Koordinator menyetujui, meminta revisi, atau meneruskan video kepada Direksi dari halaman link | Selesai |
+| Konten sederhana | Internal dan Vendor mengunggah hasil jadi berupa video, foto, desain, atau dokumen tanpa pencatatan proses produksi | Selesai |
+| Review konten sederhana | Koordinator menyetujui, meminta revisi, atau meneruskan konten kepada Direksi dari halaman link dengan PIN pribadi | Selesai |
 | Edit materi Vendor | Akses per kolom dari Koordinator, usulan tambahan non-destruktif, review terima/tolak, atribusi nama Vendor | Selesai |
 | Ringkasan materi | Snapshot read-only, lampiran terpilih, masa berlaku 12 jam, dan pencabutan | Selesai |
 | Jadwal | Channel, waktu, dan Petugas Upload terpisah per platform; dapat ditambah atau diedit Koordinator sebelum tayang | Selesai |
@@ -25,7 +25,7 @@ Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implem
 | Media Library | Aset final dalam enam kategori, versi, masa berlaku, checksum, status, owner | Selesai |
 | Akses vendor ke Library | Baca/unduh aset aktif tanpa hak kelola | Selesai |
 | Aset kedaluwarsa | Otomatis berstatus kedaluwarsa dan terkunci untuk non-pengelola | Selesai |
-| Promosi draft menjadi aset | Versi disetujui dapat disalin ke Media Library | Selesai |
+| Konten final menjadi aset | Konten sederhana otomatis disalin ke Media Library setelah disetujui Koordinator atau Direksi | Selesai |
 | Dashboard per role | Data otomatis mengikuti cakupan akses pengguna | Selesai |
 | Laporan | Status, brand, vendor SLA, reach, engagement, leads, biaya/lead | Selesai |
 | Notifikasi | Notifikasi dalam aplikasi berbasis perubahan workflow | Selesai |
@@ -47,8 +47,8 @@ Dokumen ini memetakan konsep pada PDF **Konsep AXINDO Media Hub 2026** ke implem
 4. Seluruh pengguna dapat membuka Media Library, tetapi hanya Admin/Koordinator yang dapat mengelola versi dan status.
 5. Raw Footage terpisah dari Media Library; Vendor hanya dapat membukanya setelah ditautkan ke tugas produksi.
 6. Aset kedaluwarsa/arsip tidak dapat diunduh oleh vendor maupun user baca-saja.
-7. Video Instan diputuskan Koordinator melalui link dan PIN pribadi, bukan tombol approval di dalam aplikasi.
-8. Koordinator dapat meneruskan Video Instan kepada satu Direksi tertentu; PIN setiap approver hanya diketahui pemiliknya.
+7. Konten sederhana diputuskan Koordinator melalui link dan PIN pribadi, bukan tombol approval di dalam aplikasi.
+8. Koordinator dapat meneruskan konten sederhana kepada satu Direksi tertentu; PIN setiap approver hanya diketahui pemiliknya.
 9. Perubahan substansial setelah approval membuka kembali proses review.
 10. Konten tayang tidak dapat diedit atau dihapus permanen.
 11. Setiap platform wajib memiliki URL atau bukti; konten selesai setelah seluruh jadwal dipublikasikan.

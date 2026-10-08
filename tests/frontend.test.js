@@ -120,7 +120,7 @@ test('Vendor membuat usulan brief dan Koordinator memberi keputusan', () => {
 
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.11\.1/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.12\.0/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);
@@ -173,16 +173,21 @@ test('Raw Footage terpisah dari Media Library dan dapat dipilih untuk produksi',
   assert.match(css, /\.raw-footage-detail-preview/);
 });
 
-test('Asisten Koordinator memiliki alur Video Instan, revisi, delegasi, dan tugas upload', () => {
+test('alur konten sederhana tersedia untuk internal dan vendor dengan revisi serta delegasi', () => {
   assert.match(app, /ASSISTANT_COORDINATOR:/);
-  assert.match(app, /'instant-videos', 'Video Instan'/);
-  assert.match(app, /function renderInstantVideos\(\)/);
-  assert.match(app, /Upload Video Instan/);
-  assert.match(app, /\/api\/instant-videos/);
+  assert.match(app, /'contents', 'Konten'/);
+  assert.match(app, /'contents', 'Konten Saya'/);
+  assert.match(app, /function renderContents\(\)/);
+  assert.match(app, /Upload Konten/);
+  assert.match(app, /\/api\/simple-contents/);
+  assert.match(app, /Produksi Vendor/);
+  assert.match(app, /Produksi Internal/);
+  assert.match(app, /File final \*/);
   assert.match(app, /data-copy-coordinator-approval/);
   assert.match(app, /Koordinator cukup membukanya dan memasukkan PIN pribadi/);
   assert.match(app, /has\('footage\.upload'\)/);
-  assert.match(app, /Kirim Revisi Video Instan/);
+  assert.match(app, /Kirim Revisi Konten/);
+  assert.match(app, /otomatis masuk Media Library/);
   assert.match(app, /Delegasi Asisten/);
   assert.match(app, /CREATE_REQUEST/);
   assert.match(app, /REVIEW_VENDOR/);
@@ -197,7 +202,7 @@ test('logout menawarkan keluar lokal atau AXINDO pada desktop dan mobile', () =>
   assert.match(css, /\.logout-choice/);
 });
 
-test('workflow kolaborasi v0.4.0 tersedia di desktop dan mobile', () => {
+test('workflow kolaborasi lama tetap tersedia untuk arsip dan kompatibilitas', () => {
   assert.match(app, /Diskusi & Upload/);
   assert.match(app, /uploadCollaborativeFile/);
   assert.match(app, /Kirim Hasil ke Koordinator/);

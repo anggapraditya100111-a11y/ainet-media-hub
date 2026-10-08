@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.12.0 — 2026-10-08
+
+- Menyatukan produksi internal dan Vendor ke alur sederhana: Upload Konten → Review Koordinator → Revisi atau Disetujui → Media Library.
+- Mengganti menu Video Instan dengan satu menu Konten untuk upload, pencarian, filter status, review, dan riwayat.
+- Memungkinkan Asisten Koordinator, Koordinator, Super Admin, dan Vendor mengunggah hasil jadi berupa video, foto, desain, atau dokumen.
+- Mengurangi kolom wajib menjadi judul, brand, jenis konten, Koordinator, dan file final; channel, caption, hashtag, CTA, jadwal, serta Petugas Upload dapat dilengkapi bila diperlukan.
+- Menampilkan sumber Produksi Internal atau Produksi Vendor pada detail dan halaman review Koordinator.
+- Mempertahankan review melalui link dan PIN Koordinator, termasuk pilihan minta revisi, setujui, atau teruskan ke Direksi.
+- Membuat aset Media Library otomatis saat konten sederhana disetujui oleh Koordinator atau Direksi, tanpa tombol tambahan.
+- Menjaga seluruh data dan endpoint workflow lama agar riwayat sebelumnya tetap dapat dibuka.
+
 ## 0.11.1 — 2026-10-01
 
 - Menampilkan video Video Instan langsung saat link approval Koordinator dibuka, lengkap dengan kontrol putar dan layar penuh.

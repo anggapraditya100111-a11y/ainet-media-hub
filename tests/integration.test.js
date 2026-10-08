@@ -153,6 +153,10 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/decision`, { method: 'POST', body: { decision: 'APPROVED', pin: coordinatorPin } });
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   assert.equal(result.payload.status, 'APPROVED');
+  result = await request(baseUrl, '/api/library?q=Video%20Instan%20Internal', {}, assistantCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  assert.equal(result.payload.items.length, 1, 'konten yang disetujui otomatis masuk Media Library');
+  assert.equal(result.payload.items[0].source_content_id, instantId);
   result = await request(baseUrl, `/api/contents/${instantId}/schedules`, { method: 'POST', body: { plans: [
     { channelId: 'channel-youtube', scheduledAt: '2026-10-01T10:00', uploaderId: byRole('ASSISTANT_COORDINATOR') }
   ] } }, coordinatorCookie);
@@ -188,6 +192,30 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   result = await request(baseUrl, `/api/contents/${directorInstantId}`, {}, assistantCookie);
   assert.equal(result.payload.item.status, 'APPROVED');
+  result = await request(baseUrl, '/api/library?q=Video%20Instan%20untuk%20Direksi', {}, assistantCookie);
+  assert.equal(result.payload.items[0].source_content_id, directorInstantId, 'approval Direksi juga otomatis membuat aset final');
+
+  const vendorSimpleForm = new FormData();
+  vendorSimpleForm.set('title', 'Foto Final dari Vendor');
+  vendorSimpleForm.set('description', 'Dokumentasi layanan pelanggan.');
+  vendorSimpleForm.set('brandId', 'brand-ainet');
+  vendorSimpleForm.set('contentType', 'PHOTO');
+  vendorSimpleForm.set('coordinatorId', byRole('COORDINATOR'));
+  vendorSimpleForm.set('file', new Blob([Buffer.from('foto-final-vendor')], { type: 'image/jpeg' }), 'foto-final-vendor.jpg');
+  result = await request(baseUrl, '/api/simple-contents', { method: 'POST', body: vendorSimpleForm }, vendorCookie);
+  assert.equal(result.response.status, 201, JSON.stringify(result.payload));
+  assert.equal(result.payload.item.production_mode, 'VENDOR');
+  assert.equal(result.payload.item.vendor_id, vendorId);
+  assert.deepEqual(result.payload.item.channels, [], 'channel boleh ditentukan kemudian');
+  const vendorSimpleId = result.payload.item.id;
+  coordinatorToken = new URL(result.payload.approvalUrl, baseUrl).searchParams.get('token');
+  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}`);
+  assert.equal(result.payload.content.production_mode, 'VENDOR');
+  assert.equal(result.payload.content.content_type, 'PHOTO');
+  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/decision`, { method: 'POST', body: { decision: 'APPROVED', pin: coordinatorPin } });
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  result = await request(baseUrl, '/api/library?q=Foto%20Final%20dari%20Vendor', {}, vendorCookie);
+  assert.equal(result.payload.items[0].source_content_id, vendorSimpleId);
 
   const created = await request(baseUrl, '/api/contents', { method: 'POST', body: {
     title: 'Video Edukasi AINET', brandId: 'brand-ainet', channelIds: ['channel-instagram', 'channel-tiktok'],

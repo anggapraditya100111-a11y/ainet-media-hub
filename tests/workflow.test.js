@@ -37,8 +37,11 @@ test('super admin memiliki wildcard permission', () => {
   assert.equal(hasPermission('SUPER_ADMIN', 'anything.manage'), true);
 });
 
-test('Asisten Koordinator memiliki Video Instan dan dapat menjadi petugas upload tanpa hak approval global', () => {
+test('Asisten Koordinator dapat upload konten sederhana dan menjadi petugas upload tanpa hak approval global', () => {
   assert.equal(hasPermission('ASSISTANT_COORDINATOR', 'content.instant_create'), true);
+  assert.equal(hasPermission('ASSISTANT_COORDINATOR', 'content.simple_create'), true);
+  assert.equal(hasPermission('COORDINATOR', 'content.simple_create'), true);
+  assert.equal(hasPermission('VENDOR', 'content.simple_create'), true);
   assert.equal(hasPermission('ASSISTANT_COORDINATOR', 'content.publish'), true);
   assert.equal(hasPermission('ASSISTANT_COORDINATOR', 'content.review'), false);
   assert.equal(hasPermission('ASSISTANT_COORDINATOR', 'content.schedule'), false);

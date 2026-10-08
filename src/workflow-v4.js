@@ -62,7 +62,7 @@ function sendStoredFile(req, res, row, forceDownload = false) {
 }
 
 function installWorkflowV4(app, options) {
-  const { authRequired, getContent, ensurePermission, AppError, requestIp, maxUploadMb } = options;
+  const { authRequired, getContent, ensurePermission, AppError, requestIp, autoPromoteSimpleContent, maxUploadMb } = options;
   const configuredMaxUploadMb = () => Math.max(10, Math.min(2048, Number(getSetting('MAX_COLLAB_UPLOAD_MB', maxUploadMb)) || maxUploadMb));
   const chunkBytes = 4 * 1024 * 1024;
   for (const expired of db.prepare("SELECT id,temp_path FROM chunk_upload_sessions WHERE status='ACTIVE' AND expires_at<=?").all(nowIso())) {
@@ -381,7 +381,7 @@ function installWorkflowV4(app, options) {
     try {
       const item = getContent(req.params.id, req.user);
       ensurePermission(req.user, 'content.request_director_approval');
-      if (item.workflow_type === 'INSTANT') throw new AppError('Video Instan hanya dapat diteruskan ke Direksi melalui link approval Koordinator.', 409);
+      if (item.workflow_type === 'INSTANT') throw new AppError('Konten sederhana diteruskan ke Direksi melalui link review Koordinator.', 409);
       if (!['DRAFT_SUBMITTED', 'IN_REVIEW'].includes(item.status)) throw new AppError('Konten harus berada di Review Koordinator.', 409);
       if (db.prepare("SELECT id FROM vendor_content_edits WHERE content_id=? AND status='PENDING' LIMIT 1").get(item.id)) throw new AppError('Masih ada usulan edit vendor yang belum diterima atau ditolak.', 409);
       const director = db.prepare("SELECT id,name,approval_pin_hash,approval_pin_salt FROM users WHERE id=? AND role='MANAGEMENT' AND active=1").get(String(req.body.directorId || ''));
@@ -428,8 +428,7 @@ function installWorkflowV4(app, options) {
   });
 
   function mayManageCoordinatorApproval(user, item) {
-    return user.role === 'SUPER_ADMIN' || user.id === item.coordinator_id ||
-      (user.role === 'ASSISTANT_COORDINATOR' && user.id === item.created_by);
+    return user.role === 'SUPER_ADMIN' || user.id === item.coordinator_id || user.id === item.created_by;
   }
 
   function invalidateCoordinatorApproval(contentId, reason) {
@@ -445,7 +444,7 @@ function installWorkflowV4(app, options) {
     if (!coordinator) throw new AppError('Koordinator approval tidak aktif.', 409);
     if (!coordinator.approval_pin_hash || !coordinator.approval_pin_salt) throw new AppError(`${coordinator.name} belum membuat PIN approval melalui menu Profil.`, 409);
     const file = db.prepare("SELECT id FROM collaboration_files WHERE content_id=? AND phase='PRODUCTION_RESULT' ORDER BY is_final DESC,version_number DESC,created_at DESC LIMIT 1").get(item.id);
-    if (!file) throw new AppError('Video final belum tersedia.', 409);
+    if (!file) throw new AppError('File final belum tersedia.', 409);
     const token = randomToken(32);
     const id = newId('capr');
     const timestamp = nowIso();
@@ -455,14 +454,14 @@ function installWorkflowV4(app, options) {
         VALUES(?,?,?,?,?,?,?,?)`).run(id, item.id, coordinator.id, hashToken('COORDINATOR_LINK', token), encryptSecret('COORDINATOR_LINK_TOKEN', token), JSON.stringify([file.id]), actorId, timestamp);
       recordAudit({ actorId, entityType: 'COORDINATOR_APPROVAL', entityId: id, action: 'CREATE', after: { contentId: item.id, coordinatorId: coordinator.id, fileIds: [file.id] } });
     })();
-    notifyUser(coordinator.id, 'INSTANT_VIDEO_APPROVAL', `Approval ${item.content_no}`, item.title, `/contents/${item.id}`);
+    notifyUser(coordinator.id, 'SIMPLE_CONTENT_APPROVAL', `Review ${item.content_no}`, item.title, `/contents/${item.id}`);
     return { id, url: `/approval.html?kind=coordinator&token=${token}`, coordinator: coordinator.name };
   }
 
   app.post('/api/contents/:id/coordinator-approvals', authRequired, (req, res, next) => {
     try {
       const item = getContent(req.params.id, req.user);
-      if (item.workflow_type !== 'INSTANT') throw new AppError('Link Koordinator hanya tersedia untuk Video Instan.', 409);
+      if (item.workflow_type !== 'INSTANT') throw new AppError('Link Koordinator hanya tersedia untuk alur konten sederhana.', 409);
       if (!mayManageCoordinatorApproval(req.user, item)) throw new AppError('Anda tidak dapat membuat ulang link approval ini.', 403);
       if (item.status !== 'DRAFT_SUBMITTED') throw new AppError('Link baru hanya dapat dibuat saat menunggu approval Koordinator.', 409);
       res.status(201).json(createCoordinatorApproval(item, req.user.id));
@@ -488,7 +487,7 @@ function installWorkflowV4(app, options) {
 
   function coordinatorApprovalByToken(token) {
     return db.prepare(`SELECT car.*,c.content_no,c.title,c.description,c.objective,c.audience,c.brief,c.caption,c.hashtags,c.call_to_action,c.status AS content_status,
-      c.coordinator_id,c.vendor_id,c.publish_at,c.category,c.created_at AS content_created_at,b.name AS brand_name,
+      c.coordinator_id,c.vendor_id,c.publish_at,c.category,c.content_type,c.production_mode,c.created_at AS content_created_at,b.name AS brand_name,
       u.name AS coordinator_name,u.active AS coordinator_active,creator.name AS submitted_by_name,
       u.approval_pin_hash AS coordinator_pin_hash,u.approval_pin_salt AS coordinator_pin_salt
       FROM coordinator_approval_requests car JOIN contents c ON c.id=car.content_id JOIN brands b ON b.id=c.brand_id
@@ -512,7 +511,8 @@ function installWorkflowV4(app, options) {
         objective: approval.objective, audience: approval.audience, brief: approval.brief, caption: approval.caption,
         hashtags: approval.hashtags, call_to_action: approval.call_to_action, brand_name: approval.brand_name,
         coordinator_name: approval.coordinator_name, submitted_by_name: approval.submitted_by_name,
-        publish_at: approval.publish_at, category: approval.category, created_at: approval.content_created_at, channels
+        publish_at: approval.publish_at, category: approval.category, content_type: approval.content_type,
+        production_mode: approval.production_mode, created_at: approval.content_created_at, channels
       }, directors, files: files.map(file => ({ ...file, fileUrl: `/api/public/coordinator-approvals/${req.params.token}/files/${file.id}` })) });
     } catch (error) { next(error); }
   });
@@ -561,7 +561,7 @@ function installWorkflowV4(app, options) {
         if (decision === 'DIRECTOR') {
           const directorToken = randomToken(32);
           const directorRequestId = newId('aprq');
-          invalidateApproval(approval.content_id, approval.coordinator_id, 'Diganti dengan permintaan approval Direksi dari Video Instan.');
+          invalidateApproval(approval.content_id, approval.coordinator_id, 'Diganti dengan permintaan approval Direksi dari review Koordinator.');
           db.prepare(`INSERT INTO director_approval_requests(id,content_id,director_id,token_hash,pin_hash,link_token_ciphertext,attachment_ids_json,created_by,created_at)
             VALUES(?,?,?,?,?,?,?,?,?)`).run(directorRequestId, approval.content_id, director.id, hashToken('DIRECTOR_LINK', directorToken), 'DIRECTOR_OWNED', encryptSecret('DIRECTOR_LINK_TOKEN', directorToken), approval.attachment_ids_json, approval.coordinator_id, timestamp);
           db.prepare("UPDATE contents SET status='APPROVAL_PENDING',approver_id=?,updated_at=? WHERE id=?").run(director.id, timestamp, approval.content_id);
@@ -575,6 +575,7 @@ function installWorkflowV4(app, options) {
           db.prepare('INSERT INTO approvals(id,content_id,version_id,decision,note,approver_id,created_at) VALUES(?,?,?,?,?,?,?)')
             .run(newId('apr'), approval.content_id, version?.id || null, decision === 'APPROVED' ? 'APPROVED' : 'REVISION', note, approval.coordinator_id, timestamp);
           if (decision === 'APPROVED' && version) db.prepare('UPDATE content_versions SET is_approved=1 WHERE id=?').run(version.id);
+          if (decision === 'APPROVED') autoPromoteSimpleContent(approval.content_id, approval.coordinator_id);
           db.prepare('INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at) VALUES(?,?,?,?,?,?,?,?)')
             .run(newId('evt'), approval.content_id, 'DRAFT_SUBMITTED', status, 'COORDINATOR_LINK_DECISION', note, approval.coordinator_id, timestamp);
         }
@@ -671,6 +672,7 @@ function installWorkflowV4(app, options) {
         db.prepare('INSERT INTO approvals(id,content_id,version_id,decision,note,approver_id,created_at) VALUES(?,?,?,?,?,?,?)')
           .run(newId('apr'), approval.content_id, version?.id || null, decision, note, approval.director_id, timestamp);
         if (decision === 'APPROVED' && version) db.prepare('UPDATE content_versions SET is_approved=1 WHERE id=?').run(version.id);
+        if (decision === 'APPROVED') autoPromoteSimpleContent(approval.content_id, approval.director_id);
         db.prepare('INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at) VALUES(?,?,?,?,?,?,?,?)')
           .run(newId('evt'), approval.content_id, 'APPROVAL_PENDING', status, 'DIRECTOR_DECISION', note, approval.director_id, timestamp);
         recordAudit({ actorId: approval.director_id, entityType: 'DIRECTOR_APPROVAL', entityId: approval.id, action: decision, reason: note, ip: requestIp(req) });
