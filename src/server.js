@@ -26,7 +26,7 @@ const {
 } = require('./oidc');
 const { installWorkflowV4 } = require('./workflow-v4');
 
-const APP_VERSION = '0.12.0';
+const APP_VERSION = '0.12.1';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';
@@ -354,6 +354,7 @@ function serializeContent(row) {
   if (productionMode === 'INTERNAL' && row.status === 'REVISION_REQUIRED') statusLabel = 'Revisi Internal';
   if (row.workflow_type === 'INSTANT') {
     statusLabel = ({
+      IN_PRODUCTION: row.production_mode === 'VENDOR' ? 'Menunggu Hasil Vendor' : 'Produksi Internal',
       DRAFT_SUBMITTED: 'Menunggu Review', REVISION_REQUIRED: 'Perlu Revisi',
       APPROVAL_PENDING: 'Menunggu Direksi', APPROVED: 'Disetujui',
       SCHEDULED: 'Terjadwal', PUBLISHED: 'Sudah Tayang', CANCELLED: 'Dibatalkan'
@@ -990,11 +991,96 @@ app.post('/api/simple-contents', authRequired, simpleContentUpload.single('file'
 // Endpoint lama dipertahankan agar aplikasi yang belum diperbarui tetap dapat mengirim konten.
 app.post('/api/instant-videos', authRequired, simpleContentUpload.single('file'), createSimpleContent);
 
+app.post('/api/vendor-tasks', authRequired, simpleContentUpload.single('referenceFile'), (req, res, next) => {
+  try {
+    if (!['SUPER_ADMIN', 'COORDINATOR'].includes(req.user.role)) throw new AppError('Hanya Koordinator yang dapat membuat tugas Vendor.', 403);
+    const coordinatorId = req.user.role === 'COORDINATOR' ? req.user.id : requiredText(req.body.coordinatorId, 'Koordinator', 100);
+    const coordinator = db.prepare("SELECT id,name,approval_pin_hash,approval_pin_salt FROM users WHERE id=? AND role='COORDINATOR' AND active=1").get(coordinatorId);
+    if (!coordinator) throw new AppError('Pilih Koordinator aktif.');
+    if (!coordinator.approval_pin_hash || !coordinator.approval_pin_salt) {
+      throw new AppError(`${coordinator.name} belum membuat PIN approval melalui menu Profil.`, 409);
+    }
+    const vendorId = requiredText(req.body.vendorId, 'Vendor', 100);
+    const vendor = db.prepare("SELECT id,name FROM vendors WHERE id=? AND status='ACTIVE'").get(vendorId);
+    if (!vendor) throw new AppError('Pilih Vendor aktif.');
+    const brandId = requiredText(req.body.brandId, 'Brand', 100);
+    if (!db.prepare('SELECT id FROM brands WHERE id=? AND active=1').get(brandId)) throw new AppError('Brand tidak valid.');
+    const instruction = requiredText(req.body.instruction, 'Instruksi singkat', 2000);
+    const id = newId('cnt');
+    const contentNo = nextContentNumber();
+    const title = requiredText(req.body.title, 'Judul', 200);
+    const timestamp = nowIso();
+    const references = referenceUrls(req.body.referenceUrls);
+    db.transaction(() => {
+      db.prepare(`INSERT INTO contents(
+        id,content_no,title,description,brief,brand_id,category,content_type,approval_level,production_mode,workflow_type,
+        proposal_origin,brief_review_status,status,priority,due_date,reference_urls_json,coordinator_id,vendor_id,created_by,created_at,updated_at
+      ) VALUES(?,?,?,?,?,?,'FINAL_CONTENT','SOCIAL_POST','REGULAR','VENDOR','INSTANT','COORDINATOR','NONE','IN_PRODUCTION','NORMAL',?,?,?,?,?,?,?)`).run(
+        id, contentNo, title, instruction, instruction, brandId, cleanText(req.body.dueDate, 20) || null,
+        JSON.stringify(references), coordinatorId, vendorId, req.user.id, timestamp, timestamp
+      );
+      if (req.file) {
+        const relativePath = path.join('drafts', req.file.filename);
+        db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,checksum,uploaded_by,is_final,created_at)
+          VALUES(?,?,'BRIEF',1,?,?,?,?,?,?,0,?)`).run(newId('file'), id, relativePath, safeFilename(req.file.originalname),
+          req.file.mimetype, req.file.size, checksum(fs.readFileSync(req.file.path)), req.user.id, timestamp);
+      }
+      db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+        VALUES(?,?,NULL,'IN_PRODUCTION','CREATE_SIMPLE_VENDOR_TASK',?,?,?)`).run(newId('evt'), id, `Tugas diberikan kepada ${vendor.name}`, req.user.id, timestamp);
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: id, action: 'CREATE_SIMPLE_VENDOR_TASK',
+        after: { contentNo, title, vendorId, coordinatorId, dueDate: cleanText(req.body.dueDate, 20) || null }, ip: requestIp(req) });
+    })();
+    notifyVendor(vendorId, 'SIMPLE_VENDOR_TASK', `Tugas baru ${contentNo}`, title, `/contents/${id}`);
+    res.status(201).json({ item: getContent(id, req.user) });
+  } catch (error) { removeUpload(req.file); next(error); }
+});
+
+app.post('/api/vendor-tasks/:id/result', authRequired, simpleContentUpload.single('file'), (req, res, next) => {
+  try {
+    const item = getContent(req.params.id, req.user);
+    if (req.user.role !== 'VENDOR' || !req.user.vendorId || item.vendor_id !== req.user.vendorId) {
+      throw new AppError('Tugas ini tidak diberikan kepada Vendor Anda.', 403);
+    }
+    if (item.workflow_type !== 'INSTANT' || item.production_mode !== 'VENDOR') throw new AppError('Tugas Vendor tidak valid.', 409);
+    if (item.status !== 'IN_PRODUCTION') throw new AppError('Hasil hanya dapat dikirim pada tugas yang sedang dikerjakan.', 409);
+    if (!req.file) throw new AppError('File final wajib dipilih.');
+    const versionNumber = Number(db.prepare('SELECT COALESCE(MAX(version_number),0)+1 AS n FROM content_versions WHERE content_id=?').get(item.id).n);
+    const relativePath = path.join('drafts', req.file.filename);
+    const originalName = safeFilename(req.file.originalname);
+    const timestamp = nowIso();
+    const fileId = newId('file');
+    let coordinatorApproval;
+    db.transaction(() => {
+      db.prepare(`INSERT INTO content_versions(id,content_id,version_number,file_path,original_name,mime_type,file_size,caption,change_note,submitted_by,created_at)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?)`).run(newId('ver'), item.id, versionNumber, relativePath, originalName, req.file.mimetype, req.file.size,
+        cleanText(req.body.caption, 5000), cleanText(req.body.changeNote, 1000) || 'Hasil final Vendor', req.user.id, timestamp);
+      db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,checksum,uploaded_by,is_final,created_at)
+        VALUES(?,?,'PRODUCTION_RESULT',?,?,?,?,?,?,?,1,?)`).run(fileId, item.id, versionNumber, relativePath, originalName,
+        req.file.mimetype, req.file.size, checksum(fs.readFileSync(req.file.path)), req.user.id, timestamp);
+      db.prepare(`UPDATE contents SET status='DRAFT_SUBMITTED',content_type=?,caption=?,hashtags=?,call_to_action=?,publish_at=?,updated_at=? WHERE id=?`).run(
+        ['VIDEO', 'PHOTO', 'DESIGN', 'DOCUMENT'].includes(String(req.body.contentType || '').toUpperCase()) ? String(req.body.contentType).toUpperCase() :
+          req.file.mimetype.startsWith('video/') ? 'VIDEO' : req.file.mimetype.startsWith('image/') ? 'PHOTO' : 'DOCUMENT',
+        cleanText(req.body.caption, 5000), cleanText(req.body.hashtags, 1000), cleanText(req.body.callToAction, 1000),
+        cleanText(req.body.publishAt, 40) || null, timestamp, item.id
+      );
+      coordinatorApproval = replaceCoordinatorApprovalLink({ contentId: item.id, coordinatorId: item.coordinator_id, fileIds: [fileId], createdBy: req.user.id });
+      db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+        VALUES(?,?,'IN_PRODUCTION','DRAFT_SUBMITTED','SUBMIT_SIMPLE_VENDOR_RESULT',?,?,?)`).run(newId('evt'), item.id,
+        cleanText(req.body.changeNote, 1000) || 'Hasil final Vendor dikirim', req.user.id, timestamp);
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT_VERSION', entityId: item.id, action: 'SUBMIT_SIMPLE_VENDOR_RESULT',
+        after: { versionNumber, originalName, size: req.file.size }, ip: requestIp(req) });
+    })();
+    notifyUser(item.coordinator_id, 'SIMPLE_VENDOR_RESULT', `Hasil Vendor ${item.content_no}`, `${req.user.name} mengirim ${item.title} untuk review.`, `/contents/${item.id}`);
+    res.status(201).json({ item: getContent(item.id, req.user), versionNumber, approvalUrl: coordinatorApproval.url });
+  } catch (error) { removeUpload(req.file); next(error); }
+});
+
 function submitSimpleContentRevision(req, res, next) {
   try {
     if (!hasPermission(req.user, 'content.simple_create') && !hasPermission(req.user, 'content.instant_create')) throw new AppError('Anda tidak dapat mengirim revisi konten.', 403);
     const item = getContent(req.params.id, req.user);
-    if (item.workflow_type !== 'INSTANT' || item.created_by !== req.user.id) throw new AppError('Konten ini bukan unggahan Anda.', 403);
+    const assignedVendor = req.user.role === 'VENDOR' && req.user.vendorId && item.production_mode === 'VENDOR' && item.vendor_id === req.user.vendorId;
+    if (item.workflow_type !== 'INSTANT' || (item.created_by !== req.user.id && !assignedVendor)) throw new AppError('Konten ini bukan unggahan atau tugas Anda.', 403);
     if (item.status !== 'REVISION_REQUIRED') throw new AppError('Revisi hanya dapat dikirim ketika diminta Koordinator.', 409);
     if (!req.file) throw new AppError('File revisi wajib dipilih.');
     const versionNumber = Number(db.prepare('SELECT COALESCE(MAX(version_number),0)+1 AS n FROM content_versions WHERE content_id=?').get(item.id).n);

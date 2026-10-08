@@ -2,11 +2,12 @@
 
 AXINDO Media Hub adalah aplikasi internal PT Axindo Infinitas Network untuk menyimpan, mereview, menjadwalkan, dan mempublikasikan konten AINET serta IMAS. Aplikasi berjalan mandiri di server Ubuntu menggunakan Docker Compose, database SQLite, dan penyimpanan berkas lokal server.
 
-Versi: **0.12.0 — Alur Konten Sederhana**
+Versi: **0.12.1 — Tugas Vendor Sederhana**
 
 ## Fitur yang sudah berfungsi
 
 - Alur utama disederhanakan menjadi Upload Konten Jadi → Review Koordinator → Revisi atau Disetujui → Media Library.
+- Koordinator dapat membuat tugas Vendor hanya dengan judul, brand, Vendor, instruksi singkat, deadline opsional, dan referensi; Vendor kemudian langsung mengunggah hasil final.
 - Enam role operasional: Super Admin, Koordinator Media, Asisten Koordinator, Vendor/Kreator, Direksi, dan Petugas Upload.
 - Produksi Internal dan Produksi Vendor menggunakan formulir yang sama; pembeda hanya sumber serta pengguna yang mengunggah.
 - Hasil jadi dapat berupa video, foto, desain, atau dokumen. Channel, caption, hashtag, CTA, jadwal, dan Petugas Upload bersifat opsional.

@@ -583,6 +583,11 @@ function installWorkflowV4(app, options) {
       })();
       if (decision === 'DIRECTOR') notifyUser(director.id, 'DIRECTOR_APPROVAL', `Approval ${approval.content_no}`, approval.title, `/contents/${approval.content_id}`);
       notifyUser(approval.created_by, `COORDINATOR_${decision}`, `${approval.content_no} · keputusan Koordinator`, note || (decision === 'DIRECTOR' ? `Diteruskan kepada ${director.name}` : approval.title), `/contents/${approval.content_id}`);
+      if (decision === 'REVISION' && approval.vendor_id) {
+        for (const vendorUser of db.prepare("SELECT id FROM users WHERE vendor_id=? AND role='VENDOR' AND active=1").all(approval.vendor_id)) {
+          if (vendorUser.id !== approval.created_by) notifyUser(vendorUser.id, 'COORDINATOR_REVISION', `${approval.content_no} · revisi diperlukan`, note, `/contents/${approval.content_id}`);
+        }
+      }
       res.json({ ok: true, status: decision === 'REVISION' ? 'REVISION_REQUIRED' : decision === 'DIRECTOR' ? 'APPROVAL_PENDING' : 'APPROVED', directorApprovalUrl: directorUrl, directorName: director?.name || null });
     } catch (error) { next(error); }
   });

@@ -576,8 +576,9 @@ async function renderContents() {
     ['SUPER_ADMIN', 'COORDINATOR'].includes(state.user.role) ? api('/api/assistant-delegations') : Promise.resolve(null)
   ]);
   const mayUpload = has('content.simple_create');
+  const mayCreateVendorTask = ['SUPER_ADMIN', 'COORDINATOR'].includes(state.user.role);
   page.innerHTML = `<div class="page-head"><div><h2>${state.user.role === 'VENDOR' ? 'Konten Saya' : 'Konten'}</h2><p>Upload hasil jadi, review Koordinator, revisi bila perlu, lalu otomatis tersimpan di Media Library.</p></div>
-    ${mayUpload ? '<button id="simple-content-create" class="btn btn-primary">＋ Upload Konten</button>' : ''}</div>
+    <div class="page-actions">${mayCreateVendorTask ? '<button id="vendor-task-create" class="btn btn-ghost">＋ Buat Tugas Vendor</button>' : ''}${mayUpload ? '<button id="simple-content-create" class="btn btn-primary">＋ Upload Konten Jadi</button>' : ''}</div></div>
     ${state.user.role === 'COORDINATOR' ? assistantDelegationSection(delegations) : ''}
     ${state.user.role === 'SUPER_ADMIN' && delegations?.items?.length ? `<section class="card" style="margin-bottom:16px"><div class="card-head"><h3>Delegasi Asisten Aktif</h3></div><div class="card-body"><div class="file-grid">${delegations.items.filter(item => item.active).map(item => `<article class="file-card"><div class="file-icon">♙</div><div><strong>${escapeHtml(item.assistant_name)}</strong><small>${escapeHtml(item.coordinator_name)} · ${item.permissions.map(delegationPermissionLabel).join(', ')}</small></div></article>`).join('') || emptyInline('Belum ada delegasi aktif.')}</div></div></section>` : ''}
     <form id="simple-content-filter" class="card toolbar">
@@ -588,6 +589,7 @@ async function renderContents() {
     </form>
     <section class="card"><div class="card-head"><h3>Daftar Konten</h3><span id="simple-content-count" class="tag">${number(contents.items.length)} konten</span></div><div id="simple-content-results">${contentTable(contents.items, has('content.trash'))}</div></section>`;
   $('#simple-content-create')?.addEventListener('click', showSimpleContentForm);
+  $('#vendor-task-create')?.addEventListener('click', showVendorTaskForm);
   $('#assistant-delegation-create')?.addEventListener('click', () => showAssistantDelegationForm(delegations));
   page.querySelectorAll('[data-edit-delegation]').forEach(button => button.addEventListener('click', () => {
     showAssistantDelegationForm(delegations, delegations.items.find(item => item.id === button.dataset.editDelegation));
@@ -676,6 +678,56 @@ async function showSimpleContentForm() {
       finally { setLoading(false); }
     });
   } catch (error) { toast(error.message, true); }
+}
+
+async function showVendorTaskForm() {
+  try {
+    const assignments = await loadAssignments();
+    const coordinators = assignments.users.filter(user => user.role === 'COORDINATOR');
+    const coordinatorField = state.user.role === 'SUPER_ADMIN'
+      ? `<label class="field"><span>Koordinator reviewer *</span><select name="coordinatorId" required><option value="">Pilih Koordinator</option>${coordinators.map(user => `<option value="${attr(user.id)}" ${user.approval_pin_set ? '' : 'disabled'}>${escapeHtml(user.name)}${user.approval_pin_set ? '' : ' · PIN belum dibuat'}</option>`).join('')}</select></label>`
+      : '<div class="notice"><strong>Reviewer:</strong> Anda sendiri sebagai Koordinator. Link review dan PIN akan digunakan setelah Vendor mengirim hasil.</div>';
+    openModal('Buat Tugas Vendor', `<form id="vendor-task-form"><div class="notice success"><strong>Alur singkat</strong><br>Berikan instruksi → Vendor upload hasil final → Anda review melalui link dan PIN → hasil disetujui otomatis masuk Media Library.</div><div class="form-grid" style="margin-top:16px">
+      <label class="field full"><span>Judul konten *</span><input name="title" maxlength="200" required placeholder="Contoh: Video promo paket internet Oktober"></label>
+      <label class="field"><span>Brand *</span><select name="brandId" required><option value="">Pilih brand</option>${brandOptions()}</select></label>
+      <label class="field"><span>Vendor *</span><select name="vendorId" required><option value="">Pilih Vendor</option>${assignments.vendors.map(vendor => `<option value="${attr(vendor.id)}">${escapeHtml(vendor.name)}</option>`).join('')}</select></label>
+      ${coordinatorField}
+      <label class="field"><span>Deadline (opsional)</span><input type="date" name="dueDate"></label>
+      <label class="field full"><span>Instruksi singkat *</span><textarea name="instruction" maxlength="2000" required placeholder="Jelaskan hasil akhir yang dibutuhkan, durasi/ukuran, serta pesan utama."></textarea></label>
+      <label class="field full"><span>Link referensi (opsional)</span><textarea name="referenceUrls" placeholder="Satu link per baris"></textarea></label>
+      <label class="field full"><span>File referensi (opsional)</span><input type="file" name="referenceFile" accept="image/*,video/*,audio/*,.pdf,.zip,.doc,.docx,.xls,.xlsx,.ppt,.pptx"><small>Contoh, brief, atau bahan pendukung · maksimal ${number(state.config.maxCollaborationUploadMb || 500)} MB.</small></label>
+    </div><div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn btn-primary">Kirim Tugas ke Vendor</button></div></form>`, 'Tanpa tahapan produksi yang rumit');
+    $('#vendor-task-form [data-close-modal]').addEventListener('click', closeModal);
+    $('#vendor-task-form').addEventListener('submit', async event => {
+      event.preventDefault(); setLoading(true);
+      try {
+        const result = await api('/api/vendor-tasks', { method: 'POST', body: new FormData(event.currentTarget) });
+        closeModal(); toast('Tugas berhasil dikirim kepada Vendor.'); await showContentDetail(result.item.id);
+      } catch (error) { toast(error.message, true); }
+      finally { setLoading(false); }
+    });
+  } catch (error) { toast(error.message, true); }
+}
+
+function showVendorTaskResultForm(item) {
+  openModal('Upload Hasil Final', `<form id="vendor-task-result-form"><div class="notice success"><strong>${escapeHtml(item.title)}</strong><br>Upload hasil jadi. File akan langsung dikirim ke Koordinator untuk direview melalui link dan PIN.</div><div class="form-grid" style="margin-top:16px">
+    <label class="field"><span>Jenis konten *</span><select name="contentType" required><option value="VIDEO">Video</option><option value="PHOTO">Foto</option><option value="DESIGN">Desain</option><option value="DOCUMENT">Dokumen</option></select></label>
+    <label class="field"><span>File final *</span><input type="file" name="file" required accept="image/*,video/*,audio/*,.pdf,.zip,.doc,.docx,.xls,.xlsx,.ppt,.pptx"></label>
+    <label class="field full"><span>Caption (opsional)</span><textarea name="caption" maxlength="5000"></textarea></label>
+    <label class="field"><span>Hashtag (opsional)</span><input name="hashtags" maxlength="1000"></label>
+    <label class="field"><span>CTA (opsional)</span><input name="callToAction" maxlength="1000"></label>
+    <label class="field"><span>Rencana tayang (opsional)</span><input type="datetime-local" name="publishAt"></label>
+    <label class="field full"><span>Catatan hasil (opsional)</span><textarea name="changeNote" maxlength="1000" placeholder="Keterangan singkat untuk Koordinator"></textarea></label>
+  </div><div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn btn-primary">Upload & Kirim Review</button></div></form>`, item.content_no);
+  $('#vendor-task-result-form [data-close-modal]').addEventListener('click', closeModal);
+  $('#vendor-task-result-form').addEventListener('submit', async event => {
+    event.preventDefault(); setLoading(true);
+    try {
+      await api(`/api/vendor-tasks/${item.id}/result`, { method: 'POST', body: new FormData(event.currentTarget) });
+      toast('Hasil final dikirim ke Koordinator.'); await showContentDetail(item.id);
+    } catch (error) { toast(error.message, true); }
+    finally { setLoading(false); }
+  });
 }
 
 function showSimpleRevisionForm(item) {
@@ -1152,9 +1204,13 @@ function contentActions(item) {
   if (item.workflow_type !== 'INSTANT' && has('content.edit') && item.proposal_origin !== 'VENDOR' && !['PUBLISHED', 'CANCELLED'].includes(item.status)) buttons.push(`<button class="btn btn-ghost" data-content-action="assets">Aset Referensi</button>`);
   if (item.workflow_type !== 'INSTANT' && has('content.edit') && item.proposal_origin !== 'VENDOR' && !['PUBLISHED', 'CANCELLED'].includes(item.status)) buttons.push(`<button class="btn btn-ghost" data-content-action="raw-footage">Pilih Raw Footage</button>`);
   if ((state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN') && !['CANCELLED', 'PUBLISHED'].includes(item.status)) buttons.push(`<button class="btn btn-soft" data-content-action="share">Salin Link Ringkasan</button>`);
-  if (item.status === 'IN_PRODUCTION' && state.user.role === 'VENDOR') buttons.push(`<button class="btn btn-primary" data-content-action="submit-result">Kirim Hasil ke Koordinator</button>`);
+  if (item.status === 'IN_PRODUCTION' && state.user.role === 'VENDOR') {
+    if (item.workflow_type === 'INSTANT' && item.production_mode === 'VENDOR') buttons.push('<button class="btn btn-primary" data-content-action="vendor-result">Upload Hasil Final</button>');
+    else buttons.push('<button class="btn btn-primary" data-content-action="submit-result">Kirim Hasil ke Koordinator</button>');
+  }
   if (item.status === 'IN_PRODUCTION' && item.production_mode === 'INTERNAL' && (state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-primary" data-content-action="submit-result">Selesaikan Produksi Internal</button>`);
-  if (item.workflow_type === 'INSTANT' && item.status === 'REVISION_REQUIRED' && item.created_by === state.user.id && has('content.simple_create')) buttons.push('<button class="btn btn-primary" data-content-action="simple-revision">Upload Versi Revisi</button>');
+  const mayReviseSimple = item.created_by === state.user.id || (state.user.role === 'VENDOR' && item.vendor_id === state.user.vendorId);
+  if (item.workflow_type === 'INSTANT' && item.status === 'REVISION_REQUIRED' && mayReviseSimple && has('content.simple_create')) buttons.push('<button class="btn btn-primary" data-content-action="simple-revision">Upload Versi Revisi</button>');
   if (item.workflow_type !== 'INSTANT' && ['DRAFT_SUBMITTED', 'IN_REVIEW'].includes(item.status) && (state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-primary" data-content-action="director">Kirim ke Direksi</button>`);
   if (item.status === 'APPROVED' && (has('content.schedule') || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-success" data-content-action="schedule">Buat Jadwal Platform</button>`);
   if (item.workflow_type !== 'INSTANT' && ['APPROVED', 'SCHEDULED', 'PUBLISHED'].includes(item.status) && has('library.manage')) buttons.push(`<button class="btn btn-soft" data-content-action="promote">Jadikan Aset Resmi</button>`);
@@ -1176,6 +1232,7 @@ function bindDetailActions(item, data = {}) {
   document.querySelectorAll('[data-content-action="discuss"]').forEach(button => button.addEventListener('click', () => showDiscussionForm(item)));
   $('[data-content-action="share"]')?.addEventListener('click', () => showShareForm(item, data.collaborationFiles || []));
   $('[data-content-action="submit-result"]')?.addEventListener('click', () => submitProductionResult(item));
+  $('[data-content-action="vendor-result"]')?.addEventListener('click', () => showVendorTaskResultForm(item));
   $('[data-content-action="simple-revision"]')?.addEventListener('click', () => showSimpleRevisionForm(item));
   $('[data-content-action="director"]')?.addEventListener('click', () => showDirectorApprovalForm(item, data.collaborationFiles || []));
   $('[data-content-action="schedule"]')?.addEventListener('click', () => showScheduleForm(item, data.schedules || []));

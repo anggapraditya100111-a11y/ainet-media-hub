@@ -217,6 +217,64 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   result = await request(baseUrl, '/api/library?q=Foto%20Final%20dari%20Vendor', {}, vendorCookie);
   assert.equal(result.payload.items[0].source_content_id, vendorSimpleId);
 
+  const vendorTaskForm = new FormData();
+  vendorTaskForm.set('title', 'Video Tugas Singkat Vendor');
+  vendorTaskForm.set('brandId', 'brand-ainet');
+  vendorTaskForm.set('vendorId', vendorId);
+  vendorTaskForm.set('instruction', 'Buat video vertikal 30 detik dengan pesan promo utama.');
+  vendorTaskForm.set('dueDate', '2026-10-15');
+  vendorTaskForm.set('referenceUrls', 'https://example.test/referensi-video');
+  vendorTaskForm.set('referenceFile', new Blob([Buffer.from('%PDF-1.4 brief singkat')], { type: 'application/pdf' }), 'brief-singkat.pdf');
+  result = await request(baseUrl, '/api/vendor-tasks', { method: 'POST', body: vendorTaskForm }, coordinatorCookie);
+  assert.equal(result.response.status, 201, JSON.stringify(result.payload));
+  assert.equal(result.payload.item.workflow_type, 'INSTANT');
+  assert.equal(result.payload.item.production_mode, 'VENDOR');
+  assert.equal(result.payload.item.status, 'IN_PRODUCTION');
+  assert.equal(result.payload.item.vendor_id, vendorId);
+  assert.deepEqual(result.payload.item.referenceUrls, ['https://example.test/referensi-video']);
+  const vendorTaskId = result.payload.item.id;
+
+  result = await request(baseUrl, `/api/contents/${vendorTaskId}`, {}, vendorCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  assert.equal(result.payload.collaborationFiles[0].phase, 'BRIEF');
+  assert.equal(result.payload.collaborationFiles[0].original_name, 'brief-singkat.pdf');
+
+  let vendorTaskResultForm = new FormData();
+  vendorTaskResultForm.set('contentType', 'VIDEO');
+  vendorTaskResultForm.set('caption', 'Promo AINET untuk pelanggan baru.');
+  vendorTaskResultForm.set('hashtags', '#AINET');
+  vendorTaskResultForm.set('callToAction', 'Hubungi kami sekarang.');
+  vendorTaskResultForm.set('changeNote', 'Hasil final pertama.');
+  vendorTaskResultForm.set('file', new Blob([Buffer.from('video-tugas-v1')], { type: 'video/mp4' }), 'video-tugas-v1.mp4');
+  result = await request(baseUrl, `/api/vendor-tasks/${vendorTaskId}/result`, { method: 'POST', body: vendorTaskResultForm }, vendorCookie);
+  assert.equal(result.response.status, 201, JSON.stringify(result.payload));
+  assert.equal(result.payload.item.status, 'DRAFT_SUBMITTED');
+  coordinatorToken = new URL(result.payload.approvalUrl, baseUrl).searchParams.get('token');
+  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}`);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  assert.equal(result.payload.content.submitted_by_name, 'Kreator Vendor');
+  assert.equal(result.payload.content.caption, 'Promo AINET untuk pelanggan baru.');
+  assert.equal(result.payload.files[0].mime_type, 'video/mp4');
+  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/decision`, { method: 'POST', body: {
+    decision: 'REVISION', note: 'Perjelas CTA pada penutup.', pin: coordinatorPin
+  } });
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  assert.equal(result.payload.status, 'REVISION_REQUIRED');
+
+  vendorTaskResultForm = new FormData();
+  vendorTaskResultForm.set('changeNote', 'CTA penutup sudah diperjelas.');
+  vendorTaskResultForm.set('file', new Blob([Buffer.from('video-tugas-v2')], { type: 'video/mp4' }), 'video-tugas-v2.mp4');
+  result = await request(baseUrl, `/api/simple-contents/${vendorTaskId}/revision`, { method: 'POST', body: vendorTaskResultForm }, vendorCookie);
+  assert.equal(result.response.status, 201, JSON.stringify(result.payload));
+  assert.equal(result.payload.versionNumber, 2);
+  coordinatorToken = new URL(result.payload.approvalUrl, baseUrl).searchParams.get('token');
+  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/decision`, { method: 'POST', body: { decision: 'APPROVED', pin: coordinatorPin } });
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  assert.equal(result.payload.status, 'APPROVED');
+  result = await request(baseUrl, '/api/library?q=Video%20Tugas%20Singkat%20Vendor', {}, vendorCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  assert.equal(result.payload.items[0].source_content_id, vendorTaskId);
+
   const created = await request(baseUrl, '/api/contents', { method: 'POST', body: {
     title: 'Video Edukasi AINET', brandId: 'brand-ainet', channelIds: ['channel-instagram', 'channel-tiktok'],
     contentType: 'REELS', brief: 'Video 30 detik dengan script edukasi.', vendorId, coordinatorId: byRole('COORDINATOR'),

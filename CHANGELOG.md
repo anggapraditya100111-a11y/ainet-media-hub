@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.12.1 — 2026-10-08
+
+- Menambahkan tombol Buat Tugas Vendor pada menu Konten untuk Koordinator dan Super Admin.
+- Menyederhanakan form tugas menjadi judul, brand, Vendor, instruksi singkat, deadline opsional, serta link atau file referensi.
+- Memungkinkan Vendor langsung mengunggah hasil final berupa video, foto, desain, atau dokumen tanpa tahapan produksi lama.
+- Membuat link review Koordinator secara otomatis setelah hasil Vendor dikirim, lengkap dengan preview file, keterangannya, dan keputusan menggunakan PIN.
+- Memungkinkan Vendor mengirim versi revisi dan otomatis memasukkan hasil yang disetujui ke Media Library.
+
 ## 0.12.0 — 2026-10-08
 
 - Menyatukan produksi internal dan Vendor ke alur sederhana: Upload Konten → Review Koordinator → Revisi atau Disetujui → Media Library.
