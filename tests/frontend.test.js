@@ -223,6 +223,13 @@ test('alur konten sederhana tersedia untuk internal dan vendor dengan revisi ser
   assert.match(app, /Salin Link Approval/);
   assert.match(app, /approval\.canCancel/);
   assert.match(app, /Koordinator cukup membukanya dan memasukkan PIN pribadi/);
+  assert.match(app, /data-content-action="coordinator-review"/);
+  assert.match(app, /Tindak Lanjut Review/);
+  assert.match(app, /Setujui sebagai Final/);
+  assert.match(app, /Teruskan ke Direksi/);
+  assert.match(app, /Minta Revisi/);
+  assert.match(app, /\/coordinator-decision/);
+  assert.match(app, /otomatis menonaktifkan link review Koordinator/);
   assert.match(app, /has\('footage\.upload'\)/);
   assert.match(app, /Kirim Revisi Konten/);
   assert.match(app, /otomatis masuk Media Library/);

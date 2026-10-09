@@ -2,7 +2,7 @@
 
 AXINDO Media Hub adalah aplikasi internal PT Axindo Infinitas Network untuk menyimpan, mereview, menjadwalkan, dan mempublikasikan konten AINET serta IMAS. Aplikasi berjalan mandiri di server Ubuntu menggunakan Docker Compose, database SQLite, dan penyimpanan berkas lokal server.
 
-Versi: **0.13.0 — Cover Sosial, Edit Tugas, dan Status Kalender**
+Versi: **0.14.0 — Review Hasil dari Akun Koordinator**
 
 ## Fitur yang sudah berfungsi
 
@@ -12,7 +12,7 @@ Versi: **0.13.0 — Cover Sosial, Edit Tugas, dan Status Kalender**
 - Produksi Internal dan Produksi Vendor menggunakan formulir yang sama; pembeda hanya sumber serta pengguna yang mengunggah.
 - Hasil jadi dapat berupa video, foto, desain, atau dokumen. Channel, caption, hashtag, CTA, jadwal, dan Petugas Upload bersifat opsional.
 - Link review otomatis dibuat untuk Koordinator; file dan keterangannya langsung terlihat tanpa login, sedangkan keputusan disahkan menggunakan PIN pribadi 8 digit.
-- Koordinator dapat menyetujui, meminta revisi, atau meneruskan konten tertentu kepada Direksi.
+- Koordinator dapat memakai satu tombol **Tindak Lanjut Review** di dalam akun untuk menyetujui hasil sebagai final, meminta revisi, atau meneruskan hasil kepada Direksi tanpa PIN; link dan PIN tetap tersedia sebagai alternatif.
 - Konten yang disetujui otomatis menjadi aset final di Media Library tanpa tindakan tambahan.
 - Koordinator dapat memberi atau mencabut delegasi Asisten untuk membuat permintaan konten dan mereview proses Vendor; Asisten tidak dapat menyetujui unggahannya sendiri.
 - Vendor hanya melihat konten yang ditugaskan kepada vendornya dan tidak menyimpan kredensial media sosial.

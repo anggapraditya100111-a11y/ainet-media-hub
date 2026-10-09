@@ -480,6 +480,17 @@ function replaceCoordinatorApprovalLink({ contentId, coordinatorId, fileIds, cre
   return { id, token, url: `/approval.html?kind=coordinator&token=${token}` };
 }
 
+function latestSimpleContentFileIds(contentId) {
+  const ids = [];
+  for (const role of ['MAIN', 'COVER']) {
+    const row = db.prepare(`SELECT id FROM collaboration_files
+      WHERE content_id=? AND phase='PRODUCTION_RESULT' AND file_role=?
+      ORDER BY version_number DESC,created_at DESC LIMIT 1`).get(contentId, role);
+    if (row) ids.push(row.id);
+  }
+  return ids;
+}
+
 function notifyVendor(vendorId, type, title, body, link) {
   if (!vendorId) return;
   for (const row of db.prepare("SELECT id FROM users WHERE vendor_id=? AND role='VENDOR' AND active=1").all(vendorId)) {
@@ -1023,6 +1034,109 @@ const simpleResultFields = simpleContentUpload.fields([{ name: 'file', maxCount:
 app.post('/api/simple-contents', authRequired, simpleResultFields, createSimpleContent);
 // Endpoint lama dipertahankan agar aplikasi yang belum diperbarui tetap dapat mengirim konten.
 app.post('/api/instant-videos', authRequired, simpleResultFields, createSimpleContent);
+
+app.post('/api/contents/:id/coordinator-decision', authRequired, (req, res, next) => {
+  try {
+    const item = getContent(req.params.id, req.user);
+    if (item.workflow_type !== 'INSTANT') throw new AppError('Keputusan langsung hanya tersedia untuk alur konten sederhana.', 409);
+    const delegatedAssistant = item.production_mode === 'VENDOR' &&
+      hasAssistantDelegation(req.user, item.coordinator_id, 'REVIEW_VENDOR');
+    if (req.user.role !== 'SUPER_ADMIN' &&
+      !(req.user.role === 'COORDINATOR' && req.user.id === item.coordinator_id) && !delegatedAssistant) {
+      throw new AppError('Hanya Koordinator penanggung jawab atau penerima delegasi yang dapat memberi keputusan.', 403);
+    }
+    if (item.status !== 'DRAFT_SUBMITTED') throw new AppError('Konten tidak sedang menunggu review Koordinator.', 409);
+
+    const decision = String(req.body.decision || '').toUpperCase();
+    if (!['APPROVED', 'REVISION', 'DIRECTOR'].includes(decision)) throw new AppError('Pilih keputusan review yang valid.');
+    const note = cleanText(req.body.note, 2000);
+    if (decision === 'REVISION' && !note) throw new AppError('Catatan revisi wajib diisi.');
+
+    let director = null;
+    if (decision === 'DIRECTOR') {
+      director = db.prepare("SELECT id,name,approval_pin_hash,approval_pin_salt FROM users WHERE id=? AND role='MANAGEMENT' AND active=1")
+        .get(String(req.body.directorId || ''));
+      if (!director) throw new AppError('Pilih Direksi aktif.');
+      if (!director.approval_pin_hash || !director.approval_pin_salt) {
+        throw new AppError(`${director.name} belum membuat PIN approval pribadi.`, 409);
+      }
+    }
+
+    const activeCoordinatorApproval = db.prepare(`SELECT id,attachment_ids_json,created_by FROM coordinator_approval_requests
+      WHERE content_id=? AND status='ACTIVE' ORDER BY created_at DESC LIMIT 1`).get(item.id);
+    const availableFiles = new Set(db.prepare("SELECT id FROM collaboration_files WHERE content_id=? AND phase='PRODUCTION_RESULT'")
+      .all(item.id).map(row => row.id));
+    const linkedFileIds = jsonObject(activeCoordinatorApproval?.attachment_ids_json, []).map(String).filter(id => availableFiles.has(id));
+    const fileIds = linkedFileIds.length ? [...new Set(linkedFileIds)] : latestSimpleContentFileIds(item.id);
+    if (!fileIds.length) throw new AppError('Hasil produksi belum tersedia.', 409);
+
+    const version = latestVersion(item.id);
+    if (!version) throw new AppError('Versi hasil produksi tidak ditemukan.', 409);
+    const timestamp = nowIso();
+    let directorUrl = null;
+    let directorRequestId = null;
+
+    db.transaction(() => {
+      const activeRequests = db.prepare("SELECT id FROM coordinator_approval_requests WHERE content_id=? AND status='ACTIVE'").all(item.id);
+      for (const request of activeRequests) db.prepare('DELETE FROM coordinator_approval_access_sessions WHERE request_id=?').run(request.id);
+      db.prepare(`UPDATE coordinator_approval_requests
+        SET status=?,note=?,opened_at=COALESCE(opened_at,?),decided_at=?
+        WHERE content_id=? AND status='ACTIVE'`).run(decision, note, timestamp, timestamp, item.id);
+
+      if (decision === 'DIRECTOR') {
+        const directorToken = randomToken(32);
+        directorRequestId = newId('aprq');
+        const activeDirectorApprovals = db.prepare("SELECT id FROM director_approval_requests WHERE content_id=? AND status='ACTIVE'").all(item.id);
+        for (const approval of activeDirectorApprovals) db.prepare('DELETE FROM approval_access_sessions WHERE request_id=?').run(approval.id);
+        db.prepare("UPDATE director_approval_requests SET status='CANCELLED',cancelled_at=?,note=COALESCE(note,?) WHERE content_id=? AND status='ACTIVE'")
+          .run(timestamp, 'Diganti dengan permintaan approval baru dari akun Koordinator.', item.id);
+        db.prepare(`INSERT INTO director_approval_requests(id,content_id,director_id,token_hash,pin_hash,link_token_ciphertext,attachment_ids_json,created_by,created_at)
+          VALUES(?,?,?,?,?,?,?,?,?)`).run(directorRequestId, item.id, director.id, hashToken('DIRECTOR_LINK', directorToken),
+          'DIRECTOR_OWNED', encryptSecret('DIRECTOR_LINK_TOKEN', directorToken), JSON.stringify(fileIds), req.user.id, timestamp);
+        db.prepare("UPDATE contents SET status='APPROVAL_PENDING',approver_id=?,locked_at=NULL,updated_at=? WHERE id=?")
+          .run(director.id, timestamp, item.id);
+        db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+          VALUES(?,?,'DRAFT_SUBMITTED','APPROVAL_PENDING','COORDINATOR_ACCOUNT_TO_DIRECTOR',?,?,?)`)
+          .run(newId('evt'), item.id, note || `Diteruskan kepada ${director.name}`, req.user.id, timestamp);
+        directorUrl = `/approval.html?token=${directorToken}`;
+        recordAudit({ actorId: req.user.id, entityType: 'DIRECTOR_APPROVAL', entityId: directorRequestId, action: 'CREATE_FROM_COORDINATOR_ACCOUNT',
+          after: { contentId: item.id, directorId: director.id, fileIds }, ip: requestIp(req) });
+      } else {
+        const status = decision === 'APPROVED' ? 'APPROVED' : 'REVISION_REQUIRED';
+        db.prepare('UPDATE contents SET status=?,locked_at=?,updated_at=? WHERE id=?')
+          .run(status, decision === 'APPROVED' ? timestamp : null, timestamp, item.id);
+        db.prepare('INSERT INTO approvals(id,content_id,version_id,decision,note,approver_id,created_at) VALUES(?,?,?,?,?,?,?)')
+          .run(newId('apr'), item.id, version.id, decision === 'APPROVED' ? 'APPROVED' : 'REVISION', note, req.user.id, timestamp);
+        if (decision === 'APPROVED') {
+          db.prepare('UPDATE content_versions SET is_approved=1 WHERE id=?').run(version.id);
+          autoPromoteSimpleContent(item.id, req.user.id);
+        }
+        db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+          VALUES(?,?,'DRAFT_SUBMITTED',?,'COORDINATOR_ACCOUNT_DECISION',?,?,?)`)
+          .run(newId('evt'), item.id, status, note, req.user.id, timestamp);
+      }
+      recordAudit({ actorId: req.user.id, entityType: 'COORDINATOR_APPROVAL',
+        entityId: activeCoordinatorApproval?.id || item.id, action: `ACCOUNT_${decision}`, reason: note,
+        after: { contentId: item.id, fileIds, directorId: director?.id || null }, ip: requestIp(req) });
+    })();
+
+    const link = `/contents/${item.id}`;
+    if (decision === 'DIRECTOR') {
+      notifyUser(director.id, 'DIRECTOR_APPROVAL', `Approval ${item.content_no}`, item.title, link);
+    } else if (decision === 'REVISION') {
+      if (item.created_by && item.created_by !== req.user.id) notifyUser(item.created_by, 'COORDINATOR_REVISION', `${item.content_no} · revisi diperlukan`, note, link);
+      if (item.production_mode === 'VENDOR') notifyVendor(item.vendor_id, 'COORDINATOR_REVISION', `${item.content_no} · revisi diperlukan`, note, link);
+    } else {
+      if (item.created_by && item.created_by !== req.user.id) notifyUser(item.created_by, 'COORDINATOR_APPROVED', `${item.content_no} disetujui`, item.title, link);
+      if (item.uploader_id) notifyUser(item.uploader_id, 'READY_TO_PUBLISH', `${item.content_no} siap tayang`, item.title, link);
+      else notifyRole('UPLOADER', 'READY_TO_PUBLISH', `${item.content_no} siap dijadwalkan`, item.title, link);
+    }
+
+    res.json({ ok: true,
+      status: decision === 'REVISION' ? 'REVISION_REQUIRED' : decision === 'DIRECTOR' ? 'APPROVAL_PENDING' : 'APPROVED',
+      directorApprovalUrl: directorUrl, directorName: director?.name || null, directorApprovalId: directorRequestId });
+  } catch (error) { next(error); }
+});
 
 app.post('/api/vendor-tasks', authRequired, simpleContentUpload.single('referenceFile'), (req, res, next) => {
   try {

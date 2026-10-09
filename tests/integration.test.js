@@ -188,12 +188,14 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   assert.equal(result.response.status, 201, JSON.stringify(result.payload));
   const directorInstantId = result.payload.item.id;
   coordinatorToken = new URL(result.payload.approvalUrl, baseUrl).searchParams.get('token');
-  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/decision`, { method: 'POST', body: {
-    decision: 'DIRECTOR', directorId: byRole('MANAGEMENT'), note: 'Mohon persetujuan Direksi.', pin: coordinatorPin
-  } });
+  result = await request(baseUrl, `/api/contents/${directorInstantId}/coordinator-decision`, { method: 'POST', body: {
+    decision: 'DIRECTOR', directorId: byRole('MANAGEMENT'), note: 'Mohon persetujuan Direksi.'
+  } }, coordinatorCookie);
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   assert.equal(result.payload.status, 'APPROVAL_PENDING');
   assert.match(result.payload.directorApprovalUrl, /^\/approval\.html\?token=/);
+  const inactiveCoordinatorLink = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}`);
+  assert.equal(inactiveCoordinatorLink.response.status, 410, 'Keputusan dari akun menonaktifkan link review Koordinator');
   const directorToken = new URL(result.payload.directorApprovalUrl, baseUrl).searchParams.get('token');
   result = await request(baseUrl, `/api/public/approvals/${directorToken}/unlock`, { method: 'POST', body: { pin: directorPin } });
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
@@ -291,11 +293,17 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   assert.deepEqual(result.payload.item.channelIds, ['channel-tiktok']);
   result = await request(baseUrl, `/api/simple-contents/${vendorTaskId}`, { method: 'PATCH', body: { title: 'Tidak boleh diubah' } }, coordinatorCookie);
   assert.equal(result.response.status, 409, 'judul terkunci setelah hasil Vendor dikirim');
-  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/decision`, { method: 'POST', body: {
-    decision: 'REVISION', note: 'Perjelas CTA pada penutup.', pin: coordinatorPin
-  } });
+  result = await request(baseUrl, `/api/contents/${vendorTaskId}/coordinator-decision`, { method: 'POST', body: {
+    decision: 'REVISION', note: 'Perjelas CTA pada penutup.'
+  } }, vendorCookie);
+  assert.equal(result.response.status, 403, 'Vendor tidak dapat memutuskan hasil produksinya sendiri');
+  result = await request(baseUrl, `/api/contents/${vendorTaskId}/coordinator-decision`, { method: 'POST', body: {
+    decision: 'REVISION', note: 'Perjelas CTA pada penutup.'
+  } }, coordinatorCookie);
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   assert.equal(result.payload.status, 'REVISION_REQUIRED');
+  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}`);
+  assert.equal(result.response.status, 410, 'Link lama ditutup setelah Koordinator meminta revisi dari akun');
 
   vendorTaskResultForm = new FormData();
   vendorTaskResultForm.set('changeNote', 'CTA penutup sudah diperjelas.');
@@ -304,9 +312,11 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   assert.equal(result.response.status, 201, JSON.stringify(result.payload));
   assert.equal(result.payload.versionNumber, 2);
   coordinatorToken = new URL(result.payload.approvalUrl, baseUrl).searchParams.get('token');
-  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/decision`, { method: 'POST', body: { decision: 'APPROVED', pin: coordinatorPin } });
+  result = await request(baseUrl, `/api/contents/${vendorTaskId}/coordinator-decision`, { method: 'POST', body: { decision: 'APPROVED' } }, assistantCookie);
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   assert.equal(result.payload.status, 'APPROVED');
+  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}`);
+  assert.equal(result.response.status, 410, 'Asisten dengan delegasi review Vendor juga menutup link setelah memberi keputusan');
   result = await request(baseUrl, '/api/library?q=Video%20Tugas%20Vendor%20Diperbarui', {}, vendorCookie);
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   assert.equal(result.payload.items[0].source_content_id, vendorTaskId);

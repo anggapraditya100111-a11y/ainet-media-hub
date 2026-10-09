@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.14.0 — 2026-10-09
+
+- Menambahkan satu tombol **Tindak Lanjut Review** pada akun Koordinator untuk hasil produksi konten sederhana.
+- Menampilkan pilihan Setujui sebagai Final, Teruskan ke Direksi, atau Minta Revisi di dalam satu dialog.
+- Mengizinkan keputusan dari akun yang sudah terautentikasi tanpa memasukkan PIN; link approval dan PIN tetap tersedia sebagai alternatif.
+- Menonaktifkan link review Koordinator secara otomatis setelah keputusan dibuat dari akun.
+- Mewajibkan catatan untuk permintaan revisi serta tetap mencatat pelaku, waktu, keputusan, dan tujuan Direksi pada audit log.
+- Mendukung Asisten Koordinator yang memiliki delegasi review Vendor untuk menggunakan alur keputusan yang sama pada hasil Vendor.
+
 ## 0.13.0 — 2026-10-08
 
 - Menambahkan Cover Media Sosial opsional (JPG/PNG/WebP, maksimal 5 MB) sebagai file pendamping terpisah untuk konten final.

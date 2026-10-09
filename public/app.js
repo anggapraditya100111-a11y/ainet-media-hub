@@ -1259,6 +1259,12 @@ function contentActions(item) {
   if (item.status === 'IN_PRODUCTION' && item.production_mode === 'INTERNAL' && (state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-primary" data-content-action="submit-result">Selesaikan Produksi Internal</button>`);
   const mayReviseSimple = item.created_by === state.user.id || (state.user.role === 'VENDOR' && item.vendor_id === state.user.vendorId);
   if (item.workflow_type === 'INSTANT' && item.status === 'REVISION_REQUIRED' && mayReviseSimple && has('content.simple_create')) buttons.push('<button class="btn btn-primary" data-content-action="simple-revision">Upload Versi Revisi</button>');
+  const mayReviewSimple = state.user.role === 'SUPER_ADMIN' ||
+    (state.user.role === 'COORDINATOR' && item.coordinator_id === state.user.id) ||
+    (item.production_mode === 'VENDOR' && hasAssistantDelegation('REVIEW_VENDOR', item.coordinator_id));
+  if (item.workflow_type === 'INSTANT' && item.status === 'DRAFT_SUBMITTED' && mayReviewSimple) {
+    buttons.push('<button class="btn btn-primary" data-content-action="coordinator-review">Tindak Lanjut Review</button>');
+  }
   if (item.workflow_type !== 'INSTANT' && ['DRAFT_SUBMITTED', 'IN_REVIEW'].includes(item.status) && (state.user.role === 'COORDINATOR' || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-primary" data-content-action="director">Kirim ke Direksi</button>`);
   if (item.status === 'APPROVED' && (has('content.schedule') || state.user.role === 'SUPER_ADMIN')) buttons.push(`<button class="btn btn-success" data-content-action="schedule">Buat Jadwal Platform</button>`);
   if (item.workflow_type !== 'INSTANT' && ['APPROVED', 'SCHEDULED', 'PUBLISHED'].includes(item.status) && has('library.manage')) buttons.push(`<button class="btn btn-soft" data-content-action="promote">Jadikan Aset Resmi</button>`);
@@ -1283,6 +1289,7 @@ function bindDetailActions(item, data = {}) {
   $('[data-content-action="submit-result"]')?.addEventListener('click', () => submitProductionResult(item));
   $('[data-content-action="vendor-result"]')?.addEventListener('click', () => showVendorTaskResultForm(item));
   $('[data-content-action="simple-revision"]')?.addEventListener('click', () => showSimpleRevisionForm(item));
+  $('[data-content-action="coordinator-review"]')?.addEventListener('click', () => showCoordinatorReviewForm(item));
   $('[data-content-action="director"]')?.addEventListener('click', () => showDirectorApprovalForm(item, data.collaborationFiles || []));
   $('[data-content-action="schedule"]')?.addEventListener('click', () => showScheduleForm(item, data.schedules || []));
   $('[data-content-action="add-schedule"]')?.addEventListener('click', () => showScheduleForm(item, data.schedules || []));
@@ -1353,6 +1360,58 @@ function bindDetailActions(item, data = {}) {
   }));
   document.querySelectorAll('[data-brief-decision]').forEach(button => button.addEventListener('click', () => reviewVendorBrief(item, button.dataset.briefDecision)));
   document.querySelectorAll('[data-transition]').forEach(button => button.addEventListener('click', () => showTransitionForm(item, button.dataset.transition)));
+}
+
+async function showCoordinatorReviewForm(item) {
+  try {
+    const assignments = await loadAssignments();
+    const directors = assignments.users.filter(user => user.role === 'MANAGEMENT');
+    openModal('Tindak Lanjut Review', `<form id="coordinator-review-form">
+      <div class="notice">Pilih keputusan setelah memeriksa hasil produksi. Keputusan dari akun ini tidak memerlukan PIN dan otomatis menonaktifkan link review Koordinator.</div>
+      <div class="check-row" style="margin-top:16px">
+        <label class="check"><input type="radio" name="decision" value="APPROVED" checked><span><strong>Setujui sebagai Final</strong><br><small>Konten disetujui dan otomatis masuk Media Library.</small></span></label>
+        <label class="check"><input type="radio" name="decision" value="DIRECTOR"><span><strong>Teruskan ke Direksi</strong><br><small>Buat link persetujuan Direksi untuk hasil ini.</small></span></label>
+        <label class="check"><input type="radio" name="decision" value="REVISION"><span><strong>Minta Revisi</strong><br><small>Kembalikan hasil kepada pembuat atau Vendor dengan catatan.</small></span></label>
+      </div>
+      <label id="coordinator-review-director" class="field" style="margin-top:16px" hidden><span>Direksi yang dituju *</span><select name="directorId"><option value="">Pilih satu Direksi</option>${directors.map(user => `<option value="${attr(user.id)}" ${user.approval_pin_set ? '' : 'disabled'}>${escapeHtml(user.name)}${user.approval_pin_set ? '' : ' — PIN belum dibuat'}</option>`).join('')}</select><small>Direksi membuka link menggunakan PIN approval pribadinya.</small></label>
+      <label class="field" style="margin-top:16px"><span id="coordinator-review-note-label">Catatan keputusan (opsional)</span><textarea name="note" maxlength="2000" placeholder="Tuliskan catatan untuk pembuat konten atau Direksi"></textarea></label>
+      <div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn btn-primary">Lanjutkan</button></div>
+    </form>`, item.content_no);
+    const form = $('#coordinator-review-form');
+    const directorField = $('#coordinator-review-director');
+    const note = form.elements.note;
+    const noteLabel = $('#coordinator-review-note-label');
+    const syncDecision = () => {
+      const decision = new FormData(form).get('decision');
+      directorField.hidden = decision !== 'DIRECTOR';
+      form.elements.directorId.required = decision === 'DIRECTOR';
+      note.required = decision === 'REVISION';
+      noteLabel.textContent = decision === 'REVISION' ? 'Catatan revisi *' : decision === 'DIRECTOR' ? 'Catatan untuk Direksi (opsional)' : 'Catatan keputusan (opsional)';
+    };
+    form.querySelectorAll('input[name="decision"]').forEach(input => input.addEventListener('change', syncDecision));
+    syncDecision();
+    form.querySelector('[data-close-modal]').addEventListener('click', () => showContentDetail(item.id));
+    form.addEventListener('submit', async event => {
+      event.preventDefault(); setLoading(true);
+      try {
+        const values = new FormData(event.currentTarget);
+        const decision = values.get('decision');
+        const result = await api(`/api/contents/${item.id}/coordinator-decision`, { method: 'POST', body: {
+          decision, directorId: values.get('directorId'), note: values.get('note')
+        } });
+        if (decision === 'DIRECTOR') {
+          const url = new URL(result.directorApprovalUrl, window.location.origin).href;
+          openModal('Link Approval Direksi Siap', `<div class="approval-secret"><div class="success-mark">✓</div><h3>${escapeHtml(result.directorName)}</h3><p class="muted">Bagikan link ini kepada Direksi. PIN tetap hanya diketahui oleh Direksi.</p><label class="field"><span>Link approval</span><input id="coordinator-director-url" readonly value="${attr(url)}"></label><div class="actions"><button class="btn btn-primary" id="copy-coordinator-director-url">Salin Link</button><button class="btn btn-ghost" data-close-modal>Tutup</button></div></div>`, item.content_no);
+          $('#copy-coordinator-director-url').addEventListener('click', async () => { await navigator.clipboard.writeText(`${item.title}\n${url}`); toast('Link approval Direksi disalin.'); });
+          $('#modal-body [data-close-modal]').addEventListener('click', () => showContentDetail(item.id));
+        } else {
+          toast(decision === 'APPROVED' ? 'Hasil produksi disetujui sebagai final.' : 'Permintaan revisi dikirim.');
+          await showContentDetail(item.id);
+        }
+      } catch (error) { toast(error.message, true); }
+      finally { setLoading(false); }
+    });
+  } catch (error) { toast(error.message, true); }
 }
 
 function vendorBriefReviewSection(item, versions) {
