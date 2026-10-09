@@ -119,6 +119,7 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   instantForm.append('channelIds', 'channel-youtube');
   instantForm.set('caption', 'Caption video instan.');
   instantForm.set('file', new Blob([Buffer.from('video-instan-v1')], { type: 'video/mp4' }), 'video-instan-v1.mp4');
+  instantForm.set('coverFile', new Blob([Buffer.from('cover-instan-v1')], { type: 'image/jpeg' }), 'cover-instan-v1.jpg');
   result = await request(baseUrl, '/api/instant-videos', { method: 'POST', body: instantForm }, assistantCookie);
   assert.equal(result.response.status, 201, JSON.stringify(result.payload));
   const instantId = result.payload.item.id;
@@ -135,9 +136,15 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   assert.equal(result.payload.content.caption, 'Caption video instan.');
   assert.deepEqual(result.payload.content.channels, ['YouTube']);
   assert.equal(result.payload.content.submitted_by_name, 'Asisten Koordinator');
-  assert.equal(result.payload.files[0].mime_type, 'video/mp4');
-  result = await request(baseUrl, result.payload.files[0].fileUrl);
+  assert.equal(result.payload.files.length, 2);
+  const instantMainFile = result.payload.files.find(file => file.file_role === 'MAIN');
+  const instantCoverFile = result.payload.files.find(file => file.file_role === 'COVER');
+  assert.equal(instantMainFile.mime_type, 'video/mp4');
+  assert.equal(instantCoverFile.original_name, 'cover-instan-v1.jpg');
+  result = await request(baseUrl, instantMainFile.fileUrl);
   assert.equal(result.response.status, 200, 'Video pada link Koordinator dapat diputar tanpa login');
+  result = await request(baseUrl, instantCoverFile.fileUrl);
+  assert.equal(result.response.status, 200, 'Cover pada link Koordinator dapat dilihat tanpa login');
   result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/decision`, { method: 'POST', body: { decision: 'REVISION', note: 'Perbaiki intro.', pin: '00000000' } });
   assert.equal(result.response.status, 401, 'PIN yang salah ditolak saat keputusan dikirim');
   result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/decision`, { method: 'POST', body: { decision: 'REVISION', note: 'Perbaiki intro.', pin: coordinatorPin } });
@@ -157,6 +164,9 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   assert.equal(result.payload.items.length, 1, 'konten yang disetujui otomatis masuk Media Library');
   assert.equal(result.payload.items[0].source_content_id, instantId);
+  assert.match(result.payload.items[0].coverFileUrl, /^\/api\/files\/library\//);
+  result = await request(baseUrl, result.payload.items[0].coverFileUrl, {}, assistantCookie);
+  assert.equal(result.response.status, 200, 'cover ikut dipromosikan ke Media Library');
   result = await request(baseUrl, `/api/contents/${instantId}/schedules`, { method: 'POST', body: { plans: [
     { channelId: 'channel-youtube', scheduledAt: '2026-10-01T10:00', uploaderId: byRole('ASSISTANT_COORDINATOR') }
   ] } }, coordinatorCookie);
@@ -234,6 +244,18 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   assert.deepEqual(result.payload.item.referenceUrls, ['https://example.test/referensi-video']);
   const vendorTaskId = result.payload.item.id;
 
+  result = await request(baseUrl, `/api/simple-contents/${vendorTaskId}`, { method: 'PATCH', body: {
+    title: 'Video Tugas Vendor Diperbarui', brandId: 'brand-ainet', vendorId,
+    instruction: 'Buat video vertikal 30 detik dengan CTA yang jelas.', dueDate: '2026-10-18',
+    referenceUrls: 'https://example.test/referensi-baru', channelIds: ['channel-instagram']
+  } }, coordinatorCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  assert.equal(result.payload.item.title, 'Video Tugas Vendor Diperbarui');
+  assert.equal(result.payload.item.due_date, '2026-10-18');
+  assert.deepEqual(result.payload.item.channelIds, ['channel-instagram']);
+  result = await request(baseUrl, `/api/simple-contents/${vendorTaskId}`, { method: 'PATCH', body: { dueDate: '2026-10-19' } }, vendorCookie);
+  assert.equal(result.response.status, 403, 'Vendor tidak dapat mengedit tugas Koordinator');
+
   result = await request(baseUrl, `/api/contents/${vendorTaskId}`, {}, vendorCookie);
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   assert.equal(result.payload.collaborationFiles[0].phase, 'BRIEF');
@@ -246,6 +268,7 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   vendorTaskResultForm.set('callToAction', 'Hubungi kami sekarang.');
   vendorTaskResultForm.set('changeNote', 'Hasil final pertama.');
   vendorTaskResultForm.set('file', new Blob([Buffer.from('video-tugas-v1')], { type: 'video/mp4' }), 'video-tugas-v1.mp4');
+  vendorTaskResultForm.set('coverFile', new Blob([Buffer.from('cover-tugas-v1')], { type: 'image/webp' }), 'cover-tugas-v1.webp');
   result = await request(baseUrl, `/api/vendor-tasks/${vendorTaskId}/result`, { method: 'POST', body: vendorTaskResultForm }, vendorCookie);
   assert.equal(result.response.status, 201, JSON.stringify(result.payload));
   assert.equal(result.payload.item.status, 'DRAFT_SUBMITTED');
@@ -258,7 +281,16 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   assert.equal(result.payload.content.submitted_by_name, 'Kreator Vendor');
   assert.equal(result.payload.content.caption, 'Promo AINET untuk pelanggan baru.');
-  assert.equal(result.payload.files[0].mime_type, 'video/mp4');
+  assert.equal(result.payload.files.find(file => file.file_role === 'MAIN').mime_type, 'video/mp4');
+  assert.equal(result.payload.files.find(file => file.file_role === 'COVER').original_name, 'cover-tugas-v1.webp');
+  result = await request(baseUrl, `/api/simple-contents/${vendorTaskId}`, { method: 'PATCH', body: {
+    dueDate: '2026-10-20', publishAt: '2026-10-21T09:00', uploaderId: byRole('ASSISTANT_COORDINATOR'), channelIds: ['channel-tiktok']
+  } }, coordinatorCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  assert.equal(result.payload.item.due_date, '2026-10-20');
+  assert.deepEqual(result.payload.item.channelIds, ['channel-tiktok']);
+  result = await request(baseUrl, `/api/simple-contents/${vendorTaskId}`, { method: 'PATCH', body: { title: 'Tidak boleh diubah' } }, coordinatorCookie);
+  assert.equal(result.response.status, 409, 'judul terkunci setelah hasil Vendor dikirim');
   result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/decision`, { method: 'POST', body: {
     decision: 'REVISION', note: 'Perjelas CTA pada penutup.', pin: coordinatorPin
   } });
@@ -275,10 +307,17 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/decision`, { method: 'POST', body: { decision: 'APPROVED', pin: coordinatorPin } });
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   assert.equal(result.payload.status, 'APPROVED');
-  result = await request(baseUrl, '/api/library?q=Video%20Tugas%20Singkat%20Vendor', {}, vendorCookie);
+  result = await request(baseUrl, '/api/library?q=Video%20Tugas%20Vendor%20Diperbarui', {}, vendorCookie);
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   assert.equal(result.payload.items[0].source_content_id, vendorTaskId);
+  assert.match(result.payload.items[0].coverFileUrl, /^\/api\/files\/library\//, 'cover versi sebelumnya dipertahankan saat revisi video');
   const deletableLibraryAssetId = result.payload.items[0].id;
+  const replacementCover = new FormData();
+  replacementCover.set('coverFile', new Blob([Buffer.from('cover-pengganti')], { type: 'image/png' }), 'cover-pengganti.png');
+  result = await request(baseUrl, `/api/library/${deletableLibraryAssetId}/cover`, { method: 'POST', body: replacementCover }, adminCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  result = await request(baseUrl, `/api/library/${deletableLibraryAssetId}`, {}, adminCookie);
+  assert.equal(result.payload.item.cover_original_name, 'cover-pengganti.png');
   result = await request(baseUrl, `/api/library/${deletableLibraryAssetId}`, { method: 'DELETE' }, vendorCookie);
   assert.equal(result.response.status, 403, 'Vendor tidak dapat menghapus aset Media Library');
   result = await request(baseUrl, `/api/library/${deletableLibraryAssetId}`, { method: 'DELETE' }, adminCookie);

@@ -199,6 +199,11 @@ function initDatabase() {
       original_name TEXT NOT NULL,
       mime_type TEXT NOT NULL,
       file_size INTEGER NOT NULL,
+      cover_file_path TEXT,
+      cover_original_name TEXT,
+      cover_mime_type TEXT,
+      cover_file_size INTEGER,
+      cover_checksum TEXT,
       caption TEXT,
       change_note TEXT,
       submitted_by TEXT NOT NULL,
@@ -288,6 +293,7 @@ function initDatabase() {
       original_name TEXT NOT NULL,
       mime_type TEXT NOT NULL,
       file_size INTEGER NOT NULL,
+      file_role TEXT NOT NULL DEFAULT 'MAIN',
       checksum TEXT NOT NULL,
       uploaded_by TEXT NOT NULL,
       is_final INTEGER NOT NULL DEFAULT 0,
@@ -475,6 +481,11 @@ function initDatabase() {
       mime_type TEXT NOT NULL,
       file_size INTEGER NOT NULL,
       checksum TEXT NOT NULL,
+      cover_file_path TEXT,
+      cover_original_name TEXT,
+      cover_mime_type TEXT,
+      cover_file_size INTEGER,
+      cover_checksum TEXT,
       notes TEXT,
       uploaded_by TEXT NOT NULL,
       created_at TEXT NOT NULL,
@@ -563,6 +574,7 @@ function initDatabase() {
   migrateSimpleContentLibrary();
   migrateAssistantCoordinatorRole();
   migrateWorkflowV4();
+  migrateSocialMediaCovers();
 
   seedBaseData();
   if (String(process.env.SEED_DEMO || '').toLowerCase() === 'true') seedDemoData();
@@ -711,6 +723,25 @@ function migrateWorkflowV4() {
     UPDATE users SET role='MANAGEMENT',updated_at=datetime('now') WHERE role='APPROVER';
     UPDATE contents SET status='DRAFT_SUBMITTED',updated_at=datetime('now') WHERE status='IN_REVIEW';
   `);
+}
+
+function migrateSocialMediaCovers() {
+  const addColumns = (table, additions) => {
+    const columns = new Set(db.prepare(`PRAGMA table_info(${table})`).all().map(column => column.name));
+    for (const [name, definition] of additions) {
+      if (!columns.has(name)) db.exec(`ALTER TABLE ${table} ADD COLUMN ${name} ${definition}`);
+    }
+  };
+  const coverColumns = [
+    ['cover_file_path', 'TEXT'],
+    ['cover_original_name', 'TEXT'],
+    ['cover_mime_type', 'TEXT'],
+    ['cover_file_size', 'INTEGER'],
+    ['cover_checksum', 'TEXT']
+  ];
+  addColumns('content_versions', coverColumns);
+  addColumns('media_asset_versions', coverColumns);
+  addColumns('collaboration_files', [['file_role', "TEXT NOT NULL DEFAULT 'MAIN'"]]);
 }
 
 function migrateOidcAttemptsForPopup() {

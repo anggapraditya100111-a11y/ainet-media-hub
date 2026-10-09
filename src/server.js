@@ -26,7 +26,7 @@ const {
 } = require('./oidc');
 const { installWorkflowV4 } = require('./workflow-v4');
 
-const APP_VERSION = '0.12.3';
+const APP_VERSION = '0.13.0';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';
@@ -325,21 +325,38 @@ function createUploader(folder, options = {}) {
     ].includes(String(mime));
   return multer({
     storage,
-    limits: { fileSize: Number(options.maxSizeMb || MAX_UPLOAD_MB) * 1024 * 1024, files: 1 },
+    limits: { fileSize: Number(options.maxSizeMb || MAX_UPLOAD_MB) * 1024 * 1024, files: Number(options.maxFiles || 1) },
     fileFilter: (_req, file, callback) => callback(allowed(file.mimetype) ? null : new AppError('Jenis berkas tidak didukung.'), allowed(file.mimetype))
   });
 }
 
 const draftUpload = createUploader('drafts');
-const libraryUpload = createUploader('library');
+const libraryUpload = createUploader('library', { maxFiles: 2 });
 const rawFootageUpload = createUploader('raw-footage', { mediaOnly: true, maxSizeMb: MAX_COLLAB_UPLOAD_MB });
-const simpleContentUpload = createUploader('drafts', { maxSizeMb: MAX_COLLAB_UPLOAD_MB });
+const simpleContentUpload = createUploader('drafts', { maxSizeMb: MAX_COLLAB_UPLOAD_MB, maxFiles: 2 });
 const proofUpload = createUploader('proofs');
 const logoUpload = createUploader('branding', { imagesOnly: true });
 
 function removeUpload(file) {
   if (!file?.path) return;
   try { fs.unlinkSync(file.path); } catch {}
+}
+
+function requestFile(req, name = 'file') {
+  return req.file || req.files?.[name]?.[0] || null;
+}
+
+function removeRequestUploads(req) {
+  const files = [req.file, ...Object.values(req.files || {}).flat()].filter(Boolean);
+  for (const file of files) removeUpload(file);
+}
+
+function validateCoverFile(file) {
+  if (!file) return;
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(String(file.mimetype).toLowerCase())) {
+    throw new AppError('Cover media sosial harus berupa JPG, PNG, atau WebP.');
+  }
+  if (file.size > 5 * 1024 * 1024) throw new AppError('Ukuran cover media sosial maksimal 5 MB.');
 }
 
 function serializeContent(row) {
@@ -920,7 +937,10 @@ function createSimpleContent(req, res, next) {
     if (!hasPermission(req.user, 'content.simple_create') && !hasPermission(req.user, 'content.instant_create')) {
       throw new AppError('Anda tidak dapat mengunggah konten final.', 403);
     }
-    if (!req.file) throw new AppError('File final wajib dipilih.');
+    const finalFile = requestFile(req, 'file');
+    const coverFile = requestFile(req, 'coverFile');
+    if (!finalFile) throw new AppError('File final wajib dipilih.');
+    validateCoverFile(coverFile);
     const vendorSubmission = req.user.role === 'VENDOR';
     if (vendorSubmission && !req.user.vendorId) throw new AppError('Akun Vendor belum terhubung ke data Vendor.', 403);
     const coordinatorId = req.user.role === 'COORDINATOR'
@@ -942,7 +962,7 @@ function createSimpleContent(req, res, next) {
     }
     const contentType = ['VIDEO', 'PHOTO', 'DESIGN', 'DOCUMENT'].includes(String(req.body.contentType || '').toUpperCase())
       ? String(req.body.contentType).toUpperCase()
-      : req.file.mimetype.startsWith('video/') ? 'VIDEO' : req.file.mimetype.startsWith('image/') ? 'PHOTO' : 'DOCUMENT';
+      : finalFile.mimetype.startsWith('video/') ? 'VIDEO' : finalFile.mimetype.startsWith('image/') ? 'PHOTO' : 'DOCUMENT';
     const uploaderId = cleanText(req.body.uploaderId, 100) || null;
     if (uploaderId && !db.prepare("SELECT id FROM users WHERE id=? AND role IN ('UPLOADER','ASSISTANT_COORDINATOR') AND active=1").get(uploaderId)) {
       throw new AppError('Petugas upload tidak valid.');
@@ -954,9 +974,13 @@ function createSimpleContent(req, res, next) {
     const timestamp = nowIso();
     const contentNo = nextContentNumber();
     const title = requiredText(req.body.title, 'Judul', 200);
-    const relativePath = path.join('drafts', req.file.filename);
-    const originalName = safeFilename(req.file.originalname);
-    const digest = checksum(fs.readFileSync(req.file.path));
+    const relativePath = path.join('drafts', finalFile.filename);
+    const originalName = safeFilename(finalFile.originalname);
+    const digest = checksum(fs.readFileSync(finalFile.path));
+    const cover = coverFile ? {
+      filePath: path.join('drafts', coverFile.filename), originalName: safeFilename(coverFile.originalname),
+      mimeType: coverFile.mimetype, fileSize: coverFile.size, checksum: checksum(fs.readFileSync(coverFile.path))
+    } : null;
     let coordinatorApproval;
     db.transaction(() => {
       db.prepare(`INSERT INTO contents(
@@ -971,25 +995,34 @@ function createSimpleContent(req, res, next) {
         req.user.id, timestamp, timestamp
       );
       for (const channelId of channelIds) db.prepare('INSERT INTO content_channels(content_id,channel_id) VALUES(?,?)').run(id, channelId);
-      db.prepare(`INSERT INTO content_versions(id,content_id,version_number,file_path,original_name,mime_type,file_size,caption,change_note,submitted_by,created_at)
-        VALUES(?,?,1,?,?,?,?,?,?,?,?)`).run(versionId, id, relativePath, originalName, req.file.mimetype, req.file.size,
+      db.prepare(`INSERT INTO content_versions(id,content_id,version_number,file_path,original_name,mime_type,file_size,cover_file_path,cover_original_name,cover_mime_type,cover_file_size,cover_checksum,caption,change_note,submitted_by,created_at)
+        VALUES(?,?,1,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(versionId, id, relativePath, originalName, finalFile.mimetype, finalFile.size,
+        cover?.filePath || null, cover?.originalName || null, cover?.mimeType || null, cover?.fileSize || null, cover?.checksum || null,
         cleanText(req.body.caption, 5000), 'Konten final versi 1', req.user.id, timestamp);
-      db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,checksum,uploaded_by,is_final,created_at)
-        VALUES(?,?,'PRODUCTION_RESULT',1,?,?,?,?,?,?,1,?)`).run(fileId, id, relativePath, originalName, req.file.mimetype, req.file.size, digest, req.user.id, timestamp);
-      coordinatorApproval = replaceCoordinatorApprovalLink({ contentId: id, coordinatorId, fileIds: [fileId], createdBy: req.user.id });
+      db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,file_role,checksum,uploaded_by,is_final,created_at)
+        VALUES(?,?,'PRODUCTION_RESULT',1,?,?,?,?, 'MAIN',?,?,1,?)`).run(fileId, id, relativePath, originalName, finalFile.mimetype, finalFile.size, digest, req.user.id, timestamp);
+      const fileIds = [fileId];
+      if (cover) {
+        const coverId = newId('file');
+        db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,file_role,checksum,uploaded_by,is_final,created_at)
+          VALUES(?,?,'PRODUCTION_RESULT',1,?,?,?,?, 'COVER',?,?,1,?)`).run(coverId, id, cover.filePath, cover.originalName, cover.mimeType, cover.fileSize, cover.checksum, req.user.id, timestamp);
+        fileIds.push(coverId);
+      }
+      coordinatorApproval = replaceCoordinatorApprovalLink({ contentId: id, coordinatorId, fileIds, createdBy: req.user.id });
       db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
         VALUES(?,?,NULL,'DRAFT_SUBMITTED','CREATE_SIMPLE_CONTENT','Konten final langsung dikirim untuk review Koordinator',?,?)`).run(newId('evt'), id, req.user.id, timestamp);
       recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: id, action: 'CREATE_SIMPLE_CONTENT',
-        after: { contentNo, title, contentType, source: vendorSubmission ? 'VENDOR' : 'INTERNAL', coordinatorId, channelIds, originalName, size: req.file.size }, ip: requestIp(req) });
+        after: { contentNo, title, contentType, source: vendorSubmission ? 'VENDOR' : 'INTERNAL', coordinatorId, channelIds, originalName, size: finalFile.size, cover: cover?.originalName || null }, ip: requestIp(req) });
     })();
     notifyUser(coordinatorId, 'SIMPLE_CONTENT_SUBMITTED', `Konten baru ${contentNo}`, `${req.user.name} mengirim ${title} untuk review.`, `/contents/${id}`);
     res.status(201).json({ item: getContent(id, req.user), approvalUrl: coordinatorApproval.url });
-  } catch (error) { removeUpload(req.file); next(error); }
+  } catch (error) { removeRequestUploads(req); next(error); }
 }
 
-app.post('/api/simple-contents', authRequired, simpleContentUpload.single('file'), createSimpleContent);
+const simpleResultFields = simpleContentUpload.fields([{ name: 'file', maxCount: 1 }, { name: 'coverFile', maxCount: 1 }]);
+app.post('/api/simple-contents', authRequired, simpleResultFields, createSimpleContent);
 // Endpoint lama dipertahankan agar aplikasi yang belum diperbarui tetap dapat mengirim konten.
-app.post('/api/instant-videos', authRequired, simpleContentUpload.single('file'), createSimpleContent);
+app.post('/api/instant-videos', authRequired, simpleResultFields, createSimpleContent);
 
 app.post('/api/vendor-tasks', authRequired, simpleContentUpload.single('referenceFile'), (req, res, next) => {
   try {
@@ -1035,87 +1068,191 @@ app.post('/api/vendor-tasks', authRequired, simpleContentUpload.single('referenc
   } catch (error) { removeUpload(req.file); next(error); }
 });
 
-app.post('/api/vendor-tasks/:id/result', authRequired, simpleContentUpload.single('file'), (req, res, next) => {
+app.patch('/api/simple-contents/:id', authRequired, (req, res, next) => {
   try {
+    const item = getContent(req.params.id, req.user);
+    if (!['SUPER_ADMIN', 'COORDINATOR'].includes(req.user.role) || (req.user.role === 'COORDINATOR' && item.coordinator_id !== req.user.id)) {
+      throw new AppError('Hanya Koordinator penanggung jawab atau Super Admin yang dapat mengedit tugas.', 403);
+    }
+    if (item.workflow_type !== 'INSTANT' || ['PUBLISHED', 'CANCELLED'].includes(item.status)) throw new AppError('Tugas ini tidak dapat diedit.', 409);
+    const preResult = item.status === 'IN_PRODUCTION';
+    const protectedInputs = ['title', 'brandId', 'vendorId', 'instruction', 'referenceUrls'];
+    if (!preResult && protectedInputs.some(field => Object.hasOwn(req.body, field))) {
+      throw new AppError('Setelah hasil dikirim, judul, brand, Vendor, instruksi, dan referensi tidak dapat diubah. Gunakan proses revisi untuk materi final.', 409);
+    }
+    const sets = [];
+    const values = [];
+    if (preResult) {
+      if (Object.hasOwn(req.body, 'title')) { sets.push('title=?'); values.push(requiredText(req.body.title, 'Judul', 200)); }
+      if (Object.hasOwn(req.body, 'brandId')) {
+        const brandId = requiredText(req.body.brandId, 'Brand', 100);
+        if (!db.prepare('SELECT id FROM brands WHERE id=? AND active=1').get(brandId)) throw new AppError('Brand tidak valid.');
+        sets.push('brand_id=?'); values.push(brandId);
+      }
+      if (Object.hasOwn(req.body, 'vendorId')) {
+        if (item.production_mode !== 'VENDOR') throw new AppError('Vendor hanya berlaku untuk produksi Vendor.', 409);
+        const vendorId = requiredText(req.body.vendorId, 'Vendor', 100);
+        if (!db.prepare("SELECT id FROM vendors WHERE id=? AND status='ACTIVE'").get(vendorId)) throw new AppError('Vendor tidak valid.');
+        sets.push('vendor_id=?'); values.push(vendorId);
+      }
+      if (Object.hasOwn(req.body, 'instruction')) {
+        const instruction = requiredText(req.body.instruction, 'Instruksi singkat', 2000);
+        sets.push('description=?', 'brief=?'); values.push(instruction, instruction);
+      }
+      if (Object.hasOwn(req.body, 'referenceUrls')) { sets.push('reference_urls_json=?'); values.push(JSON.stringify(referenceUrls(req.body.referenceUrls))); }
+    }
+    if (Object.hasOwn(req.body, 'dueDate')) { sets.push('due_date=?'); values.push(cleanText(req.body.dueDate, 20) || null); }
+    if (Object.hasOwn(req.body, 'publishAt')) { sets.push('publish_at=?'); values.push(cleanText(req.body.publishAt, 40) || null); }
+    if (Object.hasOwn(req.body, 'uploaderId')) {
+      const uploaderId = cleanText(req.body.uploaderId, 100) || null;
+      if (uploaderId && !db.prepare("SELECT id FROM users WHERE id=? AND role IN ('UPLOADER','ASSISTANT_COORDINATOR') AND active=1").get(uploaderId)) throw new AppError('Petugas upload tidak valid.');
+      sets.push('uploader_id=?'); values.push(uploaderId);
+    }
+    const updateChannels = Object.hasOwn(req.body, 'channelIds');
+    const channelIds = updateChannels ? [...new Set(arrayValue(req.body.channelIds))] : item.channelIds;
+    if (updateChannels && channelIds.length) {
+      const valid = db.prepare(`SELECT id FROM channels WHERE active=1 AND id IN (${channelIds.map(() => '?').join(',')})`).all(...channelIds);
+      if (valid.length !== channelIds.length) throw new AppError('Ada channel yang tidak valid.');
+    }
+    if (!sets.length && !updateChannels) throw new AppError('Tidak ada perubahan yang dikirim.');
+    const timestamp = nowIso();
+    db.transaction(() => {
+      if (sets.length) db.prepare(`UPDATE contents SET ${sets.join(',')},updated_at=? WHERE id=?`).run(...values, timestamp, item.id);
+      else db.prepare('UPDATE contents SET updated_at=? WHERE id=?').run(timestamp, item.id);
+      if (updateChannels) {
+        db.prepare('DELETE FROM content_channels WHERE content_id=?').run(item.id);
+        for (const channelId of channelIds) db.prepare('INSERT INTO content_channels(content_id,channel_id) VALUES(?,?)').run(item.id, channelId);
+      }
+      db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+        VALUES(?,?,?,?,?,?,?,?)`).run(newId('evt'), item.id, item.status, item.status, 'UPDATE_SIMPLE_CONTENT', cleanText(req.body.changeNote, 1000) || 'Detail tugas diperbarui', req.user.id, timestamp);
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: item.id, action: 'UPDATE_SIMPLE_CONTENT', before: item,
+        after: getContent(item.id, req.user), ip: requestIp(req) });
+    })();
+    const updated = getContent(item.id, req.user);
+    if (item.production_mode === 'VENDOR') {
+      notifyVendor(updated.vendor_id, 'SIMPLE_TASK_UPDATED', `Tugas diperbarui ${item.content_no}`, updated.title, `/contents/${item.id}`);
+      if (item.vendor_id && item.vendor_id !== updated.vendor_id) notifyVendor(item.vendor_id, 'SIMPLE_TASK_REASSIGNED', `Penugasan berubah ${item.content_no}`, `${item.title} dialihkan ke Vendor lain.`, `/contents/${item.id}`);
+    }
+    else if (item.created_by && item.created_by !== req.user.id) notifyUser(item.created_by, 'SIMPLE_TASK_UPDATED', `Tugas diperbarui ${item.content_no}`, updated.title, `/contents/${item.id}`);
+    res.json({ item: updated });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/vendor-tasks/:id/result', authRequired, simpleResultFields, (req, res, next) => {
+  try {
+    const finalFile = requestFile(req, 'file');
+    const coverFile = requestFile(req, 'coverFile');
+    validateCoverFile(coverFile);
     const item = getContent(req.params.id, req.user);
     if (req.user.role !== 'VENDOR' || !req.user.vendorId || item.vendor_id !== req.user.vendorId) {
       throw new AppError('Tugas ini tidak diberikan kepada Vendor Anda.', 403);
     }
     if (item.workflow_type !== 'INSTANT' || item.production_mode !== 'VENDOR') throw new AppError('Tugas Vendor tidak valid.', 409);
     if (item.status !== 'IN_PRODUCTION') throw new AppError('Hasil hanya dapat dikirim pada tugas yang sedang dikerjakan.', 409);
-    if (!req.file) throw new AppError('File final wajib dipilih.');
+    if (!finalFile) throw new AppError('File final wajib dipilih.');
     const versionNumber = Number(db.prepare('SELECT COALESCE(MAX(version_number),0)+1 AS n FROM content_versions WHERE content_id=?').get(item.id).n);
-    const relativePath = path.join('drafts', req.file.filename);
-    const originalName = safeFilename(req.file.originalname);
+    const relativePath = path.join('drafts', finalFile.filename);
+    const originalName = safeFilename(finalFile.originalname);
+    const cover = coverFile ? { filePath: path.join('drafts', coverFile.filename), originalName: safeFilename(coverFile.originalname), mimeType: coverFile.mimetype, fileSize: coverFile.size, checksum: checksum(fs.readFileSync(coverFile.path)) } : null;
     const timestamp = nowIso();
     const fileId = newId('file');
     let coordinatorApproval;
     db.transaction(() => {
-      db.prepare(`INSERT INTO content_versions(id,content_id,version_number,file_path,original_name,mime_type,file_size,caption,change_note,submitted_by,created_at)
-        VALUES(?,?,?,?,?,?,?,?,?,?,?)`).run(newId('ver'), item.id, versionNumber, relativePath, originalName, req.file.mimetype, req.file.size,
+      db.prepare(`INSERT INTO content_versions(id,content_id,version_number,file_path,original_name,mime_type,file_size,cover_file_path,cover_original_name,cover_mime_type,cover_file_size,cover_checksum,caption,change_note,submitted_by,created_at)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(newId('ver'), item.id, versionNumber, relativePath, originalName, finalFile.mimetype, finalFile.size,
+        cover?.filePath || null, cover?.originalName || null, cover?.mimeType || null, cover?.fileSize || null, cover?.checksum || null,
         cleanText(req.body.caption, 5000), cleanText(req.body.changeNote, 1000) || 'Hasil final Vendor', req.user.id, timestamp);
-      db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,checksum,uploaded_by,is_final,created_at)
-        VALUES(?,?,'PRODUCTION_RESULT',?,?,?,?,?,?,?,1,?)`).run(fileId, item.id, versionNumber, relativePath, originalName,
-        req.file.mimetype, req.file.size, checksum(fs.readFileSync(req.file.path)), req.user.id, timestamp);
+      db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,file_role,checksum,uploaded_by,is_final,created_at)
+        VALUES(?,?,'PRODUCTION_RESULT',?,?,?,?,?,'MAIN',?,?,1,?)`).run(fileId, item.id, versionNumber, relativePath, originalName,
+        finalFile.mimetype, finalFile.size, checksum(fs.readFileSync(finalFile.path)), req.user.id, timestamp);
+      const fileIds = [fileId];
+      if (coverFile && cover) {
+        const coverId = newId('file');
+        db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,file_role,checksum,uploaded_by,is_final,created_at)
+          VALUES(?,?,'PRODUCTION_RESULT',?,?,?,?,?,'COVER',?,?,1,?)`).run(coverId, item.id, versionNumber, cover.filePath, cover.originalName, cover.mimeType, cover.fileSize, cover.checksum, req.user.id, timestamp);
+        fileIds.push(coverId);
+      } else {
+        const existingCover = db.prepare("SELECT id FROM collaboration_files WHERE content_id=? AND file_role='COVER' ORDER BY version_number DESC,created_at DESC LIMIT 1").get(item.id);
+        if (existingCover) fileIds.push(existingCover.id);
+      }
       db.prepare(`UPDATE contents SET status='DRAFT_SUBMITTED',content_type=?,caption=?,hashtags=?,call_to_action=?,publish_at=?,updated_at=? WHERE id=?`).run(
         ['VIDEO', 'PHOTO', 'DESIGN', 'DOCUMENT'].includes(String(req.body.contentType || '').toUpperCase()) ? String(req.body.contentType).toUpperCase() :
-          req.file.mimetype.startsWith('video/') ? 'VIDEO' : req.file.mimetype.startsWith('image/') ? 'PHOTO' : 'DOCUMENT',
+          finalFile.mimetype.startsWith('video/') ? 'VIDEO' : finalFile.mimetype.startsWith('image/') ? 'PHOTO' : 'DOCUMENT',
         cleanText(req.body.caption, 5000), cleanText(req.body.hashtags, 1000), cleanText(req.body.callToAction, 1000),
         cleanText(req.body.publishAt, 40) || null, timestamp, item.id
       );
-      coordinatorApproval = replaceCoordinatorApprovalLink({ contentId: item.id, coordinatorId: item.coordinator_id, fileIds: [fileId], createdBy: req.user.id });
+      coordinatorApproval = replaceCoordinatorApprovalLink({ contentId: item.id, coordinatorId: item.coordinator_id, fileIds, createdBy: req.user.id });
       db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
         VALUES(?,?,'IN_PRODUCTION','DRAFT_SUBMITTED','SUBMIT_SIMPLE_VENDOR_RESULT',?,?,?)`).run(newId('evt'), item.id,
         cleanText(req.body.changeNote, 1000) || 'Hasil final Vendor dikirim', req.user.id, timestamp);
       recordAudit({ actorId: req.user.id, entityType: 'CONTENT_VERSION', entityId: item.id, action: 'SUBMIT_SIMPLE_VENDOR_RESULT',
-        after: { versionNumber, originalName, size: req.file.size }, ip: requestIp(req) });
+        after: { versionNumber, originalName, size: finalFile.size, cover: cover?.originalName || null }, ip: requestIp(req) });
     })();
     notifyUser(item.coordinator_id, 'SIMPLE_VENDOR_RESULT', `Hasil Vendor ${item.content_no}`, `${req.user.name} mengirim ${item.title} untuk review.`, `/contents/${item.id}`);
     res.status(201).json({ item: getContent(item.id, req.user), versionNumber, approvalUrl: coordinatorApproval.url });
-  } catch (error) { removeUpload(req.file); next(error); }
+  } catch (error) { removeRequestUploads(req); next(error); }
 });
 
 function submitSimpleContentRevision(req, res, next) {
   try {
+    const finalFile = requestFile(req, 'file');
+    const coverFile = requestFile(req, 'coverFile');
+    validateCoverFile(coverFile);
     if (!hasPermission(req.user, 'content.simple_create') && !hasPermission(req.user, 'content.instant_create')) throw new AppError('Anda tidak dapat mengirim revisi konten.', 403);
     const item = getContent(req.params.id, req.user);
     const assignedVendor = req.user.role === 'VENDOR' && req.user.vendorId && item.production_mode === 'VENDOR' && item.vendor_id === req.user.vendorId;
     if (item.workflow_type !== 'INSTANT' || (item.created_by !== req.user.id && !assignedVendor)) throw new AppError('Konten ini bukan unggahan atau tugas Anda.', 403);
     if (item.status !== 'REVISION_REQUIRED') throw new AppError('Revisi hanya dapat dikirim ketika diminta Koordinator.', 409);
-    if (!req.file) throw new AppError('File revisi wajib dipilih.');
+    if (!finalFile) throw new AppError('File revisi wajib dipilih.');
     const versionNumber = Number(db.prepare('SELECT COALESCE(MAX(version_number),0)+1 AS n FROM content_versions WHERE content_id=?').get(item.id).n);
-    const relativePath = path.join('drafts', req.file.filename);
-    const originalName = safeFilename(req.file.originalname);
+    const relativePath = path.join('drafts', finalFile.filename);
+    const originalName = safeFilename(finalFile.originalname);
     const timestamp = nowIso();
-    const digest = checksum(fs.readFileSync(req.file.path));
+    const digest = checksum(fs.readFileSync(finalFile.path));
+    const previousVersion = db.prepare('SELECT * FROM content_versions WHERE content_id=? ORDER BY version_number DESC LIMIT 1').get(item.id);
+    const cover = coverFile ? { filePath: path.join('drafts', coverFile.filename), originalName: safeFilename(coverFile.originalname), mimeType: coverFile.mimetype, fileSize: coverFile.size, checksum: checksum(fs.readFileSync(coverFile.path)) } : previousVersion?.cover_file_path ? {
+      filePath: previousVersion.cover_file_path, originalName: previousVersion.cover_original_name, mimeType: previousVersion.cover_mime_type,
+      fileSize: previousVersion.cover_file_size, checksum: previousVersion.cover_checksum
+    } : null;
     const coordinator = db.prepare("SELECT id,name,approval_pin_hash,approval_pin_salt FROM users WHERE id=? AND role='COORDINATOR' AND active=1").get(item.coordinator_id);
     if (!coordinator?.approval_pin_hash || !coordinator?.approval_pin_salt) throw new AppError('Koordinator belum memiliki PIN approval aktif.', 409);
     const fileId = newId('file');
     let coordinatorApproval;
     db.transaction(() => {
-      db.prepare(`INSERT INTO content_versions(id,content_id,version_number,file_path,original_name,mime_type,file_size,caption,change_note,submitted_by,created_at)
-        VALUES(?,?,?,?,?,?,?,?,?,?,?)`).run(newId('ver'), item.id, versionNumber, relativePath, originalName, req.file.mimetype, req.file.size,
+      db.prepare(`INSERT INTO content_versions(id,content_id,version_number,file_path,original_name,mime_type,file_size,cover_file_path,cover_original_name,cover_mime_type,cover_file_size,cover_checksum,caption,change_note,submitted_by,created_at)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(newId('ver'), item.id, versionNumber, relativePath, originalName, finalFile.mimetype, finalFile.size,
+        cover?.filePath || null, cover?.originalName || null, cover?.mimeType || null, cover?.fileSize || null, cover?.checksum || null,
         cleanText(req.body.caption, 5000) || item.caption, cleanText(req.body.changeNote, 1000) || `Revisi konten versi ${versionNumber}`, req.user.id, timestamp);
       db.prepare('UPDATE collaboration_files SET is_final=0 WHERE content_id=?').run(item.id);
-      db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,checksum,uploaded_by,is_final,created_at)
-        VALUES(?,?,'PRODUCTION_RESULT',?,?,?,?,?,?,?,1,?)`).run(fileId, item.id, versionNumber, relativePath, originalName,
-        req.file.mimetype, req.file.size, digest, req.user.id, timestamp);
+      db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,file_role,checksum,uploaded_by,is_final,created_at)
+        VALUES(?,?,'PRODUCTION_RESULT',?,?,?,?,?,'MAIN',?,?,1,?)`).run(fileId, item.id, versionNumber, relativePath, originalName,
+        finalFile.mimetype, finalFile.size, digest, req.user.id, timestamp);
+      const fileIds = [fileId];
+      if (coverFile && cover) {
+        const coverId = newId('file');
+        db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,file_role,checksum,uploaded_by,is_final,created_at)
+          VALUES(?,?,'PRODUCTION_RESULT',?,?,?,?,?,'COVER',?,?,1,?)`).run(coverId, item.id, versionNumber, cover.filePath, cover.originalName, cover.mimeType, cover.fileSize, cover.checksum, req.user.id, timestamp);
+        fileIds.push(coverId);
+      } else {
+        const existingCover = db.prepare("SELECT id FROM collaboration_files WHERE content_id=? AND file_role='COVER' ORDER BY version_number DESC,created_at DESC LIMIT 1").get(item.id);
+        if (existingCover) fileIds.push(existingCover.id);
+      }
       db.prepare("UPDATE contents SET status='DRAFT_SUBMITTED',caption=COALESCE(NULLIF(?,''),caption),hashtags=COALESCE(NULLIF(?,''),hashtags),call_to_action=COALESCE(NULLIF(?,''),call_to_action),updated_at=? WHERE id=?")
         .run(cleanText(req.body.caption, 5000), cleanText(req.body.hashtags, 1000), cleanText(req.body.callToAction, 1000), timestamp, item.id);
       db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
         VALUES(?,?,'REVISION_REQUIRED','DRAFT_SUBMITTED','SUBMIT_SIMPLE_REVISION',?,?,?)`).run(newId('evt'), item.id,
         cleanText(req.body.changeNote, 1000) || `Versi ${versionNumber}`, req.user.id, timestamp);
-      coordinatorApproval = replaceCoordinatorApprovalLink({ contentId: item.id, coordinatorId: item.coordinator_id, fileIds: [fileId], createdBy: req.user.id, reason: 'Diganti oleh revisi konten.' });
+      coordinatorApproval = replaceCoordinatorApprovalLink({ contentId: item.id, coordinatorId: item.coordinator_id, fileIds, createdBy: req.user.id, reason: 'Diganti oleh revisi konten.' });
       recordAudit({ actorId: req.user.id, entityType: 'CONTENT_VERSION', entityId: item.id, action: 'SUBMIT_SIMPLE_REVISION',
-        after: { versionNumber, originalName, size: req.file.size }, ip: requestIp(req) });
+        after: { versionNumber, originalName, size: finalFile.size, cover: cover?.originalName || null }, ip: requestIp(req) });
     })();
     notifyUser(item.coordinator_id, 'SIMPLE_CONTENT_RESUBMITTED', `Revisi ${item.content_no}`, `${req.user.name} mengirim versi ${versionNumber}.`, `/contents/${item.id}`);
     res.status(201).json({ item: getContent(item.id, req.user), versionNumber, approvalUrl: coordinatorApproval.url });
-  } catch (error) { removeUpload(req.file); next(error); }
+  } catch (error) { removeRequestUploads(req); next(error); }
 }
 
-app.post('/api/simple-contents/:id/revision', authRequired, simpleContentUpload.single('file'), submitSimpleContentRevision);
-app.post('/api/instant-videos/:id/revision', authRequired, simpleContentUpload.single('file'), submitSimpleContentRevision);
+app.post('/api/simple-contents/:id/revision', authRequired, simpleResultFields, submitSimpleContentRevision);
+app.post('/api/instant-videos/:id/revision', authRequired, simpleResultFields, submitSimpleContentRevision);
 
 app.get('/api/contents/trash', authRequired, permissionRequired('content.trash'), (req, res) => {
   const visibility = contentVisibility(req.user, 'c', true);
@@ -1165,6 +1302,7 @@ app.delete('/api/contents/:id/permanent', authRequired, (req, res, next) => {
     }
     const filePaths = [
       ...db.prepare('SELECT file_path AS value FROM content_versions WHERE content_id=?').all(item.id),
+      ...db.prepare('SELECT cover_file_path AS value FROM content_versions WHERE content_id=? AND cover_file_path IS NOT NULL').all(item.id),
       ...db.prepare('SELECT file_path AS value FROM collaboration_files WHERE content_id=?').all(item.id),
       ...db.prepare('SELECT file_path AS value FROM publication_proofs WHERE content_id=? AND file_path IS NOT NULL').all(item.id),
       ...db.prepare('SELECT proof_path AS value FROM publication_schedules WHERE content_id=? AND proof_path IS NOT NULL').all(item.id),
@@ -1188,7 +1326,8 @@ app.get('/api/contents/:id', authRequired, (req, res) => {
   const item = getContent(req.params.id, req.user);
   const versions = db.prepare(`SELECT cv.*,u.name AS submitted_by_name FROM content_versions cv
     JOIN users u ON u.id=cv.submitted_by WHERE cv.content_id=? ORDER BY cv.version_number DESC`).all(item.id)
-    .map(row => ({ ...row, fileUrl: `/api/files/drafts/${path.basename(row.file_path)}` }));
+    .map(row => ({ ...row, fileUrl: `/api/files/drafts/${path.basename(row.file_path)}`,
+      coverFileUrl: row.cover_file_path ? `/api/files/drafts/${path.basename(row.cover_file_path)}` : '' }));
   const events = db.prepare(`SELECT we.*,u.name AS actor_name FROM workflow_events we JOIN users u ON u.id=we.actor_id
     WHERE we.content_id=? ORDER BY we.created_at DESC`).all(item.id);
   const proofs = db.prepare(`SELECT pp.*,u.name AS uploader_name,ch.name AS channel_name FROM publication_proofs pp
@@ -1887,6 +2026,16 @@ function autoPromoteSimpleContent(contentId, actorId) {
   const filename = `${crypto.randomUUID()}${path.extname(version.original_name).toLowerCase()}`;
   const destination = path.join(UPLOAD_DIR, 'library', filename);
   fs.copyFileSync(source, destination);
+  let coverCopy = null;
+  if (version.cover_file_path) {
+    const coverSource = path.resolve(root, version.cover_file_path);
+    if (coverSource.startsWith(`${root}${path.sep}`) && fs.existsSync(coverSource)) {
+      const coverFilename = `${crypto.randomUUID()}${path.extname(version.cover_original_name || version.cover_file_path).toLowerCase()}`;
+      const coverDestination = path.join(UPLOAD_DIR, 'library', coverFilename);
+      fs.copyFileSync(coverSource, coverDestination);
+      coverCopy = { filePath: path.join('library', coverFilename), destination: coverDestination };
+    }
+  }
   const assetId = newId('ast');
   const assetVersionId = newId('av');
   const timestamp = nowIso();
@@ -1899,10 +2048,12 @@ function autoPromoteSimpleContent(contentId, actorId) {
     category, item.brand_id, assetVersionId, actorId, contentId, timestamp, timestamp
   );
   db.prepare(`INSERT INTO media_asset_versions(
-    id,asset_id,version_number,file_path,original_name,mime_type,file_size,checksum,notes,uploaded_by,created_at
-  ) VALUES(?,?,1,?,?,?,?,?,?,?,?)`).run(
+    id,asset_id,version_number,file_path,original_name,mime_type,file_size,checksum,cover_file_path,cover_original_name,cover_mime_type,cover_file_size,cover_checksum,notes,uploaded_by,created_at
+  ) VALUES(?,?,1,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
     assetVersionId, assetId, path.join('library', filename), version.original_name, version.mime_type,
-    version.file_size, checksum(fs.readFileSync(destination)), `Otomatis dari ${item.content_no} versi ${version.version_number}`,
+    version.file_size, checksum(fs.readFileSync(destination)), coverCopy?.filePath || null, version.cover_original_name || null,
+    version.cover_mime_type || null, version.cover_file_size || null, coverCopy ? checksum(fs.readFileSync(coverCopy.destination)) : null,
+    `Otomatis dari ${item.content_no} versi ${version.version_number}`,
     actorId, timestamp
   );
   recordAudit({ actorId, entityType: 'MEDIA_ASSET', entityId: assetId, action: 'AUTO_PROMOTE_APPROVED_CONTENT',
@@ -1917,7 +2068,8 @@ function serializeAsset(row, user) {
     version_number: Number(row.version_number || 0),
     file_size: Number(row.file_size || 0),
     canDownload,
-    fileUrl: canDownload && row.file_path ? `/api/files/library/${path.basename(row.file_path)}` : ''
+    fileUrl: canDownload && row.file_path ? `/api/files/library/${path.basename(row.file_path)}` : '',
+    coverFileUrl: canDownload && row.cover_file_path ? `/api/files/library/${path.basename(row.cover_file_path)}` : ''
   };
 }
 
@@ -1934,7 +2086,7 @@ app.get('/api/library', authRequired, permissionRequired('library.view'), (req, 
     params.push(query, query, query);
   }
   const rows = db.prepare(`SELECT ma.*,b.code AS brand_code,b.name AS brand_name,u.name AS owner_name,
-    mav.version_number,mav.file_path,mav.original_name,mav.mime_type,mav.file_size,mav.checksum,mav.notes AS version_notes,mav.created_at AS version_created_at
+    mav.version_number,mav.file_path,mav.original_name,mav.mime_type,mav.file_size,mav.checksum,mav.cover_file_path,mav.cover_original_name,mav.cover_mime_type,mav.cover_file_size,mav.cover_checksum,mav.notes AS version_notes,mav.created_at AS version_created_at
     FROM media_assets ma
     LEFT JOIN brands b ON b.id=ma.brand_id
     JOIN users u ON u.id=ma.owner_id
@@ -1947,7 +2099,7 @@ app.get('/api/library', authRequired, permissionRequired('library.view'), (req, 
 app.get('/api/library/:id', authRequired, permissionRequired('library.view'), (req, res, next) => {
   try {
     const row = db.prepare(`SELECT ma.*,b.code AS brand_code,b.name AS brand_name,u.name AS owner_name,
-      mav.version_number,mav.file_path,mav.original_name,mav.mime_type,mav.file_size,mav.checksum,mav.notes AS version_notes,mav.created_at AS version_created_at
+      mav.version_number,mav.file_path,mav.original_name,mav.mime_type,mav.file_size,mav.checksum,mav.cover_file_path,mav.cover_original_name,mav.cover_mime_type,mav.cover_file_size,mav.cover_checksum,mav.notes AS version_notes,mav.created_at AS version_created_at
       FROM media_assets ma LEFT JOIN brands b ON b.id=ma.brand_id JOIN users u ON u.id=ma.owner_id
       LEFT JOIN media_asset_versions mav ON mav.id=ma.active_version_id WHERE ma.id=?`).get(req.params.id);
     if (!row) throw new AppError('Aset tidak ditemukan.', 404);
@@ -1956,23 +2108,28 @@ app.get('/api/library/:id', authRequired, permissionRequired('library.view'), (r
       .map(version => ({
         ...version,
         canDownload: row.status === 'ACTIVE' || hasPermission(req.user, 'library.manage'),
-        fileUrl: row.status === 'ACTIVE' || hasPermission(req.user, 'library.manage') ? `/api/files/library/${path.basename(version.file_path)}` : ''
+        fileUrl: row.status === 'ACTIVE' || hasPermission(req.user, 'library.manage') ? `/api/files/library/${path.basename(version.file_path)}` : '',
+        coverFileUrl: (row.status === 'ACTIVE' || hasPermission(req.user, 'library.manage')) && version.cover_file_path ? `/api/files/library/${path.basename(version.cover_file_path)}` : ''
       }));
     res.json({ item: serializeAsset(row, req.user), versions });
   } catch (error) { next(error); }
 });
 
-app.post('/api/library', authRequired, permissionRequired('library.manage'), libraryUpload.single('file'), (req, res, next) => {
+const libraryAssetFields = libraryUpload.fields([{ name: 'file', maxCount: 1 }, { name: 'coverFile', maxCount: 1 }]);
+app.post('/api/library', authRequired, permissionRequired('library.manage'), libraryAssetFields, (req, res, next) => {
   try {
-    if (!req.file) throw new AppError('Berkas aset wajib dipilih.');
+    const assetFile = requestFile(req, 'file');
+    const coverFile = requestFile(req, 'coverFile');
+    if (!assetFile) throw new AppError('Berkas aset wajib dipilih.');
+    validateCoverFile(coverFile);
     const categories = ['BRAND_CENTER', 'BROCHURE_PRODUCT', 'CONTENT_TEMPLATE', 'PHOTO_VIDEO', 'CAMPAIGN', 'ARCHIVE'];
     const category = String(req.body.category || 'BRAND_CENTER');
     if (!categories.includes(category)) throw new AppError('Kategori aset tidak valid.');
     const assetId = newId('ast');
     const versionId = newId('av');
     const timestamp = nowIso();
-    const relativePath = path.join('library', req.file.filename);
-    const digest = checksum(fs.readFileSync(req.file.path));
+    const relativePath = path.join('library', assetFile.filename);
+    const digest = checksum(fs.readFileSync(assetFile.path));
     const payload = {
       code: nextAssetCode(), title: requiredText(req.body.title, 'Nama aset', 200),
       description: cleanText(req.body.description, 2000), category,
@@ -1986,38 +2143,70 @@ app.post('/api/library', authRequired, permissionRequired('library.manage'), lib
         assetId, payload.code, payload.title, payload.description, payload.category, payload.brandId,
         versionId, payload.effectiveFrom, payload.expiresAt, req.user.id, timestamp, timestamp
       );
-      db.prepare(`INSERT INTO media_asset_versions(id,asset_id,version_number,file_path,original_name,mime_type,file_size,checksum,notes,uploaded_by,created_at)
-        VALUES(?,?,1,?,?,?,?,?,?,?,?)`).run(
-        versionId, assetId, relativePath, safeFilename(req.file.originalname), req.file.mimetype,
-        req.file.size, digest, cleanText(req.body.notes, 1000), req.user.id, timestamp
+      db.prepare(`INSERT INTO media_asset_versions(id,asset_id,version_number,file_path,original_name,mime_type,file_size,checksum,cover_file_path,cover_original_name,cover_mime_type,cover_file_size,cover_checksum,notes,uploaded_by,created_at)
+        VALUES(?,?,1,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
+        versionId, assetId, relativePath, safeFilename(assetFile.originalname), assetFile.mimetype,
+        assetFile.size, digest, coverFile ? path.join('library', coverFile.filename) : null, coverFile ? safeFilename(coverFile.originalname) : null,
+        coverFile?.mimetype || null, coverFile?.size || null, coverFile ? checksum(fs.readFileSync(coverFile.path)) : null,
+        cleanText(req.body.notes, 1000), req.user.id, timestamp
       );
       recordAudit({ actorId: req.user.id, entityType: 'MEDIA_ASSET', entityId: assetId, action: 'CREATE', after: payload, ip: requestIp(req) });
     })();
     res.status(201).json({ id: assetId, code: payload.code });
-  } catch (error) { removeUpload(req.file); next(error); }
+  } catch (error) { removeRequestUploads(req); next(error); }
 });
 
-app.post('/api/library/:id/version', authRequired, permissionRequired('library.manage'), libraryUpload.single('file'), (req, res, next) => {
+app.post('/api/library/:id/version', authRequired, permissionRequired('library.manage'), libraryAssetFields, (req, res, next) => {
   try {
+    const assetFile = requestFile(req, 'file');
+    const coverFile = requestFile(req, 'coverFile');
+    validateCoverFile(coverFile);
     const asset = db.prepare('SELECT * FROM media_assets WHERE id=?').get(req.params.id);
     if (!asset) throw new AppError('Aset tidak ditemukan.', 404);
-    if (!req.file) throw new AppError('Berkas versi baru wajib dipilih.');
+    if (!assetFile) throw new AppError('Berkas versi baru wajib dipilih.');
     const versionNumber = Number(db.prepare('SELECT COALESCE(MAX(version_number),0)+1 AS next FROM media_asset_versions WHERE asset_id=?').get(asset.id).next);
     const versionId = newId('av');
     const timestamp = nowIso();
-    const relativePath = path.join('library', req.file.filename);
-    const digest = checksum(fs.readFileSync(req.file.path));
+    const relativePath = path.join('library', assetFile.filename);
+    const digest = checksum(fs.readFileSync(assetFile.path));
     db.transaction(() => {
-      db.prepare(`INSERT INTO media_asset_versions(id,asset_id,version_number,file_path,original_name,mime_type,file_size,checksum,notes,uploaded_by,created_at)
-        VALUES(?,?,?,?,?,?,?,?,?,?,?)`).run(
-        versionId, asset.id, versionNumber, relativePath, safeFilename(req.file.originalname), req.file.mimetype,
-        req.file.size, digest, cleanText(req.body.notes, 1000), req.user.id, timestamp
+      db.prepare(`INSERT INTO media_asset_versions(id,asset_id,version_number,file_path,original_name,mime_type,file_size,checksum,cover_file_path,cover_original_name,cover_mime_type,cover_file_size,cover_checksum,notes,uploaded_by,created_at)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
+        versionId, asset.id, versionNumber, relativePath, safeFilename(assetFile.originalname), assetFile.mimetype,
+        assetFile.size, digest, coverFile ? path.join('library', coverFile.filename) : null, coverFile ? safeFilename(coverFile.originalname) : null,
+        coverFile?.mimetype || null, coverFile?.size || null, coverFile ? checksum(fs.readFileSync(coverFile.path)) : null,
+        cleanText(req.body.notes, 1000), req.user.id, timestamp
       );
       db.prepare("UPDATE media_assets SET active_version_id=?,status='ACTIVE',updated_at=? WHERE id=?").run(versionId, timestamp, asset.id);
       recordAudit({ actorId: req.user.id, entityType: 'MEDIA_ASSET', entityId: asset.id, action: 'NEW_VERSION', before: { activeVersionId: asset.active_version_id }, after: { activeVersionId: versionId, versionNumber }, ip: requestIp(req) });
     })();
     res.status(201).json({ id: asset.id, versionNumber });
-  } catch (error) { removeUpload(req.file); next(error); }
+  } catch (error) { removeRequestUploads(req); next(error); }
+});
+
+app.post('/api/library/:id/cover', authRequired, permissionRequired('library.manage'), libraryUpload.single('coverFile'), (req, res, next) => {
+  try {
+    const asset = db.prepare('SELECT * FROM media_assets WHERE id=?').get(req.params.id);
+    if (!asset) throw new AppError('Aset tidak ditemukan.', 404);
+    const coverFile = requestFile(req, 'coverFile');
+    if (!coverFile) throw new AppError('Berkas cover wajib dipilih.');
+    validateCoverFile(coverFile);
+    const activeVersion = db.prepare('SELECT * FROM media_asset_versions WHERE id=?').get(asset.active_version_id);
+    if (!activeVersion) throw new AppError('Versi aktif tidak ditemukan.', 409);
+    const before = { coverFilePath: activeVersion.cover_file_path, coverOriginalName: activeVersion.cover_original_name };
+    db.prepare(`UPDATE media_asset_versions SET cover_file_path=?,cover_original_name=?,cover_mime_type=?,cover_file_size=?,cover_checksum=? WHERE id=?`).run(
+      path.join('library', coverFile.filename), safeFilename(coverFile.originalname), coverFile.mimetype, coverFile.size,
+      checksum(fs.readFileSync(coverFile.path)), activeVersion.id
+    );
+    db.prepare('UPDATE media_assets SET updated_at=? WHERE id=?').run(nowIso(), asset.id);
+    recordAudit({ actorId: req.user.id, entityType: 'MEDIA_ASSET', entityId: asset.id, action: 'UPDATE_SOCIAL_COVER', before,
+      after: { coverOriginalName: safeFilename(coverFile.originalname), coverSize: coverFile.size }, ip: requestIp(req) });
+    if (activeVersion.cover_file_path) {
+      const oldPath = path.resolve(UPLOAD_DIR, activeVersion.cover_file_path);
+      if (oldPath.startsWith(`${path.resolve(UPLOAD_DIR)}${path.sep}`)) { try { fs.unlinkSync(oldPath); } catch {} }
+    }
+    res.json({ ok: true });
+  } catch (error) { removeRequestUploads(req); next(error); }
 });
 
 app.patch('/api/library/:id', authRequired, permissionRequired('library.manage'), (req, res, next) => {
@@ -2050,7 +2239,7 @@ app.delete('/api/library/:id', authRequired, (req, res, next) => {
     if (req.user.role !== 'SUPER_ADMIN') throw new AppError('Hanya Super Admin yang dapat menghapus aset Media Library secara permanen.', 403);
     const asset = db.prepare('SELECT * FROM media_assets WHERE id=?').get(req.params.id);
     if (!asset) throw new AppError('Aset tidak ditemukan.', 404);
-    const versions = db.prepare('SELECT file_path FROM media_asset_versions WHERE asset_id=?').all(asset.id);
+    const versions = db.prepare('SELECT file_path,cover_file_path FROM media_asset_versions WHERE asset_id=?').all(asset.id);
     db.transaction(() => {
       db.prepare('DELETE FROM content_assets WHERE asset_id=?').run(asset.id);
       db.prepare('DELETE FROM media_assets WHERE id=?').run(asset.id);
@@ -2062,8 +2251,10 @@ app.delete('/api/library/:id', authRequired, (req, res, next) => {
     })();
     const uploadRoot = path.resolve(UPLOAD_DIR);
     for (const version of versions) {
-      const absolute = path.resolve(uploadRoot, version.file_path);
-      if (absolute.startsWith(`${uploadRoot}${path.sep}`)) { try { fs.unlinkSync(absolute); } catch {} }
+      for (const storedPath of [version.file_path, version.cover_file_path].filter(Boolean)) {
+        const absolute = path.resolve(uploadRoot, storedPath);
+        if (absolute.startsWith(`${uploadRoot}${path.sep}`)) { try { fs.unlinkSync(absolute); } catch {} }
+      }
     }
     res.json({ ok: true });
   } catch (error) { next(error); }
@@ -2129,8 +2320,13 @@ app.get('/api/files/:kind/:filename', authRequired, (req, res, next) => {
     let row;
     if (kind === 'library') {
       ensurePermission(req.user, 'library.download');
-      row = db.prepare(`SELECT mav.file_path,mav.original_name,mav.mime_type,ma.status FROM media_asset_versions mav
-        JOIN media_assets ma ON ma.id=mav.asset_id WHERE mav.file_path=?`).get(path.join(kind, filename));
+      const requestedPath = path.join(kind, filename);
+      row = db.prepare(`SELECT
+        CASE WHEN mav.cover_file_path=? THEN mav.cover_file_path ELSE mav.file_path END AS file_path,
+        CASE WHEN mav.cover_file_path=? THEN mav.cover_original_name ELSE mav.original_name END AS original_name,
+        CASE WHEN mav.cover_file_path=? THEN mav.cover_mime_type ELSE mav.mime_type END AS mime_type,
+        ma.status FROM media_asset_versions mav
+        JOIN media_assets ma ON ma.id=mav.asset_id WHERE mav.file_path=? OR mav.cover_file_path=?`).get(requestedPath, requestedPath, requestedPath, requestedPath, requestedPath);
       if (!row) throw new AppError('Berkas tidak ditemukan.', 404);
       if (row.status !== 'ACTIVE' && !hasPermission(req.user, 'library.manage')) throw new AppError('Aset kedaluwarsa atau diarsipkan dan tidak dapat diunduh.', 403);
     } else if (kind === 'raw-footage') {
@@ -2140,8 +2336,13 @@ app.get('/api/files/:kind/:filename', authRequired, (req, res, next) => {
         WHERE rf.file_path=? AND ${access.sql}`).get(path.join(kind, filename), ...access.params);
       if (!row || (req.user.role === 'VENDOR' && row.status !== 'ACTIVE')) throw new AppError('Raw Footage tidak ditemukan atau tidak dapat diakses.', 404);
     } else if (kind === 'drafts') {
-      row = db.prepare(`SELECT cv.file_path,cv.original_name,cv.mime_type,c.id AS content_id FROM content_versions cv
-        JOIN contents c ON c.id=cv.content_id WHERE cv.file_path=?`).get(path.join(kind, filename));
+      const requestedPath = path.join(kind, filename);
+      row = db.prepare(`SELECT
+        CASE WHEN cv.cover_file_path=? THEN cv.cover_file_path ELSE cv.file_path END AS file_path,
+        CASE WHEN cv.cover_file_path=? THEN cv.cover_original_name ELSE cv.original_name END AS original_name,
+        CASE WHEN cv.cover_file_path=? THEN cv.cover_mime_type ELSE cv.mime_type END AS mime_type,
+        c.id AS content_id FROM content_versions cv JOIN contents c ON c.id=cv.content_id
+        WHERE cv.file_path=? OR cv.cover_file_path=?`).get(requestedPath, requestedPath, requestedPath, requestedPath, requestedPath);
       if (!row) throw new AppError('Berkas tidak ditemukan.', 404);
       getContent(row.content_id, req.user);
     } else {

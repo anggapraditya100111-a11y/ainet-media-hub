@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.13.0 — 2026-10-08
+
+- Menambahkan Cover Media Sosial opsional (JPG/PNG/WebP, maksimal 5 MB) sebagai file pendamping terpisah untuk konten final.
+- Menampilkan cover pada link approval Koordinator/Direksi, detail konten, tugas Petugas Upload, dan Media Library, lengkap dengan tombol unduh terpisah.
+- Memungkinkan pengelola Media Library menambah atau mengganti cover tanpa mengganti file utama.
+- Menambahkan Edit Tugas untuk Koordinator penanggung jawab dan Super Admin, dengan pembatasan kolom sebelum dan setelah hasil produksi dikirim.
+- Mengirim notifikasi perubahan tugas kepada Vendor atau pembuat internal serta mencatat perubahan di Audit Log.
+- Memberikan warna status yang berbeda pada Kalender Konten dan menambahkan legenda status, termasuk tampilan titik status pada perangkat seluler.
+
 ## 0.12.3 — 2026-10-08
 
 - Menambahkan tombol Hapus Permanen pada detail aset Media Library khusus Super Admin.

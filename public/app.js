@@ -660,6 +660,7 @@ async function showSimpleContentForm() {
       <label class="field full"><span>Koordinator reviewer *</span><select name="coordinatorId" required><option value="">Pilih Koordinator</option>${coordinators.map(user => `<option value="${attr(user.id)}" ${user.id === state.user.id ? 'selected' : ''} ${user.approval_pin_set ? '' : 'disabled'}>${escapeHtml(user.name)}${user.approval_pin_set ? '' : ' · PIN belum dibuat'}</option>`).join('')}</select><small>Link review otomatis dibuat. Koordinator mengesahkan keputusan dengan PIN pribadi.</small></label>
       <div class="field full"><span>Channel tujuan (opsional)</span><div class="check-row">${state.channels.map(channel => `<label class="check"><input type="checkbox" name="channelIds" value="${attr(channel.id)}">${escapeHtml(channel.name)}</label>`).join('')}</div></div>
       <label class="field full"><span>File final *</span><input type="file" name="file" required accept="image/*,video/*,audio/*,.pdf,.zip,.doc,.docx,.xls,.xlsx,.ppt,.pptx"><small>Video, foto, desain, PDF, atau dokumen · maksimal ${number(state.config.maxCollaborationUploadMb || 500)} MB.</small></label>
+      <label class="field full"><span>Cover Media Sosial (opsional)</span><input type="file" name="coverFile" accept="image/jpeg,image/png,image/webp"><small>Untuk cover Instagram/TikTok · disarankan 1080 × 1920 (9:16) · maksimal 5 MB.</small></label>
       <label class="field full"><span>Keterangan singkat (opsional)</span><textarea name="description" maxlength="2000" placeholder="Keterangan yang membantu Koordinator memahami konten"></textarea></label>
       <label class="field full"><span>Caption (opsional)</span><textarea name="caption" maxlength="5000"></textarea></label>
       <label class="field"><span>Hashtag (opsional)</span><input name="hashtags" maxlength="1000"></label>
@@ -713,6 +714,7 @@ function showVendorTaskResultForm(item) {
   openModal('Upload Hasil Final', `<form id="vendor-task-result-form"><div class="notice success"><strong>${escapeHtml(item.title)}</strong><br>Upload hasil jadi. File akan langsung dikirim ke Koordinator untuk direview melalui link dan PIN.</div><div class="form-grid" style="margin-top:16px">
     <label class="field"><span>Jenis konten *</span><select name="contentType" required><option value="VIDEO">Video</option><option value="PHOTO">Foto</option><option value="DESIGN">Desain</option><option value="DOCUMENT">Dokumen</option></select></label>
     <label class="field"><span>File final *</span><input type="file" name="file" required accept="image/*,video/*,audio/*,.pdf,.zip,.doc,.docx,.xls,.xlsx,.ppt,.pptx"></label>
+    <label class="field"><span>Cover Media Sosial (opsional)</span><input type="file" name="coverFile" accept="image/jpeg,image/png,image/webp"><small>JPG, PNG, atau WebP · 1080 × 1920 disarankan · maks. 5 MB.</small></label>
     <label class="field full"><span>Caption (opsional)</span><textarea name="caption" maxlength="5000"></textarea></label>
     <label class="field"><span>Hashtag (opsional)</span><input name="hashtags" maxlength="1000"></label>
     <label class="field"><span>CTA (opsional)</span><input name="callToAction" maxlength="1000"></label>
@@ -733,6 +735,7 @@ function showVendorTaskResultForm(item) {
 function showSimpleRevisionForm(item) {
   openModal('Kirim Revisi Konten', `<form id="simple-revision-form"><div class="notice warn">Versi lama tetap tersimpan. File baru akan menjadi versi final yang menunggu review Koordinator.</div>
     <label class="field" style="margin-top:16px"><span>File revisi *</span><input type="file" name="file" required accept="image/*,video/*,audio/*,.pdf,.zip,.doc,.docx,.xls,.xlsx,.ppt,.pptx"></label>
+    <label class="field" style="margin-top:14px"><span>Cover Media Sosial (opsional)</span><input type="file" name="coverFile" accept="image/jpeg,image/png,image/webp"><small>Kosongkan untuk mempertahankan cover sebelumnya.</small></label>
     <label class="field" style="margin-top:14px"><span>Caption (opsional)</span><textarea name="caption" maxlength="5000">${escapeHtml(item.caption || '')}</textarea></label>
     <div class="form-grid" style="margin-top:14px"><label class="field"><span>Hashtag (opsional)</span><input name="hashtags" maxlength="1000" value="${attr(item.hashtags || '')}"></label><label class="field"><span>CTA (opsional)</span><input name="callToAction" maxlength="1000" value="${attr(item.call_to_action || '')}"></label></div>
     <label class="field" style="margin-top:14px"><span>Catatan perubahan *</span><textarea name="changeNote" maxlength="1000" required></textarea></label>
@@ -746,6 +749,48 @@ function showSimpleRevisionForm(item) {
     } catch (error) { toast(error.message, true); }
     finally { setLoading(false); }
   });
+}
+
+async function showSimpleTaskEditForm(item) {
+  try {
+    const assignments = await loadAssignments();
+    const preResult = item.status === 'IN_PRODUCTION';
+    const uploaders = assignments.users.filter(user => ['UPLOADER', 'ASSISTANT_COORDINATOR'].includes(user.role));
+    const vendors = assignments.vendors || [];
+    openModal('Edit Tugas', `<form id="simple-task-edit-form"><div class="notice ${preResult ? '' : 'warn'}">${preResult
+      ? 'Hasil belum dikirim. Data tugas dan pengaturan operasional masih dapat diubah.'
+      : 'Hasil sudah dikirim. Hanya deadline, channel, rencana tayang, dan petugas upload yang dapat diubah. Materi final diubah melalui revisi.'}</div>
+      <div class="form-grid" style="margin-top:16px">
+        ${preResult ? `<label class="field full"><span>Judul *</span><input name="title" maxlength="200" required value="${attr(item.title)}"></label>
+        <label class="field"><span>Brand *</span><select name="brandId" required>${brandOptions(item.brand_id)}</select></label>
+        ${item.production_mode === 'VENDOR' ? `<label class="field"><span>Vendor *</span><select name="vendorId" required>${vendors.map(vendor => `<option value="${attr(vendor.id)}" ${vendor.id === item.vendor_id ? 'selected' : ''}>${escapeHtml(vendor.name)}</option>`).join('')}</select></label>` : ''}
+        <label class="field full"><span>Instruksi singkat *</span><textarea name="instruction" maxlength="2000" required>${escapeHtml(item.brief || item.description || '')}</textarea></label>
+        <label class="field full"><span>Link referensi</span><textarea name="referenceUrls" placeholder="Satu link per baris">${escapeHtml((item.referenceUrls || []).join('\n'))}</textarea></label>` : ''}
+        <label class="field"><span>Deadline</span><input type="date" name="dueDate" value="${attr(item.due_date || '')}"></label>
+        <label class="field"><span>Rencana tayang</span><input type="datetime-local" name="publishAt" value="${attr(toLocalDateTime(item.publish_at))}"></label>
+        <div class="field full"><span>Channel tujuan</span><div class="check-row">${state.channels.map(channel => `<label class="check"><input type="checkbox" name="channelIds" value="${attr(channel.id)}" ${(item.channelIds || []).includes(channel.id) ? 'checked' : ''}>${escapeHtml(channel.name)}</label>`).join('')}</div></div>
+        <label class="field full"><span>Petugas upload</span><select name="uploaderId"><option value="">Belum ditentukan</option>${uploaders.map(user => `<option value="${attr(user.id)}" ${user.id === item.uploader_id ? 'selected' : ''}>${escapeHtml(user.name)}</option>`).join('')}</select></label>
+        <label class="field full"><span>Catatan perubahan (opsional)</span><input name="changeNote" maxlength="1000" placeholder="Contoh: deadline dimundurkan atas permintaan Vendor"></label>
+      </div><div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn btn-primary">Simpan Perubahan</button></div></form>`, item.content_no);
+    $('#simple-task-edit-form [data-close-modal]').addEventListener('click', closeModal);
+    $('#simple-task-edit-form').addEventListener('submit', async event => {
+      event.preventDefault(); setLoading(true);
+      try {
+        const form = new FormData(event.currentTarget);
+        const body = {
+          dueDate: form.get('dueDate'), publishAt: form.get('publishAt'), uploaderId: form.get('uploaderId'),
+          channelIds: form.getAll('channelIds'), changeNote: form.get('changeNote')
+        };
+        if (preResult) {
+          Object.assign(body, { title: form.get('title'), brandId: form.get('brandId'), instruction: form.get('instruction'), referenceUrls: form.get('referenceUrls') });
+          if (item.production_mode === 'VENDOR') body.vendorId = form.get('vendorId');
+        }
+        await api(`/api/simple-contents/${item.id}`, { method: 'PATCH', body });
+        toast('Tugas berhasil diperbarui.'); await showContentDetail(item.id);
+      } catch (error) { toast(error.message, true); }
+      finally { setLoading(false); }
+    });
+  } catch (error) { toast(error.message, true); }
 }
 
 async function renderPipeline() {
@@ -1093,7 +1138,7 @@ async function showContentDetail(id) {
           </section>
           <section class="card detail-section" style="margin-top:16px"><h3>Lampiran & Hasil Produksi</h3>
             ${inlineBriefUpload(item)}
-            ${(data.collaborationFiles || []).length ? `<div class="file-grid">${data.collaborationFiles.map(file => `<article class="file-card"><div class="file-icon">${fileIcon(file.mime_type)}</div><div><span class="tag">${phaseLabel(file.phase)} · v${file.version_number}</span><strong>${escapeHtml(file.original_name)}</strong><small>${fileSize(file.file_size)} · ${escapeHtml(file.uploaded_by_name)}</small></div><div class="actions">${mediaPreviewButton(file)}<a class="btn btn-ghost btn-small" href="${attr(file.fileUrl)}?download=1">Unduh</a></div></article>`).join('')}</div>` : emptyInline('Belum ada lampiran Brief & Diskusi atau hasil produksi.')}
+            ${(data.collaborationFiles || []).length ? `<div class="file-grid">${data.collaborationFiles.map(file => `<article class="file-card"><div class="file-icon">${fileIcon(file.mime_type)}</div><div><span class="tag">${file.file_role === 'COVER' ? 'Cover Media Sosial' : phaseLabel(file.phase)} · v${file.version_number}</span><strong>${escapeHtml(file.original_name)}</strong><small>${fileSize(file.file_size)} · ${escapeHtml(file.uploaded_by_name)}</small></div><div class="actions">${mediaPreviewButton(file)}<a class="btn btn-ghost btn-small" href="${attr(file.fileUrl)}?download=1">Unduh</a></div></article>`).join('')}</div>` : emptyInline('Belum ada lampiran Brief & Diskusi atau hasil produksi.')}
           </section>
           <section class="card detail-section" style="margin-top:16px"><h3>Versi Lama</h3>
             ${data.versions.length ? `<div class="table-wrap"><table><thead><tr><th>Versi</th><th>Berkas</th><th>Pengirim</th><th>Waktu</th><th></th></tr></thead><tbody>${data.versions.map(version => `<tr><td>v${version.version_number}${version.is_approved ? ' ✓' : ''}</td><td><span class="cell-title truncate">${escapeHtml(version.original_name)}</span><span class="cell-meta">${fileSize(version.file_size)}</span></td><td>${escapeHtml(version.submitted_by_name)}</td><td>${dateTime(version.created_at)}</td><td><a class="btn btn-ghost btn-small" href="${attr(version.fileUrl)}" target="_blank" rel="noopener">Buka</a></td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">Tidak ada file dari versi aplikasi lama.</p>'}
@@ -1195,6 +1240,9 @@ function contentActions(item) {
   } else if (item.workflow_type !== 'INSTANT' && has('content.edit') && item.proposal_origin !== 'VENDOR' && !['PUBLISHED', 'CANCELLED'].includes(item.status)) {
     buttons.push('<button class="btn btn-ghost" data-content-action="edit">Edit & Penugasan</button>');
   }
+  if (item.workflow_type === 'INSTANT' && (state.user.role === 'SUPER_ADMIN' || (state.user.role === 'COORDINATOR' && item.coordinator_id === state.user.id)) && !['PUBLISHED', 'CANCELLED'].includes(item.status)) {
+    buttons.push('<button class="btn btn-ghost" data-content-action="edit-simple-task">Edit Tugas</button>');
+  }
   if (item.proposal_origin === 'VENDOR' && item.status === 'REQUESTED' && item.brief_review_status === 'SUBMITTED' &&
     (state.user.role === 'SUPER_ADMIN' || (state.user.role === 'COORDINATOR' && item.coordinator_id === state.user.id) || hasAssistantDelegation('REVIEW_VENDOR', item.coordinator_id))) {
     buttons.push('<button class="btn btn-success" data-brief-decision="APPROVED">Setujui Brief & Mulai Produksi</button>');
@@ -1228,6 +1276,7 @@ function contentActions(item) {
 
 function bindDetailActions(item, data = {}) {
   $('[data-content-action="edit"]')?.addEventListener('click', () => showContentForm(item));
+  $('[data-content-action="edit-simple-task"]')?.addEventListener('click', () => showSimpleTaskEditForm(item));
   $('[data-content-action="submit-vendor-brief"]')?.addEventListener('click', () => submitVendorBrief(item));
   document.querySelectorAll('[data-content-action="discuss"]').forEach(button => button.addEventListener('click', () => showDiscussionForm(item)));
   $('[data-content-action="share"]')?.addEventListener('click', () => showShareForm(item, data.collaborationFiles || []));
@@ -1964,21 +2013,24 @@ async function showAssetDetail(id) {
       <h3>${escapeHtml(asset.title)}</h3><p>${escapeHtml(asset.code)} · ${escapeHtml(categoryLabel(asset.category))}</p>
     </section>
     <div class="actions" style="margin:16px 0">
-      ${asset.canDownload ? `<a class="btn btn-primary" href="${attr(asset.fileUrl)}?download=1">↓ Unduh Versi Aktif</a>` : '<span class="notice warn">Aset dikunci karena kedaluwarsa/diarsipkan.</span>'}
+      ${asset.canDownload ? `<a class="btn btn-primary" href="${attr(asset.fileUrl)}?download=1">↓ Unduh File Utama</a>${asset.coverFileUrl ? `<a class="btn btn-soft" href="${attr(asset.coverFileUrl)}?download=1">↓ Unduh Cover</a>` : ''}` : '<span class="notice warn">Aset dikunci karena kedaluwarsa/diarsipkan.</span>'}
       ${has('library.manage') ? '<button class="btn btn-ghost" data-asset-action="version">Upload Versi Baru</button><button class="btn btn-ghost" data-asset-action="edit">Edit Metadata</button>' : ''}
+      ${has('library.manage') ? `<button class="btn btn-ghost" data-asset-action="cover">${asset.coverFileUrl ? 'Ganti Cover' : 'Tambah Cover'}</button>` : ''}
       ${has('library.manage') && asset.status !== 'ACTIVE' ? '<button class="btn btn-success" data-asset-status="ACTIVE">Aktifkan</button>' : ''}
       ${has('library.manage') && asset.status === 'ACTIVE' ? '<button class="btn btn-danger" data-asset-status="EXPIRED">Tandai Kedaluwarsa</button>' : ''}
       ${has('library.manage') && asset.status !== 'ARCHIVED' ? '<button class="btn btn-ghost" data-asset-status="ARCHIVED">Arsipkan</button>' : ''}
       ${state.user.role === 'SUPER_ADMIN' ? '<button class="btn btn-danger" data-asset-action="delete">Hapus Permanen</button>' : ''}
     </div>
+    ${asset.coverFileUrl ? `<section class="card detail-section" style="margin-bottom:16px"><div class="card-head"><div><span class="eyebrow">Pendamping publikasi</span><h3>Cover Media Sosial</h3></div><span class="tag">${escapeHtml(asset.cover_original_name || 'Cover')}</span></div><img class="asset-cover-preview" src="${attr(asset.coverFileUrl)}" alt="Cover media sosial ${attr(asset.title)}"></section>` : ''}
     <div class="grid-2"><section class="card detail-section"><h3>Informasi</h3><dl class="detail-list">
       ${detailItem('Kategori', categoryLabel(asset.category))}${detailItem('Brand', asset.brand_name)}
       ${detailItem('Berlaku mulai', dateOnly(asset.effective_from))}${detailItem('Kedaluwarsa', dateOnly(asset.expires_at))}
       ${detailItem('Pemilik', asset.owner_name)}${detailItem('Checksum', asset.checksum ? asset.checksum.slice(0, 14) + '…' : '-')}
     </dl><h3 style="margin-top:18px">Deskripsi</h3><p class="rich-text muted">${escapeHtml(asset.description || 'Tidak ada deskripsi.')}</p></section>
-    <section class="card detail-section"><h3>Riwayat Versi</h3>${data.versions.length ? `<div class="timeline">${data.versions.map(version => `<div class="timeline-item"><strong>Versi ${version.version_number} · ${escapeHtml(version.original_name)}</strong><p>${escapeHtml(version.uploaded_by_name)} · ${dateTime(version.created_at)} · ${fileSize(version.file_size)}${version.fileUrl ? `<br><a href="${attr(version.fileUrl)}" target="_blank" rel="noopener">Buka berkas</a>` : ''}</p></div>`).join('')}</div>` : emptyInline('Belum ada versi')}</section></div>`, asset.code);
+    <section class="card detail-section"><h3>Riwayat Versi</h3>${data.versions.length ? `<div class="timeline">${data.versions.map(version => `<div class="timeline-item"><strong>Versi ${version.version_number} · ${escapeHtml(version.original_name)}</strong><p>${escapeHtml(version.uploaded_by_name)} · ${dateTime(version.created_at)} · ${fileSize(version.file_size)}${version.fileUrl ? `<br><a href="${attr(version.fileUrl)}" target="_blank" rel="noopener">Buka file utama</a>` : ''}${version.coverFileUrl ? ` · <a href="${attr(version.coverFileUrl)}" target="_blank" rel="noopener">Buka cover</a>` : ''}</p></div>`).join('')}</div>` : emptyInline('Belum ada versi')}</section></div>`, asset.code);
     $('[data-asset-action="version"]')?.addEventListener('click', () => showAssetVersionForm(asset));
     $('[data-asset-action="edit"]')?.addEventListener('click', () => showAssetMetadataForm(asset));
+    $('[data-asset-action="cover"]')?.addEventListener('click', () => showAssetCoverForm(asset));
     $('[data-asset-action="delete"]')?.addEventListener('click', () => deleteMediaAsset(asset));
     document.querySelectorAll('[data-asset-status]').forEach(button => button.addEventListener('click', () => updateAssetStatus(asset.id, button.dataset.assetStatus)));
   } catch (error) { toast(error.message, true); }
@@ -1995,6 +2047,7 @@ function showAssetForm() {
       <label class="field"><span>Tanggal kedaluwarsa</span><input type="date" name="expiresAt"></label>
       <label class="field full"><span>Deskripsi / cara penggunaan</span><textarea name="description" maxlength="2000"></textarea></label>
       <label class="field full"><span>Berkas *</span><input type="file" name="file" required></label>
+      <label class="field full"><span>Cover Media Sosial (opsional)</span><input type="file" name="coverFile" accept="image/jpeg,image/png,image/webp"><small>JPG, PNG, atau WebP · disarankan 1080 × 1920 · maksimal 5 MB.</small></label>
       <label class="field full"><span>Catatan versi</span><textarea name="notes" maxlength="1000" placeholder="Versi awal, format warna, atau catatan produksi"></textarea></label>
     </div>
     <div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn btn-primary">Simpan Aset</button></div>
@@ -2013,6 +2066,7 @@ function showAssetForm() {
 function showAssetVersionForm(asset) {
   openModal('Upload Versi Baru', `<form id="asset-version-form"><div class="notice">Versi baru langsung menjadi versi aktif. Versi lama tetap tersimpan dalam riwayat.</div>
     <label class="field" style="margin-top:16px"><span>Berkas *</span><input type="file" name="file" required></label>
+    <label class="field" style="margin-top:14px"><span>Cover Media Sosial (opsional)</span><input type="file" name="coverFile" accept="image/jpeg,image/png,image/webp"><small>Cover berlaku untuk versi baru ini.</small></label>
     <label class="field" style="margin-top:14px"><span>Catatan versi</span><textarea name="notes" maxlength="1000"></textarea></label>
     <div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn btn-primary">Upload Versi</button></div></form>`, asset.code);
   $('#asset-version-form [data-close-modal]').addEventListener('click', closeModal);
@@ -2021,6 +2075,21 @@ function showAssetVersionForm(asset) {
     try {
       await api(`/api/library/${asset.id}/version`, { method: 'POST', body: new FormData(event.currentTarget) });
       toast('Versi aktif diperbarui.'); await showAssetDetail(asset.id);
+    } catch (error) { toast(error.message, true); }
+    finally { setLoading(false); }
+  });
+}
+
+function showAssetCoverForm(asset) {
+  openModal(asset.coverFileUrl ? 'Ganti Cover Media Sosial' : 'Tambah Cover Media Sosial', `<form id="asset-cover-form"><div class="notice">Cover adalah file pendamping untuk publikasi Instagram/TikTok dan tidak mengganti file utama.</div>
+    <label class="field" style="margin-top:16px"><span>Gambar cover *</span><input type="file" name="coverFile" required accept="image/jpeg,image/png,image/webp"><small>Disarankan 1080 × 1920 (9:16) · maksimal 5 MB.</small></label>
+    <div class="form-actions"><button type="button" class="btn btn-ghost" data-close-modal>Batal</button><button type="submit" class="btn btn-primary">Simpan Cover</button></div></form>`, asset.code);
+  $('#asset-cover-form [data-close-modal]').addEventListener('click', closeModal);
+  $('#asset-cover-form').addEventListener('submit', async event => {
+    event.preventDefault(); setLoading(true);
+    try {
+      await api(`/api/library/${asset.id}/cover`, { method: 'POST', body: new FormData(event.currentTarget) });
+      toast('Cover media sosial diperbarui.'); await showAssetDetail(asset.id);
     } catch (error) { toast(error.message, true); }
     finally { setLoading(false); }
   });
@@ -2335,13 +2404,24 @@ function contentCalendar(items, cursor, selectedDate, today) {
   }).join('');
   const selectedItems = grouped[selectedDate] || [];
   const selectedLabel = new Date(`${selectedDate}T12:00:00`).toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  return `<section class="card content-calendar-card"><header class="content-calendar-toolbar"><div><span class="eyebrow">Bulan</span><h3>${escapeHtml(monthLabel)}</h3></div><div class="actions"><button class="btn btn-ghost btn-small" type="button" data-calendar-nav="-1" aria-label="Bulan sebelumnya">‹</button><button class="btn btn-ghost btn-small" type="button" data-calendar-nav="today">Hari Ini</button><button class="btn btn-ghost btn-small" type="button" data-calendar-nav="1" aria-label="Bulan berikutnya">›</button></div></header><div class="content-calendar-weekdays">${['Sen','Sel','Rab','Kam','Jum','Sab','Min'].map(day => `<span>${day}</span>`).join('')}</div><div class="content-calendar-grid">${days}</div></section>
+  return `<section class="card content-calendar-card"><header class="content-calendar-toolbar"><div><span class="eyebrow">Bulan</span><h3>${escapeHtml(monthLabel)}</h3></div><div class="actions"><button class="btn btn-ghost btn-small" type="button" data-calendar-nav="-1" aria-label="Bulan sebelumnya">‹</button><button class="btn btn-ghost btn-small" type="button" data-calendar-nav="today">Hari Ini</button><button class="btn btn-ghost btn-small" type="button" data-calendar-nav="1" aria-label="Bulan berikutnya">›</button></div></header><div class="calendar-status-legend">${[['new','Baru'],['production','Produksi'],['waiting','Menunggu Review'],['revision','Revisi'],['approved','Disetujui'],['scheduled','Terjadwal'],['published','Tayang']].map(([tone,label]) => `<span><i class="calendar-${tone}"></i>${label}</span>`).join('')}</div><div class="content-calendar-weekdays">${['Sen','Sel','Rab','Kam','Jum','Sab','Min'].map(day => `<span>${day}</span>`).join('')}</div><div class="content-calendar-grid">${days}</div></section>
     <section class="card calendar-agenda"><div class="card-head"><div><span class="eyebrow">Agenda terpilih</span><h3>${escapeHtml(selectedLabel)}</h3></div><span class="tag">${selectedItems.length} konten</span></div><div class="card-body">${selectedItems.length ? `<div class="calendar-list">${selectedItems.map(contentMiniRow).join('')}</div>` : emptyInline('Belum ada deadline atau jadwal publikasi pada tanggal ini.')}</div></section>`;
 }
 
 function calendarEvent(item) {
   const time = item.publish_at ? new Date(item.publish_at).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : 'Deadline';
-  return `<button class="content-calendar-event ${statusClass(item.status)}" type="button" data-content-id="${attr(item.id)}" title="${attr(item.title)}"><span class="calendar-event-brand" style="background:${safeColor(item.brand_color)}"></span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(time)} · ${escapeHtml(item.brand_code)}</small></button>`;
+  return `<button class="content-calendar-event calendar-${calendarStatusTone(item.status)}" type="button" data-content-id="${attr(item.id)}" title="${attr(item.title)}"><span class="calendar-event-brand" style="background:${safeColor(item.brand_color)}"></span><strong>${escapeHtml(item.title)}</strong><small>${escapeHtml(time)} · ${escapeHtml(item.brand_code)}</small></button>`;
+}
+
+function calendarStatusTone(status) {
+  if (['REQUESTED', 'BRIEFED', 'ASSIGNED'].includes(status)) return 'new';
+  if (status === 'IN_PRODUCTION') return 'production';
+  if (['DRAFT_SUBMITTED', 'IN_REVIEW', 'APPROVAL_PENDING'].includes(status)) return 'waiting';
+  if (status === 'REVISION_REQUIRED') return 'revision';
+  if (status === 'APPROVED') return 'approved';
+  if (status === 'SCHEDULED') return 'scheduled';
+  if (status === 'PUBLISHED') return 'published';
+  return 'new';
 }
 
 function bindContentOpeners(root) {

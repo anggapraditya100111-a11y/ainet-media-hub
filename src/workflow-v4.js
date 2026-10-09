@@ -501,7 +501,7 @@ function installWorkflowV4(app, options) {
       if (!approval) throw new AppError('Link approval tidak ditemukan.', 404);
       if (approval.status !== 'ACTIVE' || !approval.coordinator_active || approval.content_status !== 'DRAFT_SUBMITTED') throw new AppError('Link approval sudah tidak aktif.', 410);
       const ids = json(approval.attachment_ids_json);
-      const files = ids.length ? db.prepare(`SELECT id,original_name,mime_type,file_size,phase,version_number FROM collaboration_files WHERE content_id=? AND id IN (${ids.map(() => '?').join(',')})`).all(approval.content_id, ...ids) : [];
+      const files = ids.length ? db.prepare(`SELECT id,original_name,mime_type,file_size,phase,version_number,file_role FROM collaboration_files WHERE content_id=? AND id IN (${ids.map(() => '?').join(',')})`).all(approval.content_id, ...ids) : [];
       const channels = db.prepare(`SELECT ch.name FROM content_channels cc JOIN channels ch ON ch.id=cc.channel_id
         WHERE cc.content_id=? ORDER BY ch.name`).all(approval.content_id).map(row => row.name);
       const directors = db.prepare("SELECT id,name FROM users WHERE role='MANAGEMENT' AND active=1 AND approval_pin_hash IS NOT NULL AND approval_pin_salt IS NOT NULL ORDER BY name").all();
@@ -613,7 +613,7 @@ function installWorkflowV4(app, options) {
       if (approval.status !== 'ACTIVE' || !approval.director_active) throw new AppError('Link approval sudah tidak aktif.', 410);
       if (!approvalSession(req, approval)) return res.status(401).json({ requiresPin: true, locked: Boolean(approval.locked_at), director: approval.director_name });
       const ids = json(approval.attachment_ids_json);
-      const files = ids.length ? db.prepare(`SELECT id,original_name,mime_type,file_size,phase,version_number FROM collaboration_files WHERE content_id=? AND id IN (${ids.map(() => '?').join(',')})`).all(approval.content_id, ...ids) : [];
+      const files = ids.length ? db.prepare(`SELECT id,original_name,mime_type,file_size,phase,version_number,file_role FROM collaboration_files WHERE content_id=? AND id IN (${ids.map(() => '?').join(',')})`).all(approval.content_id, ...ids) : [];
       res.set('Cache-Control', 'no-store').set('X-Robots-Tag', 'noindex, nofollow');
       res.json({ content: {
         id: approval.id, content_no: approval.content_no, title: approval.title, description: approval.description,

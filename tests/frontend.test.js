@@ -120,7 +120,7 @@ test('Vendor membuat usulan brief dan Koordinator memberi keputusan', () => {
 
 test('mode mobile menyediakan pola aplikasi Android dan PWA', () => {
   assert.match(html, /id="mobile-navigation"/);
-  assert.match(html, /manifest\.webmanifest\?v=0\.12\.3/);
+  assert.match(html, /manifest\.webmanifest\?v=0\.13\.0/);
   assert.match(app, /renderMobileNavigation/);
   assert.match(css, /\.mobile-navigation/);
   assert.match(css, /env\(safe-area-inset-bottom\)/);
@@ -136,6 +136,30 @@ test('kalender konten memakai tampilan bulanan dan agenda mobile', () => {
   assert.match(app, /Agenda terpilih/);
   assert.match(css, /\.content-calendar-grid/);
   assert.match(css, /\.content-calendar-event/);
+  assert.match(app, /function calendarStatusTone\(status\)/);
+  assert.match(app, /Menunggu Review/);
+  assert.match(css, /\.calendar-status-legend/);
+  assert.match(css, /\.content-calendar-event\.calendar-approved/);
+  assert.match(css, /\.content-calendar-event\.calendar-published/);
+});
+
+test('cover media sosial menjadi file pendamping terpisah', () => {
+  assert.match(app, /name="coverFile"/);
+  assert.match(app, /Cover Media Sosial/);
+  assert.match(app, /1080 × 1920/);
+  assert.match(app, /coverFileUrl/);
+  assert.match(app, /function showAssetCoverForm\(asset\)/);
+  assert.match(app, /Unduh File Utama/);
+  assert.match(app, /Unduh Cover/);
+  assert.match(approval, /file\.file_role === 'COVER'/);
+});
+
+test('Koordinator dapat mengedit tugas sederhana dengan batasan status', () => {
+  assert.match(app, /data-content-action="edit-simple-task"/);
+  assert.match(app, /function showSimpleTaskEditForm\(item\)/);
+  assert.match(app, /Hanya deadline, channel, rencana tayang, dan petugas upload/);
+  assert.match(app, /Materi final diubah melalui revisi/);
+  assert.match(app, /\/api\/simple-contents\/\$\{item\.id\}/);
 });
 
 test('lampiran produksi dapat dipreview dan video mendukung layar penuh', () => {
