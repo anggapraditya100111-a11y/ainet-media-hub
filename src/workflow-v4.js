@@ -1,4 +1,212 @@
-YªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éíóM4N‹Z–‹­¦ëeŠw¬Õ½¹ÍÐ™Ì€ôÉ•ÅÕ¥É” ¹½‘”é™Ìœ¤ì)½¹ÍÐÁ…Ñ €ôÉ•ÅÕ¥É” ¹½‘”éÁ…Ñ œ¤ì)½¹ÍÐÉåÁÑ¼€ôÉ•ÅÕ¥É” ¹½‘”éÉåÁÑ¼œ¤ì)½¹ÍÐ•áÁÉ•ÍÌ€ôÉ•ÅÕ¥É” •áÁÉ•ÍÌœ¤ì)½¹ÍÐµÕ±Ñ•È€ôÉ•ÅÕ¥É” µÕ±Ñ•Èœ¤ì()½¹ÍÐì‘ˆ°UA1=}%H°¹½Ý%Í¼°•ÑM•ÑÑ¥¹œ°É•½É‘Õ‘¥Ð°¹½Ñ¥™åUÍ•Èô€ôÉ•ÅÕ¥É” œ¸½‘ˆœ¤ì)½¹ÍÐì¹•Ý%°É…¹‘½µQ½­•¸°¡…Í¡Q½­•¸°Ù•É¥™åÁÁÉ½Ù…±A¥¸°•¹ÉåÁÑM•É•Ð°‘•ÉåÁÑM•É•Ð°±•…¹Q•áÐ°Í…™•¥±•¹…µ”ô€ôÉ•ÅÕ¥É” œ¸½Í•ÕÉ¥Ñäœ¤ì()½¹ÍÐA!ML€ô¹•ÜM•Ð¡l	I%œ°€AI}AI=UQ%=8œ°€AI=UQ%=9}IMU1Pt¤ì)½¹ÍÐAIY%]	1€ô€½x¡¥µ…•ñÙ¥‘•½ñ…Õ‘¥¼¥p¼¼ì)½¹ÍÐ%91%9}QeAL€ô¹•ÜM•Ð¡l…ÁÁ±¥…Ñ¥½¸½Á‘˜t¤ì)½¹ÍÐ11=]}UA1=€ô€½x¡¥µ…•p¼ ü…ÍÙp­áµ°¥m„µèÀ´ä¸¬µt­ñÙ¥‘•½p½m„µèÀ´ä¸¬µt­ñ…Õ‘¥½p½m„µèÀ´ä¸¬µt­ñ…ÁÁ±¥…Ñ¥½¹p¼¡Á‘™ñé¥Áñàµé¥Àµ½µÁÉ•ÍÍ•‘ñµÍÝ½É‘ñÙ¹‘p¹µÌµ•á•±ñÙ¹‘p¹µÌµÁ½Ý•ÉÁ½¥¹ÑñÙ¹‘p¹½Á•¹áµ±™½Éµ…ÑÌµ½™™¥•‘½Õµ•¹Ñp¸¡Ý½É‘ÁÉ½•ÍÍ¥¹µ±p¹‘½Õµ•¹ÑñÍÁÉ•…‘Í¡••Ñµ±p¹Í¡••ÑñÁÉ•Í•¹Ñ…Ñ¥½¹µ±p¹ÁÉ•Í•¹Ñ…Ñ¥½¸¤¥ñÑ•áÑp¼¡Á±…¥¹ñÍØ¤¤½¤ì()™Õ¹Ñ¥½¸©Í½¸¡Ù…±Õ”°™…±±‰…¬€ômt¤ì(€ÑÉäìÉ•ÑÕÉ¸)M=8¹Á…ÉÍ”¡Ù…±Õ”ñð€œœ¤ìô…Ñ ìÉ•ÑÕÉ¸™…±±‰…¬ìô)ô()™Õ¹Ñ¥½¸…‰Í½±ÕÑ•UÁ±½…¡É•±…Ñ¥Ù•A…Ñ ¤ì(€½¹ÍÐÉ½½Ð€ôÁ…Ñ ¹É•Í½±Ù”¡UA1=}%H¤ì(€½¹ÍÐ…‰Í½±ÕÑ”€ôÁ…Ñ ¹É•Í½±Ù”¡É½½Ð°É•±…Ñ¥Ù•A…Ñ ¤ì(€¥˜€ ……‰Í½±ÕÑ”¹ÍÑ…ÉÑÍ]¥Ñ ¡€‘íÉ½½Ñô‘íÁ…Ñ ¹Í•Áõ€¤¤É•ÑÕÉ¸¹Õ±°ì(€É•ÑÕÉ¸…‰Í½±ÕÑ”ì)ô()™Õ¹Ñ¥½¸¡•­ÍÕµ¥±”¡™¥±•¹…µ”¤ì(€½¹ÍÐ¡…Í €ôÉåÁÑ¼¹É•…Ñ•!…Í  Í¡„ÈÔØœ¤ì(€½¹ÍÐ‘•ÍÉ¥ÁÑ½È€ô™Ì¹½Á•¹Må¹Œ¡™¥±•¹…µ”°€Èœ¤ì(€½¹ÍÐ‰Õ™™•È€ô	Õ™™•È¹…±±½U¹Í…™” ÄÀÈÐ€¨€ÄÀÈÐ¤ì(€ÑÉäì(€€€±•Ð‰åÑ•Ìì(€€€Ý¡¥±”€ ¡‰åÑ•Ì€ô™Ì¹É•…‘Må¹Œ¡‘•ÍÉ¥ÁÑ½È°‰Õ™™•È°€À°‰Õ™™•È¹±•¹Ñ °¹Õ±°¤¤€ø€À¤¡…Í ¹ÕÁ‘…Ñ”¡‰Õ™™•È¹ÍÕ‰…ÉÉ…ä À°‰åÑ•Ì¤¤ì(€ô™¥¹…±±äì™Ì¹±½Í•Må¹Œ¡‘•ÍÉ¥ÁÑ½È¤ìô(€É•ÑÕÉ¸¡…Í ¹‘¥•ÍÐ ¡•àœ¤ì)ô()™Õ¹Ñ¥½¸Í•¹‘MÑ½É•‘¥±”¡É•Ä°É•Ì°É½Ü°™½É•½Ý¹±½…€ô™…±Í”¤ì(€½¹ÍÐ…‰Í½±ÕÑ”€ô…‰Í½±ÕÑ•UÁ±½…¡É½Ü¹™¥±•}Á…Ñ ñðÉ½Ü¹ÁÉ½½™}Á…Ñ ¤ì(€¥˜€ ……‰Í½±ÕÑ”ñð€…™Ì¹•á¥ÍÑÍMå¹Œ¡…‰Í½±ÕÑ”¤¤Ñ¡É½Ü=‰©•Ð¹…ÍÍ¥¸¡¹•ÜÉÉ½È 	•É­…ÌÑ¥‘…¬‘¥Ñ•µÕ­…¸¸œ¤°ìÍÑ…ÑÕÌè€ÐÀÐô¤ì(€½¹ÍÐÍÑ…Ð€ô™Ì¹ÍÑ…ÑMå¹Œ¡…‰Í½±ÕÑ”¤ì(€½¹ÍÐµ¥µ”€ôÉ½Ü¹µ¥µ•}ÑåÁ”ñðÉ½Ü¹ÁÉ½½™}µ¥µ”ñð€…ÁÁ±¥…Ñ¥½¸½½Ñ•ÐµÍÑÉ•…´œì(€½¹ÍÐ¹…µ”€ôÍ…™•¥±•¹…µ”¡É½Ü¹½É¥¥¹…±}¹…µ”ñðÉ½Ü¹ÁÉ½½™}¹…µ”ñð€™¥±”œ¤ì(€½¹ÍÐ¥¹±¥¹”€ô€…™½É•½Ý¹±½…€˜˜€¡AIY%]	1¹Ñ•ÍÐ¡µ¥µ”¤ñð%91%9}QeAL¹¡…Ì¡µ¥µ”¤¤ì(€É•Ì¹Í•Ñ!•…‘•È ½¹Ñ•¹ÐµQåÁ”œ°µ¥µ”¤ì(€É•Ì¹Í•Ñ!•…‘•È `µ½¹Ñ•¹ÐµQåÁ”µ=ÁÑ¥½¹Ìœ°€¹½Í¹¥™˜œ¤ì(€É•Ì¹Í•Ñ!•…‘•È ½¹Ñ•¹Ðµ¥ÍÁ½Í¥Ñ¥½¸œ°€‘í¥¹±¥¹”€ü€¥¹±¥¹”œ€è€…ÑÑ…¡µ•¹Ðôì™¥±•¹…µ”ôˆ‘í¹…µ•ô‰€¤ì(€É•Ì¹Í•Ñ!•…‘•È •ÁÐµI…¹•Ìœ°€‰åÑ•Ìœ¤ì(€½¹ÍÐÉ…¹”€ôÉ•Ä¹¡•…‘•ÉÌ¹É…¹”ì(€¥˜€ …É…¹”¤ì(€€€É•Ì¹Í•Ñ!•…‘•È ½¹Ñ•¹Ðµ1•¹Ñ œ°ÍÑ…Ð¹Í¥é”¤ì(€€€É•ÑÕÉ¸™Ì¹É•…Ñ•I•…‘MÑÉ•…´¡…‰Í½±ÕÑ”¤¹Á¥Á”¡É•Ì¤ì(€ô(€½¹ÍÐµ…Ñ €ô€½y‰åÑ•Ìô¡q¨¤´¡q¨¤¼¹•á•Œ¡É…¹”¤ì(€¥˜€ …µ…Ñ ¤É•ÑÕÉ¸É•Ì¹ÍÑ…ÑÕÌ ÐÄØ¤¹•¹ ¤ì(€½¹ÍÐÍÑ…ÉÐ€ôµ…Ñ¡lÅt€ü9Õµ‰•È¡µ…Ñ¡lÅt¤€è€Àì(€½¹ÍÐ•¹€ôµ…Ñ¡lÉt€ü5…Ñ ¹µ¥¸¡9Õµ‰•È¡µ…Ñ¡lÉt¤°ÍÑ…Ð¹Í¥é”€´€Ä¤€èÍÑ…Ð¹Í¥é”€´€Äì(€¥˜€¡ÍÑ…ÉÐ€ø•¹ñðÍÑ…ÉÐ€øôÍÑ…Ð¹Í¥é”¤É•ÑÕÉ¸É•Ì¹ÍÑ…ÑÕÌ ÐÄØ¤¹Í•Ð ½¹Ñ•¹ÐµI…¹”œ°‰åÑ•Ì€¨¼‘íÍÑ…Ð¹Í¥é•õ€¤¹•¹ ¤ì(€É•Ì¹ÍÑ…ÑÕÌ ÈÀØ¤ì(€É•Ì¹Í•Ñ!•…‘•È ½¹Ñ•¹ÐµI…¹”œ°‰åÑ•Ì€‘íÍÑ…ÉÑô´‘í•¹‘ô¼‘íÍÑ…Ð¹Í¥é•õ€¤ì(€É•Ì¹Í•Ñ!•…‘•È ½¹Ñ•¹Ðµ1•¹Ñ œ°•¹€´ÍÑ…ÉÐ€¬€Ä¤ì(€É•ÑÕÉ¸™Ì¹É•…Ñ•I•…‘MÑÉ•…´¡…‰Í½±ÕÑ”°ìÍÑ…ÉÐ°•¹ô¤¹Á¥Á”¡É•Ì¤ì)ô()™Õ¹Ñ¥½¸¥¹ÍÑ…±±]½É­™±½ÝXÐ¡…ÁÀ°½ÁÑ¥½¹Ì¤ì(€½¹ÍÐì…ÕÑ¡I•ÅÕ¥É•°•Ñ½¹Ñ•¹Ð°•¹ÍÕÉ•A•Éµ¥ÍÍ¥½¸°ÁÁÉÉ½È°É•ÅÕ•ÍÑ%À°…ÕÑ½AÉ½µ½Ñ•M¥µÁ±•½¹Ñ•¹Ð°¥ÍUÁ±½…‘Q…Í­=¹±ä°µ…áUÁ±½…‘5ˆô€ô½ÁÑ¥½¹Ìì(€½¹ÍÐ½¹™¥ÕÉ•‘5…áUÁ±½…‘5ˆ€ô€ ¤€ôø5…Ñ ¹µ…à ÄÀ°5…Ñ ¹µ¥¸ ÈÀÐà°9Õµ‰•È¡•ÑM•ÑÑ¥¹œ 5a}=11	}UA1=}5œ°µ…áUÁ±½…‘5ˆ¤¤ñðµ…áUÁ±½…‘5ˆ¤¤ì(€½¹ÍÐ¡Õ¹­	åÑ•Ì€ô€Ð€¨€ÄÀÈÐ€¨€ÄÀÈÐì(€™½È€¡½¹ÍÐ•áÁ¥É•½˜‘ˆ¹ÁÉ•Á…É” ‰M1P¥±Ñ•µÁ}Á…Ñ I=4¡Õ¹­}ÕÁ±½…‘}Í•ÍÍ¥½¹Ì]!IÍÑ…ÑÕÌôQ%Yœ9•áÁ¥É•Í}…Ððôüˆ¤¹…±°¡¹½Ý%Í¼ ¤¤¤ì(€€€ÑÉäì™Ì¹Õ¹±¥¹­Må¹Œ¡…‰Í½±ÕÑ•UÁ±½…¡•áÁ¥É•¹Ñ•µÁ}Á…Ñ ¤¤ìô…Ñ íô(€€€‘ˆ¹ÁÉ•Á…É” ‰UAQ¡Õ¹­}ÕÁ±½…‘}Í•ÍÍ¥½¹ÌMPÍÑ…ÑÕÌô911œ]!I¥ôüˆ¤¹ÉÕ¸¡•áÁ¥É•¹¥¤ì(€ô((€™Õ¹Ñ¥½¸¥Í½½É‘¥¹…Ñ½È¡ÕÍ•È¤ì(€€€É•ÑÕÉ¸ÕÍ•È¹É½±”€ôôô€MUAI}5%8œñðÕÍ•È¹É½±”€ôôô€==I%9Q=Hœì(€ô((€™Õ¹Ñ¥½¸µ…å¥ÍÕÍÌ¡ÕÍ•È°¥Ñ•´¤ì(€€€É•ÑÕÉ¸¥Í½½É‘¥¹…Ñ½È¡ÕÍ•È¤ñð€¡ÕÍ•È¹É½±”€ôôô€Y9=Hœ€˜˜¥Ñ•´¹Ù•¹‘½É}¥€ôôôÕÍ•È¹Ù•¹‘½É%¤ì(€ô((€™Õ¹Ñ¥½¸…ÍÍ•ÉÑ¥ÍÕÍÌ¡ÕÍ•È°¥Ñ•´¤ì(€€€¥˜€ …µ…å¥ÍÕÍÌ¡ÕÍ•È°¥Ñ•´¤¤Ñ¡É½Ü¹•ÜÁÁÉÉ½È ¥Í­ÕÍ¤¡…¹å„Õ¹ÑÕ¬-½½É‘¥¹…Ñ½È‘…¸Ù•¹‘½Èå…¹œ‘¥ÑÕ…Í­…¸¸œ°€ÐÀÌ¤ì(€ô((€™Õ¹Ñ¥½¸™¥±•I½ÝÌ¡½¹Ñ•¹Ñ%¤ì(€€€É•ÑÕÉ¸‘ˆ¹ÁÉ•Á…É”¡M1P˜¸¨±Ô¹¹…µ”LÕÁ±½…‘•‘}‰å}¹…µ”I=4½±±…‰½É…Ñ¥½¹}™¥±•Ì˜(€€€€€)=%8ÕÍ•ÉÌÔ=8Ô¹¥õ˜¹ÕÁ±½…‘•‘}‰ä]!I˜¹½¹Ñ•¹Ñ}¥ôü=IH	d˜¹É•…Ñ•‘}…ÐM€¤¹…±°¡½¹Ñ•¹Ñ%¤(€€€€€€¹µ…À¡É½Ü€ôø€¡ì€¸¸¹É½Ü°™¥±•UÉ°è€½…Á¤½½±±…‰½É…Ñ¥½¸½™¥±•Ì¼‘íÉ½Ü¹¥‘õ€°ÁÉ•Ù¥•Ý…‰±”èAIY%]	1¹Ñ•ÍÐ¡É½Ü¹µ¥µ•}ÑåÁ”¤ñð%91%9}QeAL¹¡…Ì¡É½Ü¹µ¥µ•}ÑåÁ”¤ô¤¤ì(€ô((€™Õ¹Ñ¥½¸É•Á±…•UÁ±½…‘¥±•Ì¡½¹Ñ•¹Ñ%°™¥±•%‘Ì°…Ñ½É%°Ñ¥µ•ÍÑ…µÀ€ô¹½Ý%Í¼ ¤¤ì(€€€‘ˆ¹ÁÉ•Á…É” 1QI=4½¹Ñ•¹Ñ}ÕÁ±½…‘}™¥±•Ì]!I½¹Ñ•¹Ñ}¥ôüœ¤¹ÉÕ¸¡½¹Ñ•¹Ñ%¤ì(€€€½¹ÍÐ¥¹Í•ÉÐ€ô‘ˆ¹ÁÉ•Á…É” %9MIP%9Q<½¹Ñ•¹Ñ}ÕÁ±½…‘}™¥±•Ì¡½¹Ñ•¹Ñ}¥±™¥±•}¥±Í•±•Ñ•‘}‰ä±Í•±•Ñ•‘}…Ð¤Y1UL ü°ü°ü°ü¤œ¤ì(€€€™½È€¡½¹ÍÐ™¥±•%½˜l¸¸¹¹•ÜM•Ð¡™¥±•%‘Ì¥t¤¥¹Í•ÉÐ¹ÉÕ¸¡½¹Ñ•¹Ñ%°™¥±•%°…Ñ½É%°Ñ¥µ•ÍÑ…µÀ¤ì(€ô((€™Õ¹Ñ¥½¸¥¹Ù…±¥‘…Ñ•ÁÁÉ½Ù…°¡½¹Ñ•¹Ñ%°…Ñ½É%°É•…Í½¸¤ì(€€€½¹ÍÐ…Ñ¥Ù”€ô‘ˆ¹ÁÉ•Á…É” ‰M1P¥I=4‘¥É•Ñ½É}…ÁÁÉ½Ù…±}É•ÅÕ•ÍÑÌ]!I½¹Ñ•¹Ñ}¥ôü9ÍÑ…ÑÕÌôQ%Yœˆ¤¹…±°¡½¹Ñ•¹Ñ%¤ì(€€€¥˜€¡…Ñ¥Ù”¹±•¹Ñ ¤ì(€€€€€‘ˆ¹ÁÉ•Á…É” ‰UAQ‘¥É•Ñ½É}…ÁÁÉ½Ù…±}É•ÅÕ•ÍÑÌMPÍÑ…ÑÕÌô911œ±…¹•±±•‘}…Ðôü±¹½Ñ”õ=1M¡¹½Ñ”°ü¤]!I½¹Ñ•¹Ñ}¥ôü9ÍÑ…ÑÕÌôQ%Yœˆ¤(€€€€€€€€¹ÉÕ¸¡¹½Ý%Í¼ ¤°É•…Í½¸°½¹Ñ•¹Ñ%¤ì(€€€€€‘ˆ¹ÁÉ•Á…É” ‰UAQ½¹Ñ•¹ÑÌMPÍÑ…ÑÕÌôIQ}MU	5%QQœ±±½­•‘}…Ðõ9U10±ÕÁ‘…Ñ•‘}…Ðôü]!I¥ôü9ÍÑ…ÑÕÌôAAI=Y1}A9%9œˆ¤¹ÉÕ¸¡¹½Ý%Í¼ ¤°½¹Ñ•¹Ñ%¤ì(€€€€€™½È€¡½¹ÍÐ¥Ñ•´½˜…Ñ¥Ù”¤‘ˆ¹ÁÉ•Á…É” 1QI=4…ÁÁÉ½Ù…±}…•ÍÍ}Í•ÍÍ¥½¹Ì]!IÉ•ÅÕ•ÍÑ}¥ôüœ¤¹ÉÕ¸¡¥Ñ•´¹¥¤ì(€€€€€‘ˆ¹ÁÉ•Á…É”¡%9MIP%9Q<Ý½É­™±½Ý}•Ù•¹ÑÌ¡¥±½¹Ñ•¹Ñ}¥±™É½µ}ÍÑ…ÑÕÌ±Ñ½}ÍÑ…ÑÕÌ±…Ñ¥½¸±¹½Ñ”±…Ñ½É}¥±É•…Ñ•‘}…Ð¤(€€€€€€€Y1UL ü°ü°AAI=Y1}A9%9œ°IQ}MU	5%QQœ°AAI=Y1}UQ=}90œ°ü°ü°ü¥€¤¹ÉÕ¸¡¹•Ý% •ÙÐœ¤°½¹Ñ•¹Ñ%°É•…Í½¸°…Ñ½É%°¹½Ý%Í¼ ¤¤ì(€€€€€É•½É‘Õ‘¥Ð¡ì…Ñ½É%°•¹Ñ¥ÑåQåÁ”è€%IQ=I}AAI=Y0œ°•¹Ñ¥Ñå%è½¹Ñ•¹Ñ%°…Ñ¥½¸è€UQ=}90œ°É•…Í½¸ô¤ì(€€€ô(€€€½¹ÍÐ½½É‘¥¹…Ñ½ÉÁÁÉ½Ù…±Ì€ô‘ˆ¹ÁÉ•Á…É” ‰M1P¥I=4½½É‘¥¹…Ñ½É}…ÁÁÉ½Ù…±}É•ÅÕ•ÍÑÌ]!I½¹Ñ•¹Ñ}¥ôü9ÍÑ…ÑÕÌôQ%Yœˆ¤¹…±°¡½¹Ñ•¹Ñ%¤ì(€€€¥˜€¡½½É‘¥¹…Ñ½ÉÁÁÉ½Ù…±Ì¹±•¹Ñ ¤ì(€€€€€‘ˆ¹ÁÉ•Á…É” ‰UAQ½½É‘¥¹…Ñ½É}…ÁÁÉ½Ù…±}É•ÅÕ•ÍÑÌMPÍÑ…ÑÕÌô911œ±…¹•±±•‘}…Ðôü±¹½Ñ”õ=1M¡¹½Ñ”°ü¤]!I½¹Ñ•¹Ñ}¥ôü9ÍÑ…ÑÕÌôQ%Yœˆ¤(€€€€€€€€¹ÉÕ¸¡¹½Ý%Í¼ ¤°É•…Í½¸°½¹Ñ•¹Ñ%¤ì(€€€€€™½È€¡½¹ÍÐ¥Ñ•´½˜½½É‘¥¹…Ñ½ÉÁÁÉ½Ù…±Ì¤‘ˆ¹ÁÉ•Á…É” 1QI=4½½É‘¥¹…Ñ½É}…ÁÁÉ½Ù…±}…•ÍÍ}Í•ÍÍ¥½¹Ì]!IÉ•ÅÕ•ÍÑ}¥ôüœ¤¹ÉÕ¸¡¥Ñ•´¹¥¤ì(€€€€€É•½É‘Õ‘¥Ð¡ì…Ñ½É%°•¹Ñ¥ÑåQåÁ”è€==I%9Q=I}AAI=Y0œ°•¹Ñ¥Ñå%è½¹Ñ•¹Ñ%°…Ñ¥½¸è€UQ=}90œ°É•…Í½¸ô¤ì(€€€ô(€ô((€…ÁÀ¹•Ð œ½…Á¤½½¹Ñ•¹ÑÌ¼é¥½½±±…‰½É…Ñ¥½¸œ°…ÕÑ¡I•ÅÕ¥É•°€¡É•Ä°É•Ì°¹•áÐ¤€ôøì(€€€ÑÉäì(€€€€€½¹ÍÐ¥Ñ•´€ô•Ñ½¹Ñ•¹Ð¡É•Ä¹Á…É…µÌ¹¥°É•Ä¹ÕÍ•È¤ì(€€€€€…ÍÍ•ÉÑ¥ÍÕÍÌ¡É•Ä¹ÕÍ•È°¥Ñ•´¤ì(€€€€€½¹ÍÐµ•ÍÍ…•Ì€ô‘ˆ¹ÁÉ•Á…É”¡M1P´¸¨±Ô¹¹…µ”LÍ•¹‘•É}¹…µ”±Ô¹É½±”LÍ•¹‘•É}É½±”I=4½±±…‰½É…Ñ¥½¹}µ•ÍÍ…•Ì´(€€€€€€€)=%8ÕÍ•ÉÌÔ=8Ô¹¥õ´¹Í•¹‘•É}¥]!I´¹½¹Ñ•¹Ñ}¥ôü=IH	d´¹É•…Ñ•‘}…Ñ€¤¹…±°¡¥Ñ•´¹¥¤ì(€€€€€É•Ì¹©Í½¸¡ìµ•ÍÍ…•Ì°™¥±•Ìè™¥±•I½ÝÌ¡¥Ñ•´¹¥¤ô¤ì(€€€ô…Ñ €¡•ÉÉ½È¤ì¹•áÐ¡•ÉÉ½È¤ìô(€ô¤ì((€…ÁÀ¹Á½ÍÐ œ½…Á¤½½¹Ñ•¹ÑÌ¼é¥½µ•ÍÍ…•Ìœ°…ÕÑ¡I•ÅÕ¥É•°€¡É•Ä°É•Ì°¹•áÐ¤€ôøì(€€€ÑÉäì(€€€€€½¹ÍÐ¥Ñ•´€ô•Ñ½¹Ñ•¹Ð¡É•Ä¹Á…É…µÌ¹¥°É•Ä¹ÕÍ•È¤ì(€€€€€…ÍÍ•ÉÑ¥ÍÕÍÌ¡É•Ä¹ÕÍ•È°¥Ñ•´¤ì(€€€€€½¹ÍÐÁ¡…Í”€ôMÑÉ¥¹œ¡É•Ä¹‰½‘ä¹Á¡…Í”ñð€	I%œ¤ì(€€€€€¥˜€ …A!ML¹¡…Ì¡Á¡…Í”¤¤Ñ¡É½Ü¹•ÜÁÁÉÉ½È Q…¡…À‘¥Í­ÕÍ¤Ñ¥‘…¬Ù…±¥¸œ¤ì(€€€€€½¹ÍÐµ•ÍÍ…”€ô±•…¹Q•áÐ¡É•Ä¹‰½‘ä¹µ•ÍÍ…”°€ÔÀÀÀ¤ì(€€€€€¥˜€ …µ•ÍÍ…”¤Ñ¡É½Ü¹•ÜÁÁÉÉ½È A•Í…¸‘¥Í­ÕÍ¤Ý…©¥ˆ‘¥¥Í¤¸œ¤ì(€€€€€½¹ÍÐ¥€ô¹•Ý% µÍœœ¤ì(€€€€€‘ˆ¹ÁÉ•Á…É” %9MIP%9Q<½±±…‰½É…Ñ¥½¹}µ•ÍÍ…•Ì¡¥±½¹Ñ•¹Ñ}¥±Á¡…Í”±µ•ÍÍ…”±Í•¹‘•É}¥±É•…Ñ•‘}…Ð¤Y1UL ü°ü°ü°ü°ü°ü¤œ¤(€€€€€€€€¹ÉÕ¸¡¥°¥Ñ•´¹¥°Á¡…Í”°µ•ÍÍ…”°É•Ä¹ÕÍ•È¹¥°¹½Ý%Í¼ ¤¤ì(€€€€€É•½É‘Õ‘¥Ð¡ì…Ñ½É%èÉ•Ä¹ÕÍ•È¹¥°•¹Ñ¥ÑåQåÁ”è€=11	=IQ%=8œ°•¹Ñ¥Ñå%è¥°…Ñ¥½¸è€5MMœ°…™Ñ•Èèì½¹Ñ•¹Ñ%è¥Ñ•´¹¥°Á¡…Í”ô°¥ÀèÉ•ÅÕ•ÍÑ%À¡É•Ä¤ô¤ì(€€€€€¥˜€¡É•Ä¹ÕÍ•È¹É½±”€ôôô€Y9=Hœ¤¹½Ñ¥™åUÍ•È¡¥Ñ•´¹½½É‘¥¹…Ñ½É}¥°€Y9=I}5MMœ°A•Í…¸Ù•¹‘½È€‘í¥Ñ•´¹½¹Ñ•¹Ñ}¹½õ€°µ•ÍÍ…”¹Í±¥” À°€ÄàÀ¤°€½½¹Ñ•¹ÑÌ¼‘í¥Ñ•´¹¥‘õ€¤ì(€€€€€•±Í”¥˜€¡¥Ñ•´¹Ù•¹‘½É}¥¤ì(€€€€€€€™½È€¡½¹ÍÐÕÍ•È½˜‘ˆ¹ÁÉ•Á…É” ‰M1P¥I=4ÕÍ•ÉÌ]!IÙ•¹‘½É}¥ôü9É½±”ôY9=Hœ9…Ñ¥Ù”ôÄˆ¤¹…±°¡¥Ñ•´¹Ù•¹‘½É}¥¤¤¹½Ñ¥™åUÍ•È¡ÕÍ•È¹¥°€==I%9Q=I}5MMœ°A•Í…¸­½½É‘¥¹…Ñ½È€‘í¥Ñ•´¹½¹Ñ•¹Ñ}¹½õ€°µ•ÍÍ…”¹Í±¥” À°€ÄàÀ¤°€½½¹Ñ•¹ÑÌ¼‘í¥Ñ•´¹¥‘õ€¤ì(€€€€€ô(€€€€€É•Ì¹ÍÑ…ÑÕÌ ÈÀÄ¤¹©Í½¸¡ì¥ô¤ì(€€€ô…Ñ €¡•ÉÉ½È¤ì¹•áÐ¡•ÉÉ½È¤ìô(€ô¤ì((€…ÁÀ¹Á½ÍÐ œ½…Á¤½½¹Ñ•¹ÑÌ¼é¥½ÕÁ±½…‘Ì½¥¹¥Ðœ°…ÕÑ¡I•ÅÕ¥É•°€¡É•Ä°É•Ì°¹•áÐ¤€ôøì(€€€ÑÉäì(€€€€€½¹ÍÐ¥Ñ•´€ô•Ñ½¹Ñ•¹Ð¡É•Ä¹Á…É…µÌ¹¥°É•Ä¹ÕÍ•È¤ì(€€€€€…ÍÍ•ÉÑ¥ÍÕÍÌ¡É•Ä¹ÕÍ•È°¥Ñ•´¤ì(€€€€€½¹ÍÐÁ¡…Í”€ôMÑÉ¥¹œ¡É•Ä¹‰½‘ä¹Á¡…Í”ñð€	I%œ¤ì(€€€€€¥˜€ …A!ML¹¡…Ì¡Á¡…Í”¤¤Ñ¡É½Ü¹•ÜÁÁÉÉ½È Q…¡…À‰•É­…ÌÑ¥‘…¬Ù…±¥¸œ¤ì(€€€€€¥˜€¡É•Ä¹ÕÍ•È¹É½±”€ôôô€Y9=Hœ€˜˜Á¡…Í”€ôôô€	I%œ¤ì(€€€€€€€¥˜€¡¥Ñ•´¹ÁÉ½Á½Í…±}½É¥¥¸€ôôô€Y9=Hœ¤ì(€€€€€€€€€¥˜€¡¥Ñ•´¹É•…Ñ•‘}‰ä€„ôôÉ•Ä¹ÕÍ•È¹¥ñð¥Ñ•´¹ÍÑ…ÑÕÌ€„ôô€IEUMQœñð€…lIPœ°€IY%M%=8t¹¥¹±Õ‘•Ì¡¥Ñ•´¹‰É¥•™}É•Ù¥•Ý}ÍÑ…ÑÕÌ¤¤ì(€€€€€€€€€€€Ñ¡É½Ü¹•ÜÁÁÉÉ½È 1…µÁ¥É…¸ÕÍÕ±…¸¡…¹å„‘…Á…Ð‘¥Ñ…µ‰… Í•‰•±Õ´‰É¥•˜‘¥­¥É¥´¸œ°€ÐÀä¤ì(€€€€€€€€€ô(€€€€€€€ô•±Í”ì(€€€€€€€€€¥˜€ „¡¥Ñ•´¹Ù•¹‘½É‘¥ÑA•Éµ¥ÍÍ¥½¹Ìñðmt¤¹¥¹±Õ‘•Ì …ÑÑ…¡µ•¹ÑÌœ¤¤Ñ¡É½Ü¹•ÜÁÁÉÉ½È -½½É‘¥¹…Ñ½È‰•±Õ´µ•¹¥é¥¹­…¸Y•¹‘½Èµ•µ‰…¹ÑÔµ•¹åÕÍÕ¸‰É¥•˜¸œ°€ÐÀÌ¤ì(€€€€€€€€€¥˜€ …lIEUMQœ°€	I%œ°€MM%9œ°€IY%M%=9}IEU%It¹¥¹±Õ‘•Ì¡¥Ñ•´¹ÍÑ…ÑÕÌ¤¤Ñ¡É½Ü¹•ÜÁÁÉÉ½È 1…µÁ¥É…¸	É¥•˜¡…¹å„‘…Á…Ð‘¥Ñ…µ‰… Í……Ð	É¥•˜€˜¥Í­ÕÍ¤…Ñ…ÔI•Ù¥Í¤¸œ°€ÐÀä¤ì(€€€€€€€ô(€€€€€ô(€€€€€¥˜€¡É•Ä¹ÕÍ•È¹É½±”€ôôô€Y9=Hœ€˜˜Á¡…Í”€ôôô€AI}AI=UQ%=8œ€˜˜€…lIEUMQœ°€	I%œ°€MM%9t¹¥¹±Õ‘•Ì¡¥Ñ•´¹ÍÑ…ÑÕÌ¤¤Ñ¡É½Ü¹•ÜÁÁÉÉ½È 1…µÁ¥É…¸	É¥•˜€˜¥Í­ÕÍ¤Ñ¥‘…¬‘…Á…Ð‘¥Ñ…µ‰… Á…‘„Ñ…¡…À¥¹¤¸œ°€ÐÀä¤ì(€€€€€¥˜€¡É•Ä¹ÕÍ•È¹É½±”€ôôô€Y9=Hœ€˜˜Á¡…Í”€ôôô€AI=UQ%=9}IMU1Pœ€˜˜¥Ñ•´¹ÍÑ…ÑÕÌ€„ôô€%9}AI=UQ%=8œ¤Ñ¡É½Ü¹•ÜÁÁÉÉ½È !…Í¥°ÁÉ½‘Õ­Í¤‘¥Õ¹… Í……ÐÑ…¡…ÀAÉ½‘Õ­Í¤¸œ°€ÐÀä¤ì(€€€€€½¹ÍÐÑ½Ñ…±M¥é”€ô9Õµ‰•È¡É•Ä¹‰½‘ä¹Ñ½Ñ…±M¥é”ñð€À¤ì(€€€€€½¹ÍÐ…Ñ¥Ù•5…áUÁ±½…‘5ˆ€ô½¹™¥ÕÉ•‘5…áUÁ±½…‘5ˆ ¤ì(€€€€€½¹ÍÐµ…á	åÑ•Ì€ô…Ñ¥Ù•5…áUÁ±½…‘5ˆ€¨€ÄÀÈÐ€¨€ÄÀÈÐì(€€€€€¥˜€ …9Õµ‰•È¹¥ÍM…™•%¹Ñ••È¡Ñ½Ñ…±M¥é”¤ñðÑ½Ñ…±M¥é”€ð€ÄñðÑ½Ñ…±M¥é”€øµ…á	åÑ•Ì¤Ñ¡É½Ü¹•ÜÁÁÉÉ½È¡U­ÕÉ…¸‰•É­…Ìµ…­Í¥µ…°€‘í…Ñ¥Ù•5…áUÁ±½…‘5‰ô5¹€°€ÐÄÌ¤ì(€€€€€½¹ÍÐ½É¥¥¹…±9…µ”€ôÍ…™•¥±•¹…µ”¡É•Ä¹‰½‘ä¹™¥±•¹…µ”¤ì(€€€€€½¹ÍÐµ¥µ•QåÁ”€ô³]4ÒÚ$z{-®éÜj×|| upload.created_by !== req.user.id || upload.status !== 'ACTIVE') throw new AppError('Sesi upload tidak ditemukan.', 404);
+const fs = require('node:fs');
+const path = require('node:path');
+const crypto = require('node:crypto');
+const express = require('express');
+const multer = require('multer');
+
+const { db, UPLOAD_DIR, nowIso, getSetting, recordAudit, notifyUser } = require('./db');
+const { newId, randomToken, hashToken, verifyApprovalPin, encryptSecret, decryptSecret, cleanText, safeFilename } = require('./security');
+
+const PHASES = new Set(['BRIEF', 'PRE_PRODUCTION', 'PRODUCTION_RESULT']);
+const PREVIEWABLE = /^(image|video|audio)\//;
+const INLINE_TYPES = new Set(['application/pdf']);
+const ALLOWED_UPLOAD = /^(image\/(?!svg\+xml)[a-z0-9.+-]+|video\/[a-z0-9.+-]+|audio\/[a-z0-9.+-]+|application\/(pdf|zip|x-zip-compressed|msword|vnd\.ms-excel|vnd\.ms-powerpoint|vnd\.openxmlformats-officedocument\.(wordprocessingml\.document|spreadsheetml\.sheet|presentationml\.presentation))|text\/(plain|csv))$/i;
+
+function json(value, fallback = []) {
+  try { return JSON.parse(value || ''); } catch { return fallback; }
+}
+
+function absoluteUpload(relativePath) {
+  const root = path.resolve(UPLOAD_DIR);
+  const absolute = path.resolve(root, relativePath);
+  if (!absolute.startsWith(`${root}${path.sep}`)) return null;
+  return absolute;
+}
+
+function checksumFile(filename) {
+  const hash = crypto.createHash('sha256');
+  const descriptor = fs.openSync(filename, 'r');
+  const buffer = Buffer.allocUnsafe(1024 * 1024);
+  try {
+    let bytes;
+    while ((bytes = fs.readSync(descriptor, buffer, 0, buffer.length, null)) > 0) hash.update(buffer.subarray(0, bytes));
+  } finally { fs.closeSync(descriptor); }
+  return hash.digest('hex');
+}
+
+function sendStoredFile(req, res, row, forceDownload = false) {
+  const absolute = absoluteUpload(row.file_path || row.proof_path);
+  if (!absolute || !fs.existsSync(absolute)) throw Object.assign(new Error('Berkas tidak ditemukan.'), { status: 404 });
+  const stat = fs.statSync(absolute);
+  const mime = row.mime_type || row.proof_mime || 'application/octet-stream';
+  const name = safeFilename(row.original_name || row.proof_name || 'file');
+  const inline = !forceDownload && (PREVIEWABLE.test(mime) || INLINE_TYPES.has(mime));
+  res.setHeader('Content-Type', mime);
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Content-Disposition', `${inline ? 'inline' : 'attachment'}; filename="${name}"`);
+  res.setHeader('Accept-Ranges', 'bytes');
+  const range = req.headers.range;
+  if (!range) {
+    res.setHeader('Content-Length', stat.size);
+    return fs.createReadStream(absolute).pipe(res);
+  }
+  const match = /^bytes=(\d*)-(\d*)$/.exec(range);
+  if (!match) return res.status(416).end();
+  const start = match[1] ? Number(match[1]) : 0;
+  const end = match[2] ? Math.min(Number(match[2]), stat.size - 1) : stat.size - 1;
+  if (start > end || start >= stat.size) return res.status(416).set('Content-Range', `bytes */${stat.size}`).end();
+  res.status(206);
+  res.setHeader('Content-Range', `bytes ${start}-${end}/${stat.size}`);
+  res.setHeader('Content-Length', end - start + 1);
+  return fs.createReadStream(absolute, { start, end }).pipe(res);
+}
+
+function installWorkflowV4(app, options) {
+  const { authRequired, getContent, ensurePermission, AppError, requestIp, autoPromoteSimpleContent, isUploadTaskOnly, maxUploadMb } = options;
+  const configuredMaxUploadMb = () => Math.max(10, Math.min(2048, Number(getSetting('MAX_COLLAB_UPLOAD_MB', maxUploadMb)) || maxUploadMb));
+  const chunkBytes = 4 * 1024 * 1024;
+  for (const expired of db.prepare("SELECT id,temp_path FROM chunk_upload_sessions WHERE status='ACTIVE' AND expires_at<=?").all(nowIso())) {
+    try { fs.unlinkSync(absoluteUpload(expired.temp_path)); } catch {}
+    db.prepare("UPDATE chunk_upload_sessions SET status='CANCELLED' WHERE id=?").run(expired.id);
+  }
+
+  function isCoordinator(user) {
+    return user.role === 'SUPER_ADMIN' || user.role === 'COORDINATOR';
+  }
+
+  function mayDiscuss(user, item) {
+    return isCoordinator(user) || (user.role === 'VENDOR' && item.vendor_id === user.vendorId);
+  }
+
+  function assertDiscuss(user, item) {
+    if (!mayDiscuss(user, item)) throw new AppError('Diskusi hanya untuk Koordinator dan vendor yang ditugaskan.', 403);
+  }
+
+  function fileRows(contentId) {
+    return db.prepare(`SELECT cf.*,u.name AS uploaded_by_name FROM collaboration_files cf
+      JOIN users u ON u.id=cf.uploaded_by WHERE cf.content_id=? ORDER BY cf.created_at DESC`).all(contentId)
+      .map(row => ({ ...row, fileUrl: `/api/collaboration/files/${row.id}`, previewable: PREVIEWABLE.test(row.mime_type) || INLINE_TYPES.has(row.mime_type) }));
+  }
+
+  function replaceUploadFiles(contentId, fileIds, actorId, timestamp = nowIso()) {
+    db.prepare('DELETE FROM content_upload_files WHERE content_id=?').run(contentId);
+    const insert = db.prepare('INSERT INTO content_upload_files(content_id,file_id,selected_by,selected_at) VALUES(?,?,?,?)');
+    for (const fileId of [...new Set(fileIds)]) insert.run(contentId, fileId, actorId, timestamp);
+  }
+
+  function invalidateApproval(contentId, actorId, reason) {
+    const active = db.prepare("SELECT id FROM director_approval_requests WHERE content_id=? AND status='ACTIVE'").all(contentId);
+    if (active.length) {
+      db.prepare("UPDATE director_approval_requests SET status='CANCELLED',cancelled_at=?,note=COALESCE(note,?) WHERE content_id=? AND status='ACTIVE'")
+        .run(nowIso(), reason, contentId);
+      db.prepare("UPDATE contents SET status='DRAFT_SUBMITTED',locked_at=NULL,updated_at=? WHERE id=? AND status='APPROVAL_PENDING'").run(nowIso(), contentId);
+      for (const item of active) db.prepare('DELETE FROM approval_access_sessions WHERE request_id=?').run(item.id);
+      db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+        VALUES(?,?,'APPROVAL_PENDING','DRAFT_SUBMITTED','APPROVAL_AUTO_CANCEL',?,?,?)`).run(newId('evt'), contentId, reason, actorId, nowIso());
+      recordAudit({ actorId, entityType: 'DIRECTOR_APPROVAL', entityId: contentId, action: 'AUTO_CANCEL', reason });
+    }
+    const coordinatorApprovals = db.prepare("SELECT id FROM coordinator_approval_requests WHERE content_id=? AND status='ACTIVE'").all(contentId);
+    if (coordinatorApprovals.length) {
+      db.prepare("UPDATE coordinator_approval_requests SET status='CANCELLED',cancelled_at=?,note=COALESCE(note,?) WHERE content_id=? AND status='ACTIVE'")
+        .run(nowIso(), reason, contentId);
+      for (const item of coordinatorApprovals) db.prepare('DELETE FROM coordinator_approval_access_sessions WHERE request_id=?').run(item.id);
+      recordAudit({ actorId, entityType: 'COORDINATOR_APPROVAL', entityId: contentId, action: 'AUTO_CANCEL', reason });
+    }
+  }
+
+  app.get('/api/contents/:id/collaboration', authRequired, (req, res, next) => {
+    try {
+      const item = getContent(req.params.id, req.user);
+      assertDiscuss(req.user, item);
+      const messages = db.prepare(`SELECT cm.*,u.name AS sender_name,u.role AS sender_role FROM collaboration_messages cm
+        JOIN users u ON u.id=cm.sender_id WHERE cm.content_id=? ORDER BY cm.created_at`).all(item.id);
+      res.json({ messages, files: fileRows(item.id) });
+    } catch (error) { next(error); }
+  });
+
+  app.post('/api/contents/:id/messages', authRequired, (req, res, next) => {
+    try {
+      const item = getContent(req.params.id, req.user);
+      assertDiscuss(req.user, item);
+      const phase = String(req.body.phase || 'BRIEF');
+      if (!PHASES.has(phase)) throw new AppError('Tahap diskusi tidak valid.');
+      const message = cleanText(req.body.message, 5000);
+      if (!message) throw new AppError('Pesan diskusi wajib diisi.');
+      const id = newId('msg');
+      db.prepare('INSERT INTO collaboration_messages(id,content_id,phase,message,sender_id,created_at) VALUES(?,?,?,?,?,?)')
+        .run(id, item.id, phase, message, req.user.id, nowIso());
+      recordAudit({ actorId: req.user.id, entityType: 'COLLABORATION', entityId: id, action: 'MESSAGE', after: { contentId: item.id, phase }, ip: requestIp(req) });
+      if (req.user.role === 'VENDOR') notifyUser(item.coordinator_id, 'VENDOR_MESSAGE', `Pesan vendor ${item.content_no}`, message.slice(0, 180), `/contents/${item.id}`);
+      else if (item.vendor_id) {
+        for (const user of db.prepare("SELECT id FROM users WHERE vendor_id=? AND role='VENDOR' AND active=1").all(item.vendor_id)) notifyUser(user.id, 'COORDINATOR_MESSAGE', `Pesan koordinator ${item.content_no}`, message.slice(0, 180), `/contents/${item.id}`);
+      }
+      res.status(201).json({ id });
+    } catch (error) { next(error); }
+  });
+
+  app.post('/api/contents/:id/uploads/init', authRequired, (req, res, next) => {
+    try {
+      const item = getContent(req.params.id, req.user);
+      assertDiscuss(req.user, item);
+      const phase = String(req.body.phase || 'BRIEF');
+      if (!PHASES.has(phase)) throw new AppError('Tahap berkas tidak valid.');
+      if (req.user.role === 'VENDOR' && phase === 'BRIEF') {
+        if (item.proposal_origin === 'VENDOR') {
+          if (item.created_by !== req.user.id || item.status !== 'REQUESTED' || !['DRAFT', 'REVISION'].includes(item.brief_review_status)) {
+            throw new AppError('Lampiran usulan hanya dapat ditambah sebelum brief dikirim.', 409);
+          }
+        } else {
+          if (!(item.vendorEditPermissions || []).includes('attachments')) throw new AppError('Koordinator belum mengizinkan Vendor membantu menyusun brief.', 403);
+          if (!['REQUESTED', 'BRIEFED', 'ASSIGNED', 'REVISION_REQUIRED'].includes(item.status)) throw new AppError('Lampiran Brief hanya dapat ditambah saat Brief & Diskusi atau Revisi.', 409);
+        }
+      }
+      if (req.user.role === 'VENDOR' && phase === 'PRE_PRODUCTION' && !['REQUESTED', 'BRIEFED', 'ASSIGNED'].includes(item.status)) throw new AppError('Lampiran Brief & Diskusi tidak dapat ditambah pada tahap ini.', 409);
+      if (req.user.role === 'VENDOR' && phase === 'PRODUCTION_RESULT' && item.status !== 'IN_PRODUCTION') throw new AppError('Hasil produksi diunggah saat tahap Produksi.', 409);
+      const totalSize = Number(req.body.totalSize || 0);
+      const activeMaxUploadMb = configuredMaxUploadMb();
+      const maxBytes = activeMaxUploadMb * 1024 * 1024;
+      if (!Number.isSafeInteger(totalSize) || totalSize < 1 || totalSize > maxBytes) throw new AppError(`Ukuran berkas maksimal ${activeMaxUploadMb} MB.`, 413);
+      const originalName = safeFilename(req.body.filename);
+      const mimeType = cleanText(req.body.mimeType || 'application/octet-stream', 200);
+      if (!ALLOWED_UPLOAD.test(mimeType)) throw new AppError('Jenis berkas tidak didukung. Gunakan gambar, video, audio, PDF, Office, ZIP, atau teks.');
+      const id = newId('upl');
+      const tempPath = path.join('chunks', `${id}.part`);
+      fs.writeFileSync(absoluteUpload(tempPath), Buffer.alloc(0), { flag: 'wx' });
+      const timestamp = nowIso();
+      db.prepare(`INSERT INTO chunk_upload_sessions(id,content_id,phase,original_name,mime_type,total_size,chunk_size,temp_path,message,created_by,expires_at,created_at)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`).run(id, item.id, phase, originalName, mimeType, totalSize, chunkBytes, tempPath,
+        cleanText(req.body.message, 2000), req.user.id, new Date(Date.now() + 24 * 3600000).toISOString(), timestamp);
+      res.status(201).json({ id, chunkSize: chunkBytes, nextChunk: 0, receivedSize: 0 });
+    } catch (error) { next(error); }
+  });
+
+  app.get('/api/uploads/:id', authRequired, (req, res, next) => {
+    try {
+      const upload = db.prepare('SELECT * FROM chunk_upload_sessions WHERE id=?').get(req.params.id);
+      if (!upload || upload.created_by !== req.user.id || upload.status !== 'ACTIVE') throw new AppError('Sesi upload tidak ditemukan.', 404);
+      res.json({ id: upload.id, chunkSize: upload.chunk_size, nextChunk: upload.next_chunk, receivedSize: upload.received_size, totalSize: upload.total_size });
+    } catch (error) { next(error); }
+  });
+
+  app.put('/api/uploads/:id/chunks/:index', authRequired, express.raw({ type: 'application/octet-stream', limit: '5mb' }), (req, res, next) => {
+    try {
+      const upload = db.prepare('SELECT * FROM chunk_upload_sessions WHERE id=?').get(req.params.id);
+      if (!upload || upload.created_by !== req.user.id || upload.status !== 'ACTIVE') throw new AppError('Sesi upload tidak ditemukan.', 404);
+      if (upload.expires_at <= nowIso()) throw new AppError('Sesi upload sudah kedaluwarsa.', 410);
+      const index = Number(req.params.index);
+      if (index !== upload.next_chunk) throw new AppError(`Lanjutkan dari potongan ${upload.next_chunk}.`, 409);
+      if (!Buffer.isBuffer(req.body) || !req.body.length || req.body.length > upload.chunk_size) throw new AppError('Potongan berkas tidak valid.');
+      if (upload.received_size + req.body.length > upload.total_size) throw new AppError('Ukuran upload melebihi deklarasi.', 409);
+      fs.appendFileSync(absoluteUpload(upload.temp_path), req.body);
+      db.prepare('UPDATE chunk_upload_sessions SET received_size=received_size+?,next_chunk=next_chunk+1 WHERE id=?').run(req.body.length, upload.id);
+      res.json({ nextChunk: index + 1, receivedSize: upload.received_size + req.body.length });
+    } catch (error) { next(error); }
+  });
+
+  app.post('/api/uploads/:id/complete', authRequired, (req, res, next) => {
+    try {
+      const upload = db.prepare('SELECT * FROM chunk_upload_sessions WHERE id=?').get(req.params.id);
+      if (!upload || upload.created_by !== req.user.id || upload.status !== 'ACTIVE') throw new AppError('Sesi upload tidak ditemukan.', 404);
       const item = getContent(upload.content_id, req.user);
       if (item.proposal_origin === 'VENDOR' && upload.phase === 'BRIEF' && req.user.role === 'VENDOR' &&
         (item.created_by !== req.user.id || item.status !== 'REQUESTED' || !['DRAFT', 'REVISION'].includes(item.brief_review_status))) {
@@ -146,4 +354,526 @@ YªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éíóM4N‹Z–‹­¦ëeŠw¬Õ½¹ÍÐ™Ì€ôÉ•ÅÕ¥É” ¹½‘”é™Ìœ¤ì)½¹
       const ids = json(row.attachment_ids_json);
       const files = ids.length ? db.prepare(`SELECT id,original_name,mime_type,file_size,phase FROM collaboration_files WHERE content_id=? AND id IN (${ids.map(() => '?').join(',')})`).all(row.content_id, ...ids) : [];
       db.prepare('UPDATE material_share_links SET view_count=view_count+1,last_viewed_at=? WHERE id=?').run(nowIso(), row.id);
-      res.set('Cache-Control', 'no-
+      res.set('Cache-Control', 'no-store').set('X-Robots-Tag', 'noindex, nofollow');
+      res.json({ snapshot: json(row.snapshot_json, {}), expiresAt: row.expires_at, files: files.map(file => ({ ...file, fileUrl: `/api/public/shares/${req.params.token}/files/${file.id}` })) });
+    } catch (error) { next(error); }
+  });
+
+  app.get('/api/public/shares/:token/files/:fileId', (req, res, next) => {
+    try {
+      const share = publicShare(req.params.token);
+      if (!share || share.revoked_at || share.expires_at <= nowIso()) throw new AppError('Link ringkasan tidak berlaku.', 410);
+      if (!json(share.attachment_ids_json).includes(req.params.fileId)) throw new AppError('Berkas tidak dibagikan.', 404);
+      const file = db.prepare('SELECT * FROM collaboration_files WHERE id=? AND content_id=?').get(req.params.fileId, share.content_id);
+      if (!file) throw new AppError('Berkas tidak ditemukan.', 404);
+      res.set('Cache-Control', 'no-store').set('X-Robots-Tag', 'noindex, nofollow');
+      return sendStoredFile(req, res, file, req.query.download === '1');
+    } catch (error) { next(error); }
+  });
+
+  app.get('/api/contents/:id/director-approvals', authRequired, (req, res, next) => {
+    try {
+      const item = getContent(req.params.id, req.user);
+      if (!isCoordinator(req.user)) throw new AppError('Hanya Koordinator yang dapat melihat approval.', 403);
+      const rows = db.prepare(`SELECT dar.id,dar.status,dar.note,dar.attempt_count,dar.locked_at,dar.link_token_ciphertext,dar.opened_at,dar.decided_at,dar.cancelled_at,dar.created_at,u.name AS director_name
+        FROM director_approval_requests dar JOIN users u ON u.id=dar.director_id WHERE dar.content_id=? ORDER BY dar.created_at DESC`).all(item.id)
+        .map(row => {
+          const token = row.status === 'ACTIVE' ? decryptSecret('DIRECTOR_LINK_TOKEN', row.link_token_ciphertext) : null;
+          const { link_token_ciphertext, ...safe } = row;
+          return { ...safe, url: token ? `/approval.html?token=${token}` : null };
+        });
+      res.json({ items: rows });
+    } catch (error) { next(error); }
+  });
+
+  app.post('/api/contents/:id/director-approvals', authRequired, (req, res, next) => {
+    try {
+      const item = getContent(req.params.id, req.user);
+      ensurePermission(req.user, 'content.request_director_approval');
+      if (item.workflow_type === 'INSTANT') throw new AppError('Konten sederhana diteruskan ke Direksi melalui link review Koordinator.', 409);
+      if (!['DRAFT_SUBMITTED', 'IN_REVIEW'].includes(item.status)) throw new AppError('Konten harus berada di Review Koordinator.', 409);
+      if (db.prepare("SELECT id FROM vendor_content_edits WHERE content_id=? AND status='PENDING' LIMIT 1").get(item.id)) throw new AppError('Masih ada usulan edit vendor yang belum diterima atau ditolak.', 409);
+      const director = db.prepare("SELECT id,name,approval_pin_hash,approval_pin_salt FROM users WHERE id=? AND role='MANAGEMENT' AND active=1").get(String(req.body.directorId || ''));
+      if (!director) throw new AppError('Pilih satu Direksi aktif.');
+      if (!director.approval_pin_hash || !director.approval_pin_salt) throw new AppError(`${director.name} belum membuat PIN approval pribadi. Minta Direksi mengaturnya melalui menu Profil.`, 409);
+      const requested = Array.isArray(req.body.fileIds) ? req.body.fileIds.map(String) : [];
+      const available = new Set(db.prepare("SELECT id FROM collaboration_files WHERE content_id=? AND phase='PRODUCTION_RESULT'").all(item.id).map(row => row.id));
+      const fileIds = requested.filter(id => available.has(id));
+      if (!fileIds.length) throw new AppError('Pilih minimal satu hasil final untuk approval.');
+      const token = randomToken(32);
+      const id = newId('aprq');
+      const timestamp = nowIso();
+      db.transaction(() => {
+        invalidateApproval(item.id, req.user.id, 'Diganti dengan permintaan approval baru.');
+        db.prepare(`INSERT INTO director_approval_requests(id,content_id,director_id,token_hash,pin_hash,link_token_ciphertext,attachment_ids_json,created_by,created_at)
+          VALUES(?,?,?,?,?,?,?,?,?)`).run(id, item.id, director.id, hashToken('DIRECTOR_LINK', token), 'DIRECTOR_OWNED', encryptSecret('DIRECTOR_LINK_TOKEN', token), JSON.stringify(fileIds), req.user.id, timestamp);
+        db.prepare("UPDATE contents SET status='APPROVAL_PENDING',approver_id=?,updated_at=? WHERE id=?").run(director.id, timestamp, item.id);
+        db.prepare("INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at) VALUES(?,?,?,'APPROVAL_PENDING','REQUEST_DIRECTOR_APPROVAL',?,?,?)")
+          .run(newId('evt'), item.id, item.status, `Direksi: ${director.name}`, req.user.id, timestamp);
+        recordAudit({ actorId: req.user.id, entityType: 'DIRECTOR_APPROVAL', entityId: id, action: 'CREATE', after: { contentId: item.id, directorId: director.id, fileIds }, ip: requestIp(req) });
+      })();
+      notifyUser(director.id, 'DIRECTOR_APPROVAL', `Approval ${item.content_no}`, item.title, `/contents/${item.id}`);
+      res.status(201).json({ id, url: `/approval.html?token=${token}`, director: director.name });
+    } catch (error) { next(error); }
+  });
+
+  app.post('/api/contents/:id/director-approvals/:approvalId/cancel', authRequired, (req, res, next) => {
+    try {
+      const item = getContent(req.params.id, req.user);
+      if (!isCoordinator(req.user)) throw new AppError('Hanya Koordinator yang dapat membatalkan approval.', 403);
+      const approval = db.prepare("SELECT id FROM director_approval_requests WHERE id=? AND content_id=? AND status='ACTIVE'").get(req.params.approvalId, item.id);
+      if (!approval) throw new AppError('Approval aktif tidak ditemukan.', 404);
+      const timestamp = nowIso();
+      db.transaction(() => {
+        db.prepare("UPDATE director_approval_requests SET status='CANCELLED',cancelled_at=?,note=? WHERE id=?").run(timestamp, cleanText(req.body.note, 1000), approval.id);
+        db.prepare('DELETE FROM approval_access_sessions WHERE request_id=?').run(approval.id);
+        if (item.status === 'APPROVAL_PENDING') db.prepare("UPDATE contents SET status='DRAFT_SUBMITTED',updated_at=? WHERE id=?").run(timestamp, item.id);
+        db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+          VALUES(?,?,'APPROVAL_PENDING','DRAFT_SUBMITTED','CANCEL_DIRECTOR_APPROVAL',?,?,?)`).run(newId('evt'), item.id, cleanText(req.body.note, 1000), req.user.id, timestamp);
+        recordAudit({ actorId: req.user.id, entityType: 'DIRECTOR_APPROVAL', entityId: approval.id, action: 'CANCEL', reason: cleanText(req.body.note, 1000), ip: requestIp(req) });
+      })();
+      res.json({ ok: true });
+    } catch (error) { next(error); }
+  });
+
+  function mayManageCoordinatorApproval(user, item) {
+    return user.role === 'SUPER_ADMIN' || user.id === item.coordinator_id || user.id === item.created_by;
+  }
+
+  function invalidateCoordinatorApproval(contentId, reason) {
+    const active = db.prepare("SELECT id FROM coordinator_approval_requests WHERE content_id=? AND status='ACTIVE'").all(contentId);
+    const timestamp = nowIso();
+    for (const request of active) db.prepare('DELETE FROM coordinator_approval_access_sessions WHERE request_id=?').run(request.id);
+    db.prepare("UPDATE coordinator_approval_requests SET status='CANCELLED',cancelled_at=?,note=COALESCE(note,?) WHERE content_id=? AND status='ACTIVE'")
+      .run(timestamp, reason, contentId);
+  }
+
+  function createCoordinatorApproval(item, actorId) {
+    const coordinator = db.prepare("SELECT id,name,approval_pin_hash,approval_pin_salt FROM users WHERE id=? AND role='COORDINATOR' AND active=1").get(item.coordinator_id);
+    if (!coordinator) throw new AppError('Koordinator approval tidak aktif.', 409);
+    if (!coordinator.approval_pin_hash || !coordinator.approval_pin_salt) throw new AppError(`${coordinator.name} belum membuat PIN approval melalui menu Profil.`, 409);
+    const file = db.prepare("SELECT id FROM collaboration_files WHERE content_id=? AND phase='PRODUCTION_RESULT' ORDER BY is_final DESC,version_number DESC,created_at DESC LIMIT 1").get(item.id);
+    if (!file) throw new AppError('File final belum tersedia.', 409);
+    const token = randomToken(32);
+    const id = newId('capr');
+    const timestamp = nowIso();
+    db.transaction(() => {
+      invalidateCoordinatorApproval(item.id, 'Diganti dengan link approval baru.');
+      db.prepare(`INSERT INTO coordinator_approval_requests(id,content_id,coordinator_id,token_hash,link_token_ciphertext,attachment_ids_json,created_by,created_at)
+        VALUES(?,?,?,?,?,?,?,?)`).run(id, item.id, coordinator.id, hashToken('COORDINATOR_LINK', token), encryptSecret('COORDINATOR_LINK_TOKEN', token), JSON.stringify([file.id]), actorId, timestamp);
+      recordAudit({ actorId, entityType: 'COORDINATOR_APPROVAL', entityId: id, action: 'CREATE', after: { contentId: item.id, coordinatorId: coordinator.id, fileIds: [file.id] } });
+    })();
+    notifyUser(coordinator.id, 'SIMPLE_CONTENT_APPROVAL', `Review ${item.content_no}`, item.title, `/contents/${item.id}`);
+    return { id, url: `/approval.html?kind=coordinator&token=${token}`, coordinator: coordinator.name };
+  }
+
+  app.post('/api/contents/:id/coordinator-approvals', authRequired, (req, res, next) => {
+    try {
+      const item = getContent(req.params.id, req.user);
+      if (item.workflow_type !== 'INSTANT') throw new AppError('Link Koordinator hanya tersedia untuk alur konten sederhana.', 409);
+      if (!mayManageCoordinatorApproval(req.user, item)) throw new AppError('Anda tidak dapat membuat ulang link approval ini.', 403);
+      if (item.status !== 'DRAFT_SUBMITTED') throw new AppError('Link baru hanya dapat dibuat saat menunggu approval Koordinator.', 409);
+      res.status(201).json(createCoordinatorApproval(item, req.user.id));
+    } catch (error) { next(error); }
+  });
+
+  app.post('/api/contents/:id/coordinator-approvals/:approvalId/cancel', authRequired, (req, res, next) => {
+    try {
+      const item = getContent(req.params.id, req.user);
+      if (!mayManageCoordinatorApproval(req.user, item)) throw new AppError('Anda tidak dapat membatalkan link approval ini.', 403);
+      const approval = db.prepare("SELECT id FROM coordinator_approval_requests WHERE id=? AND content_id=? AND status='ACTIVE'").get(req.params.approvalId, item.id);
+      if (!approval) throw new AppError('Link approval aktif tidak ditemukan.', 404);
+      const timestamp = nowIso();
+      db.transaction(() => {
+        db.prepare("UPDATE coordinator_approval_requests SET status='CANCELLED',cancelled_at=?,note=? WHERE id=?")
+          .run(timestamp, cleanText(req.body.note, 1000), approval.id);
+        db.prepare('DELETE FROM coordinator_approval_access_sessions WHERE request_id=?').run(approval.id);
+        recordAudit({ actorId: req.user.id, entityType: 'COORDINATOR_APPROVAL', entityId: approval.id, action: 'CANCEL', reason: cleanText(req.body.note, 1000), ip: requestIp(req) });
+      })();
+      res.json({ ok: true });
+    } catch (error) { next(error); }
+  });
+
+  function coordinatorApprovalByToken(token) {
+    return db.prepare(`SELECT car.*,c.content_no,c.title,c.description,c.objective,c.audience,c.brief,c.caption,c.hashtags,c.call_to_action,c.review_note,c.status AS content_status,
+      c.coordinator_id,c.vendor_id,c.publish_at,c.category,c.content_type,c.production_mode,c.created_at AS content_created_at,b.name AS brand_name,
+      u.name AS coordinator_name,u.active AS coordinator_active,creator.name AS submitted_by_name,
+      u.approval_pin_hash AS coordinator_pin_hash,u.approval_pin_salt AS coordinator_pin_salt
+      FROM coordinator_approval_requests car JOIN contents c ON c.id=car.content_id JOIN brands b ON b.id=c.brand_id
+      JOIN users u ON u.id=car.coordinator_id JOIN users creator ON creator.id=car.created_by
+      WHERE car.token_hash=? AND c.deleted_at IS NULL`).get(hashToken('COORDINATOR_LINK', token));
+  }
+
+  app.get('/api/public/coordinator-approvals/:token', (req, res, next) => {
+    try {
+      const approval = coordinatorApprovalByToken(req.params.token);
+      if (!approval) throw new AppError('Link approval tidak ditemukan.', 404);
+      if (approval.status !== 'ACTIVE' || !approval.coordinator_active || approval.content_status !== 'DRAFT_SUBMITTED') throw new AppError('Link approval sudah tidak aktif.', 410);
+      const ids = json(approval.attachment_ids_json);
+      const files = ids.length ? db.prepare(`SELECT id,original_name,mime_type,file_size,phase,version_number,file_role FROM collaboration_files WHERE content_id=? AND id IN (${ids.map(() => '?').join(',')})`).all(approval.content_id, ...ids) : [];
+      const channels = db.prepare(`SELECT ch.name FROM content_channels cc JOIN channels ch ON ch.id=cc.channel_id
+        WHERE cc.content_id=? ORDER BY ch.name`).all(approval.content_id).map(row => row.name);
+      const directors = db.prepare("SELECT id,name FROM users WHERE role='MANAGEMENT' AND active=1 AND approval_pin_hash IS NOT NULL AND approval_pin_salt IS NOT NULL ORDER BY name").all();
+      res.set('Cache-Control', 'no-store').set('X-Robots-Tag', 'noindex, nofollow');
+      res.json({ kind: 'COORDINATOR', locked: Boolean(approval.locked_at), content: {
+        id: approval.id, content_no: approval.content_no, title: approval.title, description: approval.description,
+        objective: approval.objective, audience: approval.audience, brief: approval.brief, caption: approval.caption,
+        hashtags: approval.hashtags, call_to_action: approval.call_to_action, review_note: approval.review_note, brand_name: approval.brand_name,
+        coordinator_name: approval.coordinator_name, submitted_by_name: approval.submitted_by_name,
+        publish_at: approval.publish_at, category: approval.category, content_type: approval.content_type,
+        production_mode: approval.production_mode, created_at: approval.content_created_at, channels
+      }, directors, files: files.map(file => ({ ...file, fileUrl: `/api/public/coordinator-approvals/${req.params.token}/files/${file.id}` })) });
+    } catch (error) { next(error); }
+  });
+
+  app.get('/api/public/coordinator-approvals/:token/files/:fileId', (req, res, next) => {
+    try {
+      const approval = coordinatorApprovalByToken(req.params.token);
+      if (!approval || approval.status !== 'ACTIVE' || !approval.coordinator_active || approval.content_status !== 'DRAFT_SUBMITTED') throw new AppError('Akses approval tidak berlaku.', 401);
+      if (!json(approval.attachment_ids_json).includes(req.params.fileId)) throw new AppError('Berkas tidak termasuk approval.', 404);
+      const file = db.prepare('SELECT * FROM collaboration_files WHERE id=? AND content_id=?').get(req.params.fileId, approval.content_id);
+      if (!file) throw new AppError('Berkas tidak ditemukan.', 404);
+      res.set('Cache-Control', 'no-store').set('X-Robots-Tag', 'noindex, nofollow');
+      return sendStoredFile(req, res, file, req.query.download === '1');
+    } catch (error) { next(error); }
+  });
+
+  app.post('/api/public/coordinator-approvals/:token/decision', (req, res, next) => {
+    try {
+      const approval = coordinatorApprovalByToken(req.params.token);
+      if (!approval || approval.status !== 'ACTIVE' || !approval.coordinator_active || approval.content_status !== 'DRAFT_SUBMITTED') throw new AppError('Akses approval tidak berlaku.', 401);
+      if (!approval.coordinator_pin_hash || !approval.coordinator_pin_salt) throw new AppError('Koordinator belum membuat PIN approval.', 409);
+      if (approval.locked_at || approval.attempt_count >= 5) throw new AppError('PIN terkunci. Koordinator dapat mengatur ulang PIN melalui menu Profil.', 423);
+      if (!verifyApprovalPin(String(req.body.pin || ''), approval.coordinator_pin_salt, approval.coordinator_pin_hash)) {
+        const attempts = approval.attempt_count + 1;
+        db.prepare('UPDATE coordinator_approval_requests SET attempt_count=?,locked_at=? WHERE id=?').run(attempts, attempts >= 5 ? nowIso() : null, approval.id);
+        recordAudit({ actorId: approval.coordinator_id, entityType: 'COORDINATOR_APPROVAL', entityId: approval.id, action: 'PIN_FAILED', after: { attempts }, ip: requestIp(req) });
+        throw new AppError(attempts >= 5 ? 'PIN terkunci. Atur ulang PIN melalui menu Profil.' : `PIN salah. Sisa percobaan ${5 - attempts}.`, attempts >= 5 ? 423 : 401);
+      }
+      const decision = String(req.body.decision || '');
+      if (!['APPROVED', 'REVISION', 'DIRECTOR'].includes(decision)) throw new AppError('Keputusan tidak valid.');
+      const note = cleanText(req.body.note, 2000);
+      if (decision === 'REVISION' && !note) throw new AppError('Catatan revisi wajib diisi.');
+      let director = null;
+      if (decision === 'DIRECTOR') {
+        director = db.prepare("SELECT id,name,approval_pin_hash,approval_pin_salt FROM users WHERE id=? AND role='MANAGEMENT' AND active=1").get(String(req.body.directorId || ''));
+        if (!director) throw new AppError('Pilih Direksi aktif.');
+        if (!director.approval_pin_hash || !director.approval_pin_salt) throw new AppError(`${director.name} belum membuat PIN approval.`, 409);
+      }
+      const timestamp = nowIso();
+      const version = db.prepare('SELECT id FROM content_versions WHERE content_id=? ORDER BY version_number DESC LIMIT 1').get(approval.content_id);
+      let directorUrl = null;
+      db.transaction(() => {
+        const requestStatus = decision;
+        db.prepare('UPDATE coordinator_approval_requests SET status=?,note=?,opened_at=COALESCE(opened_at,?),decided_at=? WHERE id=?').run(requestStatus, note, timestamp, timestamp, approval.id);
+        db.prepare('DELETE FROM coordinator_approval_access_sessions WHERE request_id=?').run(approval.id);
+        replaceUploadFiles(approval.content_id, decision === 'REVISION' ? [] : json(approval.attachment_ids_json), approval.coordinator_id, timestamp);
+        if (decision === 'DIRECTOR') {
+          const directorToken = randomToken(32);
+          const directorRequestId = newId('aprq');
+          invalidateApproval(approval.content_id, approval.coordinator_id, 'Diganti dengan permintaan approval Direksi dari review Koordinator.');
+          db.prepare(`INSERT INTO director_approval_requests(id,content_id,director_id,token_hash,pin_hash,link_token_ciphertext,attachment_ids_json,created_by,created_at)
+            VALUES(?,?,?,?,?,?,?,?,?)`).run(directorRequestId, approval.content_id, director.id, hashToken('DIRECTOR_LINK', directorToken), 'DIRECTOR_OWNED', encryptSecret('DIRECTOR_LINK_TOKEN', directorToken), approval.attachment_ids_json, approval.coordinator_id, timestamp);
+          db.prepare("UPDATE contents SET status='APPROVAL_PENDING',approver_id=?,updated_at=? WHERE id=?").run(director.id, timestamp, approval.content_id);
+          db.prepare("INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at) VALUES(?,?,'DRAFT_SUBMITTED','APPROVAL_PENDING','COORDINATOR_LINK_TO_DIRECTOR',?,?,?)")
+            .run(newId('evt'), approval.content_id, note || `Direksi: ${director.name}`, approval.coordinator_id, timestamp);
+          directorUrl = `/approval.html?token=${directorToken}`;
+          recordAudit({ actorId: approval.coordinator_id, entityType: 'DIRECTOR_APPROVAL', entityId: directorRequestId, action: 'CREATE_FROM_INSTANT', after: { directorId: director.id }, ip: requestIp(req) });
+        } else {
+          const status = decision === 'APPROVED' ? 'APPROVED' : 'REVISION_REQUIRED';
+          db.prepare('UPDATE contents SET status=?,locked_at=?,updated_at=? WHERE id=?').run(status, decision === 'APPROVED' ? timestamp : null, timestamp, approval.content_id);
+          db.prepare('INSERT INTO approvals(id,content_id,version_id,decision,note,approver_id,created_at) VALUES(?,?,?,?,?,?,?)')
+            .run(newId('apr'), approval.content_id, version?.id || null, decision === 'APPROVED' ? 'APPROVED' : 'REVISION', note, approval.coordinator_id, timestamp);
+          if (decision === 'APPROVED' && version) db.prepare('UPDATE content_versions SET is_approved=1 WHERE id=?').run(version.id);
+          if (decision === 'APPROVED') autoPromoteSimpleContent(approval.content_id, approval.coordinator_id);
+          db.prepare('INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at) VALUES(?,?,?,?,?,?,?,?)')
+            .run(newId('evt'), approval.content_id, 'DRAFT_SUBMITTED', status, 'COORDINATOR_LINK_DECISION', note, approval.coordinator_id, timestamp);
+        }
+        recordAudit({ actorId: approval.coordinator_id, entityType: 'COORDINATOR_APPROVAL', entityId: approval.id, action: decision, reason: note, ip: requestIp(req) });
+      })();
+      if (decision === 'DIRECTOR') notifyUser(director.id, 'DIRECTOR_APPROVAL', `Approval ${approval.content_no}`, approval.title, `/contents/${approval.content_id}`);
+      notifyUser(approval.created_by, `COORDINATOR_${decision}`, `${approval.content_no} Â· keputusan Koordinator`, note || (decision === 'DIRECTOR' ? `Diteruskan kepada ${director.name}` : approval.title), `/contents/${approval.content_id}`);
+      if (decision === 'REVISION' && approval.vendor_id) {
+        for (const vendorUser of db.prepare("SELECT id FROM users WHERE vendor_id=? AND role='VENDOR' AND active=1").all(approval.vendor_id)) {
+          if (vendorUser.id !== approval.created_by) notifyUser(vendorUser.id, 'COORDINATOR_REVISION', `${approval.content_no} Â· revisi diperlukan`, note, `/contents/${approval.content_id}`);
+        }
+      }
+      res.json({ ok: true, status: decision === 'REVISION' ? 'REVISION_REQUIRED' : decision === 'DIRECTOR' ? 'APPROVAL_PENDING' : 'APPROVED', directorApprovalUrl: directorUrl, directorName: director?.name || null });
+    } catch (error) { next(error); }
+  });
+
+  function approvalByToken(token) {
+    return db.prepare(`SELECT dar.*,c.content_no,c.title,c.description,c.objective,c.audience,c.brief,c.caption,c.hashtags,c.call_to_action,c.review_note,c.status AS content_status,
+      c.coordinator_id,c.vendor_id,b.name AS brand_name,u.name AS director_name,u.active AS director_active,
+      u.approval_pin_hash AS director_pin_hash,u.approval_pin_salt AS director_pin_salt FROM director_approval_requests dar
+      JOIN contents c ON c.id=dar.content_id JOIN brands b ON b.id=c.brand_id JOIN users u ON u.id=dar.director_id
+      WHERE dar.token_hash=? AND c.deleted_at IS NULL`).get(hashToken('DIRECTOR_LINK', token));
+  }
+
+  function approvalSession(req, approval) {
+    const raw = req.cookies?.mh_approval;
+    if (!raw) return false;
+    return Boolean(db.prepare('SELECT id FROM approval_access_sessions WHERE request_id=? AND token_hash=? AND expires_at>?').get(approval.id, hashToken('APPROVAL_SESSION', raw), nowIso()));
+  }
+
+  app.get('/api/public/approvals/:token', (req, res, next) => {
+    try {
+      const approval = approvalByToken(req.params.token);
+      if (!approval) throw new AppError('Link approval tidak ditemukan.', 404);
+      if (approval.status !== 'ACTIVE' || !approval.director_active) throw new AppError('Link approval sudah tidak aktif.', 410);
+      if (!approvalSession(req, approval)) return res.status(401).json({ requiresPin: true, locked: Boolean(approval.locked_at), director: approval.director_name });
+      const ids = json(approval.attachment_ids_json);
+      const files = ids.length ? db.prepare(`SELECT id,original_name,mime_type,file_size,phase,version_number,file_role FROM collaboration_files WHERE content_id=? AND id IN (${ids.map(() => '?').join(',')})`).all(approval.content_id, ...ids) : [];
+      res.set('Cache-Control', 'no-store').set('X-Robots-Tag', 'noindex, nofollow');
+      res.json({ content: {
+        id: approval.id, content_no: approval.content_no, title: approval.title, description: approval.description,
+        objective: approval.objective, audience: approval.audience, brief: approval.brief, caption: approval.caption,
+        hashtags: approval.hashtags, call_to_action: approval.call_to_action, review_note: approval.review_note, brand_name: approval.brand_name,
+        director_name: approval.director_name
+      }, files: files.map(file => ({ ...file, fileUrl: `/api/public/approvals/${req.params.token}/files/${file.id}` })) });
+    } catch (error) { next(error); }
+  });
+
+  app.post('/api/public/approvals/:token/unlock', (req, res, next) => {
+    try {
+      const approval = approvalByToken(req.params.token);
+      if (!approval || approval.status !== 'ACTIVE' || !approval.director_active) throw new AppError('Link approval sudah tidak aktif.', 410);
+      if (!approval.director_pin_hash || !approval.director_pin_salt) throw new AppError('Direksi belum membuat PIN approval pribadi.', 409);
+      if (approval.locked_at || approval.attempt_count >= 5) throw new AppError('PIN terkunci. Direksi dapat mengatur ulang PIN melalui menu Profil.', 423);
+      if (!verifyApprovalPin(String(req.body.pin || ''), approval.director_pin_salt, approval.director_pin_hash)) {
+        const attempts = approval.attempt_count + 1;
+        db.prepare('UPDATE director_approval_requests SET attempt_count=?,locked_at=? WHERE id=?').run(attempts, attempts >= 5 ? nowIso() : null, approval.id);
+        recordAudit({ actorId: approval.director_id, entityType: 'DIRECTOR_APPROVAL', entityId: approval.id, action: 'PIN_FAILED', after: { attempts }, ip: requestIp(req) });
+        throw new AppError(attempts >= 5 ? 'PIN terkunci. Direksi dapat mengatur ulang PIN melalui menu Profil.' : `PIN salah. Sisa percobaan ${5 - attempts}.`, attempts >= 5 ? 423 : 401);
+      }
+      const session = randomToken(32);
+      const timestamp = nowIso();
+      db.prepare('INSERT INTO approval_access_sessions(id,request_id,token_hash,expires_at,created_at) VALUES(?,?,?,?,?)')
+        .run(newId('aps'), approval.id, hashToken('APPROVAL_SESSION', session), new Date(Date.now() + 2 * 3600000).toISOString(), timestamp);
+      db.prepare('UPDATE director_approval_requests SET opened_at=COALESCE(opened_at,?) WHERE id=?').run(timestamp, approval.id);
+      recordAudit({ actorId: approval.director_id, entityType: 'DIRECTOR_APPROVAL', entityId: approval.id, action: 'OPEN', ip: requestIp(req) });
+      res.cookie('mh_approval', session, { httpOnly: true, secure: options.cookieSecure, sameSite: 'strict', maxAge: 2 * 3600000, path: '/api/public/approvals' });
+      res.json({ ok: true });
+    } catch (error) { next(error); }
+  });
+
+  app.get('/api/public/approvals/:token/files/:fileId', (req, res, next) => {
+    try {
+      const approval = approvalByToken(req.params.token);
+      if (!approval || approval.status !== 'ACTIVE' || !approvalSession(req, approval)) throw new AppError('Akses approval tidak berlaku.', 401);
+      if (!json(approval.attachment_ids_json).includes(req.params.fileId)) throw new AppError('Berkas tidak termasuk approval.', 404);
+      const file = db.prepare('SELECT * FROM collaboration_files WHERE id=? AND content_id=?').get(req.params.fileId, approval.content_id);
+      if (!file) throw new AppError('Berkas tidak ditemukan.', 404);
+      res.set('Cache-Control', 'no-store').set('X-Robots-Tag', 'noindex, nofollow');
+      return sendStoredFile(req, res, file, req.query.download === '1');
+    } catch (error) { next(error); }
+  });
+
+  app.post('/api/public/approvals/:token/decision', (req, res, next) => {
+    try {
+      const approval = approvalByToken(req.params.token);
+      if (!approval || approval.status !== 'ACTIVE' || !approvalSession(req, approval)) throw new AppError('Akses approval tidak berlaku.', 401);
+      const decision = String(req.body.decision || '');
+      if (!['APPROVED', 'REVISION'].includes(decision)) throw new AppError('Keputusan tidak valid.');
+      const note = cleanText(req.body.note, 2000);
+      if (decision === 'REVISION' && !note) throw new AppError('Catatan revisi wajib diisi.');
+      const timestamp = nowIso();
+      const status = decision === 'APPROVED' ? 'APPROVED' : 'REVISION_REQUIRED';
+      const version = db.prepare('SELECT id FROM content_versions WHERE content_id=? ORDER BY version_number DESC LIMIT 1').get(approval.content_id);
+      db.transaction(() => {
+        replaceUploadFiles(approval.content_id, decision === 'APPROVED' ? json(approval.attachment_ids_json) : [], approval.director_id, timestamp);
+        db.prepare('UPDATE director_approval_requests SET status=?,note=?,decided_at=? WHERE id=?').run(decision, note, timestamp, approval.id);
+        db.prepare('DELETE FROM approval_access_sessions WHERE request_id=?').run(approval.id);
+        db.prepare('UPDATE contents SET status=?,locked_at=?,updated_at=? WHERE id=?').run(status, decision === 'APPROVED' ? timestamp : null, timestamp, approval.content_id);
+        db.prepare('INSERT INTO approvals(id,content_id,version_id,decision,note,approver_id,created_at) VALUES(?,?,?,?,?,?,?)')
+          .run(newId('apr'), approval.content_id, version?.id || null, decision, note, approval.director_id, timestamp);
+        if (decision === 'APPROVED' && version) db.prepare('UPDATE content_versions SET is_approved=1 WHERE id=?').run(version.id);
+        if (decision === 'APPROVED') autoPromoteSimpleContent(approval.content_id, approval.director_id);
+        db.prepare('INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at) VALUES(?,?,?,?,?,?,?,?)')
+          .run(newId('evt'), approval.content_id, 'APPROVAL_PENDING', status, 'DIRECTOR_DECISION', note, approval.director_id, timestamp);
+        recordAudit({ actorId: approval.director_id, entityType: 'DIRECTOR_APPROVAL', entityId: approval.id, action: decision, reason: note, ip: requestIp(req) });
+      })();
+      notifyUser(approval.created_by, decision === 'APPROVED' ? 'DIRECTOR_APPROVED' : 'DIRECTOR_REVISION', `${approval.content_no} ${decision === 'APPROVED' ? 'disetujui Direksi' : 'diminta revisi'}`, note || approval.title, `/contents/${approval.content_id}`);
+      if (approval.coordinator_id !== approval.created_by) notifyUser(approval.coordinator_id, decision === 'APPROVED' ? 'DIRECTOR_APPROVED' : 'DIRECTOR_REVISION', `${approval.content_no} ${decision === 'APPROVED' ? 'disetujui Direksi' : 'diminta revisi'}`, note || approval.title, `/contents/${approval.content_id}`);
+      if (decision === 'REVISION' && approval.vendor_id) {
+        for (const user of db.prepare("SELECT id FROM users WHERE vendor_id=? AND role='VENDOR' AND active=1").all(approval.vendor_id)) {
+          notifyUser(user.id, 'DIRECTOR_REVISION', `Revisi Direksi ${approval.content_no}`, note, `/contents/${approval.content_id}`);
+        }
+      }
+      res.json({ ok: true, status });
+    } catch (error) { next(error); }
+  });
+
+  const proofStorage = multer.diskStorage({
+    destination: (_req, _file, cb) => cb(null, path.join(UPLOAD_DIR, 'proofs')),
+    filename: (_req, file, cb) => cb(null, `${crypto.randomUUID()}${path.extname(file.originalname).replace(/[^.a-z0-9]/gi, '').slice(0, 12)}`)
+  });
+  const proofUpload = multer({
+    storage: proofStorage,
+    limits: { fileSize: Math.min(maxUploadMb * 1024 * 1024, 100 * 1024 * 1024), files: 1 },
+    fileFilter: (_req, file, callback) => callback(['application/pdf'].includes(file.mimetype) || (file.mimetype.startsWith('image/') && file.mimetype !== 'image/svg+xml') ? null : new AppError('Bukti tayang harus berupa gambar atau PDF.'), ['application/pdf'].includes(file.mimetype) || (file.mimetype.startsWith('image/') && file.mimetype !== 'image/svg+xml'))
+  });
+
+  app.post('/api/contents/:id/schedules', authRequired, (req, res, next) => {
+    try {
+      const item = getContent(req.params.id, req.user);
+      ensurePermission(req.user, 'content.schedule');
+      if (!['APPROVED', 'SCHEDULED'].includes(item.status)) throw new AppError('Channel hanya dapat dijadwalkan setelah konten disetujui dan sebelum seluruhnya tayang.', 409);
+      const plans = Array.isArray(req.body.plans) ? req.body.plans : [];
+      if (!plans.length) throw new AppError('Minimal satu jadwal platform wajib dibuat.');
+      const timestamp = nowIso();
+      const prepared = [];
+      const requestedChannels = new Set();
+      for (const plan of plans) {
+        const channel = db.prepare('SELECT id,name FROM channels WHERE id=? AND active=1').get(String(plan.channelId || ''));
+        const uploader = db.prepare("SELECT id,name FROM users WHERE id=? AND role IN ('UPLOADER','ASSISTANT_COORDINATOR') AND active=1").get(String(plan.uploaderId || ''));
+        const scheduledAt = cleanText(plan.scheduledAt, 40);
+        if (!channel || !uploader || !scheduledAt) throw new AppError('Platform, waktu, dan petugas upload wajib valid.');
+        if (requestedChannels.has(channel.id)) throw new AppError(`Platform ${channel.name} dipilih lebih dari satu kali.`, 409);
+        const duplicate = db.prepare("SELECT id FROM publication_schedules WHERE content_id=? AND channel_id=? AND status!='CANCELLED'")
+          .get(item.id, channel.id);
+        if (duplicate) throw new AppError(`Jadwal untuk ${channel.name} sudah tersedia. Gunakan Edit Jadwal untuk mengubahnya.`, 409);
+        requestedChannels.add(channel.id);
+        prepared.push({ channel, uploader, scheduledAt });
+      }
+      db.transaction(() => {
+        for (const plan of prepared) {
+          db.prepare(`INSERT INTO publication_schedules(id,content_id,channel_id,scheduled_at,uploader_id,created_by,created_at,updated_at)
+            VALUES(?,?,?,?,?,?,?,?)`).run(newId('sch'), item.id, plan.channel.id, plan.scheduledAt, plan.uploader.id, req.user.id, timestamp, timestamp);
+          db.prepare('INSERT OR IGNORE INTO content_channels(content_id,channel_id) VALUES(?,?)').run(item.id, plan.channel.id);
+          notifyUser(plan.uploader.id, 'UPLOAD_ASSIGNED', `Jadwal ${item.content_no}`, `${plan.channel.name} Â· ${plan.scheduledAt}`, `/contents/${item.id}`);
+        }
+        const firstPlan = db.prepare(`SELECT scheduled_at,uploader_id FROM publication_schedules
+          WHERE content_id=? AND status='SCHEDULED' ORDER BY scheduled_at,id LIMIT 1`).get(item.id);
+        db.prepare("UPDATE contents SET status='SCHEDULED',publish_at=?,uploader_id=?,updated_at=? WHERE id=?")
+          .run(firstPlan.scheduled_at, firstPlan.uploader_id, timestamp, item.id);
+        const action = item.status === 'APPROVED' ? 'CREATE_SCHEDULES' : 'ADD_SCHEDULES';
+        db.prepare("INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at) VALUES(?,?,?,'SCHEDULED',?,?,?,?)")
+          .run(newId('evt'), item.id, item.status, action, `${prepared.length} platform`, req.user.id, timestamp);
+        recordAudit({ actorId: req.user.id, entityType: 'PUBLICATION_SCHEDULE', entityId: item.id,
+          action: item.status === 'APPROVED' ? 'CREATE' : 'ADD', after: { plans: prepared.map(plan => ({ channelId: plan.channel.id, scheduledAt: plan.scheduledAt, uploaderId: plan.uploader.id })) }, ip: requestIp(req) });
+      })();
+      res.status(201).json({ ok: true });
+    } catch (error) { next(error); }
+  });
+
+  app.get('/api/contents/:id/schedules', authRequired, (req, res, next) => {
+    try {
+      const item = getContent(req.params.id, req.user);
+      const rows = db.prepare(`SELECT ps.*,ch.name AS channel_name,u.name AS uploader_name FROM publication_schedules ps
+        JOIN channels ch ON ch.id=ps.channel_id JOIN users u ON u.id=ps.uploader_id WHERE ps.content_id=? ORDER BY ps.scheduled_at`).all(item.id);
+      res.json({ items: rows.map(row => ({ ...row, proofUrl: row.proof_path ? `/api/schedules/${row.id}/proof` : '' })) });
+    } catch (error) { next(error); }
+  });
+
+  app.patch('/api/schedules/:id', authRequired, (req, res, next) => {
+    try {
+      ensurePermission(req.user, 'content.schedule');
+      const schedule = db.prepare(`SELECT ps.*,ch.name AS channel_name,u.name AS uploader_name
+        FROM publication_schedules ps JOIN channels ch ON ch.id=ps.channel_id
+        JOIN users u ON u.id=ps.uploader_id WHERE ps.id=?`).get(req.params.id);
+      if (!schedule) throw new AppError('Jadwal tidak ditemukan.', 404);
+      const item = getContent(schedule.content_id, req.user);
+      if (schedule.status !== 'SCHEDULED') throw new AppError('Jadwal yang sudah tayang tidak dapat diedit.', 409);
+      const channel = db.prepare('SELECT id,name FROM channels WHERE id=? AND active=1').get(String(req.body.channelId || ''));
+      const scheduledAt = cleanText(req.body.scheduledAt, 40);
+      const uploader = db.prepare("SELECT id,name FROM users WHERE id=? AND role IN ('UPLOADER','ASSISTANT_COORDINATOR') AND active=1")
+        .get(String(req.body.uploaderId || ''));
+      if (!channel || !scheduledAt || !uploader) throw new AppError('Platform, waktu, dan petugas upload wajib valid.');
+      const duplicate = db.prepare("SELECT id FROM publication_schedules WHERE content_id=? AND channel_id=? AND id!=? AND status!='CANCELLED'")
+        .get(item.id, channel.id, schedule.id);
+      if (duplicate) throw new AppError(`Jadwal untuk ${channel.name} sudah tersedia.`, 409);
+      const timestamp = nowIso();
+      const before = {
+        channelId: schedule.channel_id,
+        channelName: schedule.channel_name,
+        scheduledAt: schedule.scheduled_at,
+        uploaderId: schedule.uploader_id,
+        uploaderName: schedule.uploader_name
+      };
+      const after = { channelId: channel.id, channelName: channel.name, scheduledAt, uploaderId: uploader.id, uploaderName: uploader.name };
+      db.transaction(() => {
+        db.prepare('UPDATE publication_schedules SET channel_id=?,scheduled_at=?,uploader_id=?,updated_at=? WHERE id=?')
+          .run(channel.id, scheduledAt, uploader.id, timestamp, schedule.id);
+        db.prepare('INSERT OR IGNORE INTO content_channels(content_id,channel_id) VALUES(?,?)').run(item.id, channel.id);
+        if (channel.id !== schedule.channel_id) {
+          const oldChannelUsed = db.prepare("SELECT id FROM publication_schedules WHERE content_id=? AND channel_id=? AND status!='CANCELLED' LIMIT 1")
+            .get(item.id, schedule.channel_id);
+          const oldChannelPublished = db.prepare('SELECT id FROM publication_proofs WHERE content_id=? AND channel_id=? LIMIT 1')
+            .get(item.id, schedule.channel_id);
+          if (!oldChannelUsed && !oldChannelPublished) {
+            db.prepare('DELETE FROM content_channels WHERE content_id=? AND channel_id=?').run(item.id, schedule.channel_id);
+          }
+        }
+        const nextSchedule = db.prepare(`SELECT scheduled_at,uploader_id FROM publication_schedules
+          WHERE content_id=? AND status='SCHEDULED' ORDER BY scheduled_at,id LIMIT 1`).get(item.id);
+        if (nextSchedule) {
+          db.prepare('UPDATE contents SET publish_at=?,uploader_id=?,updated_at=? WHERE id=?')
+            .run(nextSchedule.scheduled_at, nextSchedule.uploader_id, timestamp, item.id);
+        }
+        db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+          VALUES(?,?,?,?,?,?,?,?)`).run(newId('evt'), item.id, item.status, item.status, 'UPDATE_SCHEDULE',
+          `${channel.name}: ${scheduledAt} Â· ${uploader.name}`, req.user.id, timestamp);
+        recordAudit({ actorId: req.user.id, entityType: 'PUBLICATION_SCHEDULE', entityId: schedule.id,
+          action: 'UPDATE', before, after, ip: requestIp(req) });
+      })();
+      const link = `/contents/${item.id}`;
+      if (schedule.uploader_id !== uploader.id) {
+        notifyUser(schedule.uploader_id, 'UPLOAD_REASSIGNED', `Tugas ${item.content_no} dialihkan`,
+          `${schedule.channel_name} dialihkan kepada ${uploader.name}.`, link);
+        notifyUser(uploader.id, 'UPLOAD_ASSIGNED', `Jadwal ${item.content_no} diperbarui`,
+          `${channel.name} Â· ${scheduledAt}`, link);
+      } else if (schedule.scheduled_at !== scheduledAt || schedule.channel_id !== channel.id) {
+        notifyUser(uploader.id, 'UPLOAD_RESCHEDULED', `Jadwal ${item.content_no} berubah`,
+          `${channel.name} Â· ${scheduledAt}`, link);
+      }
+      res.json({ item: { ...schedule, channel_id: channel.id, channel_name: channel.name,
+        scheduled_at: scheduledAt, uploader_id: uploader.id, uploader_name: uploader.name, updated_at: timestamp } });
+    } catch (error) { next(error); }
+  });
+
+  app.post('/api/schedules/:id/publish', authRequired, proofUpload.single('file'), (req, res, next) => {
+    try {
+      const schedule = db.prepare('SELECT * FROM publication_schedules WHERE id=?').get(req.params.id);
+      if (!schedule) throw new AppError('Jadwal tidak ditemukan.', 404);
+      const item = getContent(schedule.content_id, req.user);
+      if (req.user.role !== 'SUPER_ADMIN' && (!['UPLOADER', 'ASSISTANT_COORDINATOR'].includes(req.user.role) || schedule.uploader_id !== req.user.id)) throw new AppError('Jadwal ini bukan tugas Anda.', 403);
+      if (schedule.status !== 'SCHEDULED') throw new AppError('Jadwal sudah diproses.', 409);
+      const platformUrl = cleanText(req.body.platformUrl, 1000);
+      if (!platformUrl && !req.file) throw new AppError('URL atau bukti tayang wajib diisi.');
+      const timestamp = nowIso();
+      const proofPath = req.file ? path.join('proofs', req.file.filename) : null;
+      const metrics = { reach: Number(req.body.reach || 0), impressions: Number(req.body.impressions || 0), engagement: Number(req.body.engagement || 0), leads: Number(req.body.leads || 0), notes: cleanText(req.body.metricsNotes, 1000) };
+      db.transaction(() => {
+        db.prepare(`UPDATE publication_schedules SET status='PUBLISHED',platform_url=?,published_at=?,proof_path=?,proof_name=?,proof_mime=?,metrics_json=?,updated_at=? WHERE id=?`)
+          .run(platformUrl || null, cleanText(req.body.publishedAt, 40) || timestamp, proofPath, req.file ? safeFilename(req.file.originalname) : null, req.file?.mimetype || null, JSON.stringify(metrics), timestamp, schedule.id);
+        db.prepare(`INSERT INTO publication_proofs(id,content_id,channel_id,platform_url,published_at,file_path,original_name,mime_type,metrics_json,uploader_id,created_at)
+          VALUES(?,?,?,?,?,?,?,?,?,?,?)`).run(newId('prf'), item.id, schedule.channel_id, platformUrl || null, cleanText(req.body.publishedAt, 40) || timestamp, proofPath,
+          req.file ? safeFilename(req.file.originalname) : null, req.file?.mimetype || null, JSON.stringify(metrics), req.user.id, timestamp);
+        const remaining = Number(db.prepare("SELECT COUNT(*) AS n FROM publication_schedules WHERE content_id=? AND status='SCHEDULED'").get(item.id).n);
+        if (!remaining) {
+          db.prepare("UPDATE contents SET status='PUBLISHED',locked_at=?,updated_at=? WHERE id=?").run(timestamp, timestamp, item.id);
+          db.prepare("INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at) VALUES(?,?,'SCHEDULED','PUBLISHED','ALL_PLATFORMS_PUBLISHED',?,?,?)")
+            .run(newId('evt'), item.id, 'Semua platform selesai', req.user.id, timestamp);
+        }
+        recordAudit({ actorId: req.user.id, entityType: 'PUBLICATION_SCHEDULE', entityId: schedule.id, action: 'PUBLISH', after: { platformUrl }, ip: requestIp(req) });
+      })();
+      notifyUser(item.coordinator_id, 'PLATFORM_PUBLISHED', `${item.content_no} tayang`, platformUrl || item.title, `/contents/${item.id}`);
+      res.json({ ok: true });
+    } catch (error) {
+      if (req.file?.path) try { fs.unlinkSync(req.file.path); } catch {}
+      next(error);
+    }
+  });
+
+  app.get('/api/schedules/:id/proof', authRequired, (req, res, next) => {
+    try {
+      const row = db.prepare('SELECT * FROM publication_schedules WHERE id=?').get(req.params.id);
+      if (!row || !row.proof_path) throw new AppError('Bukti tidak ditemukan.', 404);
+      getContent(row.content_id, req.user);
+      return sendStoredFile(req, res, row, req.query.download === '1');
+    } catch (error) { next(error); }
+  });
+}
+
+module.exports = { installWorkflowV4 };

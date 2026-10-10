@@ -1,4 +1,308 @@
-YªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éíóM4N‹Z–‹­¦ëeŠw¬Õ½¹ÍĞ™Ì€ôÉ•ÅÕ¥É” ¹½‘”é™Ìœ¤ì)½¹ÍĞÁ…Ñ €ôÉ•ÅÕ¥É” ¹½‘”éÁ…Ñ œ¤ì)½¹ÍĞÉåÁÑ¼€ôÉ•ÅÕ¥É” ¹½‘”éÉåÁÑ¼œ¤ì)½¹ÍĞ•áÁÉ•ÍÌ€ôÉ•ÅÕ¥É” •áÁÉ•ÍÌœ¤ì)½¹ÍĞ¡•±µ•Ğ€ôÉ•ÅÕ¥É” ¡•±µ•Ğœ¤ì)½¹ÍĞ½½­¥•A…ÉÍ•È€ôÉ•ÅÕ¥É” ½½­¥”µÁ…ÉÍ•Èœ¤ì)½¹ÍĞµÕ±Ñ•È€ôÉ•ÅÕ¥É” µÕ±Ñ•Èœ¤ì)½¹ÍĞìÉ…Ñ•1¥µ¥Ğô€ôÉ•ÅÕ¥É” •áÁÉ•ÍÌµÉ…Ñ”µ±¥µ¥Ğœ¤ì)½¹ÍĞ½¥‘Œ€ôÉ•ÅÕ¥É” ½Á•¹¥µ±¥•¹Ğœ¤ì()½¹ÍĞì(€‘ˆ°UA1=}%H°	-UA}%H°¹½İ%Í¼°•ÑM•ÑÑ¥¹œ°Í•ÑM•ÑÑ¥¹œ°¹•áÑ½¹Ñ•¹Ñ9Õµ‰•È°(€ÁÕ‰±¥UÍ•È°É•½É‘Õ‘¥Ğ°¹½Ñ¥™åUÍ•È°¹½Ñ¥™åI½±”°±•…¹ÕÁáÁ¥É•‘M•ÍÍ¥½¹Ì°(€É•…Ñ•…Ñ…‰…Í•	…­ÕÀ°±¥ÍÑ…Ñ…‰…Í•	…­ÕÁÌ)ô€ôÉ•ÅÕ¥É” œ¸½‘ˆœ¤ì)½¹ÍĞì(€¹•İ%°É…¹‘½µQ½­•¸°¡…Í¡Q½­•¸°¡…Í¡A…ÍÍİ½É°Ù•É¥™åA…ÍÍİ½É°…ÍÍ•ÉÑA…ÍÍİ½É°(€…ÍÍ•ÉÑÁÁÉ½Ù…±A¥¸°¡…Í¡ÁÁÉ½Ù…±A¥¸°Ù•É¥™åÁÁÉ½Ù…±A¥¸°•¹ÉåÁÑM•É•Ğ°‘•ÉåÁÑM•É•Ğ°(€±•…¹Q•áĞ°±•…¹UÍ•É¹…µ”°Í…™•¥±•¹…µ”°¡•­ÍÕ´)ô€ôÉ•ÅÕ¥É” œ¸½Í•ÕÉ¥Ñäœ¤ì)½¹ÍĞìI=1}1	1L°Á•Éµ¥ÍÍ¥½¹Í½ÉI½±”°¡…ÍA•Éµ¥ÍÍ¥½¸ô€ôÉ•ÅÕ¥É” œ¸½Á•Éµ¥ÍÍ¥½¹Ìœ¤ì)½¹ÍĞìMQQUM}1	1L°QI9M%Q%=9L°QI9M%Q%=9}AI5%MM%=8°…ÍÍ•ÉÑQÉ…¹Í¥Ñ¥½¸ô€ôÉ•ÅÕ¥É” œ¸½İ½É­™±½Üœ¤ì)½¹ÍĞì(€½¥‘M•ÑÑ¥¹Ì°É½ÕÁÍÉ½µ±…¥µÌ°É½±•½ÉÉ½ÕÁÌ°¥‘•¹Ñ¥ÑåÉ½µ±…¥µÌ°(€•µ…¥±±±½İ•°Í…™•I•ÑÕÉ¹Q¼)ô€ôÉ•ÅÕ¥É” œ¸½½¥‘Œœ¤ì)½¹ÍĞì¥¹ÍÑ…±±]½É­™±½İXĞô€ôÉ•ÅÕ¥É” œ¸½İ½É­™±½ÜµØĞœ¤ì()½¹ÍĞAA}YIM%=8€ô€œÀ¸ÄÔ¸Àœì)½¹ÍĞA=IP€ô9Õµ‰•È¡ÁÉ½•ÍÌ¹•¹Ø¹A=IPñğ€àÀäĞ¤ì)½¹ÍĞ==-%}95€ô€µ¡}Í•ÍÍ¥½¸œì)½¹ÍĞ=%}MQQ}==-%€ô€µ¡}½¥‘}ÍÑ…Ñ”œì)½¹ÍĞ1=1}AIM=91}I=1L€ô¹•ÜM•Ğ¡lMUAI}5%8œ°€Y9=Ht¤ì)½¹ÍĞA=AUA}!991}AQQI8€ô€½ym„µéµhÀ´å|µuìÈÀ°ÄØÁô¼ì)½¹ÍĞMM}A=IQ1}UI0€ô¹½Éµ…±¥é•‘•ÍÍA½ÉÑ…±UÉ°¡ÁÉ½•ÍÌ¹•¹Ø¹MM}A=IQ1}UI0¤ì)½¹ÍĞMM}A=IQ1}%9QI91}UI0€ô¹½Éµ…±¥é•‘%¹Ñ•É¹…±•ÍÍUÉ°¡ÁÉ½•ÍÌ¹•¹Ø¹MM}A=IQ1}%9QI91}UI0ñğMM}A=IQ1}UI0¤ì)½¹ÍĞMMM%=9}!=UIL€ô5…Ñ ¹µ…à Ä°5…Ñ ¹µ¥¸ ÄØà°9Õµ‰•È¡ÁÉ½•ÍÌ¹•¹Ø¹MMM%=9}!=UILñğ€ÄÈ¤ñğ€ÄÈ¤¤ì)½¹ÍĞ5a}UA1=}5€ô5…Ñ ¹µ…à Ä°5…Ñ ¹µ¥¸ ÈÔÀ°9Õµ‰•È¡ÁÉ½•ÍÌ¹•¹Ø¹5a}UA1=}5ñğ€ÔÀ¤ñğ€ÔÀ¤¤ì)½¹ÍĞ5a}=11	}UA1=}5€ô5…Ñ ¹µ…à ÄÀ°5…Ñ ¹µ¥¸ ÈÀĞà°9Õµ‰•È¡ÁÉ½•ÍÌ¹•¹Ø¹5a}=11	}UA1=}5ñğ€ÔÀÀ¤ñğ€ÔÀÀ¤¤ì)½¹ÍĞ==-%}MUI€ôMÑÉ¥¹œ¡ÁÉ½•ÍÌ¹•¹Ø¹==-%}MUIñğ€œœ¤¹Ñ½1½İ•É…Í” ¤€ôôô€ÑÉÕ”œì)½¹ÍĞY9=I}%Q}%1L€ô=‰©•Ğ¹™É••é”¡ì(€‰É¥•˜èì½±Õµ¸è€‰É¥•˜œ°±…‰•°è€	É¥•˜AÉ½‘Õ­Í¤œ°µ…àè€ÔÀÀÀô°(€‘•ÍÉ¥ÁÑ¥½¸èì½±Õµ¸è€‘•ÍÉ¥ÁÑ¥½¸œ°±…‰•°è€•Í­É¥ÁÍ¤œ°µ…àè€ÈÀÀÀô°(€…ÁÑ¥½¸èì½±Õµ¸è€…ÁÑ¥½¸œ°±…‰•°è€É…™Ğ…ÁÑ¥½¸œ°µ…àè€ÔÀÀÀô°(€¡…Í¡Ñ…Ìèì½±Õµ¸è€¡…Í¡Ñ…Ìœ°±…‰•°è€!…Í¡Ñ…œœ°µ…àè€ÄÀÀÀô°(€…±±}Ñ½}…Ñ¥½¸èì½±Õµ¸è€…±±}Ñ½}…Ñ¥½¸œ°±…‰•°è€…±°Ñ¼Ñ¥½¸œ°µ…àè€ÄÀÀÀô)ô¤ì)½¹ÍĞY9=I}%Q}AI5%MM%=9L€ô¹•ÜM•Ğ¡l¸¸¹=‰©•Ğ¹­•åÌ¡Y9=I}%Q}%1L¤°€…ÑÑ…¡µ•¹ÑÌt¤ì)½¹ÍĞMM%MQ9Q}1Q%=9}AI5%MM%=9L€ô¹•ÜM•Ğ¡lIQ}IEUMPœ°€IY%]}Y9=Ht¤ì)½¹ÍĞ=%€ô½¥‘M•ÑÑ¥¹Ì ¤ì)±•Ğ½¥‘½¹™¥ÕÉ…Ñ¥½¹AÉ½µ¥Í”€ô¹Õ±°ì()±…ÍÌÁÁÉÉ½È•áÑ•¹‘ÌÉÉ½Èì(€½¹ÍÑÉÕÑ½È¡µ•ÍÍ…”°ÍÑ…ÑÕÌ€ô€ĞÀÀ¤ì(€€€ÍÕÁ•È¡µ•ÍÍ…”¤ì(€€€Ñ¡¥Ì¹ÍÑ…ÑÕÌ€ôÍÑ…ÑÕÌì(€ô)ô()™Õ¹Ñ¥½¸¹½Éµ…±¥é•‘•ÍÍA½ÉÑ…±UÉ°¡Ù…±Õ”¤ì(€ÑÉäì(€€€½¹ÍĞÕÉ°€ô¹•ÜUI0¡MÑÉ¥¹œ¡Ù…±Õ”ñğ€¡ÑÑÁÌè¼½…­Í•Ì¹…á¥¹‘¼¹µä¹¥œ¤¹ÑÉ¥´ ¤¤ì(€€€¥˜€¡ÕÉ°¹ÁÉ½Ñ½½°€„ôô€¡ÑÑÁÌèœ€˜˜ÕÉ°¹¡½ÍÑ¹…µ”€„ôô€±½…±¡½ÍĞœ€˜˜ÕÉ°¹¡½ÍÑ¹…µ”€„ôô€œÄÈÜ¸À¸À¸Äœ¤Ñ¡É½Ü¹•ÜÉÉ½È ¤ì(€€€ÕÉ°¹Á…Ñ¡¹…µ”€ôÕÉ°¹Á…Ñ¡¹…µ”¹É•Á±…” ½p¼¼°€œœ¤ì(€€€ÕÉ°¹Í•…É €ô€œœì(€€€ÕÉ°¹¡…Í €ô€œœì(€€€É•ÑÕÉ¸ÕÉ°¹¡É•˜¹É•Á±…” ½p¼¼°€œœ¤ì(€ô…Ñ ì(€€€É•ÑÕÉ¸€¡ÑÑÁÌè¼½…­Í•Ì¹…á¥¹‘¼¹µä¹¥œì(€ô)ô()™Õ¹Ñ¥½¸¹½Éµ…±¥é•‘%¹Ñ•É¹…±•ÍÍUÉ°¡Ù…±Õ”¤ì(€ÑÉäì(€€€½¹ÍĞÕÉ°€ô¹•ÜUI0¡MÑÉ¥¹œ¡Ù…±Õ”ñğ€œœ¤¹ÑÉ¥´ ¤¤ì(€€€¥˜€ …l¡ÑÑÀèœ°€¡ÑÑÁÌèt¹¥¹±Õ‘•Ì¡ÕÉ°¹ÁÉ½Ñ½½°¤ñğÕÉ°¹ÕÍ•É¹…µ”ñğÕÉ°¹Á…ÍÍİ½É¤Ñ¡É½Ü¹•ÜÉÉ½È ¤ì(€€€ÕÉ°¹Á…Ñ¡¹…µ”€ôÕÉ°¹Á…Ñ¡¹…µ”¹É•Á±…” ½p¼¼°€œœ¤ì(€€€ÕÉ°¹Í•…É €ô€œœì(€€€ÕÉ°¹¡…Í €ô€œœì(€€€É•ÑÕÉ¸ÕÉ°¹¡É•˜¹É•Á±…” ½p¼¼°€œœ¤ì(€ô…Ñ ì(€€€É•ÑÕÉ¸MM}A=IQ1}UI0ì(€ô)ô()™Õ¹Ñ¥½¸Á½ÁÕÁ½µÁ±•Ñ¥½¹Q…É•Ğ¡ÍÑ…ÑÕÌ°¡…¹¹•°°µ•ÍÍ…”€ô€œœ¤ì(€½¹ÍĞÅÕ•Éä€ô¹•ÜUI1M•…É¡A…É…µÌ¡ìÍÑ…ÑÕÌ°¡…¹¹•°ô¤ì(€¥˜€¡µ•ÍÍ…”¤ÅÕ•Éä¹Í•Ğ µ•ÍÍ…”œ°µ•ÍÍ…”¤ì(€É•ÑÕÉ¸€½Á½ÁÕÀµ½µÁ±•Ñ”¹¡Ñµ°ü‘íÅÕ•Éåõ€ì)ô()™Õ¹Ñ¥½¸…Íå¹I½ÕÑ”¡¡…¹‘±•È¤ì(€É•ÑÕÉ¸€¡É•Ä°É•Ì°¹•áĞ¤€ôøAÉ½µ¥Í”¹É•Í½±Ù”¡¡…¹‘±•È¡É•Ä°É•Ì°¹•áĞ¤¤¹…Ñ ¡¹•áĞ¤ì)ô()™Õ¹Ñ¥½¸Ñ½	½½±•…¸¡Ù…±Õ”¤ì(€É•ÑÕÉ¸Ù…±Õ”€ôôôÑÉÕ”ñğlœÄœ°€ÑÉÕ”œ°€å•Ìœ°€½¸t¹¥¹±Õ‘•Ì¡MÑÉ¥¹œ¡Ù…±Õ”ñğ€œœ¤¹Ñ½1½İ•É…Í” ¤¤ì)ô()™Õ¹Ñ¥½¸Ñ½%¹Ñ••È¡Ù…±Õ”°™…±±‰…¬€ô€À¤ì(€½¹ÍĞÉ•ÍÕ±Ğ€ô9Õµ‰•È¹Á…ÉÍ•%¹Ğ¡MÑÉ¥¹œ¡Ù…±Õ”€üü€œœ¤°€ÄÀ¤ì(€É•ÑÕÉ¸9Õµ‰•È¹¥ÍM…™•%¹Ñ••È¡É•ÍÕ±Ğ¤€üÉ•ÍÕ±Ğ€è™…±±‰…¬ì)ô()™Õ¹Ñ¥½¸…ÉÉ…åY…±Õ”¡Ù…±Õ”¤ì(€¥˜€¡ÉÉ…ä¹¥ÍÉÉ…ä¡Ù…±Õ”¤¤É•ÑÕÉ¸Ù…±Õ”¹µ…À¡MÑÉ¥¹œ¤¹™¥±Ñ•È¡	½½±•…¸¤ì(€¥˜€¡Ù…±Õ”€ôô¹Õ±°ñğÙ…±Õ”€ôôô€œœ¤É•ÑÕÉ¸mtì(€ÑÉäì(€€€½¹ÍĞÁ…ÉÍ•€ô)M=8¹Á…ÉÍ”¡MÑÉ¥¹œ¡Ù…±Õ”¤¤ì(€€€¥˜€¡ÉÉ…ä¹¥ÍÉÉ…ä¡Á…ÉÍ•¤¤É•ÑÕÉ¸Á…ÉÍ•¹µ…À¡MÑÉ¥¹œ¤¹™¥±Ñ•È¡	½½±•…¸¤ì(€ô…Ñ íô(€É•ÑÕÉ¸MÑÉ¥¹œ¡Ù…±Õ”¤¹ÍÁ±¥Ğ œ°œ¤¹µ…À¡¥Ñ•´€ôø¥Ñ•´¹ÑÉ¥´ ¤¤¹™¥±Ñ•È¡	½½±•…¸¤ì)ô()™Õ¹Ñ¥½¸É•ÅÕ¥É•‘Q•áĞ¡Ù…±Õ”°±…‰•°°µ…à€ô€ÔÀÀ¤ì(€½¹ÍĞÑ•áĞ€ô±•…¹Q•áĞ¡Ù…±Õ”°µ…à¤ì(€¥˜€ …Ñ•áĞ¤Ñ¡É½Ü¹•ÜÁÁÉÉ½È¡€‘í±…‰•±ôİ…©¥ˆ‘¥¥Í¤¹€¤ì(€É•ÑÕÉ¸Ñ•áĞì)ô()™Õ¹Ñ¥½¸É•ÅÕ•ÍÑ%À¡É•Ä¤ì(€É•ÑÕÉ¸±•…¹Q•áĞ¡É•Ä¹¥ÀñğÉ•Ä¹Í½­•Ğü¹É•µ½Ñ•‘‘É•ÍÌñğ€œœ°€ÄÀÀ¤ì)ô()™Õ¹Ñ¥½¸©Í½¹=‰©•Ğ¡Ù…±Õ”°™…±±‰…¬€ôíô¤ì(€¥˜€ …Ù…±Õ”¤É•ÑÕÉ¸™…±±‰…¬ì(€ÑÉäìÉ•ÑÕÉ¸)M=8¹Á…ÉÍ”¡Ù…±Õ”¤ìô…Ñ ìÉ•ÑÕÉ¸™…±±‰…¬ìô)ô()™Õ¹Ñ¥½¸É•™•É•¹•UÉ±Ì¡Ù…±Õ”¤ì(€½¹ÍĞ•¹ÑÉ¥•Ì€ôÉÉ…ä¹¥ÍÉÉ…ä¡Ù…±Õ”¤€üÙ…±Õ”€èMÑÉ¥¹œ¡Ù…±Õ”ñğ€œœ¤¹ÍÁ±¥Ğ ½qÈıq¸¼¤ì(€½¹ÍĞÕ¹¥ÅÕ”€ômtì(€™½È€¡½¹ÍĞ•¹ÑÉä½˜•¹ÑÉ¥•Ì¤ì(€€€½¹ÍĞÉ…Ü€ôMÑÉ¥¹œ¡•¹ÑÉäñğ€œœ¤¹ÑÉ¥´ ¤ì(€€€¥˜€ …É…Ü¤½¹Ñ¥¹Õ”ì(€€€¥˜€¡É…Ü¹±•¹Ñ €ø€ÈÀÀÀ¤Ñ¡É½Ü¹•ÜÁÁÉÉ½È UI0É•™•É•¹Í¤Ñ•É±…±ÔÁ…¹©…¹œ¸œ¤ì(€€€±•ĞÁ…ÉÍ•ì(€€€ÑÉäìÁ…ÉÍ•€ô¹•ÜUI0¡É…Ü¤ìô…Ñ ìÑ¡É½Ü¹•ÜÁÁÉÉ½È¡UI0É•™•É•¹Í¤Ñ¥‘…¬Ù…±¥è€‘íÉ…Ü¹Í±¥” À°€àÀ¥õ€¤ìô(€€€¥˜€ …l¡ÑÑÀèœ°€¡ÑÑÁÌèt¹¥¹±Õ‘•Ì¡Á…ÉÍ•¹ÁÉ½Ñ½½°¤ñğÁ…ÉÍ•¹ÕÍ•É¹…µ”ñğÁ…ÉÍ•¹Á…ÍÍİ½É¤ì(€€€€€Ñ¡É½Ü¹•ÜÁÁÉÉ½È I•™•É•¹Í¤¡…¹å„‰½±• ‰•ÉÕÁ„UI0!QQ@½!QQALÑ…¹Á„­É•‘•¹Í¥…°¸œ¤ì(€€€ô(€€€½¹ÍĞ¹½Éµ…±¥é•€ôÁ…ÉÍ•¹¡É•˜ì(€€€¥˜€ …Õ¹¥ÅÕ”¹¥¹±Õ‘•Ì¡¹½Éµ…±¥é•¤¤Õ¹¥ÅÕ”¹ÁÕÍ ¡¹½Éµ…±¥é•¤ì(€ô(€¥˜€¡Õ¹¥ÅÕ”¹±•¹Ñ €ø€ÄÀ¤Ñ¡É½Ü¹•ÜÁÁÉÉ½È 5…­Í¥µ…°€ÄÀUI0É•™•É•¹Í¤Õ¹ÑÕ¬Í•Ñ¥…À­½¹Ñ•¸¸œ¤ì(€É•ÑÕÉ¸Õ¹¥ÅÕ”ì)ô()™Õ¹Ñ¥½¸Ù•¹‘½É‘¥ÑA•Éµ¥ÍÍ¥½¹Ì¡Ù…±Õ”¤ì(€É•ÑÕÉ¸l¸¸¹¹•ÜM•Ğ¡…ÉÉ…åY…±Õ”¡Ù…±Õ”¤¹™¥±Ñ•È¡Á•Éµ¥ÍÍ¥½¸€ôøY9=I}%Q}AI5%MM%=9L¹¡…Ì¡Á•Éµ¥ÍÍ¥½¸¤¤¥tì)ô()™Õ¹Ñ¥½¸Í•ÑÑ¥¹ÍA…å±½… ¤ì(€É•ÑÕÉ¸ì(€€€…ÁÁ9…µ”è•ÑM•ÑÑ¥¹œ AA}95œ°€a%9<5•‘¥„!Õˆœ¤°(€€€½µÁ…¹å9…µ”è•ÑM•ÑÑ¥¹œ =5A9e}95œ°€APá¥¹‘¼%¹™¥¹¥Ñ…Ì9•Ñİ½É¬œ¤°(€€€Ñ¥µ•é½¹”è•ÑM•ÑÑ¥¹œ Q%5i=9œ°€Í¥„½)…­…ÉÑ„œ¤°(€€€ÁÉ¥µ…Éå½±½Èè•ÑM•ÑÑ¥¹œ Q!5}AI%5Idœ°€œŒÈÔØÍ•ˆœ¤°(€€€Í•½¹‘…Éå½±½Èè•ÑM•ÑÑ¥¹œ Q!5}M=9Idœ°€œ˜äÜÌÄØœ¤°(€€€±½½UÉ°è•ÑM•ÑÑ¥¹œ 1==}AQ œ¤€ü€œ½…Á¤½‰É…¹‘¥¹œ½±½¼œ€è€œœ°(€€€…ÁÁY•ÉÍ¥½¸èAA}YIM%=8°(€€€µ…á½±±…‰½É…Ñ¥½¹UÁ±½…‘5ˆè5…Ñ ¹µ…à ÄÀ°5…Ñ ¹µ¥¸ ÈÀĞà°9Õµ‰•È¡•ÑM•ÑÑ¥¹œ 5a}=11	}UA1=}5œ°5a}=11	}UA1=}5¤¤ñğ5a}=11	}UA1=}5¤¤°(€€€…ÕÑ èì(€€€€€½¥‘¹…‰±•è=%¹•¹…‰±•°(€€€€€½¥‘I•…‘äè=%¹É•…‘ä°(€€€€€…•ÍÍ!…¹‘½™™I•…‘äè=%¹•¹…‰±•°(€€€€€½¥‘1½¥¹UÉ°è€œ½…Á¤½…ÕÑ ½½¥‘Œ½ÍÑ…ÉĞœ°(€€€€€Á½ÁÕÁ1½¥¹UÉ°è€œ½…Á¤½…ÕÑ ½½¥‘Œ½ÍÑ…ÉĞıµ½‘”õÁ½ÁÕÀœ°(€€€€€…•ÍÍA½ÉÑ…±UÉ°èMM}A=IQ1}UI0°(€€€€€…•ÍÍA½ÉÑ…±=É¥¥¸è¹•ÜUI0¡MM}A=IQ1}UI0¤¹½É¥¥¸°(€€€€€…•ÍÍA½ÉÑ…±A½ÁÕÁUÉ°è€‘íMM}A=IQ1}UI1ô½¡…¹‘½™˜ı¡…¹‘½™˜õµ•‘¥„µ¡Õ‰€°(€€€€€±½…±1½¥¹¹…‰±•è€…=%¹•¹…‰±•ñğ=%¹±½…±A•ÉÍ½¹…±1½¥¹¹…‰±•°(€€€€€±½…±A•ÉÍ½¹…±=¹±äè=%¹•¹…‰±•°(€€€€€±½…±A•ÉÍ½¹…±I½±•Ìèl¸¸¹1=1}AIM=91}I=1Mt(€€€ô(€ôì)ô()™Õ¹Ñ¥½¸…•ÍÍ5…¹¥™•ÍĞ ¤ì(€±•ĞÁÕ‰±¥UÉ°€ôMÑÉ¥¹œ¡ÁÉ½•ÍÌ¹•¹Ø¹AU	1%}AA}UI0ñğ€œœ¤¹ÑÉ¥´ ¤¹É•Á±…” ½p¼¼°€œœ¤ì(€¥˜€ …ÁÕ‰±¥UÉ°€˜˜=%¹É•‘¥É•ÑUÉ¤¤ì(€€€ÑÉäìÁÕ‰±¥UÉ°€ô¹•ÜUI0¡=%¹É•‘¥É•ÑUÉ¤¤¹½É¥¥¸ìô…Ñ íô(€ô(€¥˜€ …ÁÕ‰±¥UÉ°¤ÁÕ‰±¥UÉ°€ô€¡ÑÑÁÌè¼½µ•‘¥…¡Õˆ¹…á¥¹‘¼¹µä¹¥œì(€É•ÑÕÉ¸ì(€€€Í¡•µ…Y•ÉÍ¥½¸è€Ä°(€€€¥è€µ•‘¥„µ¡Õˆœ°(€€€¹…µ”è€a%9<5•‘¥„!Õˆœ°(€€€‘•ÍÉ¥ÁÑ¥½¸è€A•¹å¥µÁ…¹…¸°É•Ù¥•Ü°‘…¸ÁÕ‰±¥­…Í¤­½¹Ñ•¸%9SŠM%5L¸œ°(€€€ÕÉ°èÁÕ‰±¥UÉ°°(€€€É½±•Ìèl(€€€€€ì½‘”è€MUAI}5%8œ°±…‰•°è€MÕÁ•È‘µ¥¸œ°…ÍÍ¥¹µ•¹Ğè€=%œ°É½ÕÀè€a%9<€´5%!U€´MUAH5%8œô°(€€€€€ì½‘”è€==I%9Q=Hœ°±…‰•°è€-½½É‘¥¹…Ñ½È5•‘¥„œ°…ÍÍ¥¹µ•¹Ğè€=%œ°É½ÕÀè€a%9<€´5%!U€´-==I%9Q=Hœô°(€€€€€ì½‘”è€MM%MQ9Q}==I%9Q=Hœ°±…‰•°è€Í¥ÍÑ•¸-½½É‘¥¹…Ñ½Èœ°…ÍÍ¥¹µ•¹Ğè€=%œ°É½ÕÀè€a%9<€´5%!U€´M%MQ8-==I%9Q=Hœô°(€€€€€ì½‘”è€UA1=Hœ°±…‰•°è€A•ÑÕ…ÌUÁ±½…œ°…ÍÍ¥¹µ•¹Ğè€=%œ°É½ÕÀè€a%9<€´5%!U€´UA1=Hœô°(€€€€€ì½‘”è€5959Pœ°±…‰•°è€¥É•­Í¤œ°…ÍÍ¥¹µ•¹Ğè€=%œ°É½ÕÀè€a%9<€´5%!U€´5959Pœô°(€€€€€ì½‘”è€Y9=Hœ°±…‰•°è€Y•¹‘½È€¼-É•…Ñ½Èœ°…ÍÍ¥¹µ•¹Ğè€AIM=90œô(€€€t(€ôì)ô()™Õ¹Ñ¥½¸É•ÅÕ¥É•=¥‘I•…‘ä ¤ì(€¥˜€ …=%¹•¹…‰±•¤Ñ¡É½Ü¹•ÜÁÁÉÉ½È 1½¥¸a%9<%‰•±Õ´‘¥…­Ñ¥™­…¸¸œ°€ĞÀĞ¤ì(€¥˜€ …=%¹É•…‘ä¤Ñ¡É½Ü¹•ÜÁÁÉÉ½È -½¹™¥ÕÉ…Í¤a%9<%‰•±Õ´±•¹­…ÀÁ…‘„Í•ÉÙ•È¸œ°€ÔÀÌ¤ì)ô()…Íå¹Œ™Õ¹Ñ¥½¸½¥‘½¹™¥ÕÉ…Ñ¥½¸ ¤ì(€É•ÅÕ¥É•=¥‘I•…‘ä ¤ì(€¥˜€ …½¥‘½¹™¥ÕÉ…Ñ¥½¹AÉ½µ¥Í”¤ì(€€€½¹ÍĞ½ÁÑ¥½¹Ì€ô=%¹…±±½İ%¹Í•ÕÉ”€üì•á•ÕÑ”èm½¥‘Œ¹…±±½İ%¹Í•ÕÉ•I•ÅÕ•ÍÑÍtô€èÕ¹‘•™¥¹•ì(€€€½¥‘½¹™¥ÕÉ…Ñ¥½¹AÉ½µ¥Í”€ô½¥‘Œ¹‘¥Í½Ù•Éä (€€€€€¹•ÜUI0¡=%¹¥ÍÍÕ•È¤°(€€€€€=%¹±¥•¹Ñ%°(€€€€€ì±¥•¹Ñ}Í•É•Ğè=%¹±¥•¹ÑM•É•Ğ°É•‘¥É•Ñ}ÕÉ¥Ìèm=%¹É•‘¥É•ÑUÉ¥t°É•ÍÁ½¹Í•}ÑåÁ•Ìèl½‘”tô°(€€€€€½¥‘Œ¹±¥•¹ÑM•É•Ñ	…Í¥Œ¡=%¹±¥•¹ÑM•É•Ğ¤°(€€€€€½ÁÑ¥½¹Ì(€€€€¤¹…Ñ ¡•ÉÉ½È€ôøì(€€€€€½¥‘½¹™¥ÕÉ…Ñ¥½¹AÉ½µ¥Í”€ô¹Õ±°ì(€€€€€Ñ¡É½Ü•ÉÉ½Èì(€€€ô¤ì(€ô(€É•ÑÕÉ¸½¥‘½¹™¥ÕÉ…Ñ¥½¹AÉ½µ¥Í”ì)ô()™Õ¹Ñ¥½¸Í•ÍÍ¥½¹½½­¥•=ÁÑ¥½¹Ì ¤ì(€É•ÑÕÉ¸ì(€€€¡ÑÑÁ=¹±äèÑÉÕ”°(€€€Í•ÕÉ”è==-%}MUI°(€€€Í…µ•M¥Ñ”è€ÍÑÉ¥Ğœ°(€€€µ…á”èMMM%=9}!=UIL€¨€ÌØÀÀÀÀÀ°(€€€Á…Ñ è€œ¼œ(€ôì)ô()™Õ¹Ñ¥½¸É•…Ñ•M•ÍÍ¥½¸¡ÕÍ•É%°É•Ì¤ì(€±•…¹ÕÁáÁ¥É•‘M•ÍÍ¥½¹Ì ¤ì(€½¹ÍĞÑ½­•¸€ôÉ…¹‘½µQ½­•¸ ¤ì(€½¹ÍĞÑ¥µ•ÍÑ…µÀ€ô¹½İ%Í¼ ¤ì(€½¹ÍĞ•áÁ¥É•ÍĞ€ô¹•Ü…Ñ”¡…Ñ”¹¹½Ü ¤€¬MMM%=9}!=UIL€¨€ÌØÀÀÀÀÀ¤¹Ñ½%M=MÑÉ¥¹œ ¤ì(€‘ˆ¹ÁÉ•Á…É” %9MIP%9Q<Í•ÍÍ¥½¹Ì¡¥±Ñ½­•¹}¡…Í ±ÕÍ•É}¥±•áÁ¥É•Í}…Ğ±±…ÍÑ}Í••¸±É•…Ñ•‘}…Ğ¤Y1UL ü°ü°ü°ü°ü°ü¤œ¤(€€€€¹ÉÕ¸¡¹•İ% Í•Ìœ¤°¡…Í¡Q½­•¸ MMM%=8œ°Ñ½­•¸¤°ÕÍ•É%°•áÁ¥É•ÍĞ°Ñ¥µ•ÍÑ…µÀ°Ñ¥µ•ÍÑ…µÀ¤ì(€‘ˆ¹ÁÉ•Á…É” UAQÕÍ•ÉÌMP±…ÍÑ}±½¥¸ôü±ÕÁ‘…Ñ•‘}…Ğôü]!I¥ôüœ¤¹ÉÕ¸¡Ñ¥µ•ÍÑ…µÀ°Ñ¥µ•ÍÑ…µÀ°ÕÍ•É%¤ì(€É•Ì¹½½­¥”¡==-%}95°Ñ½­•¸°Í•ÍÍ¥½¹½½­¥•=ÁÑ¥½¹Ì ¤¤ì(€É•ÑÕÉ¸‘ˆ¹ÁÉ•Á…É” M1P€¨I=4ÕÍ•ÉÌ]!I¥ôüœ¤¹•Ğ¡ÕÍ•É%¤ì)ô()™Õ¹Ñ¥½¸Õ¹¥ÅÕ•=¥‘UÍ•É¹…µ”¡ÍÕ•ÍÑ•°ÍÕ‰©•Ğ¤ì(€½¹ÍĞ‰…Í”€ô±•…¹UÍ•É¹…µ”¡ÍÕ•ÍÑ•¤ñğ…á¥¹‘¼´‘í¡…Í¡Q½­•¸ =%}UMI95œ°ÍÕ‰©•Ğ¤¹Í±¥” À°€ÄÀ¤¹Ñ½1½İ•É…Í” ¥õ€ì(€¥˜€ …‘ˆ¹ÁÉ•Á…É” M1P¥I=4ÕÍ•ÉÌ]!IÕÍ•É¹…µ”ôüœ¤¹•Ğ¡‰…Í”¤¤É•ÑÕÉ¸‰…Í”ì(€½¹ÍĞÍÕ™™¥à€ô¡…Í¡Q½­•¸ =%}UMI95œ°ÍÕ‰©•Ğ¤¹Í±¥” À°€à¤¹Ñ½1½İ•É…Í” ¤ì(€½¹ÍĞ…¹‘¥‘…Ñ”€ô€‘í‰…Í”¹Í±¥” À°5…Ñ ¹µ…à Ì°€ÔÄ€´ÍÕ™™¥à¹±•¹Ñ ¤¥ô´‘íÍÕ™™¥áõ€ì(€¥˜€ …‘ˆ¹ÁÉ•Á…É” M1P¥K]4ÒÚ$z{-®éÜj×dirSync(directory, { recursive: true });
+const fs = require('node:fs');
+const path = require('node:path');
+const crypto = require('node:crypto');
+const express = require('express');
+const helmet = require('helmet');
+const cookieParser = require('cookie-parser');
+const multer = require('multer');
+const { rateLimit } = require('express-rate-limit');
+const oidc = require('openid-client');
+
+const {
+  db, UPLOAD_DIR, BACKUP_DIR, nowIso, getSetting, setSetting, nextContentNumber,
+  publicUser, recordAudit, notifyUser, notifyRole, cleanupExpiredSessions,
+  createDatabaseBackup, listDatabaseBackups
+} = require('./db');
+const {
+  newId, randomToken, hashToken, hashPassword, verifyPassword, assertPassword,
+  assertApprovalPin, hashApprovalPin, verifyApprovalPin, encryptSecret, decryptSecret,
+  cleanText, cleanUsername, safeFilename, checksum
+} = require('./security');
+const { ROLE_LABELS, permissionsForRole, hasPermission } = require('./permissions');
+const { STATUS_LABELS, TRANSITIONS, TRANSITION_PERMISSION, assertTransition } = require('./workflow');
+const {
+  oidcSettings, groupsFromClaims, roleForGroups, identityFromClaims,
+  emailAllowed, safeReturnTo
+} = require('./oidc');
+const { installWorkflowV4 } = require('./workflow-v4');
+
+const APP_VERSION = '0.15.0';
+const PORT = Number(process.env.PORT || 8094);
+const COOKIE_NAME = 'mh_session';
+const OIDC_STATE_COOKIE = 'mh_oidc_state';
+const LOCAL_PERSONAL_ROLES = new Set(['SUPER_ADMIN', 'VENDOR']);
+const POPUP_CHANNEL_PATTERN = /^[a-zA-Z0-9_-]{20,160}$/;
+const ACCESS_PORTAL_URL = normalizedAccessPortalUrl(process.env.ACCESS_PORTAL_URL);
+const ACCESS_PORTAL_INTERNAL_URL = normalizedInternalAccessUrl(process.env.ACCESS_PORTAL_INTERNAL_URL || ACCESS_PORTAL_URL);
+const SESSION_HOURS = Math.max(1, Math.min(168, Number(process.env.SESSION_HOURS || 12) || 12));
+const MAX_UPLOAD_MB = Math.max(1, Math.min(250, Number(process.env.MAX_UPLOAD_MB || 50) || 50));
+const MAX_COLLAB_UPLOAD_MB = Math.max(10, Math.min(2048, Number(process.env.MAX_COLLAB_UPLOAD_MB || 500) || 500));
+const COOKIE_SECURE = String(process.env.COOKIE_SECURE || '').toLowerCase() === 'true';
+const VENDOR_EDIT_FIELDS = Object.freeze({
+  brief: { column: 'brief', label: 'Brief Produksi', max: 5000 },
+  description: { column: 'description', label: 'Deskripsi', max: 2000 },
+  caption: { column: 'caption', label: 'Draft Caption', max: 5000 },
+  hashtags: { column: 'hashtags', label: 'Hashtag', max: 1000 },
+  call_to_action: { column: 'call_to_action', label: 'Call to Action', max: 1000 }
+});
+const VENDOR_EDIT_PERMISSIONS = new Set([...Object.keys(VENDOR_EDIT_FIELDS), 'attachments']);
+const ASSISTANT_DELEGATION_PERMISSIONS = new Set(['CREATE_REQUEST', 'REVIEW_VENDOR']);
+const OIDC = oidcSettings();
+let oidcConfigurationPromise = null;
+
+class AppError extends Error {
+  constructor(message, status = 400) {
+    super(message);
+    this.status = status;
+  }
+}
+
+function normalizedAccessPortalUrl(value) {
+  try {
+    const url = new URL(String(value || 'https://akses.axindo.my.id').trim());
+    if (url.protocol !== 'https:' && url.hostname !== 'localhost' && url.hostname !== '127.0.0.1') throw new Error();
+    url.pathname = url.pathname.replace(/\/$/, '');
+    url.search = '';
+    url.hash = '';
+    return url.href.replace(/\/$/, '');
+  } catch {
+    return 'https://akses.axindo.my.id';
+  }
+}
+
+function normalizedInternalAccessUrl(value) {
+  try {
+    const url = new URL(String(value || '').trim());
+    if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) throw new Error();
+    url.pathname = url.pathname.replace(/\/$/, '');
+    url.search = '';
+    url.hash = '';
+    return url.href.replace(/\/$/, '');
+  } catch {
+    return ACCESS_PORTAL_URL;
+  }
+}
+
+function popupCompletionTarget(status, channel, message = '') {
+  const query = new URLSearchParams({ status, channel });
+  if (message) query.set('message', message);
+  return `/popup-complete.html?${query}`;
+}
+
+function asyncRoute(handler) {
+  return (req, res, next) => Promise.resolve(handler(req, res, next)).catch(next);
+}
+
+function toBoolean(value) {
+  return value === true || ['1', 'true', 'yes', 'on'].includes(String(value || '').toLowerCase());
+}
+
+function toInteger(value, fallback = 0) {
+  const result = Number.parseInt(String(value ?? ''), 10);
+  return Number.isSafeInteger(result) ? result : fallback;
+}
+
+function arrayValue(value) {
+  if (Array.isArray(value)) return value.map(String).filter(Boolean);
+  if (value == null || value === '') return [];
+  try {
+    const parsed = JSON.parse(String(value));
+    if (Array.isArray(parsed)) return parsed.map(String).filter(Boolean);
+  } catch {}
+  return String(value).split(',').map(item => item.trim()).filter(Boolean);
+}
+
+function requiredText(value, label, max = 500) {
+  const text = cleanText(value, max);
+  if (!text) throw new AppError(`${label} wajib diisi.`);
+  return text;
+}
+
+function requestIp(req) {
+  return cleanText(req.ip || req.socket?.remoteAddress || '', 100);
+}
+
+function jsonObject(value, fallback = {}) {
+  if (!value) return fallback;
+  try { return JSON.parse(value); } catch { return fallback; }
+}
+
+function referenceUrls(value) {
+  const entries = Array.isArray(value) ? value : String(value || '').split(/\r?\n/);
+  const unique = [];
+  for (const entry of entries) {
+    const raw = String(entry || '').trim();
+    if (!raw) continue;
+    if (raw.length > 2000) throw new AppError('URL referensi terlalu panjang.');
+    let parsed;
+    try { parsed = new URL(raw); } catch { throw new AppError(`URL referensi tidak valid: ${raw.slice(0, 80)}`); }
+    if (!['http:', 'https:'].includes(parsed.protocol) || parsed.username || parsed.password) {
+      throw new AppError('Referensi hanya boleh berupa URL HTTP/HTTPS tanpa kredensial.');
+    }
+    const normalized = parsed.href;
+    if (!unique.includes(normalized)) unique.push(normalized);
+  }
+  if (unique.length > 10) throw new AppError('Maksimal 10 URL referensi untuk setiap konten.');
+  return unique;
+}
+
+function vendorEditPermissions(value) {
+  return [...new Set(arrayValue(value).filter(permission => VENDOR_EDIT_PERMISSIONS.has(permission)))];
+}
+
+function settingsPayload() {
+  return {
+    appName: getSetting('APP_NAME', 'AXINDO Media Hub'),
+    companyName: getSetting('COMPANY_NAME', 'PT Axindo Infinitas Network'),
+    timezone: getSetting('TIMEZONE', 'Asia/Jakarta'),
+    primaryColor: getSetting('THEME_PRIMARY', '#2563eb'),
+    secondaryColor: getSetting('THEME_SECONDARY', '#f97316'),
+    logoUrl: getSetting('LOGO_PATH') ? '/api/branding/logo' : '',
+    appVersion: APP_VERSION,
+    maxCollaborationUploadMb: Math.max(10, Math.min(2048, Number(getSetting('MAX_COLLAB_UPLOAD_MB', MAX_COLLAB_UPLOAD_MB)) || MAX_COLLAB_UPLOAD_MB)),
+    auth: {
+      oidcEnabled: OIDC.enabled,
+      oidcReady: OIDC.ready,
+      accessHandoffReady: OIDC.enabled,
+      oidcLoginUrl: '/api/auth/oidc/start',
+      popupLoginUrl: '/api/auth/oidc/start?mode=popup',
+      accessPortalUrl: ACCESS_PORTAL_URL,
+      accessPortalOrigin: new URL(ACCESS_PORTAL_URL).origin,
+      accessPortalPopupUrl: `${ACCESS_PORTAL_URL}/handoff?handoff=media-hub`,
+      localLoginEnabled: !OIDC.enabled || OIDC.localPersonalLoginEnabled,
+      localPersonalOnly: OIDC.enabled,
+      localPersonalRoles: [...LOCAL_PERSONAL_ROLES]
+    }
+  };
+}
+
+function accessManifest() {
+  let publicUrl = String(process.env.PUBLIC_APP_URL || '').trim().replace(/\/$/, '');
+  if (!publicUrl && OIDC.redirectUri) {
+    try { publicUrl = new URL(OIDC.redirectUri).origin; } catch {}
+  }
+  if (!publicUrl) publicUrl = 'https://mediahub.axindo.my.id';
+  return {
+    schemaVersion: 1,
+    id: 'media-hub',
+    name: 'AXINDO Media Hub',
+    description: 'Penyimpanan, review, dan publikasi konten AINETâ€“IMAS.',
+    url: publicUrl,
+    roles: [
+      { code: 'SUPER_ADMIN', label: 'Super Admin', assignment: 'OIDC', group: 'AXINDO - MEDIA HUB - SUPER ADMIN' },
+      { code: 'COORDINATOR', label: 'Koordinator Media', assignment: 'OIDC', group: 'AXINDO - MEDIA HUB - KOORDINATOR' },
+      { code: 'ASSISTANT_COORDINATOR', label: 'Asisten Koordinator', assignment: 'OIDC', group: 'AXINDO - MEDIA HUB - ASISTEN KOORDINATOR' },
+      { code: 'UPLOADER', label: 'Petugas Upload', assignment: 'OIDC', group: 'AXINDO - MEDIA HUB - UPLOADER' },
+      { code: 'MANAGEMENT', label: 'Direksi', assignment: 'OIDC', group: 'AXINDO - MEDIA HUB - MANAGEMENT' },
+      { code: 'VENDOR', label: 'Vendor / Kreator', assignment: 'PERSONAL' }
+    ]
+  };
+}
+
+function requireOidcReady() {
+  if (!OIDC.enabled) throw new AppError('Login AXINDO ID belum diaktifkan.', 404);
+  if (!OIDC.ready) throw new AppError('Konfigurasi AXINDO ID belum lengkap pada server.', 503);
+}
+
+async function oidcConfiguration() {
+  requireOidcReady();
+  if (!oidcConfigurationPromise) {
+    const options = OIDC.allowInsecure ? { execute: [oidc.allowInsecureRequests] } : undefined;
+    oidcConfigurationPromise = oidc.discovery(
+      new URL(OIDC.issuer),
+      OIDC.clientId,
+      { client_secret: OIDC.clientSecret, redirect_uris: [OIDC.redirectUri], response_types: ['code'] },
+      oidc.ClientSecretBasic(OIDC.clientSecret),
+      options
+    ).catch(error => {
+      oidcConfigurationPromise = null;
+      throw error;
+    });
+  }
+  return oidcConfigurationPromise;
+}
+
+function sessionCookieOptions() {
+  return {
+    httpOnly: true,
+    secure: COOKIE_SECURE,
+    sameSite: 'strict',
+    maxAge: SESSION_HOURS * 3600000,
+    path: '/'
+  };
+}
+
+function createSession(userId, res) {
+  cleanupExpiredSessions();
+  const token = randomToken();
+  const timestamp = nowIso();
+  const expiresAt = new Date(Date.now() + SESSION_HOURS * 3600000).toISOString();
+  db.prepare('INSERT INTO sessions(id,token_hash,user_id,expires_at,last_seen,created_at) VALUES(?,?,?,?,?,?)')
+    .run(newId('ses'), hashToken('SESSION', token), userId, expiresAt, timestamp, timestamp);
+  db.prepare('UPDATE users SET last_login=?,updated_at=? WHERE id=?').run(timestamp, timestamp, userId);
+  res.cookie(COOKIE_NAME, token, sessionCookieOptions());
+  return db.prepare('SELECT * FROM users WHERE id=?').get(userId);
+}
+
+function uniqueOidcUsername(suggested, subject) {
+  const base = cleanUsername(suggested) || `axindo-${hashToken('OIDC_USERNAME', subject).slice(0, 10).toLowerCase()}`;
+  if (!db.prepare('SELECT id FROM users WHERE username=?').get(base)) return base;
+  const suffix = hashToken('OIDC_USERNAME', subject).slice(0, 8).toLowerCase();
+  const candidate = `${base.slice(0, Math.max(3, 51 - suffix.length))}-${suffix}`;
+  if (!db.prepare('SELECT id FROM users WHERE username=?').get(candidate)) return candidate;
+  return `axindo-${suffix}-${randomToken(3).toLowerCase()}`;
+}
+
+function provisionOidcUser(claims, authSource = 'OIDC') {
+  if (!['OIDC', 'ACCESS'].includes(authSource)) throw new AppError('Sumber autentikasi tidak valid.', 500);
+  const identity = identityFromClaims(claims);
+  const groups = groupsFromClaims(claims);
+  const role = roleForGroups(groups, OIDC.roleMapping);
+  if (!identity.subject) throw new AppError('AXINDO ID tidak mengirim identitas pengguna.', 403);
+  if (!identity.email) throw new AppError('AXINDO ID tidak mengirim alamat email pengguna.', 403);
+  if (!emailAllowed(identity.email, OIDC.allowedEmailDomains)) throw new AppError('Domain email tidak diizinkan untuk Media Hub.', 403);
+  if (!role) throw new AppError('Akun belum memiliki grup Media Hub yang sesuai di AXINDO ID.', 403);
+
+  let user = db.prepare('SELECT * FROM users WHERE oidc_issuer=? AND oidc_subject=?').get(OIDC.issuer, identity.subject);
+  const timestamp = nowIso();
+  if (!user) {
+    if (!OIDC.autoProvision) throw new AppError('Akun belum terdaftar di Media Hub.', 403);
+    const credentials = hashPassword(`Oidc-${randomToken(32)}A1`);
+    const id = newId('usr');
+    const username = uniqueOidcUsername(identity.suggestedUsername, identity.subject);
+    db.prepare(`INSERT INTO users(
+      id,name,username,email,password_hash,password_salt,role,vendor_id,active,must_change_password,
+      auth_source,oidc_issuer,oidc_subject,oidc_groups_json,oidc_last_sync_at,created_at,updated_at
+    ) VALUES(?,?,?,?,?,?,?,NULL,1,0,?,?,?,?,?,?,?)`).run(
+      id, identity.name || username, username, identity.email, credentials.hash, credentials.salt, role, authSource,
+      OIDC.issuer, identity.subject, JSON.stringify(groups), timestamp, timestamp, timestamp
+    );
+    user = db.prepare('SELECT * FROM users WHERE id=?').get(id);
+    recordAudit({ entityType: 'USER', entityId: id, action: `${authSource}_PROVISION`, after: { email: identity.email, role, groups } });
+  } else {
+    if (!user.active) throw new AppError('Akun Media Hub dinonaktifkan.', 403);
+    db.prepare(`UPDATE users SET name=?,email=?,role=?,auth_source=?,oidc_groups_json=?,oidc_last_sync_at=?,updated_at=? WHERE id=?`)
+      .run(identity.name || user.name, identity.email, role, authSource, JSON.stringify(groups), timestamp, timestamp, user.id);
+    user = db.prepare('SELECT * FROM users WHERE id=?').get(user.id);
+  }
+  return { user, groups };
+}
+
+function oidcCallbackUrl(req) {
+  const callback = new URL(OIDC.redirectUri);
+  callback.search = new URL(req.originalUrl, 'http://media-hub.local').search;
+  return callback;
+}
+
+function oidcFailureCode(error) {
+  if (error instanceof AppError && error.status === 403) return 'access_denied';
+  if (error instanceof AppError && error.status === 503) return 'configuration';
+  return 'provider_error';
+}
+
+function createUploader(folder, options = {}) {
+  const directory = path.join(UPLOAD_DIR, folder);
+  fs.mkdirSync(directory, { recursive: true });
   const storage = multer.diskStorage({
     destination: (_req, _file, callback) => callback(null, directory),
     filename: (_req, file, callback) => {
@@ -185,4 +489,2500 @@ function replaceCoordinatorApprovalLink({ contentId, coordinatorId, fileIds, cre
   const active = db.prepare("SELECT id FROM coordinator_approval_requests WHERE content_id=? AND status='ACTIVE'").all(contentId);
   const timestamp = nowIso();
   for (const request of active) db.prepare('DELETE FROM coordinator_approval_access_sessions WHERE request_id=?').run(request.id);
-  db.prepare("UPDATE coordinator_approval_requests 
+  db.prepare("UPDATE coordinator_approval_requests SET status='CANCELLED',cancelled_at=?,note=COALESCE(note,?) WHERE content_id=? AND status='ACTIVE'")
+    .run(timestamp, reason || 'Diganti dengan link approval baru.', contentId);
+  const token = randomToken(32);
+  const id = newId('capr');
+  db.prepare(`INSERT INTO coordinator_approval_requests(id,content_id,coordinator_id,token_hash,link_token_ciphertext,attachment_ids_json,created_by,created_at)
+    VALUES(?,?,?,?,?,?,?,?)`).run(id, contentId, coordinatorId, hashToken('COORDINATOR_LINK', token), encryptSecret('COORDINATOR_LINK_TOKEN', token), JSON.stringify(fileIds), createdBy, timestamp);
+  recordAudit({ actorId: createdBy, entityType: 'COORDINATOR_APPROVAL', entityId: id, action: 'CREATE', after: { contentId, coordinatorId, fileIds } });
+  return { id, token, url: `/approval.html?kind=coordinator&token=${token}` };
+}
+
+function latestSimpleContentFileIds(contentId) {
+  const ids = [];
+  for (const role of ['MAIN', 'COVER']) {
+    const row = db.prepare(`SELECT id FROM collaboration_files
+      WHERE content_id=? AND phase='PRODUCTION_RESULT' AND file_role=?
+      ORDER BY version_number DESC,created_at DESC LIMIT 1`).get(contentId, role);
+    if (row) ids.push(row.id);
+  }
+  return ids;
+}
+
+function notifyVendor(vendorId, type, title, body, link) {
+  if (!vendorId) return;
+  for (const row of db.prepare("SELECT id FROM users WHERE vendor_id=? AND role='VENDOR' AND active=1").all(vendorId)) {
+    notifyUser(row.id, type, title, body, link);
+  }
+}
+
+const app = express();
+if (String(process.env.TRUST_PROXY || '').toLowerCase() === 'true') app.set('trust proxy', 1);
+app.disable('x-powered-by');
+app.use(helmet({
+  crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      imgSrc: ["'self'", 'data:', 'blob:'],
+      mediaSrc: ["'self'", 'blob:'],
+      styleSrc: ["'self'"],
+      scriptSrc: ["'self'"],
+      frameSrc: ["'self'", 'blob:'],
+      // Local Ubuntu deployments may initially use plain HTTP on a private IP.
+      // Disable Helmet's default rewrite of HTTP assets to HTTPS.
+      upgradeInsecureRequests: null
+    }
+  }
+}));
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ extended: false, limit: '2mb' }));
+app.use(cookieParser());
+app.use((req, res, next) => {
+  if (!['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
+    const fetchSite = String(req.get('sec-fetch-site') || '').toLowerCase();
+    if (fetchSite === 'cross-site') return next(new AppError('Permintaan lintas situs ditolak.', 403));
+  }
+  next();
+});
+
+const loginLimiter = rateLimit({
+  windowMs: 60_000,
+  limit: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: true,
+  message: { error: 'Terlalu banyak percobaan login. Coba kembali satu menit lagi.' }
+});
+
+const oidcStartLimiter = rateLimit({
+  windowMs: 60_000,
+  limit: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Terlalu banyak permintaan login. Coba kembali satu menit lagi.' }
+});
+
+function authenticate(req, _res, next) {
+  const token = req.cookies?.[COOKIE_NAME];
+  if (!token) return next();
+  const tokenHash = hashToken('SESSION', token);
+  const row = db.prepare(`SELECT s.id AS session_id,s.expires_at,u.* FROM sessions s JOIN users u ON u.id=s.user_id
+    WHERE s.token_hash=? AND s.expires_at>? AND u.active=1`).get(tokenHash, nowIso());
+  if (!row) return next();
+  req.user = publicUser(row);
+  req.sessionId = row.session_id;
+  db.prepare('UPDATE sessions SET last_seen=? WHERE id=?').run(nowIso(), row.session_id);
+  next();
+}
+
+function authRequired(req, _res, next) {
+  if (!req.user) return next(new AppError('Sesi berakhir. Silakan login kembali.', 401));
+  next();
+}
+
+function permissionRequired(permission) {
+  return (req, _res, next) => {
+    try { ensurePermission(req.user, permission); next(); } catch (error) { next(error); }
+  };
+}
+
+app.use(authenticate);
+
+app.get('/api/health', (_req, res) => {
+  res.json({ ok: true, service: 'ainet-media-hub', version: APP_VERSION, time: nowIso() });
+});
+
+app.get('/api/public/config', (_req, res) => res.json(settingsPayload()));
+
+app.get('/.well-known/axindo-access.json', (_req, res) => {
+  res.set('Cache-Control', 'public, max-age=300, must-revalidate');
+  res.json(accessManifest());
+});
+
+app.post('/api/auth/access/complete', oidcStartLimiter, asyncRoute(async (req, res) => {
+  requireOidcReady();
+  const code = String(req.body?.code || '');
+  const verifier = String(req.body?.verifier || '');
+  if (!/^[a-zA-Z0-9_-]{40,200}$/.test(code) || !/^[a-zA-Z0-9_-]{43,128}$/.test(verifier)) {
+    throw new AppError('Kode login AXINDO Access tidak valid.', 401);
+  }
+
+  let response;
+  try {
+    response = await fetch(`${ACCESS_PORTAL_INTERNAL_URL}/api/auth/handoff/exchange`, {
+      method: 'POST',
+      headers: { accept: 'application/json', 'content-type': 'application/json', 'x-axindo-handoff': '1' },
+      body: JSON.stringify({ code, verifier, audience: 'media-hub' }),
+      signal: AbortSignal.timeout(8_000)
+    });
+  } catch (error) {
+    console.error('Pertukaran sesi AXINDO Access gagal:', error.message);
+    throw new AppError('AXINDO Access belum dapat dihubungi.', 502);
+  }
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new AppError(payload.error || 'Kode login AXINDO Access tidak berlaku.', response.status === 403 ? 403 : 401);
+  }
+  if (payload.audience !== 'media-hub' || !payload.identity?.subject) {
+    throw new AppError('Respons AXINDO Access tidak valid.', 502);
+  }
+
+  const identity = payload.identity;
+  const { user, groups } = provisionOidcUser({
+    sub: identity.subject,
+    email: identity.email,
+    email_verified: true,
+    name: identity.name,
+    preferred_username: identity.username,
+    groups: payload.groups
+  }, 'ACCESS');
+  const current = createSession(user.id, res);
+  recordAudit({
+    actorId: user.id, entityType: 'AUTH', entityId: user.id, action: 'ACCESS_HANDOFF_LOGIN',
+    after: { role: current.role, groups }, ip: requestIp(req)
+  });
+  res.json({ user: publicUser(current) });
+}));
+
+app.get('/api/auth/oidc/start', oidcStartLimiter, async (req, res) => {
+  try {
+    requireOidcReady();
+    cleanupExpiredSessions();
+    const configuration = await oidcConfiguration();
+    const state = oidc.randomState();
+    const nonce = oidc.randomNonce();
+    const codeVerifier = oidc.randomPKCECodeVerifier();
+    const codeChallenge = await oidc.calculatePKCECodeChallenge(codeVerifier);
+    const timestamp = nowIso();
+    const expiresAt = new Date(Date.now() + 10 * 60_000).toISOString();
+    const returnTo = safeReturnTo(req.query.returnTo);
+    const mode = req.query.mode === 'popup' ? 'popup' : 'redirect';
+    const popupChannel = mode === 'popup' ? String(req.query.channel || '') : '';
+    if (mode === 'popup' && !POPUP_CHANNEL_PATTERN.test(popupChannel)) {
+      throw new AppError('Saluran login popup tidak valid.', 400);
+    }
+
+    db.prepare(`INSERT INTO oidc_login_attempts(state_hash,code_verifier,nonce,return_to,mode,popup_channel,expires_at,created_at)
+      VALUES(?,?,?,?,?,?,?,?)`).run(
+      hashToken('OIDC_STATE', state), codeVerifier, nonce, returnTo, mode, popupChannel || null, expiresAt, timestamp
+    );
+    res.cookie(OIDC_STATE_COOKIE, state, {
+      httpOnly: true, secure: COOKIE_SECURE, sameSite: 'lax',
+      maxAge: 10 * 60_000, path: '/api/auth/oidc/callback'
+    });
+
+    const authorizationUrl = oidc.buildAuthorizationUrl(configuration, {
+      redirect_uri: OIDC.redirectUri,
+      scope: OIDC.scopes,
+      response_type: 'code',
+      code_challenge: codeChallenge,
+      code_challenge_method: 'S256',
+      state,
+      nonce
+    });
+    res.redirect(302, authorizationUrl.href);
+  } catch (error) {
+    recordAudit({ entityType: 'AUTH', action: 'OIDC_START_FAILED', reason: error.message, ip: requestIp(req) });
+    if (!(error instanceof AppError) || error.status >= 500) console.error('Memulai OIDC gagal:', error.message);
+    const popupChannel = String(req.query.channel || '');
+    if (req.query.mode === 'popup' && POPUP_CHANNEL_PATTERN.test(popupChannel)) {
+      return res.redirect(303, popupCompletionTarget('error', popupChannel, 'Login AXINDO ID belum dapat dimulai.'));
+    }
+    res.redirect(303, `/?sso_error=${encodeURIComponent(oidcFailureCode(error))}`);
+  }
+});
+
+app.get('/api/auth/oidc/callback', async (req, res) => {
+  let returnTo = '/';
+  let attempt;
+  try {
+    requireOidcReady();
+    const state = String(req.query.state || '');
+    const browserState = String(req.cookies?.[OIDC_STATE_COOKIE] || '');
+    if (!state || !browserState || hashToken('OIDC_STATE', state) !== hashToken('OIDC_STATE', browserState)) {
+      throw new AppError('Sesi login AXINDO ID tidak valid atau sudah kedaluwarsa.', 401);
+    }
+    const stateHash = hashToken('OIDC_STATE', state);
+    attempt = db.prepare('SELECT * FROM oidc_login_attempts WHERE state_hash=? AND expires_at>?').get(stateHash, nowIso());
+    if (!attempt) throw new AppError('Sesi login AXINDO ID tidak valid atau sudah kedaluwarsa.', 401);
+    returnTo = safeReturnTo(attempt.return_to);
+    db.prepare('DELETE FROM oidc_login_attempts WHERE state_hash=?').run(stateHash);
+    res.clearCookie(OIDC_STATE_COOKIE, { path: '/api/auth/oidc/callback' });
+    if (req.query.error) throw new AppError('Login dibatalkan atau ditolak oleh AXINDO ID.', 401);
+
+    const configuration = await oidcConfiguration();
+    const tokenResponse = await oidc.authorizationCodeGrant(configuration, oidcCallbackUrl(req), {
+      pkceCodeVerifier: attempt.code_verifier,
+      expectedState: state,
+      expectedNonce: attempt.nonce,
+      idTokenExpected: true
+    });
+    const idClaims = tokenResponse.claims();
+    if (!idClaims?.sub) throw new AppError('Respons AXINDO ID tidak memuat identitas pengguna.', 403);
+    let userInfo = {};
+    if (tokenResponse.access_token && configuration.serverMetadata().userinfo_endpoint) {
+      userInfo = await oidc.fetchUserInfo(configuration, tokenResponse.access_token, idClaims.sub);
+    }
+    const { user, groups } = provisionOidcUser({ ...idClaims, ...userInfo, sub: idClaims.sub });
+    const current = createSession(user.id, res);
+    recordAudit({
+      actorId: user.id, entityType: 'AUTH', entityId: user.id, action: 'OIDC_LOGIN',
+      after: { role: current.role, groups }, ip: requestIp(req)
+    });
+    res.redirect(303, attempt.mode === 'popup'
+      ? popupCompletionTarget('success', attempt.popup_channel)
+      : returnTo);
+  } catch (error) {
+    res.clearCookie(OIDC_STATE_COOKIE, { path: '/api/auth/oidc/callback' });
+    recordAudit({ entityType: 'AUTH', action: 'OIDC_LOGIN_FAILED', reason: error.message, ip: requestIp(req) });
+    if (!(error instanceof AppError) || error.status >= 500) console.error('Login OIDC gagal:', error.message);
+    if (attempt?.mode === 'popup' && POPUP_CHANNEL_PATTERN.test(attempt.popup_channel || '')) {
+      return res.redirect(303, popupCompletionTarget('error', attempt.popup_channel, 'Login AXINDO ID gagal.'));
+    }
+    const target = new URL(safeReturnTo(returnTo), OIDC.redirectUri || 'http://media-hub.local/');
+    target.searchParams.set('sso_error', oidcFailureCode(error));
+    res.redirect(303, `${target.pathname}${target.search}${target.hash}`);
+  }
+});
+
+app.post('/api/auth/login', loginLimiter, (req, res, next) => {
+  try {
+    cleanupExpiredSessions();
+    const username = cleanUsername(req.body.username);
+    const password = String(req.body.password || '');
+    const user = db.prepare('SELECT * FROM users WHERE username=? AND active=1').get(username);
+    const localAccount = (user?.auth_source || 'LOCAL') === 'LOCAL';
+    const localAllowed = !OIDC.enabled || (
+      OIDC.localPersonalLoginEnabled && localAccount && LOCAL_PERSONAL_ROLES.has(user?.role)
+    );
+    if (!user || !localAllowed || !verifyPassword(password, user.password_salt, user.password_hash)) {
+      recordAudit({ entityType: 'AUTH', action: 'LOGIN_FAILED', reason: username, ip: requestIp(req) });
+      throw new AppError('Username atau password salah.', 401);
+    }
+    const current = createSession(user.id, res);
+    recordAudit({ actorId: user.id, entityType: 'AUTH', entityId: user.id, action: 'LOGIN', ip: requestIp(req) });
+    res.json({ user: publicUser(current) });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/auth/logout', authRequired, asyncRoute(async (req, res) => {
+  const scope = String(req.body?.scope || 'local').trim().toLowerCase();
+  if (!['local', 'axindo'].includes(scope)) throw new AppError('Pilihan keluar tidak valid.', 400);
+  db.prepare('DELETE FROM sessions WHERE id=?').run(req.sessionId);
+  recordAudit({ actorId: req.user.id, entityType: 'AUTH', entityId: req.user.id, action: scope === 'axindo' ? 'LOGOUT_AXINDO' : 'LOGOUT', ip: requestIp(req) });
+  res.clearCookie(COOKIE_NAME, { path: '/' });
+  let logoutUrl = '';
+  if (scope === 'axindo') {
+    const returnTo = new URL(accessManifest().url);
+    returnTo.searchParams.set('logout', 'axindo');
+    const accessLogout = new URL('/logout', ACCESS_PORTAL_URL);
+    accessLogout.searchParams.set('return_to', returnTo.href);
+    logoutUrl = accessLogout.href;
+  }
+  res.json({ ok: true, scope, logoutUrl });
+}));
+
+app.get('/api/bootstrap', authRequired, (req, res) => {
+  const unread = db.prepare('SELECT COUNT(*) AS count FROM notifications WHERE user_id=? AND read_at IS NULL').get(req.user.id).count;
+  res.json({
+    user: req.user,
+    permissions: permissionsForRole(req.user.role),
+    roleLabels: ROLE_LABELS,
+    statusLabels: STATUS_LABELS,
+    transitions: TRANSITIONS,
+    config: settingsPayload(),
+    brands: db.prepare('SELECT * FROM brands WHERE active=1 ORDER BY name').all(),
+    channels: db.prepare('SELECT * FROM channels WHERE active=1 ORDER BY name').all(),
+    assistantDelegations: req.user.role === 'ASSISTANT_COORDINATOR' ? assistantDelegations(req.user.id) : [],
+    unreadNotifications: Number(unread || 0)
+  });
+});
+
+app.post('/api/profile/password', authRequired, (req, res, next) => {
+  try {
+    const row = db.prepare('SELECT * FROM users WHERE id=?').get(req.user.id);
+    if ((row.auth_source || 'LOCAL') !== 'LOCAL') throw new AppError('Password akun ini dikelola melalui AXINDO ID.', 403);
+    if (!verifyPassword(String(req.body.currentPassword || ''), row.password_salt, row.password_hash)) {
+      throw new AppError('Password saat ini salah.', 401);
+    }
+    assertPassword(req.body.newPassword);
+    const credentials = hashPassword(String(req.body.newPassword));
+    const timestamp = nowIso();
+    db.transaction(() => {
+      db.prepare('UPDATE users SET password_hash=?,password_salt=?,must_change_password=0,updated_at=? WHERE id=?')
+        .run(credentials.hash, credentials.salt, timestamp, req.user.id);
+      db.prepare('DELETE FROM sessions WHERE user_id=? AND id<>?').run(req.user.id, req.sessionId);
+      recordAudit({ actorId: req.user.id, entityType: 'USER', entityId: req.user.id, action: 'PASSWORD_CHANGED', ip: requestIp(req) });
+    })();
+    res.json({ ok: true });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/profile/approval-pin', authRequired, (req, res, next) => {
+  try {
+    if (!['MANAGEMENT', 'COORDINATOR'].includes(req.user.role)) throw new AppError('PIN approval hanya tersedia untuk akun Direksi dan Koordinator.', 403);
+    const row = db.prepare('SELECT * FROM users WHERE id=?').get(req.user.id);
+    const newPin = String(req.body.newPin || '');
+    if (newPin !== String(req.body.confirmPin || '')) throw new AppError('Konfirmasi PIN tidak sama.');
+    assertApprovalPin(newPin);
+    if (row.approval_pin_hash && !verifyApprovalPin(String(req.body.currentPin || ''), row.approval_pin_salt, row.approval_pin_hash)) {
+      throw new AppError('PIN approval saat ini salah.', 401);
+    }
+    const credentials = hashApprovalPin(newPin);
+    const timestamp = nowIso();
+    db.transaction(() => {
+      db.prepare('UPDATE users SET approval_pin_hash=?,approval_pin_salt=?,updated_at=? WHERE id=?')
+        .run(credentials.hash, credentials.salt, timestamp, req.user.id);
+      db.prepare("UPDATE director_approval_requests SET attempt_count=0,locked_at=NULL WHERE director_id=? AND status='ACTIVE'").run(req.user.id);
+      db.prepare("UPDATE coordinator_approval_requests SET attempt_count=0,locked_at=NULL WHERE coordinator_id=? AND status='ACTIVE'").run(req.user.id);
+      recordAudit({ actorId: req.user.id, entityType: 'USER', entityId: req.user.id, action: row.approval_pin_hash ? 'APPROVAL_PIN_CHANGED' : 'APPROVAL_PIN_CREATED', ip: requestIp(req) });
+    })();
+    res.json({ ok: true, approvalPinSet: true });
+  } catch (error) { next(error); }
+});
+
+app.get('/api/dashboard', authRequired, (req, res) => {
+  const visibility = contentVisibility(req.user);
+  const metrics = db.prepare(`SELECT
+    COUNT(*) AS total,
+    SUM(CASE WHEN status IN ('REQUESTED','BRIEFED','ASSIGNED','IN_PRODUCTION') THEN 1 ELSE 0 END) AS production,
+    SUM(CASE WHEN status IN ('DRAFT_SUBMITTED','IN_REVIEW','REVISION_REQUIRED') THEN 1 ELSE 0 END) AS review,
+    SUM(CASE WHEN status='APPROVAL_PENDING' THEN 1 ELSE 0 END) AS approval,
+    SUM(CASE WHEN status IN ('APPROVED','SCHEDULED') THEN 1 ELSE 0 END) AS ready,
+    SUM(CASE WHEN status='PUBLISHED' THEN 1 ELSE 0 END) AS published,
+    SUM(CASE WHEN due_date<date('now') AND status NOT IN ('PUBLISHED','CANCELLED') THEN 1 ELSE 0 END) AS overdue
+    FROM contents c WHERE ${visibility.sql}`).get(...visibility.params);
+  const pipeline = db.prepare(`SELECT status,COUNT(*) AS count FROM contents c WHERE ${visibility.sql} GROUP BY status`).all(...visibility.params);
+  const upcoming = db.prepare(`${CONTENT_SELECT} WHERE ${visibility.sql} AND c.status NOT IN ('PUBLISHED','CANCELLED')
+    ORDER BY CASE WHEN c.due_date IS NULL THEN 1 ELSE 0 END,c.due_date ASC LIMIT 8`).all(...visibility.params).map(serializeContent);
+  const publishedThisMonth = db.prepare(`SELECT COUNT(*) AS count FROM contents c WHERE ${visibility.sql}
+    AND c.status='PUBLISHED' AND substr(c.locked_at,1,7)=substr(date('now'),1,7)`).get(...visibility.params).count;
+  res.json({
+    metrics: Object.fromEntries(Object.entries(metrics).map(([key, value]) => [key, Number(value || 0)])),
+    pipeline: pipeline.map(row => ({ ...row, count: Number(row.count), label: STATUS_LABELS[row.status] || row.status })),
+    upcoming,
+    publishedThisMonth: Number(publishedThisMonth || 0)
+  });
+});
+
+app.get('/api/contents', authRequired, (req, res) => {
+  const visibility = contentVisibility(req.user);
+  const conditions = [visibility.sql];
+  const params = [...visibility.params];
+  const statuses = arrayValue(req.query.status);
+  if (statuses.length) {
+    conditions.push(`c.status IN (${statuses.map(() => '?').join(',')})`);
+    params.push(...statuses);
+  }
+  if (req.query.brandId) { conditions.push('c.brand_id=?'); params.push(String(req.query.brandId)); }
+  if (req.query.vendorId) { conditions.push('c.vendor_id=?'); params.push(String(req.query.vendorId)); }
+  if (req.query.workflowType) { conditions.push('c.workflow_type=?'); params.push(String(req.query.workflowType)); }
+  if (req.query.from) { conditions.push("COALESCE(c.publish_at,c.due_date||'T00:00:00')>=?"); params.push(String(req.query.from)); }
+  if (req.query.to) { conditions.push("COALESCE(c.publish_at,c.due_date||'T23:59:59')<=?"); params.push(String(req.query.to)); }
+  if (req.query.q) {
+    conditions.push('(c.title LIKE ? OR c.content_no LIKE ? OR c.campaign LIKE ?)');
+    const query = `%${cleanText(req.query.q, 100)}%`;
+    params.push(query, query, query);
+  }
+  const limit = Math.max(1, Math.min(250, toInteger(req.query.limit, 100)));
+  const rows = db.prepare(`${CONTENT_SELECT} WHERE ${conditions.join(' AND ')} ORDER BY c.updated_at DESC LIMIT ?`)
+    .all(...params, limit).map(serializeContent);
+  res.json({ items: rows });
+});
+
+app.post('/api/contents', authRequired, (req, res, next) => {
+  try {
+    const vendorProposal = req.user.role === 'VENDOR';
+    const delegatedAssistant = req.user.role === 'ASSISTANT_COORDINATOR';
+    if (!hasPermission(req.user, 'content.create') && !delegatedAssistant) throw new AppError('Anda tidak memiliki hak akses untuk membuat permintaan.', 403);
+    if (vendorProposal && !req.user.vendorId) throw new AppError('Akun Vendor belum terhubung ke data Vendor.', 403);
+    if (vendorProposal && req.body.productionMode && req.body.productionMode !== 'VENDOR') throw new AppError('Usulan Vendor wajib memakai produksi Vendor.', 403);
+    const coordinatorId = (vendorProposal || delegatedAssistant) ? cleanText(req.body.coordinatorId, 100) : cleanText(req.body.coordinatorId, 100) || req.user.id;
+    if (vendorProposal && !db.prepare("SELECT id FROM users WHERE id=? AND role='COORDINATOR' AND active=1").get(coordinatorId)) {
+      throw new AppError('Pilih Koordinator aktif untuk menerima usulan Vendor.');
+    }
+    if (delegatedAssistant && !hasAssistantDelegation(req.user, coordinatorId, 'CREATE_REQUEST')) {
+      throw new AppError('Koordinator belum memberi izin untuk membuat permintaan konten.', 403);
+    }
+    const id = newId('cnt');
+    const timestamp = nowIso();
+    const channelIds = arrayValue(req.body.channelIds);
+    const productionMode = String(req.body.productionMode || 'VENDOR') === 'INTERNAL' ? 'INTERNAL' : 'VENDOR';
+    const payload = {
+      id,
+      contentNo: nextContentNumber(),
+      title: requiredText(req.body.title, 'Judul', 200),
+      description: cleanText(req.body.description, 2000),
+      objective: cleanText(req.body.objective, 1000),
+      audience: cleanText(req.body.audience, 1000),
+      brandId: requiredText(req.body.brandId, 'Brand', 100),
+      campaign: cleanText(req.body.campaign, 150),
+      category: cleanText(req.body.category || 'EDUCATION', 50),
+      contentType: cleanText(req.body.contentType || 'SOCIAL_POST', 50),
+      approvalLevel: String(req.body.approvalLevel || 'REGULAR') === 'SENSITIVE' ? 'SENSITIVE' : 'REGULAR',
+      productionMode: vendorProposal ? 'VENDOR' : productionMode,
+      priority: ['LOW', 'NORMAL', 'HIGH', 'URGENT'].includes(req.body.priority) ? req.body.priority : 'NORMAL',
+      dueDate: cleanText(req.body.dueDate, 20) || null,
+      publishAt: cleanText(req.body.publishAt, 40) || null,
+      budget: Math.max(0, toInteger(req.body.budget)),
+      brief: cleanText(req.body.brief, 5000),
+      caption: cleanText(req.body.caption, 5000),
+      hashtags: cleanText(req.body.hashtags, 1000),
+      callToAction: cleanText(req.body.callToAction, 1000),
+      referenceUrls: referenceUrls(req.body.referenceUrls),
+      vendorEditPermissions: !vendorProposal && productionMode === 'VENDOR' ? vendorEditPermissions(req.body.vendorEditPermissions) : [],
+      internalNotes: cleanText(req.body.internalNotes, 2000),
+      coordinatorId,
+      vendorId: vendorProposal ? req.user.vendorId : productionMode === 'VENDOR' ? cleanText(req.body.vendorId, 100) || null : null,
+      reviewerId: cleanText(req.body.reviewerId, 100) || null,
+      approverId: cleanText(req.body.approverId, 100) || null,
+      uploaderId: cleanText(req.body.uploaderId, 100) || null
+    };
+    db.transaction(() => {
+      db.prepare(`INSERT INTO contents(id,content_no,title,description,objective,audience,brand_id,campaign,category,content_type,approval_level,production_mode,proposal_origin,brief_review_status,status,priority,due_date,publish_at,budget,brief,caption,hashtags,call_to_action,reference_urls_json,vendor_edit_permissions_json,internal_notes,coordinator_id,vendor_id,reviewer_id,approver_id,uploader_id,created_by,created_at,updated_at)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,'REQUESTED',?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
+        payload.id, payload.contentNo, payload.title, payload.description, payload.objective, payload.audience,
+        payload.brandId, payload.campaign, payload.category, payload.contentType, payload.approvalLevel, payload.productionMode,
+        vendorProposal ? 'VENDOR' : 'COORDINATOR', vendorProposal ? 'DRAFT' : 'NONE',
+        payload.priority, payload.dueDate, payload.publishAt, payload.budget, payload.brief, payload.caption,
+        payload.hashtags, payload.callToAction, JSON.stringify(payload.referenceUrls), JSON.stringify(payload.vendorEditPermissions), payload.internalNotes, payload.coordinatorId, payload.vendorId,
+        payload.reviewerId, payload.approverId, payload.uploaderId, req.user.id, timestamp, timestamp
+      );
+      for (const channelId of channelIds) {
+        db.prepare('INSERT OR IGNORE INTO content_channels(content_id,channel_id) VALUES(?,?)').run(id, channelId);
+      }
+      db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+        VALUES(?,?,NULL,'REQUESTED','CREATE',?,?,?)`).run(newId('evt'), id, vendorProposal ? 'Draft usulan Vendor dibuat' : 'Permintaan konten dibuat', req.user.id, timestamp);
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: id, action: 'CREATE', after: payload, ip: requestIp(req) });
+    })();
+    if (!vendorProposal) notifyUser(payload.coordinatorId, 'CONTENT_CREATED', `Permintaan baru ${payload.contentNo}`, payload.title, `/contents/${id}`);
+    res.status(201).json({ item: getContent(id, req.user) });
+  } catch (error) { next(error); }
+});
+
+function createSimpleContent(req, res, next) {
+  try {
+    if (!hasPermission(req.user, 'content.simple_create') && !hasPermission(req.user, 'content.instant_create')) {
+      throw new AppError('Anda tidak dapat mengunggah konten final.', 403);
+    }
+    const finalFile = requestFile(req, 'file');
+    const coverFile = requestFile(req, 'coverFile');
+    if (!finalFile) throw new AppError('File final wajib dipilih.');
+    validateCoverFile(coverFile);
+    const vendorSubmission = req.user.role === 'VENDOR';
+    if (vendorSubmission && !req.user.vendorId) throw new AppError('Akun Vendor belum terhubung ke data Vendor.', 403);
+    const coordinatorId = req.user.role === 'COORDINATOR'
+      ? req.user.id
+      : requiredText(req.body.coordinatorId, 'Koordinator', 100);
+    const coordinator = db.prepare("SELECT id,name,approval_pin_hash,approval_pin_salt FROM users WHERE id=? AND role='COORDINATOR' AND active=1").get(coordinatorId);
+    if (!coordinator) {
+      throw new AppError('Pilih Koordinator aktif untuk melakukan approval.');
+    }
+    if (!coordinator.approval_pin_hash || !coordinator.approval_pin_salt) {
+      throw new AppError(`${coordinator.name} belum membuat PIN approval. Minta Koordinator mengaturnya melalui menu Profil.`, 409);
+    }
+    const brandId = requiredText(req.body.brandId, 'Brand', 100);
+    if (!db.prepare('SELECT id FROM brands WHERE id=? AND active=1').get(brandId)) throw new AppError('Brand tidak valid.');
+    const channelIds = [...new Set(arrayValue(req.body.channelIds))];
+    if (channelIds.length) {
+      const validChannels = db.prepare(`SELECT id FROM channels WHERE active=1 AND id IN (${channelIds.map(() => '?').join(',')})`).all(...channelIds);
+      if (validChannels.length !== channelIds.length) throw new AppError('Ada channel yang tidak valid.');
+    }
+    const contentType = ['VIDEO', 'PHOTO', 'DESIGN', 'DOCUMENT'].includes(String(req.body.contentType || '').toUpperCase())
+      ? String(req.body.contentType).toUpperCase()
+      : finalFile.mimetype.startsWith('video/') ? 'VIDEO' : finalFile.mimetype.startsWith('image/') ? 'PHOTO' : 'DOCUMENT';
+    const uploaderId = cleanText(req.body.uploaderId, 100) || null;
+    if (uploaderId && !db.prepare("SELECT id FROM users WHERE id=? AND role IN ('UPLOADER','ASSISTANT_COORDINATOR') AND active=1").get(uploaderId)) {
+      throw new AppError('Petugas upload tidak valid.');
+    }
+
+    const id = newId('cnt');
+    const versionId = newId('ver');
+    const fileId = newId('file');
+    const timestamp = nowIso();
+    const contentNo = nextContentNumber();
+    const title = requiredText(req.body.title, 'Judul', 200);
+    const relativePath = path.join('drafts', finalFile.filename);
+    const originalName = safeFilename(finalFile.originalname);
+    const digest = checksum(fs.readFileSync(finalFile.path));
+    const cover = coverFile ? {
+      filePath: path.join('drafts', coverFile.filename), originalName: safeFilename(coverFile.originalname),
+      mimeType: coverFile.mimetype, fileSize: coverFile.size, checksum: checksum(fs.readFileSync(coverFile.path))
+    } : null;
+    let coordinatorApproval;
+    db.transaction(() => {
+      db.prepare(`INSERT INTO contents(
+        id,content_no,title,description,brand_id,category,content_type,approval_level,production_mode,workflow_type,
+        proposal_origin,brief_review_status,status,priority,publish_at,caption,hashtags,call_to_action,review_note,
+        coordinator_id,vendor_id,uploader_id,created_by,created_at,updated_at
+      ) VALUES(?,?,?,?,?,?,?,'REGULAR',?,'INSTANT',?,'NONE','DRAFT_SUBMITTED','NORMAL',?,?,?,?,?,?,?,?,?,?,?)`).run(
+        id, contentNo, title, cleanText(req.body.description, 2000), brandId, cleanText(req.body.category || 'FINAL_CONTENT', 50), contentType,
+        vendorSubmission ? 'VENDOR' : 'INTERNAL', vendorSubmission ? 'VENDOR' : 'COORDINATOR',
+        cleanText(req.body.publishAt, 40) || null, cleanText(req.body.caption, 5000), cleanText(req.body.hashtags, 1000), null,
+        cleanText(req.body.reviewNote ?? req.body.callToAction, 1000), coordinatorId, vendorSubmission ? req.user.vendorId : null, uploaderId,
+        req.user.id, timestamp, timestamp
+      );
+      for (const channelId of channelIds) db.prepare('INSERT INTO content_channels(content_id,channel_id) VALUES(?,?)').run(id, channelId);
+      db.prepare(`INSERT INTO content_versions(id,content_id,version_number,file_path,original_name,mime_type,file_size,cover_file_path,cover_original_name,cover_mime_type,cover_file_size,cover_checksum,caption,change_note,submitted_by,created_at)
+        VALUES(?,?,1,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(versionId, id, relativePath, originalName, finalFile.mimetype, finalFile.size,
+        cover?.filePath || null, cover?.originalName || null, cover?.mimeType || null, cover?.fileSize || null, cover?.checksum || null,
+        cleanText(req.body.caption, 5000), 'Konten final versi 1', req.user.id, timestamp);
+      db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,file_role,checksum,uploaded_by,is_final,created_at)
+        VALUES(?,?,'PRODUCTION_RESULT',1,?,?,?,?, 'MAIN',?,?,1,?)`).run(fileId, id, relativePath, originalName, finalFile.mimetype, finalFile.size, digest, req.user.id, timestamp);
+      const fileIds = [fileId];
+      if (cover) {
+        const coverId = newId('file');
+        db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,file_role,checksum,uploaded_by,is_final,created_at)
+          VALUES(?,?,'PRODUCTION_RESULT',1,?,?,?,?, 'COVER',?,?,1,?)`).run(coverId, id, cover.filePath, cover.originalName, cover.mimeType, cover.fileSize, cover.checksum, req.user.id, timestamp);
+        fileIds.push(coverId);
+      }
+      coordinatorApproval = replaceCoordinatorApprovalLink({ contentId: id, coordinatorId, fileIds, createdBy: req.user.id });
+      db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+        VALUES(?,?,NULL,'DRAFT_SUBMITTED','CREATE_SIMPLE_CONTENT','Konten final langsung dikirim untuk review Koordinator',?,?)`).run(newId('evt'), id, req.user.id, timestamp);
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: id, action: 'CREATE_SIMPLE_CONTENT',
+        after: { contentNo, title, contentType, source: vendorSubmission ? 'VENDOR' : 'INTERNAL', coordinatorId, channelIds, originalName, size: finalFile.size, cover: cover?.originalName || null }, ip: requestIp(req) });
+    })();
+    notifyUser(coordinatorId, 'SIMPLE_CONTENT_SUBMITTED', `Konten baru ${contentNo}`, `${req.user.name} mengirim ${title} untuk review.`, `/contents/${id}`);
+    res.status(201).json({ item: getContent(id, req.user), approvalUrl: coordinatorApproval.url });
+  } catch (error) { removeRequestUploads(req); next(error); }
+}
+
+const simpleResultFields = simpleContentUpload.fields([{ name: 'file', maxCount: 1 }, { name: 'coverFile', maxCount: 1 }]);
+app.post('/api/simple-contents', authRequired, simpleResultFields, createSimpleContent);
+// Endpoint lama dipertahankan agar aplikasi yang belum diperbarui tetap dapat mengirim konten.
+app.post('/api/instant-videos', authRequired, simpleResultFields, createSimpleContent);
+
+app.patch('/api/simple-contents/:id/review-material', authRequired, (req, res, next) => {
+  try {
+    const item = getContent(req.params.id, req.user);
+    if (item.workflow_type !== 'INSTANT') throw new AppError('Edit materi review hanya tersedia untuk alur konten sederhana.', 409);
+    if (!mayReviewSimpleContent(req.user, item)) throw new AppError('Anda tidak dapat mengedit materi review ini.', 403);
+    if (item.status !== 'DRAFT_SUBMITTED') throw new AppError('Materi hanya dapat diedit saat menunggu review Koordinator.', 409);
+    const before = { caption: item.caption || '', hashtags: item.hashtags || '', reviewNote: item.review_note || '' };
+    const after = {
+      caption: cleanText(req.body.caption, 5000),
+      hashtags: cleanText(req.body.hashtags, 1000),
+      reviewNote: cleanText(req.body.reviewNote, 1000)
+    };
+    const timestamp = nowIso();
+    db.transaction(() => {
+      db.prepare('UPDATE contents SET caption=?,hashtags=?,review_note=?,updated_at=? WHERE id=?')
+        .run(after.caption, after.hashtags, after.reviewNote, timestamp, item.id);
+      db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+        VALUES(?,?,'DRAFT_SUBMITTED','DRAFT_SUBMITTED','UPDATE_REVIEW_MATERIAL',?,?,?)`)
+        .run(newId('evt'), item.id, 'Caption, hashtag, atau catatan review diperbarui.', req.user.id, timestamp);
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: item.id, action: 'UPDATE_REVIEW_MATERIAL',
+        before, after, ip: requestIp(req) });
+    })();
+    res.json({ item: getContent(item.id, req.user) });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/simple-contents/:id/review-attachments', authRequired, simpleContentUpload.single('file'), (req, res, next) => {
+  try {
+    const item = getContent(req.params.id, req.user);
+    if (item.workflow_type !== 'INSTANT') throw new AppError('Lampiran review hanya tersedia untuk alur konten sederhana.', 409);
+    if (!mayReviewSimpleContent(req.user, item)) throw new AppError('Anda tidak dapat menambahkan lampiran review.', 403);
+    if (item.status !== 'DRAFT_SUBMITTED') throw new AppError('Lampiran hanya dapat ditambah saat menunggu review Koordinator.', 409);
+    if (!req.file) throw new AppError('Pilih file lampiran review.');
+    const versionNumber = Number(latestVersion(item.id)?.version_number || 1);
+    const id = newId('file');
+    const relativePath = path.join('drafts', req.file.filename);
+    const timestamp = nowIso();
+    db.transaction(() => {
+      db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,file_role,checksum,uploaded_by,is_final,created_at)
+        VALUES(?,?,'PRODUCTION_RESULT',?,?,?,?,?,'ATTACHMENT',?,?,0,?)`).run(id, item.id, versionNumber, relativePath,
+        safeFilename(req.file.originalname), req.file.mimetype, req.file.size, checksum(fs.readFileSync(req.file.path)), req.user.id, timestamp);
+      db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+        VALUES(?,?,'DRAFT_SUBMITTED','DRAFT_SUBMITTED','ADD_REVIEW_ATTACHMENT',?,?,?)`)
+        .run(newId('evt'), item.id, safeFilename(req.file.originalname), req.user.id, timestamp);
+      recordAudit({ actorId: req.user.id, entityType: 'COLLABORATION_FILE', entityId: id, action: 'ADD_REVIEW_ATTACHMENT',
+        after: { contentId: item.id, originalName: safeFilename(req.file.originalname), size: req.file.size }, ip: requestIp(req) });
+    })();
+    res.status(201).json({ id, fileUrl: `/api/collaboration/files/${id}` });
+  } catch (error) { removeUpload(req.file); next(error); }
+});
+
+app.post('/api/contents/:id/coordinator-decision', authRequired, (req, res, next) => {
+  try {
+    const item = getContent(req.params.id, req.user);
+    if (item.workflow_type !== 'INSTANT') throw new AppError('Keputusan langsung hanya tersedia untuk alur konten sederhana.', 409);
+    if (!mayReviewSimpleContent(req.user, item)) {
+      throw new AppError('Hanya Koordinator penanggung jawab atau penerima delegasi yang dapat memberi keputusan.', 403);
+    }
+    if (item.status !== 'DRAFT_SUBMITTED') throw new AppError('Konten tidak sedang menunggu review Koordinator.', 409);
+
+    const decision = String(req.body.decision || '').toUpperCase();
+    if (!['APPROVED', 'REVISION', 'DIRECTOR'].includes(decision)) throw new AppError('Pilih keputusan review yang valid.');
+    const note = cleanText(req.body.note, 2000);
+    if (decision === 'REVISION' && !note) throw new AppError('Catatan revisi wajib diisi.');
+
+    let director = null;
+    if (decision === 'DIRECTOR') {
+      director = db.prepare("SELECT id,name,approval_pin_hash,approval_pin_salt FROM users WHERE id=? AND role='MANAGEMENT' AND active=1")
+        .get(String(req.body.directorId || ''));
+      if (!director) throw new AppError('Pilih Direksi aktif.');
+      if (!director.approval_pin_hash || !director.approval_pin_salt) {
+        throw new AppError(`${director.name} belum membuat PIN approval pribadi.`, 409);
+      }
+    }
+
+    const activeCoordinatorApproval = db.prepare(`SELECT id,attachment_ids_json,created_by FROM coordinator_approval_requests
+      WHERE content_id=? AND status='ACTIVE' ORDER BY created_at DESC LIMIT 1`).get(item.id);
+    const availableFileRows = db.prepare("SELECT id,file_role FROM collaboration_files WHERE content_id=? AND phase='PRODUCTION_RESULT'").all(item.id);
+    const availableFiles = new Map(availableFileRows.map(row => [row.id, row]));
+    const linkedFileIds = jsonObject(activeCoordinatorApproval?.attachment_ids_json, []).map(String).filter(id => availableFiles.has(id));
+    const requestedFileIds = arrayValue(req.body.fileIds);
+    const explicitSelection = Object.hasOwn(req.body, 'fileIds');
+    const fileIds = [...new Set((explicitSelection ? requestedFileIds : linkedFileIds.length ? linkedFileIds : latestSimpleContentFileIds(item.id))
+      .filter(id => availableFiles.has(id)))];
+    if (decision !== 'REVISION' && !fileIds.length) throw new AppError('Pilih minimal satu file final untuk proses upload.', 409);
+    if (decision !== 'REVISION' && !fileIds.some(id => availableFiles.get(id)?.file_role !== 'COVER')) {
+      throw new AppError('Pilih minimal satu file utama selain cover.', 409);
+    }
+
+    const version = latestVersion(item.id);
+    if (!version) throw new AppError('Versi hasil produksi tidak ditemukan.', 409);
+    const timestamp = nowIso();
+    let directorUrl = null;
+    let directorRequestId = null;
+
+    db.transaction(() => {
+      const activeRequests = db.prepare("SELECT id FROM coordinator_approval_requests WHERE content_id=? AND status='ACTIVE'").all(item.id);
+      for (const request of activeRequests) db.prepare('DELETE FROM coordinator_approval_access_sessions WHERE request_id=?').run(request.id);
+      db.prepare(`UPDATE coordinator_approval_requests
+        SET status=?,note=?,opened_at=COALESCE(opened_at,?),decided_at=?
+        WHERE content_id=? AND status='ACTIVE'`).run(decision, note, timestamp, timestamp, item.id);
+
+      if (decision === 'DIRECTOR') {
+        replaceContentUploadFiles(item.id, fileIds, req.user.id, timestamp);
+        const directorToken = randomToken(32);
+        directorRequestId = newId('aprq');
+        const activeDirectorApprovals = db.prepare("SELECT id FROM director_approval_requests WHERE content_id=? AND status='ACTIVE'").all(item.id);
+        for (const approval of activeDirectorApprovals) db.prepare('DELETE FROM approval_access_sessions WHERE request_id=?').run(approval.id);
+        db.prepare("UPDATE director_approval_requests SET status='CANCELLED',cancelled_at=?,note=COALESCE(note,?) WHERE content_id=? AND status='ACTIVE'")
+          .run(timestamp, 'Diganti dengan permintaan approval baru dari akun Koordinator.', item.id);
+        db.prepare(`INSERT INTO director_approval_requests(id,content_id,director_id,token_hash,pin_hash,link_token_ciphertext,attachment_ids_json,created_by,created_at)
+          VALUES(?,?,?,?,?,?,?,?,?)`).run(directorRequestId, item.id, director.id, hashToken('DIRECTOR_LINK', directorToken),
+          'DIRECTOR_OWNED', encryptSecret('DIRECTOR_LINK_TOKEN', directorToken), JSON.stringify(fileIds), req.user.id, timestamp);
+        db.prepare("UPDATE contents SET status='APPROVAL_PENDING',approver_id=?,locked_at=NULL,updated_at=? WHERE id=?")
+          .run(director.id, timestamp, item.id);
+        db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+          VALUES(?,?,'DRAFT_SUBMITTED','APPROVAL_PENDING','COORDINATOR_ACCOUNT_TO_DIRECTOR',?,?,?)`)
+          .run(newId('evt'), item.id, note || `Diteruskan kepada ${director.name}`, req.user.id, timestamp);
+        directorUrl = `/approval.html?token=${directorToken}`;
+        recordAudit({ actorId: req.user.id, entityType: 'DIRECTOR_APPROVAL', entityId: directorRequestId, action: 'CREATE_FROM_COORDINATOR_ACCOUNT',
+          after: { contentId: item.id, directorId: director.id, fileIds }, ip: requestIp(req) });
+      } else {
+        const status = decision === 'APPROVED' ? 'APPROVED' : 'REVISION_REQUIRED';
+        replaceContentUploadFiles(item.id, decision === 'APPROVED' ? fileIds : [], req.user.id, timestamp);
+        db.prepare('UPDATE contents SET status=?,locked_at=?,updated_at=? WHERE id=?')
+          .run(status, decision === 'APPROVED' ? timestamp : null, timestamp, item.id);
+        db.prepare('INSERT INTO approvals(id,content_id,version_id,decision,note,approver_id,created_at) VALUES(?,?,?,?,?,?,?)')
+          .run(newId('apr'), item.id, version.id, decision === 'APPROVED' ? 'APPROVED' : 'REVISION', note, req.user.id, timestamp);
+        if (decision === 'APPROVED') {
+          db.prepare('UPDATE content_versions SET is_approved=1 WHERE id=?').run(version.id);
+          autoPromoteSimpleContent(item.id, req.user.id);
+        }
+        db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+          VALUES(?,?,'DRAFT_SUBMITTED',?,'COORDINATOR_ACCOUNT_DECISION',?,?,?)`)
+          .run(newId('evt'), item.id, status, note, req.user.id, timestamp);
+      }
+      recordAudit({ actorId: req.user.id, entityType: 'COORDINATOR_APPROVAL',
+        entityId: activeCoordinatorApproval?.id || item.id, action: `ACCOUNT_${decision}`, reason: note,
+        after: { contentId: item.id, fileIds, directorId: director?.id || null }, ip: requestIp(req) });
+    })();
+
+    const link = `/contents/${item.id}`;
+    if (decision === 'DIRECTOR') {
+      notifyUser(director.id, 'DIRECTOR_APPROVAL', `Approval ${item.content_no}`, item.title, link);
+    } else if (decision === 'REVISION') {
+      if (item.created_by && item.created_by !== req.user.id) notifyUser(item.created_by, 'COORDINATOR_REVISION', `${item.content_no} Â· revisi diperlukan`, note, link);
+      if (item.production_mode === 'VENDOR') notifyVendor(item.vendor_id, 'COORDINATOR_REVISION', `${item.content_no} Â· revisi diperlukan`, note, link);
+    } else {
+      if (item.created_by && item.created_by !== req.user.id) notifyUser(item.created_by, 'COORDINATOR_APPROVED', `${item.content_no} disetujui`, item.title, link);
+      if (item.uploader_id) notifyUser(item.uploader_id, 'READY_TO_PUBLISH', `${item.content_no} siap tayang`, item.title, link);
+      else notifyRole('UPLOADER', 'READY_TO_PUBLISH', `${item.content_no} siap dijadwalkan`, item.title, link);
+    }
+
+    res.json({ ok: true,
+      status: decision === 'REVISION' ? 'REVISION_REQUIRED' : decision === 'DIRECTOR' ? 'APPROVAL_PENDING' : 'APPROVED',
+      directorApprovalUrl: directorUrl, directorName: director?.name || null, directorApprovalId: directorRequestId });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/vendor-tasks', authRequired, simpleContentUpload.single('referenceFile'), (req, res, next) => {
+  try {
+    if (!['SUPER_ADMIN', 'COORDINATOR'].includes(req.user.role)) throw new AppError('Hanya Koordinator yang dapat membuat tugas Vendor.', 403);
+    const coordinatorId = req.user.role === 'COORDINATOR' ? req.user.id : requiredText(req.body.coordinatorId, 'Koordinator', 100);
+    const coordinator = db.prepare("SELECT id,name,approval_pin_hash,approval_pin_salt FROM users WHERE id=? AND role='COORDINATOR' AND active=1").get(coordinatorId);
+    if (!coordinator) throw new AppError('Pilih Koordinator aktif.');
+    if (!coordinator.approval_pin_hash || !coordinator.approval_pin_salt) {
+      throw new AppError(`${coordinator.name} belum membuat PIN approval melalui menu Profil.`, 409);
+    }
+    const vendorId = requiredText(req.body.vendorId, 'Vendor', 100);
+    const vendor = db.prepare("SELECT id,name FROM vendors WHERE id=? AND status='ACTIVE'").get(vendorId);
+    if (!vendor) throw new AppError('Pilih Vendor aktif.');
+    const brandId = requiredText(req.body.brandId, 'Brand', 100);
+    if (!db.prepare('SELECT id FROM brands WHERE id=? AND active=1').get(brandId)) throw new AppError('Brand tidak valid.');
+    const instruction = requiredText(req.body.instruction, 'Instruksi singkat', 2000);
+    const id = newId('cnt');
+    const contentNo = nextContentNumber();
+    const title = requiredText(req.body.title, 'Judul', 200);
+    const timestamp = nowIso();
+    const references = referenceUrls(req.body.referenceUrls);
+    db.transaction(() => {
+      db.prepare(`INSERT INTO contents(
+        id,content_no,title,description,brief,brand_id,category,content_type,approval_level,production_mode,workflow_type,
+        proposal_origin,brief_review_status,status,priority,due_date,reference_urls_json,coordinator_id,vendor_id,created_by,created_at,updated_at
+      ) VALUES(?,?,?,?,?,?,'FINAL_CONTENT','SOCIAL_POST','REGULAR','VENDOR','INSTANT','COORDINATOR','NONE','IN_PRODUCTION','NORMAL',?,?,?,?,?,?,?)`).run(
+        id, contentNo, title, instruction, instruction, brandId, cleanText(req.body.dueDate, 20) || null,
+        JSON.stringify(references), coordinatorId, vendorId, req.user.id, timestamp, timestamp
+      );
+      if (req.file) {
+        const relativePath = path.join('drafts', req.file.filename);
+        db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,checksum,uploaded_by,is_final,created_at)
+          VALUES(?,?,'BRIEF',1,?,?,?,?,?,?,0,?)`).run(newId('file'), id, relativePath, safeFilename(req.file.originalname),
+          req.file.mimetype, req.file.size, checksum(fs.readFileSync(req.file.path)), req.user.id, timestamp);
+      }
+      db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+        VALUES(?,?,NULL,'IN_PRODUCTION','CREATE_SIMPLE_VENDOR_TASK',?,?,?)`).run(newId('evt'), id, `Tugas diberikan kepada ${vendor.name}`, req.user.id, timestamp);
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: id, action: 'CREATE_SIMPLE_VENDOR_TASK',
+        after: { contentNo, title, vendorId, coordinatorId, dueDate: cleanText(req.body.dueDate, 20) || null }, ip: requestIp(req) });
+    })();
+    notifyVendor(vendorId, 'SIMPLE_VENDOR_TASK', `Tugas baru ${contentNo}`, title, `/contents/${id}`);
+    res.status(201).json({ item: getContent(id, req.user) });
+  } catch (error) { removeUpload(req.file); next(error); }
+});
+
+app.patch('/api/simple-contents/:id', authRequired, (req, res, next) => {
+  try {
+    const item = getContent(req.params.id, req.user);
+    if (!['SUPER_ADMIN', 'COORDINATOR'].includes(req.user.role) || (req.user.role === 'COORDINATOR' && item.coordinator_id !== req.user.id)) {
+      throw new AppError('Hanya Koordinator penanggung jawab atau Super Admin yang dapat mengedit tugas.', 403);
+    }
+    if (item.workflow_type !== 'INSTANT' || ['PUBLISHED', 'CANCELLED'].includes(item.status)) throw new AppError('Tugas ini tidak dapat diedit.', 409);
+    const preResult = item.status === 'IN_PRODUCTION';
+    const protectedInputs = ['title', 'brandId', 'vendorId', 'instruction', 'referenceUrls'];
+    if (!preResult && protectedInputs.some(field => Object.hasOwn(req.body, field))) {
+      throw new AppError('Setelah hasil dikirim, judul, brand, Vendor, instruksi, dan referensi tidak dapat diubah. Gunakan proses revisi untuk materi final.', 409);
+    }
+    const sets = [];
+    const values = [];
+    if (preResult) {
+      if (Object.hasOwn(req.body, 'title')) { sets.push('title=?'); values.push(requiredText(req.body.title, 'Judul', 200)); }
+      if (Object.hasOwn(req.body, 'brandId')) {
+        const brandId = requiredText(req.body.brandId, 'Brand', 100);
+        if (!db.prepare('SELECT id FROM brands WHERE id=? AND active=1').get(brandId)) throw new AppError('Brand tidak valid.');
+        sets.push('brand_id=?'); values.push(brandId);
+      }
+      if (Object.hasOwn(req.body, 'vendorId')) {
+        if (item.production_mode !== 'VENDOR') throw new AppError('Vendor hanya berlaku untuk produksi Vendor.', 409);
+        const vendorId = requiredText(req.body.vendorId, 'Vendor', 100);
+        if (!db.prepare("SELECT id FROM vendors WHERE id=? AND status='ACTIVE'").get(vendorId)) throw new AppError('Vendor tidak valid.');
+        sets.push('vendor_id=?'); values.push(vendorId);
+      }
+      if (Object.hasOwn(req.body, 'instruction')) {
+        const instruction = requiredText(req.body.instruction, 'Instruksi singkat', 2000);
+        sets.push('description=?', 'brief=?'); values.push(instruction, instruction);
+      }
+      if (Object.hasOwn(req.body, 'referenceUrls')) { sets.push('reference_urls_json=?'); values.push(JSON.stringify(referenceUrls(req.body.referenceUrls))); }
+    }
+    if (Object.hasOwn(req.body, 'dueDate')) { sets.push('due_date=?'); values.push(cleanText(req.body.dueDate, 20) || null); }
+    if (Object.hasOwn(req.body, 'publishAt')) { sets.push('publish_at=?'); values.push(cleanText(req.body.publishAt, 40) || null); }
+    if (Object.hasOwn(req.body, 'uploaderId')) {
+      const uploaderId = cleanText(req.body.uploaderId, 100) || null;
+      if (uploaderId && !db.prepare("SELECT id FROM users WHERE id=? AND role IN ('UPLOADER','ASSISTANT_COORDINATOR') AND active=1").get(uploaderId)) throw new AppError('Petugas upload tidak valid.');
+      sets.push('uploader_id=?'); values.push(uploaderId);
+    }
+    const updateChannels = Object.hasOwn(req.body, 'channelIds');
+    const channelIds = updateChannels ? [...new Set(arrayValue(req.body.channelIds))] : item.channelIds;
+    if (updateChannels && channelIds.length) {
+      const valid = db.prepare(`SELECT id FROM channels WHERE active=1 AND id IN (${channelIds.map(() => '?').join(',')})`).all(...channelIds);
+      if (valid.length !== channelIds.length) throw new AppError('Ada channel yang tidak valid.');
+    }
+    if (!sets.length && !updateChannels) throw new AppError('Tidak ada perubahan yang dikirim.');
+    const timestamp = nowIso();
+    db.transaction(() => {
+      if (sets.length) db.prepare(`UPDATE contents SET ${sets.join(',')},updated_at=? WHERE id=?`).run(...values, timestamp, item.id);
+      else db.prepare('UPDATE contents SET updated_at=? WHERE id=?').run(timestamp, item.id);
+      if (updateChannels) {
+        db.prepare('DELETE FROM content_channels WHERE content_id=?').run(item.id);
+        for (const channelId of channelIds) db.prepare('INSERT INTO content_channels(content_id,channel_id) VALUES(?,?)').run(item.id, channelId);
+      }
+      db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+        VALUES(?,?,?,?,?,?,?,?)`).run(newId('evt'), item.id, item.status, item.status, 'UPDATE_SIMPLE_CONTENT', cleanText(req.body.changeNote, 1000) || 'Detail tugas diperbarui', req.user.id, timestamp);
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: item.id, action: 'UPDATE_SIMPLE_CONTENT', before: item,
+        after: getContent(item.id, req.user), ip: requestIp(req) });
+    })();
+    const updated = getContent(item.id, req.user);
+    if (item.production_mode === 'VENDOR') {
+      notifyVendor(updated.vendor_id, 'SIMPLE_TASK_UPDATED', `Tugas diperbarui ${item.content_no}`, updated.title, `/contents/${item.id}`);
+      if (item.vendor_id && item.vendor_id !== updated.vendor_id) notifyVendor(item.vendor_id, 'SIMPLE_TASK_REASSIGNED', `Penugasan berubah ${item.content_no}`, `${item.title} dialihkan ke Vendor lain.`, `/contents/${item.id}`);
+    }
+    else if (item.created_by && item.created_by !== req.user.id) notifyUser(item.created_by, 'SIMPLE_TASK_UPDATED', `Tugas diperbarui ${item.content_no}`, updated.title, `/contents/${item.id}`);
+    res.json({ item: updated });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/vendor-tasks/:id/result', authRequired, simpleResultFields, (req, res, next) => {
+  try {
+    const finalFile = requestFile(req, 'file');
+    const coverFile = requestFile(req, 'coverFile');
+    validateCoverFile(coverFile);
+    const item = getContent(req.params.id, req.user);
+    if (req.user.role !== 'VENDOR' || !req.user.vendorId || item.vendor_id !== req.user.vendorId) {
+      throw new AppError('Tugas ini tidak diberikan kepada Vendor Anda.', 403);
+    }
+    if (item.workflow_type !== 'INSTANT' || item.production_mode !== 'VENDOR') throw new AppError('Tugas Vendor tidak valid.', 409);
+    if (item.status !== 'IN_PRODUCTION') throw new AppError('Hasil hanya dapat dikirim pada tugas yang sedang dikerjakan.', 409);
+    if (!finalFile) throw new AppError('File final wajib dipilih.');
+    const versionNumber = Number(db.prepare('SELECT COALESCE(MAX(version_number),0)+1 AS n FROM content_versions WHERE content_id=?').get(item.id).n);
+    const relativePath = path.join('drafts', finalFile.filename);
+    const originalName = safeFilename(finalFile.originalname);
+    const cover = coverFile ? { filePath: path.join('drafts', coverFile.filename), originalName: safeFilename(coverFile.originalname), mimeType: coverFile.mimetype, fileSize: coverFile.size, checksum: checksum(fs.readFileSync(coverFile.path)) } : null;
+    const timestamp = nowIso();
+    const fileId = newId('file');
+    let coordinatorApproval;
+    db.transaction(() => {
+      db.prepare(`INSERT INTO content_versions(id,content_id,version_number,file_path,original_name,mime_type,file_size,cover_file_path,cover_original_name,cover_mime_type,cover_file_size,cover_checksum,caption,change_note,submitted_by,created_at)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(newId('ver'), item.id, versionNumber, relativePath, originalName, finalFile.mimetype, finalFile.size,
+        cover?.filePath || null, cover?.originalName || null, cover?.mimeType || null, cover?.fileSize || null, cover?.checksum || null,
+        cleanText(req.body.caption, 5000), cleanText(req.body.changeNote, 1000) || 'Hasil final Vendor', req.user.id, timestamp);
+      db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,file_role,checksum,uploaded_by,is_final,created_at)
+        VALUES(?,?,'PRODUCTION_RESULT',?,?,?,?,?,'MAIN',?,?,1,?)`).run(fileId, item.id, versionNumber, relativePath, originalName,
+        finalFile.mimetype, finalFile.size, checksum(fs.readFileSync(finalFile.path)), req.user.id, timestamp);
+      const fileIds = [fileId];
+      if (coverFile && cover) {
+        const coverId = newId('file');
+        db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,file_role,checksum,uploaded_by,is_final,created_at)
+          VALUES(?,?,'PRODUCTION_RESULT',?,?,?,?,?,'COVER',?,?,1,?)`).run(coverId, item.id, versionNumber, cover.filePath, cover.originalName, cover.mimeType, cover.fileSize, cover.checksum, req.user.id, timestamp);
+        fileIds.push(coverId);
+      } else {
+        const existingCover = db.prepare("SELECT id FROM collaboration_files WHERE content_id=? AND file_role='COVER' ORDER BY version_number DESC,created_at DESC LIMIT 1").get(item.id);
+        if (existingCover) fileIds.push(existingCover.id);
+      }
+      db.prepare(`UPDATE contents SET status='DRAFT_SUBMITTED',content_type=?,caption=?,hashtags=?,review_note=?,publish_at=?,updated_at=? WHERE id=?`).run(
+        ['VIDEO', 'PHOTO', 'DESIGN', 'DOCUMENT'].includes(String(req.body.contentType || '').toUpperCase()) ? String(req.body.contentType).toUpperCase() :
+          finalFile.mimetype.startsWith('video/') ? 'VIDEO' : finalFile.mimetype.startsWith('image/') ? 'PHOTO' : 'DOCUMENT',
+        cleanText(req.body.caption, 5000), cleanText(req.body.hashtags, 1000), cleanText(req.body.reviewNote ?? req.body.callToAction, 1000),
+        cleanText(req.body.publishAt, 40) || null, timestamp, item.id
+      );
+      db.prepare('DELETE FROM content_upload_files WHERE content_id=?').run(item.id);
+      coordinatorApproval = replaceCoordinatorApprovalLink({ contentId: item.id, coordinatorId: item.coordinator_id, fileIds, createdBy: req.user.id });
+      db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+        VALUES(?,?,'IN_PRODUCTION','DRAFT_SUBMITTED','SUBMIT_SIMPLE_VENDOR_RESULT',?,?,?)`).run(newId('evt'), item.id,
+        cleanText(req.body.changeNote, 1000) || 'Hasil final Vendor dikirim', req.user.id, timestamp);
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT_VERSION', entityId: item.id, action: 'SUBMIT_SIMPLE_VENDOR_RESULT',
+        after: { versionNumber, originalName, size: finalFile.size, cover: cover?.originalName || null }, ip: requestIp(req) });
+    })();
+    notifyUser(item.coordinator_id, 'SIMPLE_VENDOR_RESULT', `Hasil Vendor ${item.content_no}`, `${req.user.name} mengirim ${item.title} untuk review.`, `/contents/${item.id}`);
+    res.status(201).json({ item: getContent(item.id, req.user), versionNumber, approvalUrl: coordinatorApproval.url });
+  } catch (error) { removeRequestUploads(req); next(error); }
+});
+
+function submitSimpleContentRevision(req, res, next) {
+  try {
+    const finalFile = requestFile(req, 'file');
+    const coverFile = requestFile(req, 'coverFile');
+    validateCoverFile(coverFile);
+    if (!hasPermission(req.user, 'content.simple_create') && !hasPermission(req.user, 'content.instant_create')) throw new AppError('Anda tidak dapat mengirim revisi konten.', 403);
+    const item = getContent(req.params.id, req.user);
+    const assignedVendor = req.user.role === 'VENDOR' && req.user.vendorId && item.production_mode === 'VENDOR' && item.vendor_id === req.user.vendorId;
+    if (item.workflow_type !== 'INSTANT' || (item.created_by !== req.user.id && !assignedVendor)) throw new AppError('Konten ini bukan unggahan atau tugas Anda.', 403);
+    if (item.status !== 'REVISION_REQUIRED') throw new AppError('Revisi hanya dapat dikirim ketika diminta Koordinator.', 409);
+    if (!finalFile) throw new AppError('File revisi wajib dipilih.');
+    const versionNumber = Number(db.prepare('SELECT COALESCE(MAX(version_number),0)+1 AS n FROM content_versions WHERE content_id=?').get(item.id).n);
+    const relativePath = path.join('drafts', finalFile.filename);
+    const originalName = safeFilename(finalFile.originalname);
+    const timestamp = nowIso();
+    const digest = checksum(fs.readFileSync(finalFile.path));
+    const previousVersion = db.prepare('SELECT * FROM content_versions WHERE content_id=? ORDER BY version_number DESC LIMIT 1').get(item.id);
+    const cover = coverFile ? { filePath: path.join('drafts', coverFile.filename), originalName: safeFilename(coverFile.originalname), mimeType: coverFile.mimetype, fileSize: coverFile.size, checksum: checksum(fs.readFileSync(coverFile.path)) } : previousVersion?.cover_file_path ? {
+      filePath: previousVersion.cover_file_path, originalName: previousVersion.cover_original_name, mimeType: previousVersion.cover_mime_type,
+      fileSize: previousVersion.cover_file_size, checksum: previousVersion.cover_checksum
+    } : null;
+    const coordinator = db.prepare("SELECT id,name,approval_pin_hash,approval_pin_salt FROM users WHERE id=? AND role='COORDINATOR' AND active=1").get(item.coordinator_id);
+    if (!coordinator?.approval_pin_hash || !coordinator?.approval_pin_salt) throw new AppError('Koordinator belum memiliki PIN approval aktif.', 409);
+    const fileId = newId('file');
+    let coordinatorApproval;
+    db.transaction(() => {
+      db.prepare(`INSERT INTO content_versions(id,content_id,version_number,file_path,original_name,mime_type,file_size,cover_file_path,cover_original_name,cover_mime_type,cover_file_size,cover_checksum,caption,change_note,submitted_by,created_at)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(newId('ver'), item.id, versionNumber, relativePath, originalName, finalFile.mimetype, finalFile.size,
+        cover?.filePath || null, cover?.originalName || null, cover?.mimeType || null, cover?.fileSize || null, cover?.checksum || null,
+        cleanText(req.body.caption, 5000) || item.caption, cleanText(req.body.changeNote, 1000) || `Revisi konten versi ${versionNumber}`, req.user.id, timestamp);
+      db.prepare('UPDATE collaboration_files SET is_final=0 WHERE content_id=?').run(item.id);
+      db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,file_role,checksum,uploaded_by,is_final,created_at)
+        VALUES(?,?,'PRODUCTION_RESULT',?,?,?,?,?,'MAIN',?,?,1,?)`).run(fileId, item.id, versionNumber, relativePath, originalName,
+        finalFile.mimetype, finalFile.size, digest, req.user.id, timestamp);
+      const fileIds = [fileId];
+      if (coverFile && cover) {
+        const coverId = newId('file');
+        db.prepare(`INSERT INTO collaboration_files(id,content_id,phase,version_number,file_path,original_name,mime_type,file_size,file_role,checksum,uploaded_by,is_final,created_at)
+          VALUES(?,?,'PRODUCTION_RESULT',?,?,?,?,?,'COVER',?,?,1,?)`).run(coverId, item.id, versionNumber, cover.filePath, cover.originalName, cover.mimeType, cover.fileSize, cover.checksum, req.user.id, timestamp);
+        fileIds.push(coverId);
+      } else {
+        const existingCover = db.prepare("SELECT id FROM collaboration_files WHERE content_id=? AND file_role='COVER' ORDER BY version_number DESC,created_at DESC LIMIT 1").get(item.id);
+        if (existingCover) fileIds.push(existingCover.id);
+      }
+      db.prepare("UPDATE contents SET status='DRAFT_SUBMITTED',caption=COALESCE(NULLIF(?,''),caption),hashtags=COALESCE(NULLIF(?,''),hashtags),review_note=COALESCE(NULLIF(?,''),review_note),updated_at=? WHERE id=?")
+        .run(cleanText(req.body.caption, 5000), cleanText(req.body.hashtags, 1000), cleanText(req.body.reviewNote ?? req.body.callToAction, 1000), timestamp, item.id);
+      db.prepare('DELETE FROM content_upload_files WHERE content_id=?').run(item.id);
+      db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+        VALUES(?,?,'REVISION_REQUIRED','DRAFT_SUBMITTED','SUBMIT_SIMPLE_REVISION',?,?,?)`).run(newId('evt'), item.id,
+        cleanText(req.body.changeNote, 1000) || `Versi ${versionNumber}`, req.user.id, timestamp);
+      coordinatorApproval = replaceCoordinatorApprovalLink({ contentId: item.id, coordinatorId: item.coordinator_id, fileIds, createdBy: req.user.id, reason: 'Diganti oleh revisi konten.' });
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT_VERSION', entityId: item.id, action: 'SUBMIT_SIMPLE_REVISION',
+        after: { versionNumber, originalName, size: finalFile.size, cover: cover?.originalName || null }, ip: requestIp(req) });
+    })();
+    notifyUser(item.coordinator_id, 'SIMPLE_CONTENT_RESUBMITTED', `Revisi ${item.content_no}`, `${req.user.name} mengirim versi ${versionNumber}.`, `/contents/${item.id}`);
+    res.status(201).json({ item: getContent(item.id, req.user), versionNumber, approvalUrl: coordinatorApproval.url });
+  } catch (error) { removeRequestUploads(req); next(error); }
+}
+
+app.post('/api/simple-contents/:id/revision', authRequired, simpleResultFields, submitSimpleContentRevision);
+app.post('/api/instant-videos/:id/revision', authRequired, simpleResultFields, submitSimpleContentRevision);
+
+app.get('/api/contents/trash', authRequired, permissionRequired('content.trash'), (req, res) => {
+  const visibility = contentVisibility(req.user, 'c', true);
+  const rows = db.prepare(`${CONTENT_SELECT} WHERE ${visibility.sql} AND c.deleted_at IS NOT NULL ORDER BY c.deleted_at DESC LIMIT 250`)
+    .all(...visibility.params).map(row => ({
+      ...serializeContent(row),
+      canPurge: req.user.role === 'SUPER_ADMIN' && Boolean(db.prepare("SELECT 1 FROM contents WHERE id=? AND datetime(deleted_at)<=datetime('now','-30 days')").get(row.id))
+    }));
+  res.json({ items: rows, retentionDays: 30 });
+});
+
+app.post('/api/contents/:id/trash', authRequired, permissionRequired('content.trash'), (req, res, next) => {
+  try {
+    const item = getContent(req.params.id, req.user);
+    const reason = requiredText(req.body.reason, 'Alasan penghapusan', 1000);
+    const timestamp = nowIso();
+    db.transaction(() => {
+      db.prepare('UPDATE contents SET deleted_at=?,deleted_by=?,delete_reason=?,updated_at=? WHERE id=? AND deleted_at IS NULL')
+        .run(timestamp, req.user.id, reason, timestamp, item.id);
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: item.id, action: 'MOVE_TO_TRASH', before: { status: item.status, title: item.title }, after: { deletedAt: timestamp }, reason, ip: requestIp(req) });
+    })();
+    res.json({ ok: true });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/contents/:id/restore', authRequired, permissionRequired('content.trash'), (req, res, next) => {
+  try {
+    const visibility = contentVisibility(req.user, 'c', true);
+    const item = db.prepare(`${CONTENT_SELECT} WHERE c.id=? AND ${visibility.sql} AND c.deleted_at IS NOT NULL`).get(req.params.id, ...visibility.params);
+    if (!item) throw new AppError('Data di Sampah tidak ditemukan atau tidak dapat diakses.', 404);
+    const timestamp = nowIso();
+    db.transaction(() => {
+      db.prepare('UPDATE contents SET deleted_at=NULL,deleted_by=NULL,delete_reason=NULL,updated_at=? WHERE id=?').run(timestamp, item.id);
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: item.id, action: 'RESTORE_FROM_TRASH', before: { deletedAt: item.deleted_at, reason: item.delete_reason }, after: { restoredAt: timestamp }, ip: requestIp(req) });
+    })();
+    res.json({ ok: true });
+  } catch (error) { next(error); }
+});
+
+app.delete('/api/contents/:id/permanent', authRequired, (req, res, next) => {
+  try {
+    if (req.user.role !== 'SUPER_ADMIN') throw new AppError('Hanya Super Admin yang dapat menghapus permanen.', 403);
+    const item = db.prepare(`${CONTENT_SELECT} WHERE c.id=? AND c.deleted_at IS NOT NULL`).get(req.params.id);
+    if (!item) throw new AppError('Data di Sampah tidak ditemukan.', 404);
+    if (!db.prepare("SELECT 1 FROM contents WHERE id=? AND datetime(deleted_at)<=datetime('now','-30 days')").get(item.id)) {
+      throw new AppError('Data baru dapat dihapus permanen setelah berada di Sampah selama 30 hari.', 409);
+    }
+    const filePaths = [
+      ...db.prepare('SELECT file_path AS value FROM content_versions WHERE content_id=?').all(item.id),
+      ...db.prepare('SELECT cover_file_path AS value FROM content_versions WHERE content_id=? AND cover_file_path IS NOT NULL').all(item.id),
+      ...db.prepare('SELECT file_path AS value FROM collaboration_files WHERE content_id=?').all(item.id),
+      ...db.prepare('SELECT file_path AS value FROM publication_proofs WHERE content_id=? AND file_path IS NOT NULL').all(item.id),
+      ...db.prepare('SELECT proof_path AS value FROM publication_schedules WHERE content_id=? AND proof_path IS NOT NULL').all(item.id),
+      ...db.prepare('SELECT temp_path AS value FROM chunk_upload_sessions WHERE content_id=?').all(item.id)
+    ].map(row => row.value).filter(Boolean);
+    db.transaction(() => {
+      db.prepare('DELETE FROM contents WHERE id=?').run(item.id);
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: item.id, action: 'PERMANENT_DELETE', before: { contentNo: item.content_no, title: item.title, deletedAt: item.deleted_at, reason: item.delete_reason }, ip: requestIp(req) });
+    })();
+    const root = path.resolve(UPLOAD_DIR);
+    for (const storedPath of filePaths) {
+      const absolute = path.resolve(root, storedPath);
+      if (!absolute.startsWith(`${root}${path.sep}`)) continue;
+      try { fs.unlinkSync(absolute); } catch {}
+    }
+    res.json({ ok: true });
+  } catch (error) { next(error); }
+});
+
+app.get('/api/contents/:id', authRequired, (req, res) => {
+  const item = getContent(req.params.id, req.user);
+  const versions = db.prepare(`SELECT cv.*,u.name AS submitted_by_name FROM content_versions cv
+    JOIN users u ON u.id=cv.submitted_by WHERE cv.content_id=? ORDER BY cv.version_number DESC`).all(item.id)
+    .map(row => ({ ...row, fileUrl: `/api/files/drafts/${path.basename(row.file_path)}`,
+      coverFileUrl: row.cover_file_path ? `/api/files/drafts/${path.basename(row.cover_file_path)}` : '' }));
+  const events = db.prepare(`SELECT we.*,u.name AS actor_name FROM workflow_events we JOIN users u ON u.id=we.actor_id
+    WHERE we.content_id=? ORDER BY we.created_at DESC`).all(item.id);
+  const proofs = db.prepare(`SELECT pp.*,u.name AS uploader_name,ch.name AS channel_name FROM publication_proofs pp
+    JOIN users u ON u.id=pp.uploader_id LEFT JOIN channels ch ON ch.id=pp.channel_id
+    WHERE pp.content_id=? ORDER BY pp.published_at DESC`).all(item.id)
+    .map(row => ({ ...row, metrics: jsonObject(row.metrics_json), fileUrl: row.file_path ? `/api/files/proofs/${path.basename(row.file_path)}` : '' }));
+  const assets = db.prepare(`SELECT ma.id,ma.code,ma.title,ma.category,ma.status FROM content_assets ca
+    JOIN media_assets ma ON ma.id=ca.asset_id WHERE ca.content_id=? ORDER BY ma.title`).all(item.id);
+  const rawFootage = hasPermission(req.user, 'footage.view') ? db.prepare(`SELECT rf.id,rf.code,rf.title,rf.category,rf.brand_id,rf.status,rf.original_name,rf.mime_type,rf.file_size,
+    rf.file_path,b.code AS brand_code,b.name AS brand_name FROM content_raw_footage crf
+    JOIN raw_footage rf ON rf.id=crf.footage_id LEFT JOIN brands b ON b.id=rf.brand_id
+    WHERE crf.content_id=? ${req.user.role === 'VENDOR' ? "AND rf.status='ACTIVE'" : ''} ORDER BY rf.title`).all(item.id).map(row => ({
+      ...row,
+      file_size: Number(row.file_size || 0),
+      fileUrl: `/api/files/raw-footage/${path.basename(row.file_path)}`
+    })) : [];
+  const discussions = db.prepare(`SELECT cm.*,u.name AS sender_name,u.role AS sender_role FROM collaboration_messages cm
+    JOIN users u ON u.id=cm.sender_id WHERE cm.content_id=? ORDER BY cm.created_at`).all(item.id);
+  const vendorEdits = db.prepare(`SELECT vce.*,vu.name AS vendor_user_name,COALESCE(v.name,vu.name) AS vendor_name,reviewer.name AS reviewer_name
+    FROM vendor_content_edits vce JOIN users vu ON vu.id=vce.vendor_user_id
+    LEFT JOIN vendors v ON v.id=vu.vendor_id LEFT JOIN users reviewer ON reviewer.id=vce.reviewed_by
+    WHERE vce.content_id=? ORDER BY vce.created_at DESC`).all(item.id);
+  const vendorEditAttributions = {};
+  for (const edit of vendorEdits) {
+    if (edit.status === 'ACCEPTED' && !vendorEditAttributions[edit.field_name]) {
+      vendorEditAttributions[edit.field_name] = { vendorName: edit.vendor_name, vendorUserName: edit.vendor_user_name, reviewedAt: edit.reviewed_at };
+    }
+  }
+  const allCollaborationFiles = db.prepare(`SELECT cf.*,u.name AS uploaded_by_name FROM collaboration_files cf
+    JOIN users u ON u.id=cf.uploaded_by WHERE cf.content_id=? ORDER BY cf.created_at DESC`).all(item.id)
+    .map(row => ({ ...row, fileUrl: `/api/collaboration/files/${row.id}` }));
+  const uploadFiles = db.prepare(`SELECT cf.*,u.name AS uploaded_by_name,cuf.selected_by,cuf.selected_at,selector.name AS selected_by_name
+    FROM content_upload_files cuf JOIN collaboration_files cf ON cf.id=cuf.file_id
+    JOIN users u ON u.id=cf.uploaded_by JOIN users selector ON selector.id=cuf.selected_by
+    WHERE cuf.content_id=? ORDER BY cf.file_role='COVER',cf.created_at DESC`).all(item.id)
+    .map(row => ({ ...row, selected_for_upload: 1, fileUrl: `/api/collaboration/files/${row.id}` }));
+  const selectedUploadIds = new Set(uploadFiles.map(file => file.id));
+  const uploadTaskOnly = isUploadTaskOnly(req.user, item);
+  const collaborationFiles = uploadTaskOnly ? uploadFiles : allCollaborationFiles.map(file => ({ ...file, selected_for_upload: selectedUploadIds.has(file.id) ? 1 : 0 }));
+  const schedules = db.prepare(`SELECT ps.*,ch.name AS channel_name,u.name AS uploader_name FROM publication_schedules ps
+    JOIN channels ch ON ch.id=ps.channel_id JOIN users u ON u.id=ps.uploader_id WHERE ps.content_id=? ORDER BY ps.scheduled_at`).all(item.id);
+  const directorApprovals = db.prepare(`SELECT dar.id,dar.status,dar.note,dar.link_token_ciphertext,dar.opened_at,dar.decided_at,dar.cancelled_at,dar.created_at,u.name AS director_name
+    FROM director_approval_requests dar JOIN users u ON u.id=dar.director_id WHERE dar.content_id=? ORDER BY dar.created_at DESC`).all(item.id)
+    .map(row => {
+      const mayManageLink = req.user.role === 'SUPER_ADMIN' || req.user.role === 'COORDINATOR';
+      const token = mayManageLink && row.status === 'ACTIVE' ? decryptSecret('DIRECTOR_LINK_TOKEN', row.link_token_ciphertext) : null;
+      const { link_token_ciphertext, ...safe } = row;
+      return { ...safe, url: token ? `/approval.html?token=${token}` : null };
+    });
+  const coordinatorApprovals = db.prepare(`SELECT car.id,car.status,car.note,car.link_token_ciphertext,car.opened_at,car.decided_at,car.cancelled_at,car.created_at,u.name AS coordinator_name
+    FROM coordinator_approval_requests car JOIN users u ON u.id=car.coordinator_id WHERE car.content_id=? ORDER BY car.created_at DESC`).all(item.id)
+    .map(row => {
+      const mayManageLink = req.user.role === 'SUPER_ADMIN' || req.user.id === item.created_by || req.user.id === item.coordinator_id;
+      const assignedVendor = req.user.role === 'VENDOR' && req.user.vendorId && item.workflow_type === 'INSTANT' &&
+        item.production_mode === 'VENDOR' && item.vendor_id === req.user.vendorId;
+      const token = (mayManageLink || assignedVendor) && row.status === 'ACTIVE'
+        ? decryptSecret('COORDINATOR_LINK_TOKEN', row.link_token_ciphertext) : null;
+      const { link_token_ciphertext, ...safe } = row;
+      return { ...safe, canCancel: mayManageLink, url: token ? `/approval.html?kind=coordinator&token=${token}` : null };
+    });
+  const briefVersions = db.prepare(`SELECT vbv.*,u.name AS submitted_by_name,r.name AS reviewed_by_name FROM vendor_brief_versions vbv
+    JOIN users u ON u.id=vbv.submitted_by LEFT JOIN users r ON r.id=vbv.reviewed_by
+    WHERE vbv.content_id=? ORDER BY vbv.version_number DESC`).all(item.id)
+    .map(row => ({ ...row, snapshot: jsonObject(row.snapshot_json, {}), snapshot_json: undefined }));
+  res.json({ item, versions: uploadTaskOnly ? [] : versions, events, proofs, assets, rawFootage, discussions, vendorEdits, vendorEditAttributions, collaborationFiles, uploadFiles, uploadTaskOnly, schedules, coordinatorApprovals, directorApprovals, briefVersions });
+});
+
+const VENDOR_BRIEF_FIELDS = Object.freeze({
+  title: ['title', 200], description: ['description', 2000], objective: ['objective', 1000],
+  audience: ['audience', 1000], brandId: ['brand_id', 100], campaign: ['campaign', 150],
+  category: ['category', 50], contentType: ['content_type', 50], brief: ['brief', 5000],
+  caption: ['caption', 5000], hashtags: ['hashtags', 1000], callToAction: ['call_to_action', 1000],
+  dueDate: ['due_date', 20], publishAt: ['publish_at', 40]
+});
+
+app.patch('/api/contents/:id/vendor-brief', authRequired, (req, res, next) => {
+  try {
+    const item = getContent(req.params.id, req.user);
+    if (item.proposal_origin !== 'VENDOR' || req.user.role !== 'VENDOR' || item.created_by !== req.user.id || item.vendor_id !== req.user.vendorId) {
+      throw new AppError('Hanya pembuat usulan Vendor yang dapat mengubah brief.', 403);
+    }
+    if (item.status !== 'REQUESTED' || !['DRAFT', 'REVISION'].includes(item.brief_review_status)) {
+      throw new AppError('Brief sedang direview atau sudah diputuskan.', 409);
+    }
+    const sets = [];
+    const values = [];
+    for (const [input, [column, max]] of Object.entries(VENDOR_BRIEF_FIELDS)) {
+      if (!Object.hasOwn(req.body, input)) continue;
+      const value = input === 'title' ? requiredText(req.body[input], 'Judul', max) : cleanText(req.body[input], max);
+      sets.push(`${column}=?`);
+      values.push(value || null);
+    }
+    if (Object.hasOwn(req.body, 'referenceUrls')) {
+      sets.push('reference_urls_json=?');
+      values.push(JSON.stringify(referenceUrls(req.body.referenceUrls)));
+    }
+    if (Object.hasOwn(req.body, 'coordinatorId')) {
+      const coordinatorId = cleanText(req.body.coordinatorId, 100);
+      if (!db.prepare("SELECT id FROM users WHERE id=? AND role='COORDINATOR' AND active=1").get(coordinatorId)) {
+        throw new AppError('Pilih Koordinator aktif untuk menerima usulan Vendor.');
+      }
+      sets.push('coordinator_id=?');
+      values.push(coordinatorId);
+    }
+    const channelIds = Object.hasOwn(req.body, 'channelIds') ? arrayValue(req.body.channelIds) : null;
+    if (channelIds && !channelIds.length) throw new AppError('Pilih minimal satu channel.');
+    if (!sets.length && !channelIds) throw new AppError('Tidak ada perubahan yang dikirim.');
+    const timestamp = nowIso();
+    db.transaction(() => {
+      if (sets.length) db.prepare(`UPDATE contents SET ${sets.join(',')},updated_at=? WHERE id=?`).run(...values, timestamp, item.id);
+      if (channelIds) {
+        db.prepare('DELETE FROM content_channels WHERE content_id=?').run(item.id);
+        for (const channelId of channelIds) db.prepare('INSERT INTO content_channels(content_id,channel_id) VALUES(?,?)').run(item.id, channelId);
+      }
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: item.id, action: 'VENDOR_BRIEF_EDIT',
+        after: { fields: Object.keys(req.body) }, ip: requestIp(req) });
+    })();
+    res.json({ item: getContent(item.id, req.user) });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/contents/:id/vendor-brief/submit', authRequired, (req, res, next) => {
+  try {
+    const item = getContent(req.params.id, req.user);
+    if (item.proposal_origin !== 'VENDOR' || req.user.role !== 'VENDOR' || item.created_by !== req.user.id || item.vendor_id !== req.user.vendorId) {
+      throw new AppError('Hanya pembuat usulan Vendor yang dapat mengirim brief.', 403);
+    }
+    if (item.status !== 'REQUESTED' || !['DRAFT', 'REVISION'].includes(item.brief_review_status)) {
+      throw new AppError('Brief sedang direview atau sudah diputuskan.', 409);
+    }
+    if (!item.brief?.trim()) throw new AppError('Brief Produksi wajib diisi sebelum dikirim.');
+    if (!item.channelIds.length) throw new AppError('Pilih minimal satu channel sebelum mengirim.');
+    const timestamp = nowIso();
+    const version = Number(db.prepare('SELECT COALESCE(MAX(version_number),0)+1 AS n FROM vendor_brief_versions WHERE content_id=?').get(item.id).n);
+    const snapshot = {
+      title: item.title, description: item.description, objective: item.objective, audience: item.audience,
+      brandId: item.brand_id, campaign: item.campaign, category: item.category, contentType: item.content_type,
+      brief: item.brief, caption: item.caption, hashtags: item.hashtags, callToAction: item.call_to_action,
+      dueDate: item.due_date, publishAt: item.publish_at, referenceUrls: item.referenceUrls, channelIds: item.channelIds,
+      files: db.prepare("SELECT id,original_name,mime_type,file_size FROM collaboration_files WHERE content_id=? AND phase='BRIEF'").all(item.id)
+    };
+    db.transaction(() => {
+      db.prepare('INSERT INTO vendor_brief_versions(id,content_id,version_number,snapshot_json,submitted_by,submitted_at) VALUES(?,?,?,?,?,?)')
+        .run(newId('vbv'), item.id, version, JSON.stringify(snapshot), req.user.id, timestamp);
+      db.prepare("UPDATE contents SET brief_review_status='SUBMITTED',updated_at=? WHERE id=?").run(timestamp, item.id);
+      db.prepare("INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at) VALUES(?,?,'REQUESTED','REQUESTED','VENDOR_BRIEF_SUBMIT',?,?,?)")
+        .run(newId('evt'), item.id, `Usulan brief versi ${version} dikirim`, req.user.id, timestamp);
+      recordAudit({ actorId: req.user.id, entityType: 'VENDOR_BRIEF', entityId: item.id, action: 'SUBMIT',
+        after: { version }, ip: requestIp(req) });
+    })();
+    notifyUser(item.coordinator_id, 'VENDOR_BRIEF_SUBMITTED', `Review brief ${item.content_no}`, item.title, `/contents/${item.id}`);
+    res.json({ item: getContent(item.id, req.user), version });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/contents/:id/vendor-brief/review', authRequired, (req, res, next) => {
+  try {
+    const item = getContent(req.params.id, req.user);
+    if (item.proposal_origin !== 'VENDOR' || !mayReviewVendor(req.user, item)) {
+      throw new AppError('Review brief hanya untuk Koordinator yang ditugaskan.', 403);
+    }
+    if (item.status !== 'REQUESTED' || item.brief_review_status !== 'SUBMITTED') throw new AppError('Tidak ada brief yang menunggu review.', 409);
+    const decision = String(req.body.decision || '');
+    if (!['APPROVED', 'REVISION', 'REJECTED'].includes(decision)) throw new AppError('Keputusan brief tidak valid.');
+    const note = cleanText(req.body.note, 2000);
+    if (decision !== 'APPROVED' && !note) throw new AppError('Alasan revisi atau penolakan wajib diisi.');
+    const briefVersion = db.prepare("SELECT id,version_number FROM vendor_brief_versions WHERE content_id=? AND decision='PENDING' ORDER BY version_number DESC LIMIT 1").get(item.id);
+    if (!briefVersion) throw new AppError('Versi brief belum ditemukan.', 409);
+    const timestamp = nowIso();
+    const nextStatus = decision === 'APPROVED' ? 'IN_PRODUCTION' : decision === 'REJECTED' ? 'CANCELLED' : 'REQUESTED';
+    db.transaction(() => {
+      db.prepare('UPDATE vendor_brief_versions SET decision=?,reviewed_by=?,review_note=?,reviewed_at=? WHERE id=?')
+        .run(decision, req.user.id, note, timestamp, briefVersion.id);
+      db.prepare('UPDATE contents SET status=?,brief_review_status=?,updated_at=? WHERE id=?').run(nextStatus, decision, timestamp, item.id);
+      db.prepare('INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at) VALUES(?,?,?,?,?,?,?,?)')
+        .run(newId('evt'), item.id, 'REQUESTED', nextStatus, `VENDOR_BRIEF_${decision}`, note, req.user.id, timestamp);
+      recordAudit({ actorId: req.user.id, entityType: 'VENDOR_BRIEF', entityId: item.id, action: decision,
+        after: { version: briefVersion.version_number, status: nextStatus }, reason: note, ip: requestIp(req) });
+    })();
+    notifyUser(item.created_by, 'VENDOR_BRIEF_REVIEW', `Brief ${item.content_no}: ${decision}`,
+      note || 'Brief disetujui Koordinator dan produksi dapat dimulai.', `/contents/${item.id}`);
+    res.json({ item: getContent(item.id, req.user) });
+  } catch (error) { next(error); }
+});
+
+app.patch('/api/contents/:id', authRequired, permissionRequired('content.edit'), (req, res, next) => {
+  try {
+    const current = getContent(req.params.id, req.user);
+    if (current.proposal_origin === 'VENDOR') {
+      const protectedFields = [...Object.keys(VENDOR_BRIEF_FIELDS), 'referenceUrls', 'channelIds', 'vendorId', 'productionMode', 'vendorEditPermissions'];
+      if (protectedFields.some(field => Object.hasOwn(req.body, field))) {
+        throw new AppError('Materi usulan Vendor hanya dapat diedit pembuatnya sebelum disetujui.', 403);
+      }
+    }
+    if (['PUBLISHED', 'CANCELLED'].includes(current.status)) throw new AppError('Konten yang tayang atau dibatalkan tidak dapat diedit.', 409);
+    if (current.status === 'APPROVAL_PENDING') throw new AppError('Batalkan link approval Direksi sebelum mengubah materi.', 409);
+    const allowed = {
+      title: ['title', 200], description: ['description', 2000], objective: ['objective', 1000],
+      audience: ['audience', 1000], brandId: ['brand_id', 100], campaign: ['campaign', 150],
+      category: ['category', 50], contentType: ['content_type', 50], approvalLevel: ['approval_level', 20],
+      priority: ['priority', 20], dueDate: ['due_date', 20], publishAt: ['publish_at', 40],
+      brief: ['brief', 5000], caption: ['caption', 5000], hashtags: ['hashtags', 1000],
+      callToAction: ['call_to_action', 1000], internalNotes: ['internal_notes', 2000],
+      coordinatorId: ['coordinator_id', 100], reviewerId: ['reviewer_id', 100],
+      approverId: ['approver_id', 100], uploaderId: ['uploader_id', 100]
+    };
+    const sets = [];
+    const values = [];
+    let substantiveChange = false;
+    let effectiveProductionMode = current.production_mode || 'VENDOR';
+    if (Object.hasOwn(req.body, 'productionMode')) {
+      const productionMode = String(req.body.productionMode || '');
+      if (!['VENDOR', 'INTERNAL'].includes(productionMode)) throw new AppError('Metode produksi tidak valid.');
+      if (productionMode !== effectiveProductionMode && !['REQUESTED', 'BRIEFED'].includes(current.status)) {
+        throw new AppError('Metode produksi hanya dapat diubah sebelum produksi dimulai.', 409);
+      }
+      effectiveProductionMode = productionMode;
+      sets.push('production_mode=?'); values.push(productionMode);
+    }
+    for (const [input, [column, max]] of Object.entries(allowed)) {
+      if (!Object.hasOwn(req.body, input)) continue;
+      let value = cleanText(req.body[input], max) || null;
+      if (input === 'title') value = requiredText(req.body[input], 'Judul', max);
+      if (input === 'approvalLevel' && !['REGULAR', 'SENSITIVE'].includes(value)) throw new AppError('Tingkat persetujuan tidak valid.');
+      if (input === 'priority' && !['LOW', 'NORMAL', 'HIGH', 'URGENT'].includes(value)) throw new AppError('Prioritas tidak valid.');
+      sets.push(`${column}=?`); values.push(value);
+      if (['title', 'description', 'objective', 'audience', 'brandId', 'brief', 'caption', 'hashtags', 'callToAction'].includes(input)) substantiveChange = true;
+    }
+    if (Object.hasOwn(req.body, 'referenceUrls')) {
+      sets.push('reference_urls_json=?');
+      values.push(JSON.stringify(referenceUrls(req.body.referenceUrls)));
+      substantiveChange = true;
+    }
+    if (Object.hasOwn(req.body, 'vendorId') || (effectiveProductionMode === 'INTERNAL' && current.vendor_id)) {
+      const vendorId = cleanText(req.body.vendorId, 100) || null;
+      if (effectiveProductionMode === 'INTERNAL' && vendorId) throw new AppError('Produksi internal tidak menggunakan vendor.');
+      sets.push('vendor_id=?'); values.push(effectiveProductionMode === 'VENDOR' ? vendorId : null);
+    }
+    if (Object.hasOwn(req.body, 'vendorEditPermissions') || effectiveProductionMode === 'INTERNAL') {
+      sets.push('vendor_edit_permissions_json=?');
+      values.push(JSON.stringify(effectiveProductionMode === 'VENDOR' ? vendorEditPermissions(req.body.vendorEditPermissions) : []));
+    }
+    if (Object.hasOwn(req.body, 'budget')) { sets.push('budget=?'); values.push(Math.max(0, toInteger(req.body.budget))); }
+    if (!sets.length && !Object.hasOwn(req.body, 'channelIds')) throw new AppError('Tidak ada perubahan yang dikirim.');
+    const timestamp = nowIso();
+    const reopen = substantiveChange && ['APPROVED', 'SCHEDULED'].includes(current.status);
+    db.transaction(() => {
+      if (sets.length) {
+        sets.push('updated_at=?'); values.push(timestamp);
+        if (reopen) { sets.push("status='DRAFT_SUBMITTED'", 'locked_at=NULL'); }
+        db.prepare(`UPDATE contents SET ${sets.join(',')} WHERE id=?`).run(...values, current.id);
+      }
+      if (Object.hasOwn(req.body, 'channelIds')) {
+        db.prepare('DELETE FROM content_channels WHERE content_id=?').run(current.id);
+        for (const channelId of arrayValue(req.body.channelIds)) {
+          db.prepare('INSERT OR IGNORE INTO content_channels(content_id,channel_id) VALUES(?,?)').run(current.id, channelId);
+        }
+      }
+      if (reopen) {
+        db.prepare('UPDATE content_versions SET is_approved=0 WHERE content_id=?').run(current.id);
+        db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+          VALUES(?,?,?,?,?,?,?,?)`).run(newId('evt'), current.id, current.status, 'DRAFT_SUBMITTED', 'REOPEN_AFTER_EDIT', 'Perubahan setelah persetujuan; review dibuka kembali.', req.user.id, timestamp);
+      }
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: current.id, action: reopen ? 'EDIT_REOPEN_REVIEW' : 'UPDATE', before: current, after: req.body, ip: requestIp(req) });
+    })();
+    res.json({ item: getContent(current.id, req.user), reopenedReview: reopen });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/contents/:id/vendor-edits', authRequired, permissionRequired('content.production'), (req, res, next) => {
+  try {
+    const current = getContent(req.params.id, req.user);
+    if (req.user.role !== 'VENDOR') throw new AppError('Usulan materi hanya dapat dikirim vendor yang ditugaskan.', 403);
+    if (current.vendor_id !== req.user.vendorId) throw new AppError('Tugas ini tidak diberikan kepada vendor Anda.', 403);
+    if (!['REQUESTED', 'BRIEFED', 'ASSIGNED', 'REVISION_REQUIRED'].includes(current.status)) {
+      throw new AppError('Usulan materi hanya dapat dikirim saat Brief & Diskusi atau saat Revisi.', 409);
+    }
+    const fieldName = String(req.body.fieldName || '');
+    const definition = VENDOR_EDIT_FIELDS[fieldName];
+    if (!definition) throw new AppError('Kolom materi tidak valid.');
+    if (!current.vendorEditPermissions.includes(fieldName)) throw new AppError(`Koordinator belum memberikan akses edit untuk ${definition.label}.`, 403);
+    const addedValue = cleanText(req.body.addedValue, definition.max);
+    if (!addedValue) throw new AppError('Isi tambahan vendor wajib diisi.');
+    const baseValue = String(current[definition.column] || '');
+    const separator = fieldName === 'hashtags' ? (baseValue ? ' ' : '') : (baseValue ? '\n\n' : '');
+    const proposedValue = `${baseValue}${separator}${addedValue}`;
+    if (proposedValue.length > definition.max) throw new AppError(`${definition.label} melebihi batas ${definition.max.toLocaleString('id-ID')} karakter setelah digabung.`);
+    const timestamp = nowIso();
+    let id = db.prepare("SELECT id FROM vendor_content_edits WHERE content_id=? AND field_name=? AND status='PENDING'").get(current.id, fieldName)?.id;
+    if (id) {
+      db.prepare(`UPDATE vendor_content_edits SET base_value=?,added_value=?,proposed_value=?,vendor_user_id=?,created_at=? WHERE id=?`)
+        .run(baseValue, addedValue, proposedValue, req.user.id, timestamp, id);
+    } else {
+      id = newId('ved');
+      db.prepare(`INSERT INTO vendor_content_edits(id,content_id,field_name,base_value,added_value,proposed_value,vendor_user_id,created_at)
+        VALUES(?,?,?,?,?,?,?,?)`).run(id, current.id, fieldName, baseValue, addedValue, proposedValue, req.user.id, timestamp);
+    }
+    recordAudit({ actorId: req.user.id, entityType: 'VENDOR_CONTENT_EDIT', entityId: id, action: 'PROPOSE', after: { contentId: current.id, fieldName, addedValue }, ip: requestIp(req) });
+    notifyUser(current.coordinator_id, 'VENDOR_EDIT_PROPOSED', `Usulan ${definition.label} ${current.content_no}`, `${req.user.name} mengirim tambahan materi.`, `/contents/${current.id}`);
+    res.status(201).json({ id, fieldName, status: 'PENDING' });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/contents/:id/vendor-edits/:editId/review', authRequired, (req, res, next) => {
+  try {
+    const current = getContent(req.params.id, req.user);
+    if (!mayReviewVendor(req.user, current)) throw new AppError('Hanya Koordinator atau Asisten yang diberi izin yang dapat meninjau usulan vendor.', 403);
+    if (!['REQUESTED', 'BRIEFED', 'ASSIGNED', 'DRAFT_SUBMITTED', 'IN_REVIEW', 'REVISION_REQUIRED'].includes(current.status)) {
+      throw new AppError('Usulan vendor tidak dapat diproses pada tahap ini.', 409);
+    }
+    const edit = db.prepare("SELECT * FROM vendor_content_edits WHERE id=? AND content_id=? AND status='PENDING'").get(req.params.editId, current.id);
+    if (!edit) throw new AppError('Usulan vendor tidak ditemukan atau sudah diproses.', 404);
+    const action = String(req.body.action || '').toUpperCase();
+    if (!['ACCEPT', 'REJECT'].includes(action)) throw new AppError('Keputusan usulan tidak valid.');
+    const definition = VENDOR_EDIT_FIELDS[edit.field_name];
+    const note = cleanText(req.body.note, 1000);
+    if (action === 'ACCEPT' && String(current[definition.column] || '') !== edit.base_value) {
+      throw new AppError('Materi Koordinator sudah berubah setelah usulan dibuat. Tolak usulan ini dan minta vendor mengirim ulang.', 409);
+    }
+    const timestamp = nowIso();
+    db.transaction(() => {
+      if (action === 'ACCEPT') {
+        db.prepare(`UPDATE contents SET ${definition.column}=?,updated_at=? WHERE id=?`).run(edit.proposed_value, timestamp, current.id);
+      }
+      db.prepare('UPDATE vendor_content_edits SET status=?,reviewed_by=?,review_note=?,reviewed_at=? WHERE id=?')
+        .run(action === 'ACCEPT' ? 'ACCEPTED' : 'REJECTED', req.user.id, note || null, timestamp, edit.id);
+      db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+        VALUES(?,?,?,?,?,?,?,?)`).run(newId('evt'), current.id, current.status, current.status, action === 'ACCEPT' ? 'ACCEPT_VENDOR_EDIT' : 'REJECT_VENDOR_EDIT', `${definition.label}${note ? `: ${note}` : ''}`, req.user.id, timestamp);
+      recordAudit({ actorId: req.user.id, entityType: 'VENDOR_CONTENT_EDIT', entityId: edit.id, action, reason: note, after: { contentId: current.id, fieldName: edit.field_name }, ip: requestIp(req) });
+    })();
+    notifyUser(edit.vendor_user_id, action === 'ACCEPT' ? 'VENDOR_EDIT_ACCEPTED' : 'VENDOR_EDIT_REJECTED', `${definition.label} ${current.content_no} ${action === 'ACCEPT' ? 'diterima' : 'ditolak'}`, note, `/contents/${current.id}`);
+    res.json({ ok: true, status: action === 'ACCEPT' ? 'ACCEPTED' : 'REJECTED', item: getContent(current.id, req.user) });
+  } catch (error) { next(error); }
+});
+
+app.patch('/api/contents/:id/vendor-description', authRequired, (_req, _res, next) => {
+  next(new AppError('Endpoint lama dinonaktifkan. Gunakan kolom Usulan Vendor di bawah materi terkait.', 410));
+});
+
+app.post('/api/contents/:id/version', authRequired, draftUpload.single('file'), (req, res, next) => {
+  try {
+    const item = getContent(req.params.id, req.user);
+    if (!req.file) throw new AppError('Berkas draft wajib dipilih.');
+    if (!hasPermission(req.user, 'content.upload_draft') && req.user.role !== 'SUPER_ADMIN') throw new AppError('Anda tidak dapat mengunggah draft.', 403);
+    if (req.user.role === 'VENDOR' && item.vendor_id !== req.user.vendorId) throw new AppError('Tugas ini tidak diberikan kepada vendor Anda.', 403);
+    if (item.status !== 'IN_PRODUCTION') throw new AppError('Draft hanya dapat dikirim ketika konten berstatus Produksi.', 409);
+    const versionNumber = Number(db.prepare('SELECT COALESCE(MAX(version_number),0)+1 AS next FROM content_versions WHERE content_id=?').get(item.id).next);
+    const versionId = newId('ver');
+    const timestamp = nowIso();
+    const relativePath = path.join('drafts', req.file.filename);
+    const versionCaption = cleanText(req.body.caption, 5000);
+    db.transaction(() => {
+      db.prepare(`INSERT INTO content_versions(id,content_id,version_number,file_path,original_name,mime_type,file_size,caption,change_note,submitted_by,created_at)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?)`).run(
+        versionId, item.id, versionNumber, relativePath, safeFilename(req.file.originalname), req.file.mimetype,
+        req.file.size, versionCaption, cleanText(req.body.changeNote, 1000), req.user.id, timestamp
+      );
+      if (req.user.role !== 'VENDOR') {
+        db.prepare("UPDATE contents SET caption=COALESCE(NULLIF(?,''),caption),updated_at=? WHERE id=?")
+          .run(versionCaption, timestamp, item.id);
+      }
+      db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+        VALUES(?,?,?,?,?,?,?,?)`).run(newId('evt'), item.id, item.status, item.status, 'UPLOAD_FILE', `Versi ${versionNumber}: ${cleanText(req.body.changeNote, 500)}`, req.user.id, timestamp);
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT_VERSION', entityId: versionId, action: 'UPLOAD', after: { contentId: item.id, versionNumber, originalName: req.file.originalname, size: req.file.size }, ip: requestIp(req) });
+    })();
+    if (item.coordinator_id) notifyUser(item.coordinator_id, 'FILE_UPLOADED', `Berkas ${item.content_no} diunggah`, item.title, `/contents/${item.id}`);
+    res.status(201).json({ item: getContent(item.id, req.user), versionNumber });
+  } catch (error) { removeUpload(req.file); next(error); }
+});
+
+app.post('/api/contents/:id/transition', authRequired, (req, res, next) => {
+  try {
+    const item = getContent(req.params.id, req.user);
+    const toStatus = String(req.body.toStatus || '');
+    assertTransition(item.status, toStatus);
+    if (item.proposal_origin === 'VENDOR' && item.brief_review_status !== 'APPROVED') {
+      throw new AppError('Gunakan keputusan review brief untuk usulan Vendor.', 409);
+    }
+    if (toStatus === 'DRAFT_SUBMITTED') throw new AppError('Gunakan tombol Kirim Hasil ke Koordinator.', 409);
+    if (toStatus === 'PUBLISHED') throw new AppError('Gunakan menu Bukti Tayang untuk menandai konten sebagai tayang.', 409);
+    const internalProduction = item.production_mode === 'INTERNAL';
+    let permission = TRANSITION_PERMISSION[toStatus];
+    if (item.status === 'REVISION_REQUIRED' && toStatus === 'IN_PRODUCTION') {
+      permission = internalProduction ? 'content.approve_production' : 'content.production';
+    }
+    if (item.status === 'APPROVAL_PENDING') throw new AppError('Keputusan approval hanya melalui link Direksi atau pembatalan oleh Koordinator.', 409);
+    const delegatedVendorReview = ['content.review', 'content.approve_production'].includes(permission) && item.production_mode === 'VENDOR' &&
+      hasAssistantDelegation(req.user, item.coordinator_id, 'REVIEW_VENDOR');
+    if (!delegatedVendorReview) ensurePermission(req.user, permission);
+    if (item.workflow_type === 'INSTANT' && ['APPROVED', 'REVISION_REQUIRED', 'APPROVAL_PENDING'].includes(toStatus)) {
+      throw new AppError('Keputusan konten sederhana dilakukan Koordinator melalui link review dan PIN.', 409);
+    }
+    if (item.workflow_type === 'INSTANT' && req.user.role === 'COORDINATOR' && item.coordinator_id !== req.user.id) {
+      throw new AppError('Konten hanya dapat direview Koordinator yang dipilih.', 403);
+    }
+    if (internalProduction && req.user.role === 'VENDOR') throw new AppError('Konten ini diproduksi secara internal oleh Koordinator.', 403);
+    if (req.user.role === 'VENDOR' && item.vendor_id !== req.user.vendorId) throw new AppError('Tugas ini tidak diberikan kepada vendor Anda.', 403);
+    if (toStatus === 'ASSIGNED') {
+      if (internalProduction) throw new AppError('Produksi internal tidak memerlukan penugasan Vendor.', 409);
+      if (!item.vendor_id) throw new AppError('Pilih vendor sebelum menugaskan konten.', 409);
+    }
+    if (toStatus === 'IN_PRODUCTION' && !internalProduction && !item.vendor_id) {
+      throw new AppError('Pilih vendor sebelum menyetujui brief dan memulai produksi.', 409);
+    }
+    if (internalProduction && toStatus === 'IN_PRODUCTION' && req.user.role === 'COORDINATOR' && item.coordinator_id !== req.user.id) {
+      throw new AppError('Produksi internal hanya dapat diproses Koordinator yang ditugaskan.', 403);
+    }
+    if (toStatus === 'IN_PRODUCTION' && db.prepare("SELECT id FROM vendor_content_edits WHERE content_id=? AND status='PENDING' LIMIT 1").get(item.id)) {
+      throw new AppError('Masih ada usulan Vendor yang belum diterima atau ditolak.', 409);
+    }
+    if (['APPROVAL_PENDING', 'APPROVED'].includes(toStatus) && !latestVersion(item.id)
+      && !db.prepare("SELECT id FROM collaboration_files WHERE content_id=? AND phase='PRODUCTION_RESULT' LIMIT 1").get(item.id)) throw new AppError('Hasil produksi belum tersedia.', 409);
+    if (toStatus === 'APPROVED' && db.prepare("SELECT id FROM vendor_content_edits WHERE content_id=? AND status='PENDING' LIMIT 1").get(item.id)) {
+      throw new AppError('Masih ada usulan edit vendor yang belum diterima atau ditolak.', 409);
+    }
+    if (toStatus === 'APPROVAL_PENDING') throw new AppError('Gunakan menu Kirim ke Direksi untuk memilih Direksi dan file final.', 409);
+    if (toStatus === 'SCHEDULED') throw new AppError('Gunakan menu Jadwal Platform untuk membuat penayangan.', 409);
+    const note = cleanText(req.body.note, 2000);
+    if (toStatus === 'REVISION_REQUIRED' && !note) throw new AppError('Catatan revisi wajib diisi.');
+    const timestamp = nowIso();
+    const version = latestVersion(item.id);
+    db.transaction(() => {
+      db.prepare('UPDATE contents SET status=?,locked_at=?,updated_at=? WHERE id=?')
+        .run(toStatus, toStatus === 'PUBLISHED' ? timestamp : null, timestamp, item.id);
+      db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+        VALUES(?,?,?,?,?,?,?,?)`).run(newId('evt'), item.id, item.status, toStatus, 'TRANSITION', note, req.user.id, timestamp);
+      if (['DRAFT_SUBMITTED', 'IN_REVIEW'].includes(item.status) && ['REVISION_REQUIRED', 'APPROVAL_PENDING'].includes(toStatus)) {
+        db.prepare('INSERT INTO reviews(id,content_id,version_id,decision,note,reviewer_id,created_at) VALUES(?,?,?,?,?,?,?)')
+          .run(newId('rev'), item.id, version?.id || null, toStatus === 'APPROVAL_PENDING' ? 'PASS' : 'REVISION', note, req.user.id, timestamp);
+      }
+      if (item.status === 'APPROVAL_PENDING' && ['APPROVED', 'REVISION_REQUIRED'].includes(toStatus)) {
+        db.prepare('INSERT INTO approvals(id,content_id,version_id,decision,note,approver_id,created_at) VALUES(?,?,?,?,?,?,?)')
+          .run(newId('apr'), item.id, version?.id || null, toStatus === 'APPROVED' ? 'APPROVED' : 'REVISION', note, req.user.id, timestamp);
+        if (toStatus === 'APPROVED' && version) db.prepare('UPDATE content_versions SET is_approved=1 WHERE id=?').run(version.id);
+      }
+      if (toStatus === 'APPROVED' && version) db.prepare('UPDATE content_versions SET is_approved=1 WHERE id=?').run(version.id);
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: item.id, action: `STATUS_${toStatus}`, before: { status: item.status }, after: { status: toStatus, productionMode: item.production_mode }, reason: note, ip: requestIp(req) });
+    })();
+
+    const link = `/contents/${item.id}`;
+    if (toStatus === 'ASSIGNED' && !internalProduction) notifyVendor(item.vendor_id, 'TASK_ASSIGNED', `Tugas baru ${item.content_no}`, item.title, link);
+    if (toStatus === 'IN_PRODUCTION' && !internalProduction && ['REQUESTED', 'BRIEFED', 'ASSIGNED'].includes(item.status)) {
+      notifyVendor(item.vendor_id, 'PRODUCTION_STARTED', `Produksi dimulai ${item.content_no}`, item.title, link);
+    }
+    if (toStatus === 'REVISION_REQUIRED' && item.workflow_type === 'INSTANT') notifyUser(item.created_by, 'INSTANT_VIDEO_REVISION', `Revisi ${item.content_no}`, note, link);
+    else if (toStatus === 'REVISION_REQUIRED' && !internalProduction) notifyVendor(item.vendor_id, 'REVISION_REQUIRED', `Revisi ${item.content_no}`, note, link);
+    if (toStatus === 'APPROVED') {
+      if (item.coordinator_id) notifyUser(item.coordinator_id, 'CONTENT_APPROVED', `${item.content_no} disetujui`, item.title, link);
+      if (item.uploader_id) notifyUser(item.uploader_id, 'READY_TO_PUBLISH', `${item.content_no} siap tayang`, item.title, link);
+      else notifyRole('UPLOADER', 'READY_TO_PUBLISH', `${item.content_no} siap dijadwalkan`, item.title, link);
+    }
+    if (toStatus === 'SCHEDULED') {
+      if (item.uploader_id) notifyUser(item.uploader_id, 'CONTENT_SCHEDULED', `${item.content_no} dijadwalkan`, item.publish_at, link);
+    }
+    res.json({ item: getContent(item.id, req.user) });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/contents/:id/publication', authRequired, permissionRequired('content.publish'), proofUpload.single('file'), (req, res, next) => {
+  try {
+    const item = getContent(req.params.id, req.user);
+    if (req.user.role === 'ASSISTANT_COORDINATOR' && item.uploader_id !== req.user.id &&
+      !db.prepare('SELECT id FROM publication_schedules WHERE content_id=? AND uploader_id=?').get(item.id, req.user.id)) {
+      throw new AppError('Konten ini bukan tugas upload Anda.', 403);
+    }
+    if (item.status !== 'SCHEDULED') throw new AppError('Konten harus berstatus Terjadwal sebelum bukti tayang dicatat.', 409);
+    const platformUrl = cleanText(req.body.platformUrl, 1000);
+    if (!req.file && !platformUrl) throw new AppError('Tautan publikasi atau berkas bukti wajib diisi.');
+    const timestamp = nowIso();
+    const proofId = newId('prf');
+    const relativePath = req.file ? path.join('proofs', req.file.filename) : null;
+    const metrics = {
+      reach: Math.max(0, toInteger(req.body.reach)),
+      impressions: Math.max(0, toInteger(req.body.impressions)),
+      engagement: Math.max(0, toInteger(req.body.engagement)),
+      leads: Math.max(0, toInteger(req.body.leads)),
+      notes: cleanText(req.body.metricsNotes, 1000)
+    };
+    db.transaction(() => {
+      db.prepare(`INSERT INTO publication_proofs(id,content_id,channel_id,platform_url,published_at,file_path,original_name,mime_type,metrics_json,uploader_id,created_at)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?)`).run(
+        proofId, item.id, cleanText(req.body.channelId, 100) || null, platformUrl || null,
+        cleanText(req.body.publishedAt, 40) || timestamp, relativePath,
+        req.file ? safeFilename(req.file.originalname) : null, req.file?.mimetype || null,
+        JSON.stringify(metrics), req.user.id, timestamp
+      );
+      db.prepare("UPDATE contents SET status='PUBLISHED',locked_at=?,updated_at=? WHERE id=?").run(timestamp, timestamp, item.id);
+      db.prepare(`INSERT INTO workflow_events(id,content_id,from_status,to_status,action,note,actor_id,created_at)
+        VALUES(?,?,?,'PUBLISHED','PUBLICATION_PROOF',?,?,?)`).run(newId('evt'), item.id, item.status, platformUrl, req.user.id, timestamp);
+      recordAudit({ actorId: req.user.id, entityType: 'PUBLICATION', entityId: proofId, action: 'CREATE', after: { contentId: item.id, platformUrl, metrics }, ip: requestIp(req) });
+    })();
+    notifyUser(item.coordinator_id, 'PUBLISHED', `${item.content_no} sudah tayang`, platformUrl || item.title, `/contents/${item.id}`);
+    res.status(201).json({ item: getContent(item.id, req.user), proofId });
+  } catch (error) { removeUpload(req.file); next(error); }
+});
+
+app.get('/api/calendar', authRequired, permissionRequired('calendar.view'), (req, res) => {
+  const visibility = contentVisibility(req.user);
+  const from = cleanText(req.query.from, 30) || new Date().toISOString().slice(0, 8) + '01';
+  const to = cleanText(req.query.to, 30) || new Date(Date.now() + 45 * 86400000).toISOString().slice(0, 10);
+  const rows = db.prepare(`${CONTENT_SELECT} WHERE ${visibility.sql}
+    AND COALESCE(substr(c.publish_at,1,10),c.due_date) BETWEEN ? AND ?
+    ORDER BY COALESCE(c.publish_at,c.due_date)`).all(...visibility.params, from, to).map(serializeContent);
+  res.json({ items: rows, from, to });
+});
+
+const RAW_FOOTAGE_CATEGORIES = Object.freeze([
+  'VIDEO_RAW', 'PHOTO_RAW', 'DRONE', 'EVENT_DOCUMENTATION', 'INFRASTRUCTURE',
+  'PRODUCT_SERVICE', 'TALENT_TESTIMONIAL', 'LOCATION_AMBIENCE', 'OTHER'
+]);
+
+function nextRawFootageCode() {
+  const period = new Date().toISOString().slice(0, 7).replace('-', '');
+  const key = `FOOTAGE-${period}`;
+  const current = db.prepare('SELECT last_value FROM sequences WHERE sequence_key=?').get(key)?.last_value || 0;
+  const next = current + 1;
+  db.prepare(`INSERT INTO sequences(sequence_key,last_value) VALUES(?,?)
+    ON CONFLICT(sequence_key) DO UPDATE SET last_value=excluded.last_value`).run(key, next);
+  return `RAW-${period}-${String(next).padStart(4, '0')}`;
+}
+
+function footageTags(value) {
+  const tags = arrayValue(value).map(tag => cleanText(tag, 50)).filter(Boolean);
+  return [...new Set(tags)].slice(0, 20);
+}
+
+function rawFootageAccess(user, alias = 'rf') {
+  if (user.role !== 'VENDOR') return { sql: '1=1', params: [] };
+  return {
+    sql: `EXISTS (SELECT 1 FROM content_raw_footage crf JOIN contents c ON c.id=crf.content_id
+      WHERE crf.footage_id=${alias}.id AND c.vendor_id=? AND c.deleted_at IS NULL)`,
+    params: [user.vendorId || '__none__']
+  };
+}
+
+function serializeRawFootage(row) {
+  return {
+    ...row,
+    tags: jsonObject(row.tags_json, []),
+    file_size: Number(row.file_size || 0),
+    mediaType: String(row.mime_type || '').startsWith('video/') ? 'VIDEO' : 'PHOTO',
+    fileUrl: row.file_path ? `/api/files/raw-footage/${path.basename(row.file_path)}` : ''
+  };
+}
+
+app.get('/api/raw-footage', authRequired, permissionRequired('footage.view'), (req, res) => {
+  const access = rawFootageAccess(req.user);
+  const conditions = [access.sql];
+  const params = [...access.params];
+  if (req.user.role === 'VENDOR') conditions.push("rf.status='ACTIVE'");
+  if (req.query.category) { conditions.push('rf.category=?'); params.push(String(req.query.category)); }
+  if (req.query.brandId) { conditions.push('rf.brand_id=?'); params.push(String(req.query.brandId)); }
+  if (req.query.status && req.user.role !== 'VENDOR') { conditions.push('rf.status=?'); params.push(String(req.query.status)); }
+  if (req.query.mediaType === 'VIDEO') conditions.push("rf.mime_type LIKE 'video/%'");
+  if (req.query.mediaType === 'PHOTO') conditions.push("rf.mime_type LIKE 'image/%'");
+  if (req.query.q) {
+    const query = `%${cleanText(req.query.q, 100)}%`;
+    conditions.push('(rf.title LIKE ? OR rf.code LIKE ? OR rf.description LIKE ? OR rf.location LIKE ? OR rf.tags_json LIKE ?)');
+    params.push(query, query, query, query, query);
+  }
+  const rows = db.prepare(`SELECT rf.*,b.code AS brand_code,b.name AS brand_name,u.name AS uploaded_by_name
+    FROM raw_footage rf LEFT JOIN brands b ON b.id=rf.brand_id JOIN users u ON u.id=rf.uploaded_by
+    WHERE ${conditions.join(' AND ')} ORDER BY CASE rf.status WHEN 'ACTIVE' THEN 0 ELSE 1 END,rf.updated_at DESC LIMIT 500`)
+    .all(...params).map(serializeRawFootage);
+  res.json({ items: rows, categories: RAW_FOOTAGE_CATEGORIES });
+});
+
+app.get('/api/raw-footage/:id', authRequired, permissionRequired('footage.view'), (req, res, next) => {
+  try {
+    const access = rawFootageAccess(req.user);
+    const row = db.prepare(`SELECT rf.*,b.code AS brand_code,b.name AS brand_name,u.name AS uploaded_by_name
+      FROM raw_footage rf LEFT JOIN brands b ON b.id=rf.brand_id JOIN users u ON u.id=rf.uploaded_by
+      WHERE rf.id=? AND ${access.sql}`).get(req.params.id, ...access.params);
+    if (!row || (req.user.role === 'VENDOR' && row.status !== 'ACTIVE')) throw new AppError('Raw Footage tidak ditemukan atau tidak dapat diakses.', 404);
+    res.json({ item: serializeRawFootage(row) });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/raw-footage', authRequired, rawFootageUpload.single('file'), (req, res, next) => {
+  try {
+    if (!hasPermission(req.user, 'footage.manage') && !hasPermission(req.user, 'footage.upload')) {
+      throw new AppError('Anda tidak memiliki hak akses untuk mengunggah Raw Footage.', 403);
+    }
+    if (!req.file) throw new AppError('File foto atau video mentah wajib dipilih.');
+    const category = String(req.body.category || (String(req.file.mimetype).startsWith('video/') ? 'VIDEO_RAW' : 'PHOTO_RAW'));
+    if (!RAW_FOOTAGE_CATEGORIES.includes(category)) throw new AppError('Kategori Raw Footage tidak valid.');
+    const id = newId('raw');
+    const timestamp = nowIso();
+    const payload = {
+      code: nextRawFootageCode(),
+      title: requiredText(req.body.title, 'Judul footage', 200),
+      description: cleanText(req.body.description, 2000),
+      category,
+      brandId: cleanText(req.body.brandId, 100) || null,
+      capturedAt: cleanText(req.body.capturedAt, 20) || null,
+      location: cleanText(req.body.location, 200),
+      tags: footageTags(req.body.tags)
+    };
+    const relativePath = path.join('raw-footage', req.file.filename);
+    const digest = checksum(fs.readFileSync(req.file.path));
+    db.prepare(`INSERT INTO raw_footage(id,code,title,description,category,brand_id,captured_at,location,tags_json,file_path,original_name,mime_type,file_size,checksum,status,uploaded_by,created_at,updated_at)
+      VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,'ACTIVE',?,?,?)`).run(
+      id, payload.code, payload.title, payload.description, payload.category, payload.brandId, payload.capturedAt,
+      payload.location, JSON.stringify(payload.tags), relativePath, safeFilename(req.file.originalname), req.file.mimetype,
+      req.file.size, digest, req.user.id, timestamp, timestamp
+    );
+    recordAudit({ actorId: req.user.id, entityType: 'RAW_FOOTAGE', entityId: id, action: 'CREATE', after: payload, ip: requestIp(req) });
+    res.status(201).json({ id, code: payload.code });
+  } catch (error) { removeUpload(req.file); next(error); }
+});
+
+app.patch('/api/raw-footage/:id', authRequired, (req, res, next) => {
+  try {
+    const item = db.prepare('SELECT * FROM raw_footage WHERE id=?').get(req.params.id);
+    if (!item) throw new AppError('Raw Footage tidak ditemukan.', 404);
+    const managesAll = hasPermission(req.user, 'footage.manage');
+    const ownsUpload = hasPermission(req.user, 'footage.upload') && item.uploaded_by === req.user.id;
+    if (!managesAll && !ownsUpload) throw new AppError('Asisten hanya dapat mengubah metadata Raw Footage yang diunggah sendiri.', 403);
+    const sets = [];
+    const values = [];
+    const fields = {
+      title: ['title', 200], description: ['description', 2000], brandId: ['brand_id', 100],
+      capturedAt: ['captured_at', 20], location: ['location', 200]
+    };
+    for (const [input, [column, max]] of Object.entries(fields)) {
+      if (!Object.hasOwn(req.body, input)) continue;
+      const value = input === 'title' ? requiredText(req.body[input], 'Judul footage', max) : cleanText(req.body[input], max) || null;
+      sets.push(`${column}=?`); values.push(value);
+    }
+    if (Object.hasOwn(req.body, 'category')) {
+      const category = String(req.body.category);
+      if (!RAW_FOOTAGE_CATEGORIES.includes(category)) throw new AppError('Kategori Raw Footage tidak valid.');
+      sets.push('category=?'); values.push(category);
+    }
+    if (Object.hasOwn(req.body, 'tags')) { sets.push('tags_json=?'); values.push(JSON.stringify(footageTags(req.body.tags))); }
+    if (Object.hasOwn(req.body, 'status')) {
+      if (!managesAll) throw new AppError('Hanya Koordinator yang dapat mengarsipkan atau mengaktifkan Raw Footage.', 403);
+      const status = String(req.body.status);
+      if (!['ACTIVE', 'ARCHIVED'].includes(status)) throw new AppError('Status Raw Footage tidak valid.');
+      sets.push('status=?'); values.push(status);
+    }
+    if (!sets.length) throw new AppError('Tidak ada perubahan yang dikirim.');
+    sets.push('updated_at=?'); values.push(nowIso(), item.id);
+    db.prepare(`UPDATE raw_footage SET ${sets.join(',')} WHERE id=?`).run(...values);
+    const updated = db.prepare('SELECT * FROM raw_footage WHERE id=?').get(item.id);
+    recordAudit({ actorId: req.user.id, entityType: 'RAW_FOOTAGE', entityId: item.id, action: 'UPDATE', before: item, after: updated, ip: requestIp(req) });
+    res.json({ ok: true });
+  } catch (error) { next(error); }
+});
+
+app.delete('/api/raw-footage/:id', authRequired, (req, res, next) => {
+  try {
+    if (req.user.role !== 'SUPER_ADMIN') throw new AppError('Hanya Super Admin yang dapat menghapus Raw Footage secara permanen.', 403);
+    const item = db.prepare('SELECT * FROM raw_footage WHERE id=?').get(req.params.id);
+    if (!item) throw new AppError('Raw Footage tidak ditemukan.', 404);
+    db.transaction(() => {
+      db.prepare('DELETE FROM raw_footage WHERE id=?').run(item.id);
+      recordAudit({ actorId: req.user.id, entityType: 'RAW_FOOTAGE', entityId: item.id, action: 'PERMANENT_DELETE', before: { code: item.code, title: item.title }, ip: requestIp(req) });
+    })();
+    const absolute = path.resolve(UPLOAD_DIR, item.file_path);
+    if (absolute.startsWith(`${path.resolve(UPLOAD_DIR)}${path.sep}`)) { try { fs.unlinkSync(absolute); } catch {} }
+    res.json({ ok: true });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/contents/:id/raw-footage', authRequired, permissionRequired('content.edit'), (req, res, next) => {
+  try {
+    const item = getContent(req.params.id, req.user);
+    const footageIds = arrayValue(req.body.footageIds);
+    db.transaction(() => {
+      db.prepare('DELETE FROM content_raw_footage WHERE content_id=?').run(item.id);
+      for (const footageId of footageIds) {
+        if (!db.prepare("SELECT id FROM raw_footage WHERE id=? AND status='ACTIVE'").get(footageId)) throw new AppError('Salah satu Raw Footage tidak aktif atau tidak ditemukan.');
+        db.prepare('INSERT INTO content_raw_footage(content_id,footage_id) VALUES(?,?)').run(item.id, footageId);
+      }
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: item.id, action: 'LINK_RAW_FOOTAGE', after: { footageIds }, ip: requestIp(req) });
+    })();
+    res.json({ ok: true });
+  } catch (error) { next(error); }
+});
+
+function nextAssetCode() {
+  const period = new Date().toISOString().slice(0, 7).replace('-', '');
+  const key = `ASSET-${period}`;
+  const current = db.prepare('SELECT last_value FROM sequences WHERE sequence_key=?').get(key)?.last_value || 0;
+  const next = current + 1;
+  db.prepare(`INSERT INTO sequences(sequence_key,last_value) VALUES(?,?)
+    ON CONFLICT(sequence_key) DO UPDATE SET last_value=excluded.last_value`).run(key, next);
+  return `AST-${period}-${String(next).padStart(4, '0')}`;
+}
+
+function autoPromoteSimpleContent(contentId, actorId) {
+  const item = db.prepare(`SELECT id,content_no,title,description,caption,brand_id,workflow_type
+    FROM contents WHERE id=?`).get(contentId);
+  if (!item || item.workflow_type !== 'INSTANT') return null;
+  const existing = db.prepare('SELECT id FROM media_assets WHERE source_content_id=?').get(contentId);
+  if (existing) return existing.id;
+  const version = db.prepare(`SELECT * FROM content_versions WHERE content_id=?
+    ORDER BY is_approved DESC,version_number DESC LIMIT 1`).get(contentId);
+  if (!version) throw new AppError('Versi final tidak ditemukan untuk Media Library.', 409);
+  const root = path.resolve(UPLOAD_DIR);
+  const source = path.resolve(root, version.file_path);
+  if (!source.startsWith(`${root}${path.sep}`) || !fs.existsSync(source)) throw new AppError('Berkas final tidak ditemukan.', 404);
+  const filename = `${crypto.randomUUID()}${path.extname(version.original_name).toLowerCase()}`;
+  const destination = path.join(UPLOAD_DIR, 'library', filename);
+  fs.copyFileSync(source, destination);
+  let coverCopy = null;
+  if (version.cover_file_path) {
+    const coverSource = path.resolve(root, version.cover_file_path);
+    if (coverSource.startsWith(`${root}${path.sep}`) && fs.existsSync(coverSource)) {
+      const coverFilename = `${crypto.randomUUID()}${path.extname(version.cover_original_name || version.cover_file_path).toLowerCase()}`;
+      const coverDestination = path.join(UPLOAD_DIR, 'library', coverFilename);
+      fs.copyFileSync(coverSource, coverDestination);
+      coverCopy = { filePath: path.join('library', coverFilename), destination: coverDestination };
+    }
+  }
+  const assetId = newId('ast');
+  const assetVersionId = newId('av');
+  const timestamp = nowIso();
+  const category = /^(image|video)\//.test(version.mime_type) ? 'PHOTO_VIDEO' : 'CAMPAIGN';
+  db.prepare(`INSERT INTO media_assets(
+    id,code,title,description,category,brand_id,status,active_version_id,owner_id,source_content_id,created_at,updated_at
+  ) VALUES(?,?,?,?,?,?,'ACTIVE',?,?,?,?,?)`).run(
+    assetId, nextAssetCode(), item.title,
+    cleanText(item.description || item.caption || `Konten final dari ${item.content_no}`, 2000),
+    category, item.brand_id, assetVersionId, actorId, contentId, timestamp, timestamp
+  );
+  db.prepare(`INSERT INTO media_asset_versions(
+    id,asset_id,version_number,file_path,original_name,mime_type,file_size,checksum,cover_file_path,cover_original_name,cover_mime_type,cover_file_size,cover_checksum,notes,uploaded_by,created_at
+  ) VALUES(?,?,1,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
+    assetVersionId, assetId, path.join('library', filename), version.original_name, version.mime_type,
+    version.file_size, checksum(fs.readFileSync(destination)), coverCopy?.filePath || null, version.cover_original_name || null,
+    version.cover_mime_type || null, version.cover_file_size || null, coverCopy ? checksum(fs.readFileSync(coverCopy.destination)) : null,
+    `Otomatis dari ${item.content_no} versi ${version.version_number}`,
+    actorId, timestamp
+  );
+  recordAudit({ actorId, entityType: 'MEDIA_ASSET', entityId: assetId, action: 'AUTO_PROMOTE_APPROVED_CONTENT',
+    after: { contentId, contentVersionId: version.id } });
+  return assetId;
+}
+
+function serializeAsset(row, user) {
+  const canDownload = hasPermission(user, 'library.download') && (row.status === 'ACTIVE' || hasPermission(user, 'library.manage'));
+  return {
+    ...row,
+    version_number: Number(row.version_number || 0),
+    file_size: Number(row.file_size || 0),
+    canDownload,
+    fileUrl: canDownload && row.file_path ? `/api/files/library/${path.basename(row.file_path)}` : '',
+    coverFileUrl: canDownload && row.cover_file_path ? `/api/files/library/${path.basename(row.cover_file_path)}` : ''
+  };
+}
+
+app.get('/api/library', authRequired, permissionRequired('library.view'), (req, res) => {
+  db.prepare("UPDATE media_assets SET status='EXPIRED',updated_at=? WHERE status='ACTIVE' AND expires_at IS NOT NULL AND expires_at<date('now')").run(nowIso());
+  const conditions = ['1=1'];
+  const params = [];
+  if (req.query.category) { conditions.push('ma.category=?'); params.push(String(req.query.category)); }
+  if (req.query.brandId) { conditions.push('ma.brand_id=?'); params.push(String(req.query.brandId)); }
+  if (req.query.status) { conditions.push('ma.status=?'); params.push(String(req.query.status)); }
+  if (req.query.q) {
+    conditions.push('(ma.title LIKE ? OR ma.code LIKE ? OR ma.description LIKE ?)');
+    const query = `%${cleanText(req.query.q, 100)}%`;
+    params.push(query, query, query);
+  }
+  const rows = db.prepare(`SELECT ma.*,b.code AS brand_code,b.name AS brand_name,u.name AS owner_name,
+    mav.version_number,mav.file_path,mav.original_name,mav.mime_type,mav.file_size,mav.checksum,mav.cover_file_path,mav.cover_original_name,mav.cover_mime_type,mav.cover_file_size,mav.cover_checksum,mav.notes AS version_notes,mav.created_at AS version_created_at
+    FROM media_assets ma
+    LEFT JOIN brands b ON b.id=ma.brand_id
+    JOIN users u ON u.id=ma.owner_id
+    LEFT JOIN media_asset_versions mav ON mav.id=ma.active_version_id
+    WHERE ${conditions.join(' AND ')} ORDER BY CASE ma.status WHEN 'ACTIVE' THEN 0 WHEN 'EXPIRED' THEN 1 ELSE 2 END,ma.updated_at DESC`)
+    .all(...params).map(row => serializeAsset(row, req.user));
+  res.json({ items: rows });
+});
+
+app.get('/api/library/:id', authRequired, permissionRequired('library.view'), (req, res, next) => {
+  try {
+    const row = db.prepare(`SELECT ma.*,b.code AS brand_code,b.name AS brand_name,u.name AS owner_name,
+      mav.version_number,mav.file_path,mav.original_name,mav.mime_type,mav.file_size,mav.checksum,mav.cover_file_path,mav.cover_original_name,mav.cover_mime_type,mav.cover_file_size,mav.cover_checksum,mav.notes AS version_notes,mav.created_at AS version_created_at
+      FROM media_assets ma LEFT JOIN brands b ON b.id=ma.brand_id JOIN users u ON u.id=ma.owner_id
+      LEFT JOIN media_asset_versions mav ON mav.id=ma.active_version_id WHERE ma.id=?`).get(req.params.id);
+    if (!row) throw new AppError('Aset tidak ditemukan.', 404);
+    const versions = db.prepare(`SELECT mav.*,u.name AS uploaded_by_name FROM media_asset_versions mav
+      JOIN users u ON u.id=mav.uploaded_by WHERE mav.asset_id=? ORDER BY mav.version_number DESC`).all(row.id)
+      .map(version => ({
+        ...version,
+        canDownload: row.status === 'ACTIVE' || hasPermission(req.user, 'library.manage'),
+        fileUrl: row.status === 'ACTIVE' || hasPermission(req.user, 'library.manage') ? `/api/files/library/${path.basename(version.file_path)}` : '',
+        coverFileUrl: (row.status === 'ACTIVE' || hasPermission(req.user, 'library.manage')) && version.cover_file_path ? `/api/files/library/${path.basename(version.cover_file_path)}` : ''
+      }));
+    res.json({ item: serializeAsset(row, req.user), versions });
+  } catch (error) { next(error); }
+});
+
+const libraryAssetFields = libraryUpload.fields([{ name: 'file', maxCount: 1 }, { name: 'coverFile', maxCount: 1 }]);
+app.post('/api/library', authRequired, permissionRequired('library.manage'), libraryAssetFields, (req, res, next) => {
+  try {
+    const assetFile = requestFile(req, 'file');
+    const coverFile = requestFile(req, 'coverFile');
+    if (!assetFile) throw new AppError('Berkas aset wajib dipilih.');
+    validateCoverFile(coverFile);
+    const categories = ['BRAND_CENTER', 'BROCHURE_PRODUCT', 'CONTENT_TEMPLATE', 'PHOTO_VIDEO', 'CAMPAIGN', 'ARCHIVE'];
+    const category = String(req.body.category || 'BRAND_CENTER');
+    if (!categories.includes(category)) throw new AppError('Kategori aset tidak valid.');
+    const assetId = newId('ast');
+    const versionId = newId('av');
+    const timestamp = nowIso();
+    const relativePath = path.join('library', assetFile.filename);
+    const digest = checksum(fs.readFileSync(assetFile.path));
+    const payload = {
+      code: nextAssetCode(), title: requiredText(req.body.title, 'Nama aset', 200),
+      description: cleanText(req.body.description, 2000), category,
+      brandId: cleanText(req.body.brandId, 100) || null,
+      effectiveFrom: cleanText(req.body.effectiveFrom, 20) || null,
+      expiresAt: cleanText(req.body.expiresAt, 20) || null
+    };
+    db.transaction(() => {
+      db.prepare(`INSERT INTO media_assets(id,code,title,description,category,brand_id,status,active_version_id,effective_from,expires_at,owner_id,created_at,updated_at)
+        VALUES(?,?,?,?,?,?,'ACTIVE',?,?,?,?,?,?)`).run(
+        assetId, payload.code, payload.title, payload.description, payload.category, payload.brandId,
+        versionId, payload.effectiveFrom, payload.expiresAt, req.user.id, timestamp, timestamp
+      );
+      db.prepare(`INSERT INTO media_asset_versions(id,asset_id,version_number,file_path,original_name,mime_type,file_size,checksum,cover_file_path,cover_original_name,cover_mime_type,cover_file_size,cover_checksum,notes,uploaded_by,created_at)
+        VALUES(?,?,1,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
+        versionId, assetId, relativePath, safeFilename(assetFile.originalname), assetFile.mimetype,
+        assetFile.size, digest, coverFile ? path.join('library', coverFile.filename) : null, coverFile ? safeFilename(coverFile.originalname) : null,
+        coverFile?.mimetype || null, coverFile?.size || null, coverFile ? checksum(fs.readFileSync(coverFile.path)) : null,
+        cleanText(req.body.notes, 1000), req.user.id, timestamp
+      );
+      recordAudit({ actorId: req.user.id, entityType: 'MEDIA_ASSET', entityId: assetId, action: 'CREATE', after: payload, ip: requestIp(req) });
+    })();
+    res.status(201).json({ id: assetId, code: payload.code });
+  } catch (error) { removeRequestUploads(req); next(error); }
+});
+
+app.post('/api/library/:id/version', authRequired, permissionRequired('library.manage'), libraryAssetFields, (req, res, next) => {
+  try {
+    const assetFile = requestFile(req, 'file');
+    const coverFile = requestFile(req, 'coverFile');
+    validateCoverFile(coverFile);
+    const asset = db.prepare('SELECT * FROM media_assets WHERE id=?').get(req.params.id);
+    if (!asset) throw new AppError('Aset tidak ditemukan.', 404);
+    if (!assetFile) throw new AppError('Berkas versi baru wajib dipilih.');
+    const versionNumber = Number(db.prepare('SELECT COALESCE(MAX(version_number),0)+1 AS next FROM media_asset_versions WHERE asset_id=?').get(asset.id).next);
+    const versionId = newId('av');
+    const timestamp = nowIso();
+    const relativePath = path.join('library', assetFile.filename);
+    const digest = checksum(fs.readFileSync(assetFile.path));
+    db.transaction(() => {
+      db.prepare(`INSERT INTO media_asset_versions(id,asset_id,version_number,file_path,original_name,mime_type,file_size,checksum,cover_file_path,cover_original_name,cover_mime_type,cover_file_size,cover_checksum,notes,uploaded_by,created_at)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
+        versionId, asset.id, versionNumber, relativePath, safeFilename(assetFile.originalname), assetFile.mimetype,
+        assetFile.size, digest, coverFile ? path.join('library', coverFile.filename) : null, coverFile ? safeFilename(coverFile.originalname) : null,
+        coverFile?.mimetype || null, coverFile?.size || null, coverFile ? checksum(fs.readFileSync(coverFile.path)) : null,
+        cleanText(req.body.notes, 1000), req.user.id, timestamp
+      );
+      db.prepare("UPDATE media_assets SET active_version_id=?,status='ACTIVE',updated_at=? WHERE id=?").run(versionId, timestamp, asset.id);
+      recordAudit({ actorId: req.user.id, entityType: 'MEDIA_ASSET', entityId: asset.id, action: 'NEW_VERSION', before: { activeVersionId: asset.active_version_id }, after: { activeVersionId: versionId, versionNumber }, ip: requestIp(req) });
+    })();
+    res.status(201).json({ id: asset.id, versionNumber });
+  } catch (error) { removeRequestUploads(req); next(error); }
+});
+
+app.post('/api/library/:id/cover', authRequired, permissionRequired('library.manage'), libraryUpload.single('coverFile'), (req, res, next) => {
+  try {
+    const asset = db.prepare('SELECT * FROM media_assets WHERE id=?').get(req.params.id);
+    if (!asset) throw new AppError('Aset tidak ditemukan.', 404);
+    const coverFile = requestFile(req, 'coverFile');
+    if (!coverFile) throw new AppError('Berkas cover wajib dipilih.');
+    validateCoverFile(coverFile);
+    const activeVersion = db.prepare('SELECT * FROM media_asset_versions WHERE id=?').get(asset.active_version_id);
+    if (!activeVersion) throw new AppError('Versi aktif tidak ditemukan.', 409);
+    const before = { coverFilePath: activeVersion.cover_file_path, coverOriginalName: activeVersion.cover_original_name };
+    db.prepare(`UPDATE media_asset_versions SET cover_file_path=?,cover_original_name=?,cover_mime_type=?,cover_file_size=?,cover_checksum=? WHERE id=?`).run(
+      path.join('library', coverFile.filename), safeFilename(coverFile.originalname), coverFile.mimetype, coverFile.size,
+      checksum(fs.readFileSync(coverFile.path)), activeVersion.id
+    );
+    db.prepare('UPDATE media_assets SET updated_at=? WHERE id=?').run(nowIso(), asset.id);
+    recordAudit({ actorId: req.user.id, entityType: 'MEDIA_ASSET', entityId: asset.id, action: 'UPDATE_SOCIAL_COVER', before,
+      after: { coverOriginalName: safeFilename(coverFile.originalname), coverSize: coverFile.size }, ip: requestIp(req) });
+    if (activeVersion.cover_file_path) {
+      const oldPath = path.resolve(UPLOAD_DIR, activeVersion.cover_file_path);
+      if (oldPath.startsWith(`${path.resolve(UPLOAD_DIR)}${path.sep}`)) { try { fs.unlinkSync(oldPath); } catch {} }
+    }
+    res.json({ ok: true });
+  } catch (error) { removeRequestUploads(req); next(error); }
+});
+
+app.patch('/api/library/:id', authRequired, permissionRequired('library.manage'), (req, res, next) => {
+  try {
+    const asset = db.prepare('SELECT * FROM media_assets WHERE id=?').get(req.params.id);
+    if (!asset) throw new AppError('Aset tidak ditemukan.', 404);
+    const sets = [];
+    const values = [];
+    const fields = { title: ['title', 200], description: ['description', 2000], category: ['category', 50], brandId: ['brand_id', 100], effectiveFrom: ['effective_from', 20], expiresAt: ['expires_at', 20] };
+    for (const [input, [column, max]] of Object.entries(fields)) {
+      if (!Object.hasOwn(req.body, input)) continue;
+      sets.push(`${column}=?`); values.push(cleanText(req.body[input], max) || null);
+    }
+    if (Object.hasOwn(req.body, 'status')) {
+      const status = String(req.body.status);
+      if (!['ACTIVE', 'EXPIRED', 'ARCHIVED'].includes(status)) throw new AppError('Status aset tidak valid.');
+      sets.push('status=?'); values.push(status);
+    }
+    if (!sets.length) throw new AppError('Tidak ada perubahan yang dikirim.');
+    sets.push('updated_at=?'); values.push(nowIso(), asset.id);
+    db.prepare(`UPDATE media_assets SET ${sets.join(',')} WHERE id=?`).run(...values);
+    const updated = db.prepare('SELECT * FROM media_assets WHERE id=?').get(asset.id);
+    recordAudit({ actorId: req.user.id, entityType: 'MEDIA_ASSET', entityId: asset.id, action: 'UPDATE', before: asset, after: updated, ip: requestIp(req) });
+    res.json({ ok: true });
+  } catch (error) { next(error); }
+});
+
+app.delete('/api/library/:id', authRequired, (req, res, next) => {
+  try {
+    if (req.user.role !== 'SUPER_ADMIN') throw new AppError('Hanya Super Admin yang dapat menghapus aset Media Library secara permanen.', 403);
+    const asset = db.prepare('SELECT * FROM media_assets WHERE id=?').get(req.params.id);
+    if (!asset) throw new AppError('Aset tidak ditemukan.', 404);
+    const versions = db.prepare('SELECT file_path,cover_file_path FROM media_asset_versions WHERE asset_id=?').all(asset.id);
+    db.transaction(() => {
+      db.prepare('DELETE FROM content_assets WHERE asset_id=?').run(asset.id);
+      db.prepare('DELETE FROM media_assets WHERE id=?').run(asset.id);
+      recordAudit({
+        actorId: req.user.id, entityType: 'MEDIA_ASSET', entityId: asset.id, action: 'PERMANENT_DELETE',
+        before: { code: asset.code, title: asset.title, versionCount: versions.length, sourceContentId: asset.source_content_id },
+        ip: requestIp(req)
+      });
+    })();
+    const uploadRoot = path.resolve(UPLOAD_DIR);
+    for (const version of versions) {
+      for (const storedPath of [version.file_path, version.cover_file_path].filter(Boolean)) {
+        const absolute = path.resolve(uploadRoot, storedPath);
+        if (absolute.startsWith(`${uploadRoot}${path.sep}`)) { try { fs.unlinkSync(absolute); } catch {} }
+      }
+    }
+    res.json({ ok: true });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/contents/:id/assets', authRequired, permissionRequired('content.edit'), (req, res, next) => {
+  try {
+    const item = getContent(req.params.id, req.user);
+    const assetIds = arrayValue(req.body.assetIds);
+    db.transaction(() => {
+      db.prepare('DELETE FROM content_assets WHERE content_id=?').run(item.id);
+      for (const assetId of assetIds) {
+        const asset = db.prepare("SELECT id FROM media_assets WHERE id=? AND status='ACTIVE'").get(assetId);
+        if (!asset) throw new AppError('Salah satu aset tidak aktif atau tidak ditemukan.');
+        db.prepare('INSERT INTO content_assets(content_id,asset_id) VALUES(?,?)').run(item.id, assetId);
+      }
+      recordAudit({ actorId: req.user.id, entityType: 'CONTENT', entityId: item.id, action: 'LINK_ASSETS', after: { assetIds }, ip: requestIp(req) });
+    })();
+    res.json({ ok: true });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/contents/:id/promote-to-library', authRequired, permissionRequired('library.manage'), (req, res, next) => {
+  try {
+    const item = getContent(req.params.id, req.user);
+    if (!['APPROVED', 'SCHEDULED', 'PUBLISHED'].includes(item.status)) throw new AppError('Hanya draft yang sudah disetujui yang dapat dijadikan aset resmi.', 409);
+    const version = db.prepare('SELECT * FROM content_versions WHERE content_id=? AND is_approved=1 ORDER BY version_number DESC LIMIT 1').get(item.id);
+    if (!version) throw new AppError('Versi yang disetujui tidak ditemukan.', 409);
+    const source = path.join(UPLOAD_DIR, version.file_path);
+    if (!fs.existsSync(source)) throw new AppError('Berkas sumber tidak ditemukan.', 404);
+    const filename = `${crypto.randomUUID()}${path.extname(version.original_name).toLowerCase()}`;
+    const destination = path.join(UPLOAD_DIR, 'library', filename);
+    fs.copyFileSync(source, destination);
+    const assetId = newId('ast');
+    const versionId = newId('av');
+    const timestamp = nowIso();
+    const category = ['BRAND_CENTER', 'BROCHURE_PRODUCT', 'CONTENT_TEMPLATE', 'PHOTO_VIDEO', 'CAMPAIGN', 'ARCHIVE'].includes(req.body.category) ? req.body.category : 'CAMPAIGN';
+    db.transaction(() => {
+      db.prepare(`INSERT INTO media_assets(id,code,title,description,category,brand_id,status,active_version_id,owner_id,created_at,updated_at)
+        VALUES(?,?,?,?,?,?,'ACTIVE',?,?,?,?)`).run(
+        assetId, nextAssetCode(), cleanText(req.body.title, 200) || item.title,
+        `Dipromosikan dari ${item.content_no}. ${cleanText(req.body.description, 1000)}`.trim(), category,
+        item.brand_id, versionId, req.user.id, timestamp, timestamp
+      );
+      db.prepare(`INSERT INTO media_asset_versions(id,asset_id,version_number,file_path,original_name,mime_type,file_size,checksum,notes,uploaded_by,created_at)
+        VALUES(?,?,1,?,?,?,?,?,?,?,?)`).run(
+        versionId, assetId, path.join('library', filename), version.original_name, version.mime_type,
+        version.file_size, checksum(fs.readFileSync(destination)), `Sumber: ${item.content_no} versi ${version.version_number}`,
+        req.user.id, timestamp
+      );
+      recordAudit({ actorId: req.user.id, entityType: 'MEDIA_ASSET', entityId: assetId, action: 'PROMOTE_APPROVED_DRAFT', after: { contentId: item.id, contentVersionId: version.id }, ip: requestIp(req) });
+    })();
+    res.status(201).json({ id: assetId });
+  } catch (error) { next(error); }
+});
+
+app.get('/api/files/:kind/:filename', authRequired, (req, res, next) => {
+  try {
+    const kind = String(req.params.kind);
+    if (!['drafts', 'library', 'raw-footage', 'proofs'].includes(kind)) throw new AppError('Jenis berkas tidak valid.', 404);
+    const filename = path.basename(String(req.params.filename));
+    if (filename !== req.params.filename) throw new AppError('Nama berkas tidak valid.', 400);
+    let row;
+    if (kind === 'library') {
+      ensurePermission(req.user, 'library.download');
+      const requestedPath = path.join(kind, filename);
+      row = db.prepare(`SELECT
+        CASE WHEN mav.cover_file_path=? THEN mav.cover_file_path ELSE mav.file_path END AS file_path,
+        CASE WHEN mav.cover_file_path=? THEN mav.cover_original_name ELSE mav.original_name END AS original_name,
+        CASE WHEN mav.cover_file_path=? THEN mav.cover_mime_type ELSE mav.mime_type END AS mime_type,
+        ma.status FROM media_asset_versions mav
+        JOIN media_assets ma ON ma.id=mav.asset_id WHERE mav.file_path=? OR mav.cover_file_path=?`).get(requestedPath, requestedPath, requestedPath, requestedPath, requestedPath);
+      if (!row) throw new AppError('Berkas tidak ditemukan.', 404);
+      if (row.status !== 'ACTIVE' && !hasPermission(req.user, 'library.manage')) throw new AppError('Aset kedaluwarsa atau diarsipkan dan tidak dapat diunduh.', 403);
+    } else if (kind === 'raw-footage') {
+      ensurePermission(req.user, 'footage.download');
+      const access = rawFootageAccess(req.user);
+      row = db.prepare(`SELECT rf.file_path,rf.original_name,rf.mime_type,rf.status FROM raw_footage rf
+        WHERE rf.file_path=? AND ${access.sql}`).get(path.join(kind, filename), ...access.params);
+      if (!row || (req.user.role === 'VENDOR' && row.status !== 'ACTIVE')) throw new AppError('Raw Footage tidak ditemukan atau tidak dapat diakses.', 404);
+    } else if (kind === 'drafts') {
+      const requestedPath = path.join(kind, filename);
+      row = db.prepare(`SELECT
+        CASE WHEN cv.cover_file_path=? THEN cv.cover_file_path ELSE cv.file_path END AS file_path,
+        CASE WHEN cv.cover_file_path=? THEN cv.cover_original_name ELSE cv.original_name END AS original_name,
+        CASE WHEN cv.cover_file_path=? THEN cv.cover_mime_type ELSE cv.mime_type END AS mime_type,
+        c.id AS content_id FROM content_versions cv JOIN contents c ON c.id=cv.content_id
+        WHERE cv.file_path=? OR cv.cover_file_path=?`).get(requestedPath, requestedPath, requestedPath, requestedPath, requestedPath);
+      if (!row) throw new AppError('Berkas tidak ditemukan.', 404);
+      const content = getContent(row.content_id, req.user);
+      if (isUploadTaskOnly(req.user, content) && !db.prepare(`SELECT 1 FROM content_upload_files cuf
+        JOIN collaboration_files cf ON cf.id=cuf.file_id
+        WHERE cuf.content_id=? AND cf.file_path=?`).get(row.content_id, row.file_path)) {
+        throw new AppError('Berkas ini tidak dipilih untuk tugas upload.', 403);
+      }
+    } else {
+      row = db.prepare(`SELECT pp.file_path,pp.original_name,pp.mime_type,c.id AS content_id FROM publication_proofs pp
+        JOIN contents c ON c.id=pp.content_id WHERE pp.file_path=?`).get(path.join(kind, filename));
+      if (!row) throw new AppError('Berkas tidak ditemukan.', 404);
+      getContent(row.content_id, req.user);
+    }
+    const absolute = path.join(UPLOAD_DIR, row.file_path);
+    if (!absolute.startsWith(path.resolve(UPLOAD_DIR)) || !fs.existsSync(absolute)) throw new AppError('Berkas tidak ditemukan.', 404);
+    res.type(row.mime_type || 'application/octet-stream');
+    res.setHeader('Content-Disposition', `${toBoolean(req.query.download) ? 'attachment' : 'inline'}; filename="${safeFilename(row.original_name)}"`);
+    res.sendFile(path.resolve(absolute));
+  } catch (error) { next(error); }
+});
+
+app.get('/api/meta/assignments', authRequired, (req, res, next) => {
+  try {
+    if (!hasPermission(req.user, 'content.create') && !hasPermission(req.user, 'content.edit') && !hasPermission(req.user, 'content.simple_create') && !hasPermission(req.user, 'content.instant_create') && req.user.role !== 'SUPER_ADMIN') {
+      throw new AppError('Anda tidak dapat melihat daftar penugasan.', 403);
+    }
+    const users = db.prepare(`SELECT id,name,username,role,active,
+      CASE WHEN approval_pin_hash IS NOT NULL AND approval_pin_salt IS NOT NULL THEN 1 ELSE 0 END AS approval_pin_set FROM users
+      WHERE active=1 AND role IN ('COORDINATOR','ASSISTANT_COORDINATOR','MANAGEMENT','UPLOADER') ORDER BY role,name`).all();
+    const vendors = db.prepare("SELECT * FROM vendors WHERE status='ACTIVE' ORDER BY name").all();
+    res.json({ users, vendors });
+  } catch (error) { next(error); }
+});
+
+app.get('/api/assistant-delegations', authRequired, (req, res, next) => {
+  try {
+    if (!['SUPER_ADMIN', 'COORDINATOR', 'ASSISTANT_COORDINATOR'].includes(req.user.role)) throw new AppError('Anda tidak dapat melihat delegasi Asisten.', 403);
+    let rows;
+    if (req.user.role === 'ASSISTANT_COORDINATOR') rows = assistantDelegations(req.user.id, false);
+    else {
+      const conditions = req.user.role === 'COORDINATOR' ? 'WHERE cad.coordinator_id=?' : '';
+      const params = req.user.role === 'COORDINATOR' ? [req.user.id] : [];
+      rows = db.prepare(`SELECT cad.*,c.name AS coordinator_name,a.name AS assistant_name,a.username AS assistant_username
+        FROM coordinator_assistant_delegations cad JOIN users c ON c.id=cad.coordinator_id
+        JOIN users a ON a.id=cad.assistant_id ${conditions} ORDER BY c.name,a.name`).all(...params)
+        .map(row => ({ ...row, permissions: jsonObject(row.permissions_json, []), active: Boolean(row.active) }));
+    }
+    const assistants = ['SUPER_ADMIN', 'COORDINATOR'].includes(req.user.role)
+      ? db.prepare("SELECT id,name,username FROM users WHERE role='ASSISTANT_COORDINATOR' AND active=1 ORDER BY name").all() : [];
+    res.json({ items: rows, assistants, permissionOptions: [
+      { code: 'CREATE_REQUEST', label: 'Membuat permintaan konten' },
+      { code: 'REVIEW_VENDOR', label: 'Review brief dan usulan Vendor' }
+    ] });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/assistant-delegations', authRequired, (req, res, next) => {
+  try {
+    if (!['SUPER_ADMIN', 'COORDINATOR'].includes(req.user.role)) throw new AppError('Hanya Koordinator yang dapat mengatur delegasi.', 403);
+    const coordinatorId = req.user.role === 'COORDINATOR' ? req.user.id : requiredText(req.body.coordinatorId, 'Koordinator', 100);
+    if (!db.prepare("SELECT id FROM users WHERE id=? AND role='COORDINATOR' AND active=1").get(coordinatorId)) throw new AppError('Koordinator tidak valid.');
+    const assistantId = requiredText(req.body.assistantId, 'Asisten Koordinator', 100);
+    if (!db.prepare("SELECT id FROM users WHERE id=? AND role='ASSISTANT_COORDINATOR' AND active=1").get(assistantId)) throw new AppError('Asisten Koordinator tidak valid.');
+    const permissions = [...new Set(arrayValue(req.body.permissions))].filter(code => ASSISTANT_DELEGATION_PERMISSIONS.has(code));
+    const active = toBoolean(req.body.active) ? 1 : 0;
+    if (active && !permissions.length) throw new AppError('Pilih minimal satu izin delegasi.');
+    const expiresAt = cleanText(req.body.expiresAt, 40) || null;
+    const existing = db.prepare('SELECT * FROM coordinator_assistant_delegations WHERE coordinator_id=? AND assistant_id=?').get(coordinatorId, assistantId);
+    const timestamp = nowIso();
+    const id = existing?.id || newId('cad');
+    db.prepare(`INSERT INTO coordinator_assistant_delegations(id,coordinator_id,assistant_id,permissions_json,active,expires_at,created_at,updated_at)
+      VALUES(?,?,?,?,?,?,?,?) ON CONFLICT(coordinator_id,assistant_id) DO UPDATE SET
+      permissions_json=excluded.permissions_json,active=excluded.active,expires_at=excluded.expires_at,updated_at=excluded.updated_at`)
+      .run(id, coordinatorId, assistantId, JSON.stringify(permissions), active, expiresAt, existing?.created_at || timestamp, timestamp);
+    recordAudit({ actorId: req.user.id, entityType: 'ASSISTANT_DELEGATION', entityId: id, action: existing ? 'UPDATE' : 'CREATE',
+      before: existing, after: { coordinatorId, assistantId, permissions, active: Boolean(active), expiresAt }, ip: requestIp(req) });
+    notifyUser(assistantId, 'ASSISTANT_DELEGATION_UPDATED', active ? 'Delegasi Koordinator diperbarui' : 'Delegasi Koordinator dinonaktifkan',
+      permissions.join(', '), '/instant-videos');
+    res.json({ ok: true, id });
+  } catch (error) { next(error); }
+});
+
+app.get('/api/vendors', authRequired, (req, res, next) => {
+  try {
+    if (!hasPermission(req.user, 'vendor.view') && !hasPermission(req.user, 'vendor.manage') && req.user.role !== 'SUPER_ADMIN') throw new AppError('Anda tidak dapat melihat data vendor.', 403);
+    const rows = db.prepare(`SELECT v.*,
+      COUNT(c.id) AS content_count,
+      SUM(CASE WHEN c.status='PUBLISHED' THEN 1 ELSE 0 END) AS published_count,
+      SUM(CASE WHEN c.due_date<date('now') AND c.status NOT IN ('PUBLISHED','CANCELLED') THEN 1 ELSE 0 END) AS overdue_count
+      FROM vendors v LEFT JOIN contents c ON c.vendor_id=v.id AND c.deleted_at IS NULL GROUP BY v.id ORDER BY v.status,v.name`).all()
+      .map(row => ({ ...row, content_count: Number(row.content_count || 0), published_count: Number(row.published_count || 0), overdue_count: Number(row.overdue_count || 0) }));
+    res.json({ items: rows });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/vendors', authRequired, permissionRequired('vendor.manage'), (req, res, next) => {
+  try {
+    const id = newId('vnd');
+    const timestamp = nowIso();
+    const payload = {
+      name: requiredText(req.body.name, 'Nama vendor', 200),
+      contactName: cleanText(req.body.contactName, 150), email: cleanText(req.body.email, 200),
+      phone: cleanText(req.body.phone, 50), slaDays: Math.max(1, Math.min(60, toInteger(req.body.slaDays, 3))),
+      notes: cleanText(req.body.notes, 2000)
+    };
+    db.prepare(`INSERT INTO vendors(id,name,contact_name,email,phone,status,sla_days,notes,created_at,updated_at)
+      VALUES(?,?,?,?,?,'ACTIVE',?,?,?,?)`).run(id, payload.name, payload.contactName, payload.email, payload.phone, payload.slaDays, payload.notes, timestamp, timestamp);
+    recordAudit({ actorId: req.user.id, entityType: 'VENDOR', entityId: id, action: 'CREATE', after: payload, ip: requestIp(req) });
+    res.status(201).json({ id });
+  } catch (error) { next(error); }
+});
+
+app.patch('/api/vendors/:id', authRequired, permissionRequired('vendor.manage'), (req, res, next) => {
+  try {
+    const vendor = db.prepare('SELECT * FROM vendors WHERE id=?').get(req.params.id);
+    if (!vendor) throw new AppError('Vendor tidak ditemukan.', 404);
+    const sets = [];
+    const values = [];
+    const fields = { name: ['name', 200], contactName: ['contact_name', 150], email: ['email', 200], phone: ['phone', 50], notes: ['notes', 2000] };
+    for (const [input, [column, max]] of Object.entries(fields)) {
+      if (!Object.hasOwn(req.body, input)) continue;
+      sets.push(`${column}=?`); values.push(cleanText(req.body[input], max) || null);
+    }
+    if (Object.hasOwn(req.body, 'slaDays')) { sets.push('sla_days=?'); values.push(Math.max(1, Math.min(60, toInteger(req.body.slaDays, 3)))); }
+    if (Object.hasOwn(req.body, 'status')) {
+      const status = String(req.body.status);
+      if (!['ACTIVE', 'INACTIVE'].includes(status)) throw new AppError('Status vendor tidak valid.');
+      sets.push('status=?'); values.push(status);
+    }
+    if (!sets.length) throw new AppError('Tidak ada perubahan yang dikirim.');
+    sets.push('updated_at=?'); values.push(nowIso(), vendor.id);
+    db.prepare(`UPDATE vendors SET ${sets.join(',')} WHERE id=?`).run(...values);
+    recordAudit({ actorId: req.user.id, entityType: 'VENDOR', entityId: vendor.id, action: 'UPDATE', before: vendor, after: req.body, ip: requestIp(req) });
+    res.json({ ok: true });
+  } catch (error) { next(error); }
+});
+
+app.get('/api/users', authRequired, (req, res, next) => {
+  try {
+    if (req.user.role !== 'SUPER_ADMIN') throw new AppError('Menu pengguna hanya untuk Super Admin.', 403);
+    const rows = db.prepare(`SELECT u.id,u.name,u.username,u.email,u.auth_source,u.role,u.vendor_id,u.active,u.must_change_password,u.last_login,u.oidc_last_sync_at,u.created_at,u.updated_at,v.name AS vendor_name
+      FROM users u LEFT JOIN vendors v ON v.id=u.vendor_id ORDER BY u.active DESC,u.name`).all();
+    res.json({ items: rows.map(row => ({ ...row, active: Boolean(row.active), must_change_password: Boolean(row.must_change_password) })) });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/users', authRequired, (req, res, next) => {
+  try {
+    if (req.user.role !== 'SUPER_ADMIN') throw new AppError('Menu pengguna hanya untuk Super Admin.', 403);
+    const role = String(req.body.role || '');
+    if (!Object.hasOwn(ROLE_LABELS, role)) throw new AppError('Role tidak valid.');
+    if (OIDC.enabled && (!OIDC.localPersonalLoginEnabled || !LOCAL_PERSONAL_ROLES.has(role))) {
+      throw new AppError('Saat AXINDO ID aktif, Login Personal hanya dapat dibuat untuk Super Admin dan Vendor.');
+    }
+    const username = cleanUsername(req.body.username);
+    if (username.length < 3) throw new AppError('Username minimal 3 karakter.');
+    const password = String(req.body.password || '');
+    assertPassword(password);
+    const credentials = hashPassword(password);
+    const id = newId('usr');
+    const timestamp = nowIso();
+    const vendorId = role === 'VENDOR' ? requiredText(req.body.vendorId, 'Vendor', 100) : null;
+    db.prepare(`INSERT INTO users(id,name,username,password_hash,password_salt,role,vendor_id,active,must_change_password,created_at,updated_at)
+      VALUES(?,?,?,?,?,?,?,1,1,?,?)`).run(
+      id, requiredText(req.body.name, 'Nama pengguna', 200), username, credentials.hash, credentials.salt,
+      role, vendorId, timestamp, timestamp
+    );
+    recordAudit({ actorId: req.user.id, entityType: 'USER', entityId: id, action: 'CREATE', after: { name: req.body.name, username, role, vendorId }, ip: requestIp(req) });
+    res.status(201).json({ id });
+  } catch (error) { next(error); }
+});
+
+app.patch('/api/users/:id', authRequired, (req, res, next) => {
+  try {
+    if (req.user.role !== 'SUPER_ADMIN') throw new AppError('Menu pengguna hanya untuk Super Admin.', 403);
+    const user = db.prepare('SELECT * FROM users WHERE id=?').get(req.params.id);
+    if (!user) throw new AppError('Pengguna tidak ditemukan.', 404);
+    const axindoIdUser = ['OIDC', 'ACCESS'].includes(user.auth_source || 'LOCAL');
+    const sets = [];
+    const values = [];
+    if (Object.hasOwn(req.body, 'name')) { sets.push('name=?'); values.push(requiredText(req.body.name, 'Nama', 200)); }
+    if (Object.hasOwn(req.body, 'role')) {
+      const role = String(req.body.role);
+      if (!Object.hasOwn(ROLE_LABELS, role)) throw new AppError('Role tidak valid.');
+      if (axindoIdUser) throw new AppError('Role akun AXINDO ID disinkronkan dari grup Authentik.', 403);
+      if (OIDC.enabled && role !== user.role && !LOCAL_PERSONAL_ROLES.has(role)) {
+        throw new AppError('Saat AXINDO ID aktif, Login Personal hanya dapat menggunakan role Super Admin atau Vendor.');
+      }
+      if (user.id === req.user.id && role !== 'SUPER_ADMIN') throw new AppError('Anda tidak dapat menurunkan role akun sendiri.');
+      sets.push('role=?'); values.push(role);
+    }
+    if (Object.hasOwn(req.body, 'vendorId')) { sets.push('vendor_id=?'); values.push(cleanText(req.body.vendorId, 100) || null); }
+    if (Object.hasOwn(req.body, 'active')) {
+      const active = toBoolean(req.body.active) ? 1 : 0;
+      if (user.id === req.user.id && !active) throw new AppError('Anda tidak dapat menonaktifkan akun sendiri.');
+      if (!active && user.role === 'SUPER_ADMIN') {
+        const adminCount = Number(db.prepare("SELECT COUNT(*) AS count FROM users WHERE role='SUPER_ADMIN' AND active=1").get().count);
+        if (adminCount <= 1) throw new AppError('Super Admin aktif terakhir tidak dapat dinonaktifkan.');
+      }
+      sets.push('active=?'); values.push(active);
+    }
+    if (Object.hasOwn(req.body, 'password') && String(req.body.password || '')) {
+      if (axindoIdUser) throw new AppError('Password akun ini dikelola melalui AXINDO ID.', 403);
+      assertPassword(req.body.password);
+      const credentials = hashPassword(String(req.body.password));
+      sets.push('password_hash=?', 'password_salt=?', 'must_change_password=1');
+      values.push(credentials.hash, credentials.salt);
+    }
+    if (!sets.length) throw new AppError('Tidak ada perubahan yang dikirim.');
+    sets.push('updated_at=?'); values.push(nowIso(), user.id);
+    db.transaction(() => {
+      db.prepare(`UPDATE users SET ${sets.join(',')} WHERE id=?`).run(...values);
+      if (Object.hasOwn(req.body, 'active') && !toBoolean(req.body.active) && user.role === 'MANAGEMENT') {
+        const approvals = db.prepare("SELECT id,content_id FROM director_approval_requests WHERE director_id=? AND status='ACTIVE'").all(user.id);
+        for (const approval of approvals) {
+          db.prepare("UPDATE director_approval_requests SET status='CANCELLED',cancelled_at=?,note='Direksi dinonaktifkan' WHERE id=?").run(nowIso(), approval.id);
+          db.prepare('DELETE FROM approval_access_sessions WHERE request_id=?').run(approval.id);
+          db.prepare("UPDATE contents SET status='DRAFT_SUBMITTED',updated_at=? WHERE id=? AND status='APPROVAL_PENDING'").run(nowIso(), approval.content_id);
+        }
+      }
+      if (Object.hasOwn(req.body, 'active') && !toBoolean(req.body.active) && user.role === 'COORDINATOR') {
+        const approvals = db.prepare("SELECT id FROM coordinator_approval_requests WHERE coordinator_id=? AND status='ACTIVE'").all(user.id);
+        for (const approval of approvals) {
+          db.prepare("UPDATE coordinator_approval_requests SET status='CANCELLED',cancelled_at=?,note='Koordinator dinonaktifkan' WHERE id=?").run(nowIso(), approval.id);
+          db.prepare('DELETE FROM coordinator_approval_access_sessions WHERE request_id=?').run(approval.id);
+        }
+      }
+      db.prepare('DELETE FROM sessions WHERE user_id=? AND id<>?').run(user.id, user.id === req.user.id ? req.sessionId : '');
+      recordAudit({ actorId: req.user.id, entityType: 'USER', entityId: user.id, action: 'UPDATE', before: publicUser(user), after: req.body, ip: requestIp(req) });
+    })();
+    res.json({ ok: true });
+  } catch (error) { next(error); }
+});
+
+app.get('/api/reports/summary', authRequired, permissionRequired('reports.view'), (req, res) => {
+  const from = cleanText(req.query.from, 20) || new Date(new Date().getFullYear(), 0, 1).toISOString().slice(0, 10);
+  const to = cleanText(req.query.to, 20) || new Date().toISOString().slice(0, 10);
+  const byStatus = db.prepare(`SELECT status,COUNT(*) AS count FROM contents
+    WHERE deleted_at IS NULL AND date(created_at) BETWEEN ? AND ? GROUP BY status ORDER BY count DESC`).all(from, to)
+    .map(row => ({ status: row.status, label: STATUS_LABELS[row.status] || row.status, count: Number(row.count) }));
+  const byBrand = db.prepare(`SELECT b.code,b.name,b.color,COUNT(c.id) AS count,
+    SUM(CASE WHEN c.status='PUBLISHED' THEN 1 ELSE 0 END) AS published
+    FROM brands b LEFT JOIN contents c ON c.brand_id=b.id AND c.deleted_at IS NULL AND date(c.created_at) BETWEEN ? AND ?
+    GROUP BY b.id ORDER BY count DESC`).all(from, to)
+    .map(row => ({ ...row, count: Number(row.count || 0), published: Number(row.published || 0) }));
+  const vendors = db.prepare(`SELECT v.id,v.name,COUNT(c.id) AS assigned,
+    SUM(CASE WHEN c.status='PUBLISHED' THEN 1 ELSE 0 END) AS published,
+    SUM(CASE WHEN c.status='PUBLISHED' AND (c.due_date IS NULL OR date(c.locked_at)<=c.due_date) THEN 1 ELSE 0 END) AS on_time,
+    SUM(CASE WHEN c.status='REVISION_REQUIRED' THEN 1 ELSE 0 END) AS revisions,
+    ROUND(AVG(CASE WHEN c.status='PUBLISHED' THEN julianday(c.locked_at)-julianday(c.created_at) END),1) AS avg_cycle_days
+    FROM vendors v LEFT JOIN contents c ON c.vendor_id=v.id AND c.deleted_at IS NULL AND date(c.created_at) BETWEEN ? AND ?
+    GROUP BY v.id ORDER BY published DESC,assigned DESC`).all(from, to).map(row => ({
+      ...row, assigned: Number(row.assigned || 0), published: Number(row.published || 0),
+      on_time: Number(row.on_time || 0), revisions: Number(row.revisions || 0), avg_cycle_days: Number(row.avg_cycle_days || 0),
+      on_time_percent: Number(row.published || 0) ? Math.round(Number(row.on_time || 0) * 100 / Number(row.published)) : 0
+    }));
+  const byProductionMode = db.prepare(`SELECT production_mode,COUNT(*) AS count,
+    SUM(CASE WHEN status='PUBLISHED' THEN 1 ELSE 0 END) AS published
+    FROM contents WHERE deleted_at IS NULL AND date(created_at) BETWEEN ? AND ? GROUP BY production_mode ORDER BY production_mode`).all(from, to)
+    .map(row => ({
+      mode: row.production_mode || 'VENDOR',
+      label: row.production_mode === 'INTERNAL' ? 'Internal Koordinator' : 'Vendor',
+      count: Number(row.count || 0), published: Number(row.published || 0)
+    }));
+  const performance = db.prepare(`SELECT
+    COALESCE(SUM(CAST(json_extract(metrics_json,'$.reach') AS INTEGER)),0) AS reach,
+    COALESCE(SUM(CAST(json_extract(metrics_json,'$.impressions') AS INTEGER)),0) AS impressions,
+    COALESCE(SUM(CAST(json_extract(metrics_json,'$.engagement') AS INTEGER)),0) AS engagement,
+    COALESCE(SUM(CAST(json_extract(metrics_json,'$.leads') AS INTEGER)),0) AS leads
+    FROM publication_proofs pp JOIN contents c ON c.id=pp.content_id
+    WHERE c.deleted_at IS NULL AND date(pp.published_at) BETWEEN ? AND ?`).get(from, to);
+  const budget = db.prepare(`SELECT COALESCE(SUM(budget),0) AS total FROM contents WHERE deleted_at IS NULL AND date(created_at) BETWEEN ? AND ?`).get(from, to).total;
+  const metrics = Object.fromEntries(Object.entries(performance).map(([key, value]) => [key, Number(value || 0)]));
+  metrics.budget = Number(budget || 0);
+  metrics.costPerLead = metrics.leads ? Math.round(metrics.budget / metrics.leads) : 0;
+  res.json({ from, to, byStatus, byBrand, byProductionMode, vendors, metrics });
+});
+
+app.get('/api/notifications', authRequired, (req, res) => {
+  const rows = db.prepare('SELECT * FROM notifications WHERE user_id=? ORDER BY created_at DESC LIMIT 100').all(req.user.id);
+  res.json({ items: rows, unread: rows.filter(row => !row.read_at).length });
+});
+
+app.post('/api/notifications/read', authRequired, (req, res) => {
+  const ids = arrayValue(req.body.ids);
+  if (ids.length) {
+    const statement = db.prepare('UPDATE notifications SET read_at=? WHERE id=? AND user_id=?');
+    db.transaction(() => { for (const id of ids) statement.run(nowIso(), id, req.user.id); })();
+  } else {
+    db.prepare('UPDATE notifications SET read_at=? WHERE user_id=? AND read_at IS NULL').run(nowIso(), req.user.id);
+  }
+  res.json({ ok: true });
+});
+
+app.get('/api/audit', authRequired, (req, res, next) => {
+  try {
+    if (req.user.role !== 'SUPER_ADMIN') throw new AppError('Audit log hanya untuk Super Admin.', 403);
+    const params = [];
+    const conditions = ['1=1'];
+    if (req.query.entityType) { conditions.push('a.entity_type=?'); params.push(String(req.query.entityType)); }
+    if (req.query.q) {
+      conditions.push('(a.action LIKE ? OR a.entity_id LIKE ? OR a.reason LIKE ? OR u.name LIKE ?)');
+      const query = `%${cleanText(req.query.q, 100)}%`; params.push(query, query, query, query);
+    }
+    const rows = db.prepare(`SELECT a.*,u.name AS actor_name FROM audit_logs a LEFT JOIN users u ON u.id=a.actor_id
+      WHERE ${conditions.join(' AND ')} ORDER BY a.created_at DESC LIMIT 500`).all(...params)
+      .map(row => ({ ...row, before: jsonObject(row.before_json, null), after: jsonObject(row.after_json, null) }));
+    res.json({ items: rows });
+  } catch (error) { next(error); }
+});
+
+app.get('/api/settings', authRequired, (req, res, next) => {
+  try {
+    if (req.user.role !== 'SUPER_ADMIN') throw new AppError('Pengaturan hanya untuk Super Admin.', 403);
+    res.json({ settings: settingsPayload() });
+  } catch (error) { next(error); }
+});
+
+app.patch('/api/settings', authRequired, (req, res, next) => {
+  try {
+    if (req.user.role !== 'SUPER_ADMIN') throw new AppError('Pengaturan hanya untuk Super Admin.', 403);
+    const before = settingsPayload();
+    const changes = {
+      APP_NAME: req.body.appName,
+      COMPANY_NAME: req.body.companyName,
+      TIMEZONE: req.body.timezone,
+      THEME_PRIMARY: req.body.primaryColor,
+      THEME_SECONDARY: req.body.secondaryColor
+    };
+    if (Object.hasOwn(req.body, 'maxCollaborationUploadMb')) {
+      const limit = toInteger(req.body.maxCollaborationUploadMb);
+      if (limit < 10 || limit > 2048) throw new AppError('Batas upload kolaborasi harus 10â€“2048 MB.');
+      changes.MAX_COLLAB_UPLOAD_MB = limit;
+    }
+    if (changes.THEME_PRIMARY && !/^#[0-9a-f]{6}$/i.test(changes.THEME_PRIMARY)) throw new AppError('Warna utama tidak valid.');
+    if (changes.THEME_SECONDARY && !/^#[0-9a-f]{6}$/i.test(changes.THEME_SECONDARY)) throw new AppError('Warna sekunder tidak valid.');
+    for (const [key, value] of Object.entries(changes)) if (value != null && String(value).trim()) setSetting(key, cleanText(value, 200), req.user.id);
+    recordAudit({ actorId: req.user.id, entityType: 'SETTINGS', action: 'UPDATE', before, after: settingsPayload(), ip: requestIp(req) });
+    res.json({ settings: settingsPayload() });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/settings/logo', authRequired, logoUpload.single('file'), (req, res, next) => {
+  try {
+    if (req.user.role !== 'SUPER_ADMIN') throw new AppError('Pengaturan hanya untuk Super Admin.', 403);
+    if (!req.file) throw new AppError('File logo wajib dipilih.');
+    const previous = getSetting('LOGO_PATH');
+    setSetting('LOGO_PATH', path.join('branding', req.file.filename), req.user.id);
+    if (previous) {
+      try { fs.unlinkSync(path.join(UPLOAD_DIR, previous)); } catch {}
+    }
+    recordAudit({ actorId: req.user.id, entityType: 'SETTINGS', action: 'LOGO_UPDATE', after: { originalName: req.file.originalname }, ip: requestIp(req) });
+    res.json({ logoUrl: '/api/branding/logo' });
+  } catch (error) { removeUpload(req.file); next(error); }
+});
+
+app.get('/api/branding/logo', (req, res, next) => {
+  try {
+    const logoPath = getSetting('LOGO_PATH');
+    if (!logoPath) throw new AppError('Logo belum diatur.', 404);
+    const absolute = path.resolve(UPLOAD_DIR, logoPath);
+    if (!absolute.startsWith(path.resolve(UPLOAD_DIR)) || !fs.existsSync(absolute)) throw new AppError('Logo tidak ditemukan.', 404);
+    res.setHeader('Cache-Control', 'no-cache');
+    res.sendFile(absolute);
+  } catch (error) { next(error); }
+});
+
+app.get('/api/backups', authRequired, (req, res, next) => {
+  try {
+    if (req.user.role !== 'SUPER_ADMIN') throw new AppError('Backup hanya untuk Super Admin.', 403);
+    res.json({ items: listDatabaseBackups() });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/backups', authRequired, asyncRoute(async (req, res) => {
+  if (req.user.role !== 'SUPER_ADMIN') throw new AppError('Backup hanya untuk Super Admin.', 403);
+  const destination = await createDatabaseBackup('manual');
+  recordAudit({ actorId: req.user.id, entityType: 'BACKUP', action: 'CREATE', after: { name: path.basename(destination) }, ip: requestIp(req) });
+  res.status(201).json({ name: path.basename(destination) });
+}));
+
+app.get('/api/backups/:name', authRequired, (req, res, next) => {
+  try {
+    if (req.user.role !== 'SUPER_ADMIN') throw new AppError('Backup hanya untuk Super Admin.', 403);
+    const name = path.basename(String(req.params.name));
+    if (!/^media-hub-.*\.sqlite$/.test(name)) throw new AppError('Nama backup tidak valid.');
+    const file = path.resolve(BACKUP_DIR, name);
+    if (!file.startsWith(path.resolve(BACKUP_DIR)) || !fs.existsSync(file)) throw new AppError('Backup tidak ditemukan.', 404);
+    recordAudit({ actorId: req.user.id, entityType: 'BACKUP', action: 'DOWNLOAD', after: { name }, ip: requestIp(req) });
+    res.download(file, name);
+  } catch (error) { next(error); }
+});
+
+installWorkflowV4(app, {
+  authRequired,
+  getContent,
+  ensurePermission,
+  AppError,
+  requestIp,
+  autoPromoteSimpleContent,
+  isUploadTaskOnly,
+  maxUploadMb: MAX_COLLAB_UPLOAD_MB,
+  cookieSecure: COOKIE_SECURE
+});
+
+app.use(['/share.html', '/approval.html'], (_req, res, next) => {
+  res.set('Cache-Control', 'no-store');
+  res.set('X-Robots-Tag', 'noindex, nofollow');
+  res.set('Referrer-Policy', 'no-referrer');
+  next();
+});
+
+const publicDir = path.join(process.cwd(), 'public');
+app.use(express.static(publicDir, {
+  etag: true,
+  setHeaders: (res, filePath) => {
+    res.setHeader('Cache-Control', filePath.endsWith('.html') ? 'no-cache' : 'public, max-age=3600, must-revalidate');
+  }
+}));
+
+app.use((req, res, next) => {
+  if (req.method === 'GET' && !req.path.startsWith('/api/')) return res.sendFile(path.join(publicDir, 'index.html'));
+  next(new AppError('Endpoint tidak ditemukan.', 404));
+});
+
+app.use((error, req, res, _next) => {
+  if (error instanceof multer.MulterError && error.code === 'LIMIT_FILE_SIZE') {
+    const limit = req.path.startsWith('/api/raw-footage') ? MAX_COLLAB_UPLOAD_MB : MAX_UPLOAD_MB;
+    return res.status(413).json({ error: `Ukuran berkas maksimal ${limit} MB.` });
+  }
+  const status = Number(error.status || error.statusCode || 500);
+  if (status >= 500) console.error(error);
+  res.status(status).json({ error: status >= 500 ? 'Terjadi kesalahan pada server.' : error.message });
+});
+
+let server;
+if (require.main === module) {
+  cleanupExpiredSessions();
+  server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`AXINDO Media Hub ${APP_VERSION} aktif pada port ${PORT}`);
+  });
+}
+
+module.exports = { app, APP_VERSION, PORT, server };
