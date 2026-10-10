@@ -225,6 +225,15 @@ test('alur konten sederhana tersedia untuk internal dan vendor dengan revisi ser
   assert.match(app, /Koordinator cukup membukanya dan memasukkan PIN pribadi/);
   assert.match(app, /data-content-action="coordinator-review"/);
   assert.match(app, /Tindak Lanjut Review/);
+  assert.match(app, /Edit Materi Review/);
+  assert.match(app, /Note \(Catatan\)/);
+  assert.match(app, /Tambah Lampiran Review/);
+  assert.match(app, /\/review-material/);
+  assert.match(app, /\/review-attachments/);
+  assert.match(app, /File Final untuk Proses Upload/);
+  assert.match(app, /name="fileIds"/);
+  assert.match(app, /Hanya file yang dicentang yang diteruskan/);
+  assert.match(app, /File Final untuk Diunggah/);
   assert.match(app, /Setujui sebagai Final/);
   assert.match(app, /Teruskan ke Direksi/);
   assert.match(app, /Minta Revisi/);

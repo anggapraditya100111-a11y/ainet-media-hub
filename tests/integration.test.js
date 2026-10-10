@@ -1,195 +1,4 @@
-const test = require('node:test');
-const assert = require('node:assert/strict');
-const path = require('node:path');
-const os = require('node:os');
-const fs = require('node:fs');
-const net = require('node:net');
-const { spawn } = require('node:child_process');
-
-function freePort() {
-  return new Promise((resolve, reject) => {
-    const server = net.createServer();
-    server.unref(); server.on('error', reject);
-    server.listen(0, '127.0.0.1', () => { const { port } = server.address(); server.close(() => resolve(port)); });
-  });
-}
-
-async function waitForHealth(baseUrl, child) {
-  for (let attempt = 0; attempt < 60; attempt += 1) {
-    if (child.exitCode !== null) throw new Error(`Server berhenti dengan kode ${child.exitCode}`);
-    try { if ((await fetch(`${baseUrl}/api/health`)).ok) return; } catch {}
-    await new Promise(resolve => setTimeout(resolve, 100));
-  }
-  throw new Error('Server tidak siap tepat waktu.');
-}
-
-async function request(baseUrl, url, options = {}, cookie = '') {
-  const headers = { ...(options.headers || {}) };
-  if (cookie) headers.cookie = cookie;
-  let body;
-  if (options.body instanceof FormData || Buffer.isBuffer(options.body)) body = options.body;
-  else if (options.body !== undefined) { headers['content-type'] = 'application/json'; body = JSON.stringify(options.body); }
-  const response = await fetch(`${baseUrl}${url}`, { method: options.method || 'GET', headers, body });
-  const payload = (response.headers.get('content-type') || '').includes('application/json') ? await response.json() : await response.text();
-  return { response, payload };
-}
-
-async function login(baseUrl, username, password) {
-  const { response, payload } = await request(baseUrl, '/api/auth/login', { method: 'POST', body: { username, password } });
-  assert.equal(response.status, 200, JSON.stringify(payload));
-  return response.headers.get('set-cookie').split(';')[0];
-}
-
-async function transition(baseUrl, contentId, toStatus, cookie, note = '') {
-  const result = await request(baseUrl, `/api/contents/${contentId}/transition`, { method: 'POST', body: { toStatus, note } }, cookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  return result.payload.item;
-}
-
-async function chunkUpload(baseUrl, contentId, cookie, name, contents, message = '', phase = 'PRODUCTION_RESULT') {
-  const buffer = Buffer.from(contents);
-  let result = await request(baseUrl, `/api/contents/${contentId}/uploads/init`, { method: 'POST', body: {
-    phase, filename: name, mimeType: 'application/pdf', totalSize: buffer.length, message
-  } }, cookie);
-  assert.equal(result.response.status, 201, JSON.stringify(result.payload));
-  const upload = result.payload;
-  result = await request(baseUrl, `/api/uploads/${upload.id}/chunks/0`, {
-    method: 'PUT', headers: { 'content-type': 'application/octet-stream' }, body: buffer
-  }, cookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  result = await request(baseUrl, `/api/uploads/${upload.id}/complete`, { method: 'POST', body: {} }, cookie);
-  assert.equal(result.response.status, 201, JSON.stringify(result.payload));
-  return result.payload.id;
-}
-
-test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { timeout: 30_000 }, async t => {
-  const runtime = fs.mkdtempSync(path.join(os.tmpdir(), 'media-hub-v4-test-'));
-  const port = await freePort();
-  const baseUrl = `http://127.0.0.1:${port}`;
-  const child = spawn(process.execPath, ['src/server.js'], {
-    cwd: path.resolve(__dirname, '..'),
-    env: { ...process.env, PORT: String(port), DATA_DIR: path.join(runtime, 'data'), UPLOAD_DIR: path.join(runtime, 'uploads'), BACKUP_DIR: path.join(runtime, 'backups'), APP_PEPPER: 'integration-test-pepper-media-hub-v4', INITIAL_ADMIN_PASSWORD: 'Admin12345', SEED_DEMO: 'true' },
-    stdio: ['ignore', 'pipe', 'pipe']
-  });
-  let stderr = ''; child.stderr.on('data', chunk => { stderr += chunk.toString(); });
-  t.after(() => { child.kill('SIGTERM'); fs.rmSync(runtime, { recursive: true, force: true }); });
-  await waitForHealth(baseUrl, child);
-
-  const adminCookie = await login(baseUrl, 'admin', 'Admin12345');
-  const coordinatorCookie = await login(baseUrl, 'koordinator', 'Demo12345');
-  const assistantCookie = await login(baseUrl, 'asisten', 'Demo12345');
-  const vendorCookie = await login(baseUrl, 'vendor', 'Demo12345');
-  const uploaderCookie = await login(baseUrl, 'uploader', 'Demo12345');
-  const managementCookie = await login(baseUrl, 'manajemen', 'Demo12345');
-  let result = await request(baseUrl, '/api/users', { method: 'POST', body: {
-    name: 'Petugas Upload Kedua', username: 'uploader2', password: 'Demo12345', role: 'UPLOADER'
-  } }, adminCookie);
-  assert.equal(result.response.status, 201, JSON.stringify(result.payload));
-  const secondUploaderId = result.payload.id;
-  const secondUploaderCookie = await login(baseUrl, 'uploader2', 'Demo12345');
-  const directorPin = '77258816';
-  const coordinatorPin = '24861357';
-  result = await request(baseUrl, '/api/profile/approval-pin', { method: 'POST', body: { newPin: directorPin, confirmPin: directorPin } }, managementCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  result = await request(baseUrl, '/api/profile/approval-pin', { method: 'POST', body: { newPin: coordinatorPin, confirmPin: coordinatorPin } }, coordinatorCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  const assignments = await request(baseUrl, '/api/meta/assignments', {}, adminCookie);
-  assert.deepEqual([...new Set(assignments.payload.users.map(user => user.role))].sort(), ['ASSISTANT_COORDINATOR', 'COORDINATOR', 'MANAGEMENT', 'UPLOADER']);
-  assert.equal(assignments.payload.users.find(user => user.role === 'MANAGEMENT').approval_pin_set, 1);
-  const vendorId = assignments.payload.vendors[0].id;
-  const byRole = role => assignments.payload.users.find(user => user.role === role).id;
-
-  result = await request(baseUrl, '/api/assistant-delegations', { method: 'POST', body: {
-    assistantId: byRole('ASSISTANT_COORDINATOR'), permissions: ['CREATE_REQUEST', 'REVIEW_VENDOR'], active: true
-  } }, coordinatorCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  result = await request(baseUrl, '/api/bootstrap', {}, assistantCookie);
-  assert.deepEqual(result.payload.assistantDelegations[0].permissions.sort(), ['CREATE_REQUEST', 'REVIEW_VENDOR']);
-
-  const delegatedRequest = await request(baseUrl, '/api/contents', { method: 'POST', body: {
-    title: 'Permintaan oleh Asisten', brandId: 'brand-ainet', channelIds: ['channel-instagram'],
-    contentType: 'SOCIAL_POST', brief: 'Permintaan atas delegasi Koordinator.', coordinatorId: byRole('COORDINATOR'), productionMode: 'INTERNAL'
-  } }, assistantCookie);
-  assert.equal(delegatedRequest.response.status, 201, JSON.stringify(delegatedRequest.payload));
-
-  let instantForm = new FormData();
-  instantForm.set('title', 'Video Instan Internal');
-  instantForm.set('brandId', 'brand-ainet');
-  instantForm.set('coordinatorId', byRole('COORDINATOR'));
-  instantForm.append('channelIds', 'channel-youtube');
-  instantForm.set('caption', 'Caption video instan.');
-  instantForm.set('file', new Blob([Buffer.from('video-instan-v1')], { type: 'video/mp4' }), 'video-instan-v1.mp4');
-  instantForm.set('coverFile', new Blob([Buffer.from('cover-instan-v1')], { type: 'image/jpeg' }), 'cover-instan-v1.jpg');
-  result = await request(baseUrl, '/api/instant-videos', { method: 'POST', body: instantForm }, assistantCookie);
-  assert.equal(result.response.status, 201, JSON.stringify(result.payload));
-  const instantId = result.payload.item.id;
-  assert.equal(result.payload.item.workflow_type, 'INSTANT');
-  assert.equal(result.payload.item.status, 'DRAFT_SUBMITTED');
-  assert.match(result.payload.approvalUrl, /^\/approval\.html\?kind=coordinator&token=/);
-  let coordinatorToken = new URL(result.payload.approvalUrl, baseUrl).searchParams.get('token');
-  result = await request(baseUrl, `/api/contents/${instantId}/transition`, { method: 'POST', body: { toStatus: 'APPROVED' } }, assistantCookie);
-  assert.equal(result.response.status, 403, 'Asisten tidak dapat menyetujui Video Instan sendiri');
-  result = await request(baseUrl, `/api/contents/${instantId}/transition`, { method: 'POST', body: { toStatus: 'REVISION_REQUIRED', note: 'Perbaiki intro.' } }, coordinatorCookie);
-  assert.equal(result.response.status, 409, 'Koordinator wajib menggunakan link dan PIN');
-  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}`);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  assert.equal(result.payload.content.caption, 'Caption video instan.');
-  assert.deepEqual(result.payload.content.channels, ['YouTube']);
-  assert.equal(result.payload.content.submitted_by_name, 'Asisten Koordinator');
-  assert.equal(result.payload.files.length, 2);
-  const instantMainFile = result.payload.files.find(file => file.file_role === 'MAIN');
-  const instantCoverFile = result.payload.files.find(file => file.file_role === 'COVER');
-  assert.equal(instantMainFile.mime_type, 'video/mp4');
-  assert.equal(instantCoverFile.original_name, 'cover-instan-v1.jpg');
-  result = await request(baseUrl, instantMainFile.fileUrl);
-  assert.equal(result.response.status, 200, 'Video pada link Koordinator dapat diputar tanpa login');
-  result = await request(baseUrl, instantCoverFile.fileUrl);
-  assert.equal(result.response.status, 200, 'Cover pada link Koordinator dapat dilihat tanpa login');
-  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/decision`, { method: 'POST', body: { decision: 'REVISION', note: 'Perbaiki intro.', pin: '00000000' } });
-  assert.equal(result.response.status, 401, 'PIN yang salah ditolak saat keputusan dikirim');
-  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/decision`, { method: 'POST', body: { decision: 'REVISION', note: 'Perbaiki intro.', pin: coordinatorPin } });
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  assert.equal(result.payload.status, 'REVISION_REQUIRED');
-  instantForm = new FormData();
-  instantForm.set('changeNote', 'Intro sudah diperbaiki.');
-  instantForm.set('file', new Blob([Buffer.from('video-instan-v2')], { type: 'video/mp4' }), 'video-instan-v2.mp4');
-  result = await request(baseUrl, `/api/instant-videos/${instantId}/revision`, { method: 'POST', body: instantForm }, assistantCookie);
-  assert.equal(result.response.status, 201, JSON.stringify(result.payload));
-  assert.equal(result.payload.versionNumber, 2);
-  coordinatorToken = new URL(result.payload.approvalUrl, baseUrl).searchParams.get('token');
-  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}/decision`, { method: 'POST', body: { decision: 'APPROVED', pin: coordinatorPin } });
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  assert.equal(result.payload.status, 'APPROVED');
-  result = await request(baseUrl, '/api/library?q=Video%20Instan%20Internal', {}, assistantCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  assert.equal(result.payload.items.length, 1, 'konten yang disetujui otomatis masuk Media Library');
-  assert.equal(result.payload.items[0].source_content_id, instantId);
-  assert.match(result.payload.items[0].coverFileUrl, /^\/api\/files\/library\//);
-  result = await request(baseUrl, result.payload.items[0].coverFileUrl, {}, assistantCookie);
-  assert.equal(result.response.status, 200, 'cover ikut dipromosikan ke Media Library');
-  result = await request(baseUrl, `/api/contents/${instantId}/schedules`, { method: 'POST', body: { plans: [
-    { channelId: 'channel-youtube', scheduledAt: '2026-10-01T10:00', uploaderId: byRole('ASSISTANT_COORDINATOR') }
-  ] } }, coordinatorCookie);
-  assert.equal(result.response.status, 201, JSON.stringify(result.payload));
-  let instantSchedules = await request(baseUrl, `/api/contents/${instantId}/schedules`, {}, assistantCookie);
-  assert.equal(instantSchedules.payload.items.length, 1);
-  instantForm = new FormData();
-  instantForm.set('platformUrl', 'https://example.test/video-instan');
-  result = await request(baseUrl, `/api/schedules/${instantSchedules.payload.items[0].id}/publish`, { method: 'POST', body: instantForm }, assistantCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-
-  const directorInstantForm = new FormData();
-  directorInstantForm.set('title', 'Video Instan untuk Direksi');
-  directorInstantForm.set('brandId', 'brand-ainet');
-  directorInstantForm.set('coordinatorId', byRole('COORDINATOR'));
-  directorInstantForm.append('channelIds', 'channel-instagram');
-  directorInstantForm.set('file', new Blob([Buffer.from('video-instan-direksi')], { type: 'video/mp4' }), 'video-instan-direksi.mp4');
-  result = await request(baseUrl, '/api/instant-videos', { method: 'POST', body: directorInstantForm }, assistantCookie);
-  assert.equal(result.response.status, 201, JSON.stringify(result.payload));
-  const directorInstantId = result.payload.item.id;
-  coordinatorToken = new URL(result.payload.approvalUrl, baseUrl).searchParams.get('token');
-  result = await request(baseUrl, `/api/contents/${directorInstantId}/coordinator-decision`, { method: 'POST', body: {
-    decision: 'DIRECTOR', directorId: byRole('MANAGEMENT'), note: 'Mohon persetujuan Direksi.'
+YªçŠx-®éÜj×¢ëiºÚ+Š§j[h‘éÜ¢éíóM4N‹Z–‹­¦ëeŠw¬Õ½¹ÍĞÑ•ÍĞ€ôÉ•ÅÕ¥É” ¹½‘”éÑ•ÍĞœ¤ì)½¹ÍĞ…ÍÍ•ÉĞ€ôÉ•ÅÕ¥É” ¹½‘”é…ÍÍ•ÉĞ½ÍÑÉ¥Ğœ¤ì)½¹ÍĞÁ…Ñ €ôÉ•ÅÕ¥É” ¹½‘”éÁ…Ñ œ¤ì)½¹ÍĞ½Ì€ôÉ•ÅÕ¥É” ¹½‘”é½Ìœ¤ì)½¹ÍĞ™Ì€ôÉ•ÅÕ¥É” ¹½‘”é™Ìœ¤ì)½¹ÍĞ¹•Ğ€ôÉ•ÅÕ¥É” ¹½‘”é¹•Ğœ¤ì)½¹ÍĞìÍÁ…İ¸ô€ôÉ•ÅÕ¥É” ¹½‘”é¡¥±‘}ÁÉ½•ÍÌœ¤ì()™Õ¹Ñ¥½¸™É••A½ÉĞ ¤ì(€É•ÑÕÉ¸¹•ÜAÉ½µ¥Í” ¡É•Í½±Ù”°É•©•Ğ¤€ôøì(€€€½¹ÍĞÍ•ÉÙ•È€ô¹•Ğ¹É•…Ñ•M•ÉÙ•È ¤ì(€€€Í•ÉÙ•È¹Õ¹É•˜ ¤ìÍ•ÉÙ•È¹½¸ •ÉÉ½Èœ°É•©•Ğ¤ì(€€€Í•ÉÙ•È¹±¥ÍÑ•¸ À°€œÄÈÜ¸À¸À¸Äœ°€ ¤€ôøì½¹ÍĞìÁ½ÉĞô€ôÍ•ÉÙ•È¹…‘‘É•ÍÌ ¤ìÍ•ÉÙ•È¹±½Í”  ¤€ôøÉ•Í½±Ù”¡Á½ÉĞ¤¤ìô¤ì(€ô¤ì)ô()…Íå¹Œ™Õ¹Ñ¥½¸İ…¥Ñ½É!•…±Ñ ¡‰…Í•UÉ°°¡¥±¤ì(€™½È€¡±•Ğ…ÑÑ•µÁĞ€ô€Àì…ÑÑ•µÁĞ€ğ€ØÀì…ÑÑ•µÁĞ€¬ô€Ä¤ì(€€€¥˜€¡¡¥±¹•á¥Ñ½‘”€„ôô¹Õ±°¤Ñ¡É½Ü¹•ÜÉÉ½È¡M•ÉÙ•È‰•É¡•¹Ñ¤‘•¹…¸­½‘”€‘í¡¥±¹•á¥Ñ½‘•õ€¤ì(€€€ÑÉäì¥˜€ ¡…İ…¥Ğ™•Ñ ¡€‘í‰…Í•UÉ±ô½…Á¤½¡•…±Ñ¡€¤¤¹½¬¤É•ÑÕÉ¸ìô…Ñ íô(€€€…İ…¥Ğ¹•ÜAÉ½µ¥Í”¡É•Í½±Ù”€ôøÍ•ÑQ¥µ•½ÕĞ¡É•Í½±Ù”°€ÄÀÀ¤¤ì(€ô(€Ñ¡É½Ü¹•ÜÉÉ½È M•ÉÙ•ÈÑ¥‘…¬Í¥…ÀÑ•Á…Ğİ…­ÑÔ¸œ¤ì)ô()…Íå¹Œ™Õ¹Ñ¥½¸É•ÅÕ•ÍĞ¡‰…Í•UÉ°°ÕÉ°°½ÁÑ¥½¹Ì€ôíô°½½­¥”€ô€œœ¤ì(€½¹ÍĞ¡•…‘•ÉÌ€ôì€¸¸¸¡½ÁÑ¥½¹Ì¹¡•…‘•ÉÌñğíô¤ôì(€¥˜€¡½½­¥”¤¡•…‘•ÉÌ¹½½­¥”€ô½½­¥”ì(€±•Ğ‰½‘äì(€¥˜€¡½ÁÑ¥½¹Ì¹‰½‘ä¥¹ÍÑ…¹•½˜½Éµ…Ñ„ñğ	Õ™™•È¹¥Í	Õ™™•È¡½ÁÑ¥½¹Ì¹‰½‘ä¤¤‰½‘ä€ô½ÁÑ¥½¹Ì¹‰½‘äì(€•±Í”¥˜€¡½ÁÑ¥½¹Ì¹‰½‘ä€„ôôÕ¹‘•™¥¹•¤ì¡•…‘•ÉÍl½¹Ñ•¹ĞµÑåÁ”t€ô€…ÁÁ±¥…Ñ¥½¸½©Í½¸œì‰½‘ä€ô)M=8¹ÍÑÉ¥¹¥™ä¡½ÁÑ¥½¹Ì¹‰½‘ä¤ìô(€½¹ÍĞÉ•ÍÁ½¹Í”€ô…İ…¥Ğ™•Ñ ¡€‘í‰…Í•UÉ±ô‘íÕÉ±õ€°ìµ•Ñ¡½è½ÁÑ¥½¹Ì¹µ•Ñ¡½ñğ€Pœ°¡•…‘•ÉÌ°‰½‘äô¤ì(€½¹ÍĞÁ…å±½…€ô€¡É•ÍÁ½¹Í”¹¡•…‘•ÉÌ¹•Ğ ½¹Ñ•¹ĞµÑåÁ”œ¤ñğ€œœ¤¹¥¹±Õ‘•Ì …ÁÁ±¥…Ñ¥½¸½©Í½¸œ¤€ü…İ…¥ĞÉ•ÍÁ½¹Í”¹©Í½¸ ¤€è…İ…¥ĞÉ•ÍÁ½¹Í”¹Ñ•áĞ ¤ì(€É•ÑÕÉ¸ìÉ•ÍÁ½¹Í”°Á…å±½…ôì)ô()…Íå¹Œ™Õ¹Ñ¥½¸±½¥¸¡‰…Í•UÉ°°ÕÍ•É¹…µ”°Á…ÍÍİ½É¤ì(€½¹ÍĞìÉ•ÍÁ½¹Í”°Á…å±½…ô€ô…İ…¥ĞÉ•ÅÕ•ÍĞ¡‰…Í•UÉ°°€œ½…Á¤½…ÕÑ ½±½¥¸œ°ìµ•Ñ¡½è€A=MPœ°‰½‘äèìÕÍ•É¹…µ”°Á…ÍÍİ½Éôô¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÁ½¹Í”¹ÍÑ…ÑÕÌ°€ÈÀÀ°)M=8¹ÍÑÉ¥¹¥™ä¡Á…å±½…¤¤ì(€É•ÑÕÉ¸É•ÍÁ½¹Í”¹¡•…‘•ÉÌ¹•Ğ Í•Ğµ½½­¥”œ¤¹ÍÁ±¥Ğ œìœ¥lÁtì)ô()…Íå¹Œ™Õ¹Ñ¥½¸ÑÉ…¹Í¥Ñ¥½¸¡‰…Í•UÉ°°½¹Ñ•¹Ñ%°Ñ½MÑ…ÑÕÌ°½½­¥”°¹½Ñ”€ô€œœ¤ì(€½¹ÍĞÉ•ÍÕ±Ğ€ô…İ…¥ĞÉ•ÅÕ•ÍĞ¡‰…Í•UÉ°°€½…Á¤½½¹Ñ•¹ÑÌ¼‘í½¹Ñ•¹Ñ%‘ô½ÑÉ…¹Í¥Ñ¥½¹€°ìµ•Ñ¡½è€A=MPœ°‰½‘äèìÑ½MÑ…ÑÕÌ°¹½Ñ”ôô°½½­¥”¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÕ±Ğ¹É•ÍÁ½¹Í”¹ÍÑ…ÑÕÌ°€ÈÀÀ°)M=8¹ÍÑÉ¥¹¥™ä¡É•ÍÕ±Ğ¹Á…å±½…¤¤ì(€É•ÑÕÉ¸É•ÍÕ±Ğ¹Á…å±½…¹¥Ñ•´ì)ô()…Íå¹Œ™Õ¹Ñ¥½¸¡Õ¹­UÁ±½…¡‰…Í•UÉ°°½¹Ñ•¹Ñ%°½½­¥”°¹…µ”°½¹Ñ•¹ÑÌ°µ•ÍÍ…”€ô€œœ°Á¡…Í”€ô€AI=UQ%=9}IMU1Pœ¤ì(€½¹ÍĞ‰Õ™™•È€ô	Õ™™•È¹™É½´¡½¹Ñ•¹ÑÌ¤ì(€±•ĞÉ•ÍÕ±Ğ€ô…İ…¥ĞÉ•ÅÕ•ÍĞ¡‰…Í•UÉ°°€½…Á¤½½¹Ñ•¹ÑÌ¼‘í½¹Ñ•¹Ñ%‘ô½ÕÁ±½…‘Ì½¥¹¥Ñ€°ìµ•Ñ¡½è€A=MPœ°‰½‘äèì(€€€Á¡…Í”°™¥±•¹…µ”è¹…µ”°µ¥µ•QåÁ”è€…ÁÁ±¥…Ñ¥½¸½Á‘˜œ°Ñ½Ñ…±M¥é”è‰Õ™™•È¹±•¹Ñ °µ•ÍÍ…”(€ôô°½½­¥”¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÕ±Ğ¹É•ÍÁ½¹Í”¹ÍÑ…ÑÕÌ°€ÈÀÄ°)M=8¹ÍÑÉ¥¹¥™ä¡É•ÍÕ±Ğ¹Á…å±½…¤¤ì(€½¹ÍĞÕÁ±½…€ôÉ•ÍÕ±Ğ¹Á…å±½…ì(€É•ÍÕ±Ğ€ô…İ…¥ĞÉ•ÅÕ•ÍĞ¡‰…Í•UÉ°°€½…Á¤½ÕÁ±½…‘Ì¼‘íÕÁ±½…¹¥‘ô½¡Õ¹­Ì¼Á€°ì(€€€µ•Ñ¡½è€AUPœ°¡•…‘•ÉÌèì€½¹Ñ•¹ĞµÑåÁ”œè€…ÁÁ±¥…Ñ¥½¸½½Ñ•ĞµÍÑÉ•…´œô°‰½‘äè‰Õ™™•È(€ô°½½­¥”¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÕ±Ğ¹É•ÍÁ½¹Í”¹ÍÑ…ÑÕÌ°€ÈÀÀ°)M=8¹ÍÑÉ¥¹¥™ä¡É•ÍÕ±Ğ¹Á…å±½…¤¤ì(€É•ÍÕ±Ğ€ô…İ…¥ĞÉ•ÅÕ•ÍĞ¡‰…Í•UÉ°°€½…Á¤½ÕÁ±½…‘Ì¼‘íÕÁ±½…¹¥‘ô½½µÁ±•Ñ•€°ìµ•Ñ¡½è€A=MPœ°‰½‘äèíôô°½½­¥”¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÕ±Ğ¹É•ÍÁ½¹Í”¹ÍÑ…ÑÕÌ°€ÈÀÄ°)M=8¹ÍÑÉ¥¹¥™ä¡É•ÍÕ±Ğ¹Á…å±½…¤¤ì(€É•ÑÕÉ¸É•ÍÕ±Ğ¹Á…å±½…¹¥ì)ô()Ñ•ÍĞ …±ÕÈØÀ¸Ğ¸Àè­½±…‰½É…Í¤°…ÁÁÉ½Ù…°A%8°‘…¸ÁÕ‰±¥­…Í¤µÕ±Ñ¤µÁ±…Ñ™½É´œ°ìÑ¥µ•½ÕĞè€ÌÁ|ÀÀÀô°…Íå¹ŒĞ€ôøì(€½¹ÍĞÉÕ¹Ñ¥µ”€ô™Ì¹µ­‘Ñ•µÁMå¹Œ¡Á…Ñ ¹©½¥¸¡½Ì¹ÑµÁ‘¥È ¤°€µ•‘¥„µ¡ÕˆµØĞµÑ•ÍĞ´œ¤¤ì(€½¹ÍĞÁ½ÉĞ€ô…İ…¥Ğ™É••A½ÉĞ ¤ì(€½¹ÍĞ‰…Í•UÉ°€ô¡ÑÑÀè¼¼ÄÈÜ¸À¸À¸Äè‘íÁ½ÉÑõ€ì(€½¹ÍĞ¡¥±€ôÍÁ…İ¸¡ÁÉ½•ÍÌ¹•á•A…Ñ °lÍÉŒ½Í•ÉÙ•È¹©Ìt°ì(€€€İèÁ…Ñ ¹É•Í½±Ù”¡}}‘¥É¹…µ”°€œ¸¸œ¤°(€€€•¹Øèì€¸¸¹ÁÉ½•ÍÌ¹•¹Ø°A=IPèMÑÉ¥¹œ¡Á½ÉĞ¤°Q}%HèÁ…Ñ ¹©½¥¸¡ÉÕ¹Ñ¥µ”°€‘…Ñ„œ¤°UA1=}%HèÁ…Ñ ¹©½¥¸¡ÉÕ¹Ñ¥µ”°€ÕÁ±½…‘Ìœ¤°	-UA}%HèÁ…Ñ ¹©½¥¸¡ÉÕ¹Ñ¥µ”°€‰…­ÕÁÌœ¤°AA}AAAHè€¥¹Ñ•É…Ñ¥½¸µÑ•ÍĞµÁ•ÁÁ•Èµµ•‘¥„µ¡ÕˆµØĞœ°%9%Q%1}5%9}AMM]=Iè€‘µ¥¸ÄÈÌĞÔœ°M}5<è€ÑÉÕ”œô°(€€€ÍÑ‘¥¼èl¥¹½É”œ°€Á¥Á”œ°€Á¥Á”t(€ô¤ì(€±•ĞÍÑ‘•ÉÈ€ô€œœì¡¥±¹ÍÑ‘•ÉÈ¹½¸ ‘…Ñ„œ°¡Õ¹¬€ôøìÍÑ‘•ÉÈ€¬ô¡Õ¹¬¹Ñ½MÑÉ¥¹œ ¤ìô¤ì(€Ğ¹…™Ñ•È  ¤€ôøì¡¥±¹­¥±° M%QI4œ¤ì™Ì¹ÉµMå¹Œ¡ÉÕ¹Ñ¥µ”°ìÉ•ÕÉÍ¥Ù”èÑÉÕ”°™½É”èÑÉÕ”ô¤ìô¤ì(€…İ…¥Ğİ…¥Ñ½É!•…±Ñ ¡‰…Í•UÉ°°¡¥±¤ì((€½¹ÍĞ…‘µ¥¹½½­¥”€ô…İ…¥Ğ±½¥¸¡‰…Í•UÉ°°€…‘µ¥¸œ°€‘µ¥¸ÄÈÌĞÔœ¤ì(€½¹ÍĞ½½É‘¥¹…Ñ½É½½­¥”€ô…İ…¥Ğ±½¥¸¡‰…Í•UÉ°°€­½½É‘¥¹…Ñ½Èœ°€•µ¼ÄÈÌĞÔœ¤ì(€½¹ÍĞ…ÍÍ¥ÍÑ…¹Ñ½½­¥”€ô…İ…¥Ğ±½¥¸¡‰…Í•UÉ°°€…Í¥ÍÑ•¸œ°€•µ¼ÄÈÌĞÔœ¤ì(€½¹ÍĞÙ•¹‘½É½½­¥”€ô…İ…¥Ğ±½¥¸¡‰…Í•UÉ°°€Ù•¹‘½Èœ°€•µ¼ÄÈÌĞÔœ¤ì(€½¹ÍĞÕÁ±½…‘•É½½­¥”€ô…İ…¥Ğ±½¥¸¡‰…Í•UÉ°°€ÕÁ±½…‘•Èœ°€•µ¼ÄÈÌĞÔœ¤ì(€½¹ÍĞµ…¹…•µ•¹Ñ½½­¥”€ô…İ…¥Ğ±½¥¸¡‰…Í•UÉ°°€µ…¹…©•µ•¸œ°€•µ¼ÄÈÌĞÔœ¤ì(€±•ĞÉ•ÍÕ±Ğ€ô…İ…¥ĞÉ•ÅÕ•ÍĞ¡‰…Í•UÉ°°€œ½…Á¤½ÕÍ•ÉÌœ°ìµ•Ñ¡½è€A=MPœ°‰½‘äèì(€€€¹…µ”è€A•ÑÕ…ÌUÁ±½…-•‘Õ„œ°ÕÍ•É¹…µ”è€ÕÁ±½…‘•ÈÈœ°Á…ÍÍİ½Éè€•µ¼ÄÈÌĞÔœ°É½±”è€UA1=Hœ(€ôô°…‘µ¥¹½½­¥”¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÕ±Ğ¹É•ÍÁ½¹Í”¹ÍÑ…ÑÕÌ°€ÈÀÄ°)M=8¹ÍÑÉ¥¹¥™ä¡É•ÍÕ±Ğ¹Á…å±½…¤¤ì(€½¹ÍĞÍ•½¹‘UÁ±½…‘•É%€ôÉ•ÍÕ±Ğ¹Á…å±½…¹¥ì(€½¹ÍĞÍ•½¹‘UÁ±½…‘•É½½­¥”€ô…İ…¥Ğ±½¥¸¡‰…Í•UÉ°°€ÕÁ±½…‘•ÈÈœ°€•µ¼ÄÈÌĞÔœ¤ì(€½¹ÍĞ‘¥É•Ñ½ÉA¥¸€ô€œÜÜÈÔààÄØœì(€½¹ÍĞ½½É‘¥¹…Ñ½ÉA¥¸€ô€œÈĞàØÄÌÔÜœì(€É•ÍÕ±Ğ€ô…İ…¥ĞÉ•ÅÕ•ÍĞ¡‰…Í•UÉ°°€œ½…Á¤½ÁÉ½™¥±”½…ÁÁÉ½Ù…°µÁ¥¸œ°ìµ•Ñ¡½è€A=MPœ°‰½‘äèì¹•İA¥¸è‘¥É•Ñ½ÉA¥¸°½¹™¥ÉµA¥¸è‘¥É•Ñ½ÉA¥¸ôô°µ…¹…•µ•¹Ñ½½­¥”¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÕ±Ğ¹É•ÍÁ½¹Í”¹ÍÑ…ÑÕÌ°€ÈÀÀ°)M=8¹ÍÑÉ¥¹¥™ä¡É•ÍÕ±Ğ¹Á…å±½…¤¤ì(€É•ÍÕ±Ğ€ô…İ…¥ĞÉ•ÅÕ•ÍĞ¡‰…Í•UÉ°°€œ½…Á¤½ÁÉ½™¥±”½…ÁÁÉ½Ù…°µÁ¥¸œ°ìµ•Ñ¡½è€A=MPœ°‰½‘äèì¹•İA¥¸è½½É‘¥¹…Ñ½ÉA¥¸°½¹™¥ÉµA¥¸è½½É‘¥¹…Ñ½ÉA¥¸ôô°½½É‘¥¹…Ñ½É½½­¥”¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÕ±Ğ¹É•ÍÁ½¹Í”¹ÍÑ…ÑÕÌ°€ÈÀÀ°)M=8¹ÍÑÉ¥¹¥™ä¡É•ÍÕ±Ğ¹Á…å±½…¤¤ì(€½¹ÍĞ…ÍÍ¥¹µ•¹ÑÌ€ô…İ…¥ĞÉ•ÅÕ•ÍĞ¡‰…Í•UÉ°°€œ½…Á¤½µ•Ñ„½…ÍÍ¥¹µ•¹ÑÌœ°íô°…‘µ¥¹½½­¥”¤ì(€…ÍÍ•ÉĞ¹‘••ÁÅÕ…°¡l¸¸¹¹•ÜM•Ğ¡…ÍÍ¥¹µ•¹ÑÌ¹Á…å±½…¹ÕÍ•ÉÌ¹µ…À¡ÕÍ•È€ôøÕÍ•È¹É½±”¤¥t¹Í½ÉĞ ¤°lMM%MQ9Q}==I%9Q=Hœ°€==I%9Q=Hœ°€5959Pœ°€UA1=Ht¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡…ÍÍ¥¹µ•¹ÑÌ¹Á…å±½…¹ÕÍ•ÉÌ¹™¥¹¡ÕÍ•È€ôøÕÍ•È¹É½±”€ôôô€5959Pœ¤¹…ÁÁÉ½Ù…±}Á¥¹}Í•Ğ°€Ä¤ì(€½¹ÍĞÙ•¹‘½É%€ô…ÍÍ¥¹µ•¹ÑÌ¹Á…å±½…¹Ù•¹‘½ÉÍlÁt¹¥ì(€½¹ÍĞ‰åI½±”€ôÉ½±”€ôø…ÍÍ¥¹µ•¹ÑÌ¹Á…å±½…¹ÕÍ•ÉÌ¹™¥¹¡ÕÍ•È€ôøÕÍ•È¹É½±”€ôôôÉ½±”¤¹¥ì((€É•ÍÕ±Ğ€ô…İ…¥ĞÉ•ÅÕ•ÍĞ¡‰…Í•UÉ°°€œ½…Á¤½…ÍÍ¥ÍÑ…¹Ğµ‘•±•…Ñ¥½¹Ìœ°ìµ•Ñ¡½è€A=MPœ°‰½‘äèì(€€€…ÍÍ¥ÍÑ…¹Ñ%è‰åI½±” MM%MQ9Q}==I%9Q=Hœ¤°Á•Éµ¥ÍÍ¥½¹ÌèlIQ}IEUMPœ°€IY%]}Y9=Ht°…Ñ¥Ù”èÑÉÕ”(€ôô°½½É‘¥¹…Ñ½É½½­¥”¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÕ±Ğ¹É•ÍÁ½¹Í”¹ÍÑ…ÑÕÌ°€ÈÀÀ°)M=8¹ÍÑÉ¥¹¥™ä¡É•ÍÕ±Ğ¹Á…å±½…¤¤ì(€É•ÍÕ±Ğ€ô…İ…¥ĞÉ•ÅÕ•ÍĞ¡‰…Í•UÉ°°€œ½…Á¤½‰½½ÑÍÑÉ…Àœ°íô°…ÍÍ¥ÍÑ…¹Ñ½½­¥”¤ì(€…ÍÍ•ÉĞ¹‘••ÁÅÕ…°¡É•ÍÕ±Ğ¹Á…å±½…¹…ÍÍ¥ÍÑ…¹Ñ•±•…Ñ¥½¹ÍlÁt¹Á•Éµ¥ÍÍ¥½¹Ì¹Í½ÉĞ ¤°lIQ}IEUMPœ°€IY%]}Y9=Ht¤ì((€½¹ÍĞ‘•±•…Ñ•‘I•ÅÕ•ÍĞ€ô…İ…¥ĞÉ•ÅÕ•ÍĞ¡‰…Í•UÉ°°€œ½…Á¤½½¹Ñ•¹ÑÌœ°ìµ•Ñ¡½è€A=MPœ°‰½‘äèì(€€€Ñ¥Ñ±”è€A•Éµ¥¹Ñ……¸½±• Í¥ÍÑ•¸œ°‰É…¹‘%è€‰É…¹µ…¥¹•Ğœ°¡…¹¹•±%‘Ìèl¡…¹¹•°µ¥¹ÍÑ…É…´t°(€€€½¹Ñ•¹ÑQåÁ”è€M=%1}A=MPœ°‰É¥•˜è€A•Éµ¥¹Ñ……¸…Ñ…Ì‘•±•…Í¤-½½É‘¥¹…Ñ½È¸œ°½½É‘¥¹…Ñ½É%è‰åI½±” ==I%9Q=Hœ¤°ÁÉ½‘ÕÑ¥½¹5½‘”è€%9QI90œ(€ôô°…ÍÍ¥ÍÑ…¹Ñ½½­¥”¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡‘•±•…Ñ•‘I•ÅÕ•ÍĞ¹É•ÍÁ½¹Í”¹ÍÑ…ÑÕÌ°€ÈÀÄ°)M=8¹ÍÑÉ¥¹¥™ä¡‘•±•…Ñ•‘I•ÅÕ•ÍĞ¹Á…å±½…¤¤ì((€±•Ğ¥¹ÍÑ…¹Ñ½É´€ô¹•Ü½Éµ…Ñ„ ¤ì(€¥¹ÍÑ…¹Ñ½É´¹Í•Ğ Ñ¥Ñ±”œ°€Y¥‘•¼%¹ÍÑ…¸%¹Ñ•É¹…°œ¤ì(€¥¹ÍÑ…¹Ñ½É´¹Í•Ğ ‰É…¹‘%œ°€‰É…¹µ…¥¹•Ğœ¤ì(€¥¹ÍÑ…¹Ñ½É´¹Í•Ğ ½½É‘¥¹…Ñ½É%œ°‰åI½±” ==I%9Q=Hœ¤¤ì(€¥¹ÍÑ…¹Ñ½É´¹…ÁÁ•¹ ¡…¹¹•±%‘Ìœ°€¡…¹¹•°µå½ÕÑÕ‰”œ¤ì(€¥¹ÍÑ…¹Ñ½É´¹Í•Ğ …ÁÑ¥½¸œ°€…ÁÑ¥½¸Ù¥‘•¼¥¹ÍÑ…¸¸œ¤ì(€¥¹ÍÑ…¹Ñ½É´¹Í•Ğ ™¥±”œ°¹•Ü	±½ˆ¡m	Õ™™•È¹™É½´ Ù¥‘•¼µ¥¹ÍÑ…¸µØÄœ¥t°ìÑåÁ”è€Ù¥‘•¼½µÀĞœô¤°€Ù¥‘•¼µ¥¹ÍÑ…¸µØÄ¹µÀĞœ¤ì(€¥¹ÍÑ…¹Ñ½É´¹Í•Ğ ½Ù•É¥±”œ°¹•Ü	±½ˆ¡m	Õ™™•È¹™É½´ ½Ù•Èµ¥¹ÍÑ…¸µØÄœ¥t°ìÑåÁ”è€¥µ…”½©Á•œœô¤°€½Ù•Èµ¥¹ÍÑ…¸µØÄ¹©Áœœ¤ì(€É•ÍÕ±Ğ€ô…İ…¥ĞÉ•ÅÕ•ÍĞ¡‰…Í•UÉ°°€œ½…Á¤½¥¹ÍÑ…¹ĞµÙ¥‘•½Ìœ°ìµ•Ñ¡½è€A=MPœ°‰½‘äè¥¹ÍÑ…¹Ñ½É´ô°…ÍÍ¥ÍÑ…¹Ñ½½­¥”¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÕ±Ğ¹É•ÍÁ½¹Í”¹ÍÑ…ÑÕÌ°€ÈÀÄ°)M=8¹ÍÑÉ¥¹¥™ä¡É•ÍÕ±Ğ¹Á…å±½…¤¤ì(€½¹ÍĞ¥¹ÍÑ…¹Ñ%€ôÉ•ÍÕ±Ğ¹Á…å±½…¹¥Ñ•´¹¥ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÕ±Ğ¹Á…å±½…¹¥Ñ•´¹İ½É­™±½İ}ÑåÁ”°€%9MQ9Pœ¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÕ±Ğ¹Á…å±½…¹¥Ñ•´¹ÍÑ…ÑÕÌ°€IQ}MU	5%QQœ¤ì(€…ÍÍ•ÉĞ¹µ…Ñ ¡É•ÍÕ±Ğ¹Á…å±½…¹…ÁÁÉ½Ù…±UÉ°°€½yp½…ÁÁÉ½Ù…±p¹¡Ñµ±pı­¥¹õ½½É‘¥¹…Ñ½È™Ñ½­•¸ô¼¤ì(€±•Ğ½½É‘¥¹…Ñ½ÉQ½­•¸€ô¹•ÜUI0¡É•ÍÕ±Ğ¹Á…å±½…¹…ÁÁÉ½Ù…±UÉ°°‰…Í•UÉ°¤¹Í•…É¡A…É…µÌ¹•Ğ Ñ½­•¸œ¤ì(€É•ÍÕ±Ğ€ô…İ…¥ĞÉ•ÅÕ•ÍĞ¡‰…Í•UÉ°°€½…Á¤½½¹Ñ•¹ÑÌ¼‘í¥¹ÍÑ…¹Ñ%‘ô½ÑÉ…¹Í¥Ñ¥½¹€°ìµ•Ñ¡½è€A=MPœ°‰½‘äèìÑ½MÑ…ÑÕÌè€AAI=Yœôô°…ÍÍ¥ÍÑ…¹Ñ½½­¥”¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÕ±Ğ¹É•ÍÁ½¹Í”¹ÍÑ…ÑÕÌ°€ĞÀÌ°€Í¥ÍÑ•¸Ñ¥‘…¬‘…Á…Ğµ•¹å•ÑÕ©Õ¤Y¥‘•¼%¹ÍÑ…¸Í•¹‘¥É¤œ¤ì(€É•ÍÕ±Ğ€ô…İ…¥ĞÉ•ÅÕ•ÍĞ¡‰…Í•UÉ°°€½…Á¤½½¹Ñ•¹ÑÌ¼‘í¥¹ÍÑ…¹Ñ%‘ô½ÑÉ…¹Í¥Ñ¥½¹€°ìµ•Ñ¡½è€A=MPœ°‰½‘äèìÑ½MÑ…ÑÕÌè€IY%M%=9}IEU%Iœ°¹½Ñ”è€A•É‰…¥­¤¥¹ÑÉ¼¸œôô°½½É‘¥¹…Ñ½É½½­¥”¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÕ±Ğ¹É•ÍÁ½¹Í”¹ÍÑ…ÑÕÌ°€ĞÀä°€-½½É‘¥¹…Ñ½Èİ…©¥ˆµ•¹Õ¹…­…¸±¥¹¬‘…¸A%8œ¤ì(€É•ÍÕ±Ğ€ô…İ…¥ĞÉ•ÅÕ•ÍĞ¡‰…Í•UÉ°°€½…Á¤½ÁÕ‰±¥Œ½½½É‘¥¹…Ñ½Èµ…ÁÁÉ½Ù…±Ì¼‘í½½É‘¥¹…Ñ½ÉQ½­•¹õ€¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÕ±Ğ¹É•ÍÁ½¹Í”¹ÍÑ…ÑÕÌ°€ÈÀÀ°)M=8¹ÍÑÉ¥¹¥™ä¡É•ÍÕ±Ğ¹Á…å±½…¤¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÕ±Ğ¹Á…å±½…¹½¹Ñ•¹Ğ¹…ÁÑ¥½¸°€…ÁÑ¥½¸Ù¥‘•¼¥¹ÍÑ…¸¸œ¤ì(€…ÍÍ•ÉĞ¹‘••ÁÅÕ…°¡É•ÍÕ±Ğ¹Á…å±½…¹½¹Ñ•¹Ğ¹¡…¹¹•±Ì°le½ÕQÕ‰”t¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÕ±Ğ¹Á…å±½…¹½¹Ñ•¹Ğ¹ÍÕ‰µ¥ÑÑ•‘}‰å}¹…µ”°€Í¥ÍÑ•¸-½½É‘¥¹…Ñ½Èœ¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÕ±Ğ¹Á…å±½…¹™¥±•Ì¹±•¹Ñ °€È¤ì(€½¹ÍĞ¥¹ÍÑ…¹Ñ5…¥¹¥±”€ôÉ•ÍÕ±Ğ¹Á…å±½…¹™¥±•Ì¹™¥¹¡™¥±”€ôø™¥±”¹™¥±•}É½±”€ôôô€5%8œ¤ì(€½¹ÍĞ¥¹ÍÑ…¹Ñ½Ù•É¥±”€ôÉ•ÍÕ±Ğ¹Á…å±½…¹™¥±•Ì¹™¥¹¡™¥±”€ôø™¥±”¹™¥±•}É½±”€ôôô€=YHœ¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡¥¹ÍÑ…¹Ñ5…¥¹¥±”¹µ¥µ•}ÑåÁ”°€Ù¥‘•¼½µÀĞœ¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡¥¹ÍÑ…¹Ñ½Ù•É¥±”¹½É¥¥¹…±}¹…µ”°€½Ù•Èµ¥¹ÍÑ…¸µØÄ¹©Áœœ¤ì(€É•ÍÕ±Ğ€ô…İ…¥ĞÉ•ÅÕ•ÍĞ¡‰…Í•UÉ°°¥¹ÍÑ…¹Ñ5…¥¹¥±”¹™¥±•UÉ°¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÕ±Ğ¹É•ÍÁ½¹Í”¹ÍÑ…ÑÕÌ°€ÈÀÀ°€Y¥‘•¼Á…‘„±¥¹¬-½½É‘¥¹…Ñ½È‘…Á…Ğ‘¥ÁÕÑ…ÈÑ…¹Á„±½¥¸œ¤ì(€É•ÍÕ±Ğ€ô…İ…¥ĞÉ•ÅÕ•ÍĞ¡‰…Í•UÉ°°¥¹ÍÑ…¹Ñ½Ù•É¥±”¹™¥±•UÉ°¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÕ±Ğ¹É•ÍÁ½¹Í”¹ÍÑ…ÑÕÌ°€ÈÀÀ°€½Ù•ÈÁ…‘„±¥¹¬-½½É‘¥¹…Ñ½È‘…Á…Ğ‘¥±¥¡…ĞÑ…¹Á„±½¥¸œ¤ì(€É•ÍÕ±Ğ€ô…İ…¥ĞÉ•ÅÕ•ÍĞ¡‰…Í•UÉ°°€½…Á¤½ÁÕ‰±¥Œ½½½É‘¥¹…Ñ½Èµ…ÁÁÉ½Ù…±Ì¼‘í½½É‘¥¹…Ñ½ÉQ½­•¹ô½‘•¥Í¥½¹€°ìµ•Ñ¡½è€A=MPœ°‰½‘äèì‘•¥Í¥½¸è€IY%M%=8œ°¹½Ñ”è€A•É‰…¥­¤¥¹ÑÉ¼¸œ°Á¥¸è€œÀÀÀÀÀÀÀÀœôô¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÕ±Ğ¹É•ÍÁ½¹Í”¹ÍÑ…ÑÕÌ°€ĞÀÄ°€A%8å…¹œÍ…±… ‘¥Ñ½±…¬Í……Ğ­•ÁÕÑÕÍ…¸‘¥­¥É¥´œ¤ì(€É•ÍÕ±Ğ€ô…İ…¥ĞÉ•ÅÕ•ÍĞ¡‰…Í•UÉ°°€½…Á¤½ÁÕ‰±¥Œ½½½É‘¥¹…Ñ½Èµ…ÁÁÉ½Ù…±Ì¼‘í½½É‘¥¹…Ñ½ÉQ½­•¹ô½‘•¥Í¥½¹€°ìµ•Ñ¡½è€A=MPœ°‰½‘äèì‘•¥Í¥½¸è€IY%M%=8œ°¹½Ñ”è€A•É‰…¥­¤¥¹ÑÉ¼¸œ°Á¥¸è½½É‘¥¹…Ñ½ÉA¥¸ôô¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÕ±Ğ¹É•ÍÁ½¹Í”¹ÍÑ…ÑÕÌ°€ÈÀÀ°)M=8¹ÍÑÉ¥¹¥™ä¡É•ÍÕ±Ğ¹Á…å±½…¤¤ì(€…ÍÍ•ÉĞ¹•ÅÕ…°¡É•ÍÕ±Ğ¹Á…å±½…¹ÍÑ…ÑÕÌ°€IY%M%=9}IEU%Iœ¤ì(€¥¹ÍÑ…¹Ñ½É´€ô¹•Ü½Éµ…Ñ„ ¤ì(€¥¹ÍÑ…¹Ñ½É´¹Í•Ğ ¡…¹•9½Ñ”œ°€%¹ÑÉ¼ÍÕ‘… ‘¥Á•É‰…¥­¤¸œ¤ì(€¥¹ÍÑ…¹Ñ½É´¹Í•Ğ ™¥±”œ°¹•Ü	±½ˆ¡m	Õ™™•È¹™É½´ Ù¥‘•¼µ¥¹ÍÑ…¸µØÈœ¥t°ìÑåÁ”è€Ù¥‘•¼½µÀĞœô¤°€Ù¥‘•¼µ¥¹ÍÑ…¸µØÈ¹µÀĞœ¤ì(€É•ÍÕ±Ğ€ô…İ…¥ĞÉ•ÅÕ•ÍĞ¡‰…Í•UÉ°°€½…Á¤½¥¹ÍÑ…¹ĞµÙ¥‘•½Ì¼‘í¥¹ÍÑ…¹Ó]4ÒÚ$z{-®éÜj×te: 'Mohon persetujuan Direksi.'
   } }, coordinatorCookie);
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   assert.equal(result.payload.status, 'APPROVAL_PENDING');
@@ -279,10 +88,28 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   assert.equal(result.payload.coordinatorApprovals[0].url, `/approval.html?kind=coordinator&token=${coordinatorToken}`);
   assert.equal(result.payload.coordinatorApprovals[0].canCancel, false, 'Vendor dapat menyalin link tetapi tidak membatalkannya');
+  result = await request(baseUrl, `/api/simple-contents/${vendorTaskId}/review-material`, { method: 'PATCH', body: {
+    caption: 'Caption hasil review Koordinator.', hashtags: '#AINET #InternetCepat', reviewNote: 'Gunakan versi ini untuk publikasi.'
+  } }, coordinatorCookie);
+  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
+  assert.equal(result.payload.item.caption, 'Caption hasil review Koordinator.');
+  assert.equal(result.payload.item.hashtags, '#AINET #InternetCepat');
+  assert.equal(result.payload.item.review_note, 'Gunakan versi ini untuk publikasi.');
+  result = await request(baseUrl, `/api/simple-contents/${vendorTaskId}/review-material`, { method: 'PATCH', body: {
+    caption: 'Vendor tidak boleh mengubah hasil review.'
+  } }, vendorCookie);
+  assert.equal(result.response.status, 403, 'Vendor tidak dapat mengubah materi pada tahap review Koordinator');
+  const coordinatorAttachmentForm = new FormData();
+  coordinatorAttachmentForm.set('file', new Blob([Buffer.from('%PDF-1.4 lampiran koordinator')], { type: 'application/pdf' }), 'lampiran-koordinator.pdf');
+  result = await request(baseUrl, `/api/simple-contents/${vendorTaskId}/review-attachments`, { method: 'POST', body: coordinatorAttachmentForm }, coordinatorCookie);
+  assert.equal(result.response.status, 201, JSON.stringify(result.payload));
+  const coordinatorAttachmentId = result.payload.id;
   result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}`);
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   assert.equal(result.payload.content.submitted_by_name, 'Kreator Vendor');
-  assert.equal(result.payload.content.caption, 'Promo AINET untuk pelanggan baru.');
+  assert.equal(result.payload.content.caption, 'Caption hasil review Koordinator.');
+  assert.equal(result.payload.content.hashtags, '#AINET #InternetCepat');
+  assert.equal(result.payload.content.review_note, 'Gunakan versi ini untuk publikasi.');
   assert.equal(result.payload.files.find(file => file.file_role === 'MAIN').mime_type, 'video/mp4');
   assert.equal(result.payload.files.find(file => file.file_role === 'COVER').original_name, 'cover-tugas-v1.webp');
   result = await request(baseUrl, `/api/simple-contents/${vendorTaskId}`, { method: 'PATCH', body: {
@@ -302,362 +129,4 @@ test('alur v0.4.0: kolaborasi, approval PIN, dan publikasi multi-platform', { ti
   } }, coordinatorCookie);
   assert.equal(result.response.status, 200, JSON.stringify(result.payload));
   assert.equal(result.payload.status, 'REVISION_REQUIRED');
-  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}`);
-  assert.equal(result.response.status, 410, 'Link lama ditutup setelah Koordinator meminta revisi dari akun');
-
-  vendorTaskResultForm = new FormData();
-  vendorTaskResultForm.set('changeNote', 'CTA penutup sudah diperjelas.');
-  vendorTaskResultForm.set('file', new Blob([Buffer.from('video-tugas-v2')], { type: 'video/mp4' }), 'video-tugas-v2.mp4');
-  result = await request(baseUrl, `/api/simple-contents/${vendorTaskId}/revision`, { method: 'POST', body: vendorTaskResultForm }, vendorCookie);
-  assert.equal(result.response.status, 201, JSON.stringify(result.payload));
-  assert.equal(result.payload.versionNumber, 2);
-  coordinatorToken = new URL(result.payload.approvalUrl, baseUrl).searchParams.get('token');
-  result = await request(baseUrl, `/api/contents/${vendorTaskId}/coordinator-decision`, { method: 'POST', body: { decision: 'APPROVED' } }, assistantCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  assert.equal(result.payload.status, 'APPROVED');
-  result = await request(baseUrl, `/api/public/coordinator-approvals/${coordinatorToken}`);
-  assert.equal(result.response.status, 410, 'Asisten dengan delegasi review Vendor juga menutup link setelah memberi keputusan');
-  result = await request(baseUrl, '/api/library?q=Video%20Tugas%20Vendor%20Diperbarui', {}, vendorCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  assert.equal(result.payload.items[0].source_content_id, vendorTaskId);
-  assert.match(result.payload.items[0].coverFileUrl, /^\/api\/files\/library\//, 'cover versi sebelumnya dipertahankan saat revisi video');
-  const deletableLibraryAssetId = result.payload.items[0].id;
-  const replacementCover = new FormData();
-  replacementCover.set('coverFile', new Blob([Buffer.from('cover-pengganti')], { type: 'image/png' }), 'cover-pengganti.png');
-  result = await request(baseUrl, `/api/library/${deletableLibraryAssetId}/cover`, { method: 'POST', body: replacementCover }, adminCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  result = await request(baseUrl, `/api/library/${deletableLibraryAssetId}`, {}, adminCookie);
-  assert.equal(result.payload.item.cover_original_name, 'cover-pengganti.png');
-  result = await request(baseUrl, `/api/library/${deletableLibraryAssetId}`, { method: 'DELETE' }, vendorCookie);
-  assert.equal(result.response.status, 403, 'Vendor tidak dapat menghapus aset Media Library');
-  result = await request(baseUrl, `/api/library/${deletableLibraryAssetId}`, { method: 'DELETE' }, adminCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  result = await request(baseUrl, `/api/library/${deletableLibraryAssetId}`, {}, adminCookie);
-  assert.equal(result.response.status, 404, 'aset yang dihapus tidak lagi tersedia di Media Library');
-  result = await request(baseUrl, `/api/contents/${vendorTaskId}`, {}, vendorCookie);
-  assert.equal(result.response.status, 200, 'konten sumber tetap tersedia setelah aset Media Library dihapus');
-
-  const created = await request(baseUrl, '/api/contents', { method: 'POST', body: {
-    title: 'Video Edukasi AINET', brandId: 'brand-ainet', channelIds: ['channel-instagram', 'channel-tiktok'],
-    contentType: 'REELS', brief: 'Video 30 detik dengan script edukasi.', vendorId, coordinatorId: byRole('COORDINATOR'),
-    referenceUrls: 'https://www.instagram.com/contoh/\nhttps://example.test/referensi',
-    vendorEditPermissions: ['brief', 'description', 'caption', 'hashtags', 'call_to_action', 'attachments']
-  } }, adminCookie);
-  assert.equal(created.response.status, 201, `${JSON.stringify(created.payload)}\n${stderr}`);
-  const contentId = created.payload.item.id;
-
-  result = await request(baseUrl, `/api/contents/${contentId}`, {}, adminCookie);
-  assert.deepEqual(result.payload.item.referenceUrls, ['https://www.instagram.com/contoh/', 'https://example.test/referensi']);
-  const briefReferenceId = await chunkUpload(baseUrl, contentId, vendorCookie, 'referensi-vendor.pdf', '%PDF-1.4 referensi vendor', 'Referensi tambahan vendor.', 'BRIEF');
-  assert.ok(briefReferenceId);
-  result = await request(baseUrl, `/api/contents/${contentId}/vendor-edits`, { method: 'POST', body: { fieldName: 'brief', addedValue: 'Tambahkan penutup dengan nomor WhatsApp.' } }, vendorCookie);
-  assert.equal(result.response.status, 201, JSON.stringify(result.payload));
-  const vendorEditId = result.payload.id;
-  result = await request(baseUrl, `/api/contents/${contentId}/transition`, { method: 'POST', body: { toStatus: 'IN_PRODUCTION' } }, adminCookie);
-  assert.equal(result.response.status, 409, 'produksi belum boleh dimulai ketika usulan Vendor masih menunggu review');
-  result = await request(baseUrl, `/api/contents/${contentId}`, {}, vendorCookie);
-  assert.equal(result.payload.item.brief, 'Video 30 detik dengan script edukasi.', 'usulan belum boleh langsung mengubah materi Koordinator');
-  assert.equal(result.payload.vendorEdits[0].status, 'PENDING');
-  result = await request(baseUrl, `/api/contents/${contentId}/vendor-description`, { method: 'PATCH', body: { description: 'hapus materi lama' } }, vendorCookie);
-  assert.equal(result.response.status, 410, 'endpoint edit langsung lama harus dinonaktifkan');
-  result = await request(baseUrl, `/api/contents/${contentId}/vendor-edits/${vendorEditId}/review`, { method: 'POST', body: { action: 'ACCEPT', note: 'Tambahan diterima.' } }, assistantCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  assert.equal(result.payload.item.brief, 'Video 30 detik dengan script edukasi.\n\nTambahkan penutup dengan nomor WhatsApp.');
-  result = await request(baseUrl, `/api/contents/${contentId}`, {}, adminCookie);
-  assert.equal(result.payload.vendorEditAttributions.brief.vendorName, 'Studio Kreatif Nusantara');
-  result = await request(baseUrl, `/api/contents/${contentId}/messages`, { method: 'POST', body: { phase: 'BRIEF', message: 'Draft script sudah disiapkan untuk dibahas.' } }, vendorCookie);
-  assert.equal(result.response.status, 201);
-  result = await request(baseUrl, `/api/contents/${contentId}/transition`, { method: 'POST', body: { toStatus: 'IN_PRODUCTION' } }, vendorCookie);
-  assert.equal(result.response.status, 403, 'Vendor tidak boleh menyetujui mulai produksi sendiri');
-  await transition(baseUrl, contentId, 'IN_PRODUCTION', adminCookie);
-  result = await request(baseUrl, `/api/contents/${contentId}/vendor-edits`, { method: 'POST', body: { fieldName: 'caption', addedValue: 'Perubahan diam-diam setelah produksi.' } }, vendorCookie);
-  assert.equal(result.response.status, 409, 'brief harus terkunci setelah Produksi dimulai');
-
-  const firstFileId = await chunkUpload(baseUrl, contentId, vendorCookie, 'hasil-v1.pdf', '%PDF-1.4 hasil pertama', 'Hasil produksi versi pertama.');
-  result = await request(baseUrl, `/api/contents/${contentId}`, {}, vendorCookie);
-  assert.equal(result.payload.item.status, 'IN_PRODUCTION', 'Upload tidak mengubah status otomatis');
-  result = await request(baseUrl, `/api/contents/${contentId}/submit-result`, { method: 'POST', body: { note: 'Mohon review hasil pertama.' } }, vendorCookie);
-  assert.equal(result.response.status, 200);
-  assert.equal(result.payload.item.status, 'DRAFT_SUBMITTED');
-
-  const share = await request(baseUrl, `/api/contents/${contentId}/share-links`, { method: 'POST', body: { fileIds: [firstFileId] } }, adminCookie);
-  assert.equal(share.response.status, 201);
-  const shareToken = new URL(share.payload.url, baseUrl).searchParams.get('token');
-  const publicShare = await request(baseUrl, `/api/public/shares/${shareToken}`);
-  assert.equal(publicShare.response.status, 200);
-  assert.equal(publicShare.payload.files.length, 1);
-  assert.equal(Object.hasOwn(publicShare.payload.snapshot, 'budget'), false);
-
-  const approval = await request(baseUrl, `/api/contents/${contentId}/director-approvals`, { method: 'POST', body: { directorId: byRole('MANAGEMENT'), fileIds: [firstFileId] } }, adminCookie);
-  assert.equal(approval.response.status, 201, JSON.stringify(approval.payload));
-  assert.equal(Object.hasOwn(approval.payload, 'pin'), false, 'PIN Direksi tidak boleh dikirim ke Koordinator');
-  const approvalToken = new URL(approval.payload.url, baseUrl).searchParams.get('token');
-  const approvalHistory = await request(baseUrl, `/api/contents/${contentId}/director-approvals`, {}, adminCookie);
-  assert.equal(approvalHistory.payload.items[0].url, approval.payload.url);
-  result = await request(baseUrl, `/api/public/approvals/${approvalToken}`);
-  assert.equal(result.response.status, 401);
-  const unlocked = await request(baseUrl, `/api/public/approvals/${approvalToken}/unlock`, { method: 'POST', body: { pin: directorPin } });
-  assert.equal(unlocked.response.status, 200);
-  const approvalCookie = unlocked.response.headers.get('set-cookie').split(';')[0];
-  result = await request(baseUrl, `/api/public/approvals/${approvalToken}`, {}, approvalCookie);
-  assert.equal(result.response.status, 200);
-  assert.equal(Object.hasOwn(result.payload.content, 'pin_hash'), false);
-  const ranged = await request(baseUrl, `/api/public/approvals/${approvalToken}/files/${firstFileId}`, { headers: { range: 'bytes=0-3' } }, approvalCookie);
-  assert.equal(ranged.response.status, 206);
-  result = await request(baseUrl, `/api/public/approvals/${approvalToken}/decision`, { method: 'POST', body: { decision: 'REVISION', note: 'Perbaiki bagian penutup.' } }, approvalCookie);
-  assert.equal(result.response.status, 200);
-  assert.equal(result.payload.status, 'REVISION_REQUIRED');
-
-  await transition(baseUrl, contentId, 'IN_PRODUCTION', vendorCookie);
-  const finalFileId = await chunkUpload(baseUrl, contentId, vendorCookie, 'hasil-final.pdf', '%PDF-1.4 hasil final', 'Revisi final.');
-  result = await request(baseUrl, `/api/contents/${contentId}/submit-result`, { method: 'POST', body: { note: 'Revisi sudah selesai.' } }, vendorCookie);
-  assert.equal(result.response.status, 200);
-  const finalApproval = await request(baseUrl, `/api/contents/${contentId}/director-approvals`, { method: 'POST', body: { directorId: byRole('MANAGEMENT'), fileIds: [finalFileId] } }, adminCookie);
-  assert.equal(finalApproval.response.status, 201, JSON.stringify(finalApproval.payload));
-  const finalToken = new URL(finalApproval.payload.url, baseUrl).searchParams.get('token');
-  const finalUnlock = await request(baseUrl, `/api/public/approvals/${finalToken}/unlock`, { method: 'POST', body: { pin: directorPin } });
-  const finalCookie = finalUnlock.response.headers.get('set-cookie').split(';')[0];
-  result = await request(baseUrl, `/api/public/approvals/${finalToken}/decision`, { method: 'POST', body: { decision: 'APPROVED', note: 'Disetujui.' } }, finalCookie);
-  assert.equal(result.payload.status, 'APPROVED');
-
-  result = await request(baseUrl, `/api/contents/${contentId}/schedules`, { method: 'POST', body: { plans: [
-    { channelId: 'channel-instagram', scheduledAt: '2026-09-20T10:00', uploaderId: byRole('UPLOADER') },
-    { channelId: 'channel-tiktok', scheduledAt: '2026-09-20T11:00', uploaderId: byRole('UPLOADER') }
-  ] } }, adminCookie);
-  assert.equal(result.response.status, 201, JSON.stringify(result.payload));
-  let schedules = await request(baseUrl, `/api/contents/${contentId}/schedules`, {}, uploaderCookie);
-  assert.equal(schedules.payload.items.length, 2);
-  result = await request(baseUrl, `/api/contents/${contentId}/schedules`, { method: 'POST', body: { plans: [
-    { channelId: 'channel-facebook', scheduledAt: '2026-09-20T12:00', uploaderId: byRole('UPLOADER') }
-  ] } }, coordinatorCookie);
-  assert.equal(result.response.status, 201, JSON.stringify(result.payload));
-  result = await request(baseUrl, `/api/contents/${contentId}/schedules`, { method: 'POST', body: { plans: [
-    { channelId: 'channel-tiktok', scheduledAt: '2026-09-20T13:00', uploaderId: byRole('UPLOADER') }
-  ] } }, coordinatorCookie);
-  assert.equal(result.response.status, 409, 'channel yang sudah dijadwalkan tidak boleh diduplikasi');
-  schedules = await request(baseUrl, `/api/contents/${contentId}/schedules`, {}, uploaderCookie);
-  assert.equal(schedules.payload.items.length, 3, 'koordinator dapat menambahkan channel setelah jadwal dikirim');
-  const reassignedSchedule = schedules.payload.items[0];
-  result = await request(baseUrl, `/api/schedules/${reassignedSchedule.id}`, { method: 'PATCH', body: {
-    channelId: 'channel-website', scheduledAt: '2026-09-21T09:30', uploaderId: secondUploaderId
-  } }, vendorCookie);
-  assert.equal(result.response.status, 403, 'vendor tidak boleh mengubah jadwal');
-  result = await request(baseUrl, `/api/schedules/${reassignedSchedule.id}`, { method: 'PATCH', body: {
-    channelId: 'channel-website', scheduledAt: '2026-09-21T09:30', uploaderId: secondUploaderId
-  } }, coordinatorCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  assert.equal(result.payload.item.channel_id, 'channel-website');
-  assert.equal(result.payload.item.scheduled_at, '2026-09-21T09:30');
-  assert.equal(result.payload.item.uploader_id, secondUploaderId);
-  schedules = await request(baseUrl, `/api/contents/${contentId}/schedules`, {}, adminCookie);
-  assert.equal(schedules.payload.items.find(row => row.id === reassignedSchedule.id).channel_name, 'Website / Banner');
-  assert.equal(schedules.payload.items.find(row => row.id === reassignedSchedule.id).uploader_name, 'Petugas Upload Kedua');
-  result = await request(baseUrl, `/api/schedules/${reassignedSchedule.id}`, { method: 'PATCH', body: {
-    channelId: 'channel-tiktok', scheduledAt: '2026-09-21T09:30', uploaderId: secondUploaderId
-  } }, coordinatorCookie);
-  assert.equal(result.response.status, 409, 'jadwal tidak boleh dipindahkan ke channel yang sudah digunakan');
-  let detail = await request(baseUrl, `/api/contents/${contentId}`, {}, adminCookie);
-  assert.ok(detail.payload.item.channelIds.includes('channel-website'));
-  assert.equal(detail.payload.item.channelIds.includes('channel-instagram'), false, 'channel lama dilepas setelah jadwal dipindahkan');
-
-  let form = new FormData(); form.set('platformUrl', 'https://example.test/post-reassigned');
-  result = await request(baseUrl, `/api/schedules/${reassignedSchedule.id}/publish`, { method: 'POST', body: form }, uploaderCookie);
-  assert.equal(result.response.status, 403, 'petugas lama tidak boleh menerbitkan jadwal yang dialihkan');
-  form = new FormData(); form.set('platformUrl', 'https://example.test/post-reassigned');
-  result = await request(baseUrl, `/api/schedules/${reassignedSchedule.id}/publish`, { method: 'POST', body: form }, secondUploaderCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  result = await request(baseUrl, `/api/schedules/${reassignedSchedule.id}`, { method: 'PATCH', body: {
-    channelId: 'channel-website', scheduledAt: '2026-09-22T09:30', uploaderId: secondUploaderId
-  } }, coordinatorCookie);
-  assert.equal(result.response.status, 409, 'jadwal yang sudah tayang harus terkunci');
-  detail = await request(baseUrl, `/api/contents/${contentId}`, {}, adminCookie);
-  assert.equal(detail.payload.item.status, 'SCHEDULED');
-
-  const remainingSchedules = schedules.payload.items.filter(row => row.id !== reassignedSchedule.id);
-  for (let index = 0; index < remainingSchedules.length; index += 1) {
-    form = new FormData(); form.set('platformUrl', `https://example.test/post-remaining-${index}`);
-    result = await request(baseUrl, `/api/schedules/${remainingSchedules[index].id}/publish`, { method: 'POST', body: form }, uploaderCookie);
-    assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-    detail = await request(baseUrl, `/api/contents/${contentId}`, {}, adminCookie);
-    assert.equal(detail.payload.item.status, index === remainingSchedules.length - 1 ? 'PUBLISHED' : 'SCHEDULED');
-  }
-
-  const internalCreated = await request(baseUrl, '/api/contents', { method: 'POST', body: {
-    title: 'Konten Internal Koordinator', brandId: 'brand-ainet', channelIds: ['channel-instagram'],
-    contentType: 'SOCIAL_POST', brief: 'Materi dibuat langsung oleh Koordinator.',
-    coordinatorId: byRole('COORDINATOR'), productionMode: 'INTERNAL', vendorId,
-    vendorEditPermissions: ['brief', 'attachments']
-  } }, adminCookie);
-  assert.equal(internalCreated.response.status, 201, JSON.stringify(internalCreated.payload));
-  const internalId = internalCreated.payload.item.id;
-  assert.equal(internalCreated.payload.item.production_mode, 'INTERNAL');
-  assert.equal(internalCreated.payload.item.vendor_id, null);
-  assert.deepEqual(internalCreated.payload.item.vendorEditPermissions, []);
-  result = await request(baseUrl, `/api/contents/${internalId}/transition`, { method: 'POST', body: { toStatus: 'ASSIGNED' } }, coordinatorCookie);
-  assert.equal(result.response.status, 409, 'produksi internal tidak boleh dikirim ke Vendor');
-  await transition(baseUrl, internalId, 'IN_PRODUCTION', coordinatorCookie);
-  result = await request(baseUrl, `/api/contents/${internalId}`, {}, vendorCookie);
-  assert.equal(result.response.status, 404, 'konten internal tidak boleh terlihat oleh Vendor');
-  result = await request(baseUrl, `/api/contents/${internalId}`, { method: 'PATCH', body: { productionMode: 'VENDOR' } }, coordinatorCookie);
-  assert.equal(result.response.status, 409, 'metode produksi terkunci setelah produksi dimulai');
-  const internalFileId = await chunkUpload(baseUrl, internalId, coordinatorCookie, 'hasil-internal.pdf', '%PDF-1.4 hasil internal', 'Hasil produksi internal.');
-  assert.ok(internalFileId);
-  result = await request(baseUrl, `/api/contents/${internalId}/submit-result`, { method: 'POST', body: { note: 'Produksi internal selesai.' } }, coordinatorCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  assert.equal(result.payload.item.status, 'DRAFT_SUBMITTED');
-  result = await request(baseUrl, `/api/contents/${internalId}/transition`, { method: 'POST', body: { toStatus: 'APPROVED', note: 'Disetujui Koordinator.' } }, coordinatorCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  assert.equal(result.payload.item.status, 'APPROVED');
-  const report = await request(baseUrl, '/api/reports/summary?from=2026-01-01&to=2026-12-31', {}, adminCookie);
-  assert.equal(report.response.status, 200, JSON.stringify(report.payload));
-  assert.ok(report.payload.byProductionMode.some(row => row.mode === 'INTERNAL' && row.count >= 1));
-
-  const vendorProposal = await request(baseUrl, '/api/contents', { method: 'POST', body: {
-    title: 'Ide Konten dari Vendor', brandId: 'brand-ainet', channelIds: ['channel-tiktok'],
-    contentType: 'REELS', objective: 'Meningkatkan engagement.', audience: 'Keluarga muda.',
-    brief: 'Video singkat dengan alur edukasi dan penutup CTA.', caption: 'Internet lancar untuk keluarga.',
-    hashtags: '#AINET', callToAction: 'Cek jangkauan sekarang.', coordinatorId: byRole('COORDINATOR'),
-    productionMode: 'VENDOR', vendorId: 'vendor-yang-tidak-valid'
-  } }, vendorCookie);
-  assert.equal(vendorProposal.response.status, 201, JSON.stringify(vendorProposal.payload));
-  const proposalId = vendorProposal.payload.item.id;
-  assert.equal(vendorProposal.payload.item.proposal_origin, 'VENDOR');
-  assert.equal(vendorProposal.payload.item.brief_review_status, 'DRAFT');
-  assert.equal(vendorProposal.payload.item.vendor_id, vendorId, 'Vendor harus otomatis mengikuti akun pembuat');
-  await chunkUpload(baseUrl, proposalId, vendorCookie, 'referensi-usulan.pdf', '%PDF-1.4 referensi usulan', 'Referensi ide Vendor.', 'BRIEF');
-
-  result = await request(baseUrl, `/api/contents/${proposalId}/transition`, { method: 'POST', body: { toStatus: 'BRIEFED' } }, coordinatorCookie);
-  assert.equal(result.response.status, 409, 'usulan Vendor wajib melalui review brief');
-  result = await request(baseUrl, `/api/contents/${proposalId}/vendor-brief/submit`, { method: 'POST', body: {} }, vendorCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  assert.equal(result.payload.item.brief_review_status, 'SUBMITTED');
-  result = await request(baseUrl, `/api/contents/${proposalId}/vendor-brief`, { method: 'PATCH', body: { brief: 'Edit saat direview.' } }, vendorCookie);
-  assert.equal(result.response.status, 409, 'brief harus terkunci selama review');
-
-  result = await request(baseUrl, `/api/contents/${proposalId}/vendor-brief/review`, {
-    method: 'POST', body: { decision: 'REVISION', note: 'Tambahkan penjelasan manfaat utama.' }
-  }, coordinatorCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  assert.equal(result.payload.item.brief_review_status, 'REVISION');
-  result = await request(baseUrl, `/api/contents/${proposalId}/vendor-brief`, {
-    method: 'PATCH', body: { brief: 'Video edukasi dengan tiga manfaat utama dan penutup CTA.', channelIds: ['channel-tiktok'] }
-  }, vendorCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  await request(baseUrl, `/api/contents/${proposalId}/vendor-brief/submit`, { method: 'POST', body: {} }, vendorCookie);
-
-  result = await request(baseUrl, `/api/contents/${proposalId}`, { method: 'PATCH', body: { brief: 'Diubah Koordinator.' } }, coordinatorCookie);
-  assert.equal(result.response.status, 403, 'Koordinator tidak boleh mengubah materi usulan Vendor');
-  result = await request(baseUrl, `/api/contents/${proposalId}/vendor-brief/review`, {
-    method: 'POST', body: { decision: 'APPROVED', note: 'Konsep sesuai.' }
-  }, coordinatorCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  assert.equal(result.payload.item.status, 'IN_PRODUCTION', 'brief disetujui langsung membuka Produksi Vendor');
-  assert.equal(result.payload.item.brief_review_status, 'APPROVED');
-  const proposalDetail = await request(baseUrl, `/api/contents/${proposalId}`, {}, coordinatorCookie);
-  assert.equal(proposalDetail.response.status, 200);
-  assert.equal(proposalDetail.payload.briefVersions.length, 2);
-  assert.equal(proposalDetail.payload.briefVersions[0].decision, 'APPROVED');
-  assert.equal(proposalDetail.payload.briefVersions[1].decision, 'REVISION');
-
-  const trashCreated = await request(baseUrl, '/api/contents', { method: 'POST', body: {
-    title: 'Konten Uji Sampah', brandId: 'brand-ainet', channelIds: ['channel-instagram'],
-    contentType: 'SOCIAL_POST', brief: 'Konten khusus pengujian Sampah.',
-    coordinatorId: byRole('COORDINATOR'), productionMode: 'INTERNAL'
-  } }, adminCookie);
-  assert.equal(trashCreated.response.status, 201, JSON.stringify(trashCreated.payload));
-  const trashContentId = trashCreated.payload.item.id;
-
-  result = await request(baseUrl, `/api/contents/${trashContentId}/trash`, {
-    method: 'POST', body: { reason: 'Tidak berwenang.' }
-  }, coordinatorCookie);
-  assert.equal(result.response.status, 403, 'Koordinator tidak boleh menghapus data progres');
-  result = await request(baseUrl, `/api/contents/${trashContentId}/trash`, {
-    method: 'POST', body: { reason: '' }
-  }, managementCookie);
-  assert.equal(result.response.status, 400, 'alasan penghapusan wajib diisi');
-  result = await request(baseUrl, `/api/contents/${trashContentId}/trash`, {
-    method: 'POST', body: { reason: 'Data duplikat untuk pengujian.' }
-  }, managementCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-
-  result = await request(baseUrl, `/api/contents/${trashContentId}`, {}, adminCookie);
-  assert.equal(result.response.status, 404, 'konten di Sampah tidak boleh tampil sebagai data aktif');
-  const activeContents = await request(baseUrl, '/api/contents', {}, adminCookie);
-  assert.equal(activeContents.payload.items.some(item => item.id === trashContentId), false);
-  const trashContents = await request(baseUrl, '/api/contents/trash', {}, managementCookie);
-  const trashedItem = trashContents.payload.items.find(item => item.id === trashContentId);
-  assert.ok(trashedItem);
-  assert.equal(trashedItem.delete_reason, 'Data duplikat untuk pengujian.');
-  assert.ok(trashedItem.deleted_by_name);
-
-  result = await request(baseUrl, `/api/contents/${trashContentId}/permanent`, { method: 'DELETE' }, managementCookie);
-  assert.equal(result.response.status, 403, 'Direksi tidak boleh menghapus permanen');
-  result = await request(baseUrl, `/api/contents/${trashContentId}/restore`, { method: 'POST' }, managementCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  result = await request(baseUrl, `/api/contents/${trashContentId}`, {}, adminCookie);
-  assert.equal(result.response.status, 200, 'konten yang dipulihkan harus kembali aktif');
-
-  result = await request(baseUrl, `/api/contents/${trashContentId}/trash`, {
-    method: 'POST', body: { reason: 'Uji masa retensi.' }
-  }, adminCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  result = await request(baseUrl, `/api/contents/${trashContentId}/permanent`, { method: 'DELETE' }, adminCookie);
-  assert.equal(result.response.status, 409, 'Super Admin harus menunggu masa retensi 30 hari');
-
-  const rawForm = new FormData();
-  rawForm.set('title', 'Teknisi memasang ODP');
-  rawForm.set('category', 'INFRASTRUCTURE');
-  rawForm.set('brandId', 'brand-ainet');
-  rawForm.set('capturedAt', '2026-09-29');
-  rawForm.set('location', 'POP Pringsewu');
-  rawForm.set('tags', 'teknisi, odp, instalasi');
-  rawForm.set('description', 'Video mentah untuk bahan produksi konten edukasi.');
-  rawForm.set('file', new Blob(['raw-video-test'], { type: 'video/mp4' }), 'teknisi-odp.mp4');
-  const rawCreated = await request(baseUrl, '/api/raw-footage', { method: 'POST', body: rawForm }, coordinatorCookie);
-  assert.equal(rawCreated.response.status, 201, JSON.stringify(rawCreated.payload));
-  const rawFootageId = rawCreated.payload.id;
-
-  const assistantRawForm = new FormData();
-  assistantRawForm.set('title', 'Foto mentah internal Asisten');
-  assistantRawForm.set('category', 'PHOTO_RAW');
-  assistantRawForm.set('file', new Blob(['raw-photo-assistant'], { type: 'image/jpeg' }), 'internal-asisten.jpg');
-  result = await request(baseUrl, '/api/raw-footage', { method: 'POST', body: assistantRawForm }, assistantCookie);
-  assert.equal(result.response.status, 201, JSON.stringify(result.payload));
-  const assistantRawFootageId = result.payload.id;
-  result = await request(baseUrl, `/api/raw-footage/${assistantRawFootageId}`, { method: 'PATCH', body: { title: 'Foto mentah internal diperbarui' } }, assistantCookie);
-  assert.equal(result.response.status, 200, 'Asisten dapat mengubah metadata footage miliknya');
-  result = await request(baseUrl, `/api/raw-footage/${rawFootageId}`, { method: 'PATCH', body: { title: 'Tidak boleh diubah' } }, assistantCookie);
-  assert.equal(result.response.status, 403, 'Asisten tidak dapat mengubah footage milik pengguna lain');
-  result = await request(baseUrl, `/api/raw-footage/${assistantRawFootageId}`, { method: 'PATCH', body: { status: 'ARCHIVED' } }, assistantCookie);
-  assert.equal(result.response.status, 403, 'Asisten tidak dapat mengarsipkan footage');
-
-  result = await request(baseUrl, '/api/raw-footage', {}, uploaderCookie);
-  assert.equal(result.response.status, 403, 'Petugas Upload tidak memiliki menu Raw Footage');
-  result = await request(baseUrl, '/api/raw-footage', {}, managementCookie);
-  assert.equal(result.response.status, 200, 'Direksi dapat melihat Raw Footage');
-  result = await request(baseUrl, '/api/raw-footage', {}, vendorCookie);
-  assert.equal(result.payload.items.some(item => item.id === rawFootageId), false, 'Vendor belum dapat melihat footage yang belum ditautkan');
-
-  result = await request(baseUrl, `/api/contents/${contentId}/raw-footage`, {
-    method: 'POST', body: { footageIds: [rawFootageId] }
-  }, coordinatorCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-  result = await request(baseUrl, '/api/raw-footage', {}, vendorCookie);
-  const linkedFootage = result.payload.items.find(item => item.id === rawFootageId);
-  assert.ok(linkedFootage, 'Vendor dapat melihat footage yang ditautkan ke tugasnya');
-  assert.equal(linkedFootage.mediaType, 'VIDEO');
-  assert.deepEqual(linkedFootage.tags, ['teknisi', 'odp', 'instalasi']);
-  result = await request(baseUrl, linkedFootage.fileUrl, {}, vendorCookie);
-  assert.equal(result.response.status, 200, 'Vendor dapat membuka file mentah yang ditautkan');
-
-  const uploaderDetail = await request(baseUrl, `/api/contents/${contentId}`, {}, uploaderCookie);
-  assert.deepEqual(uploaderDetail.payload.rawFootage, [], 'Petugas Upload tidak melihat Raw Footage pada detail konten');
-  result = await request(baseUrl, `/api/raw-footage/${rawFootageId}`, { method: 'DELETE' }, coordinatorCookie);
-  assert.equal(result.response.status, 403, 'Koordinator tidak dapat menghapus permanen Raw Footage');
-  result = await request(baseUrl, `/api/raw-footage/${rawFootageId}`, { method: 'PATCH', body: { status: 'ARCHIVED' } }, coordinatorCookie);
-  assert.equal(result.response.status, 200);
-  result = await request(baseUrl, `/api/raw-footage/${rawFootageId}`, {}, vendorCookie);
-  assert.equal(result.response.status, 404, 'Vendor tidak dapat membuka footage yang sudah diarsipkan');
-  result = await request(baseUrl, `/api/raw-footage/${rawFootageId}`, { method: 'DELETE' }, adminCookie);
-  assert.equal(result.response.status, 200, JSON.stringify(result.payload));
-});
+  result = await re
