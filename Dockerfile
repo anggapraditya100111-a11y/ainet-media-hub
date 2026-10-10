@@ -1,7 +1,13 @@
+# syntax=docker/dockerfile:1
+
 FROM node:24-bookworm-slim AS dependencies
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci --omit=dev
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --omit=dev --prefer-offline \
+      --fetch-retries=5 \
+      --fetch-retry-mintimeout=2000 \
+      --fetch-retry-maxtimeout=30000
 
 FROM node:24-bookworm-slim
 ENV NODE_ENV=production \

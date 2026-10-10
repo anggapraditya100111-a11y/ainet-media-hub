@@ -560,6 +560,21 @@ function initDatabase() {
     );
     CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id, read_at, created_at DESC);
 
+    CREATE TABLE IF NOT EXISTS access_notification_outbox (
+      id TEXT PRIMARY KEY,
+      notification_id TEXT NOT NULL UNIQUE,
+      payload_json TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'PENDING' CHECK(status IN ('PENDING','SENDING','SENT')),
+      attempts INTEGER NOT NULL DEFAULT 0,
+      next_attempt_at TEXT NOT NULL,
+      last_error TEXT,
+      created_at TEXT NOT NULL,
+      sent_at TEXT,
+      FOREIGN KEY(notification_id) REFERENCES notifications(id) ON DELETE CASCADE
+    );
+    CREATE INDEX IF NOT EXISTS idx_access_notification_outbox_pending
+      ON access_notification_outbox(status,next_attempt_at,created_at);
+
     CREATE TABLE IF NOT EXISTS audit_logs (
       id TEXT PRIMARY KEY,
       actor_id TEXT,
@@ -945,10 +960,23 @@ function recordAudit({ actorId = null, entityType, entityId = null, action, befo
     );
 }
 
+let notificationDispatcher = null;
+
+function setNotificationDispatcher(dispatcher) {
+  notificationDispatcher = typeof dispatcher === 'function' ? dispatcher : null;
+}
+
 function notifyUser(userId, type, title, body = '', link = '') {
   if (!userId) return;
+  const id = newId('ntf');
+  const createdAt = nowIso();
   db.prepare(`INSERT INTO notifications(id,user_id,type,title,body,link,created_at) VALUES(?,?,?,?,?,?,?)`)
-    .run(newId('ntf'), userId, type, title, body, link, nowIso());
+    .run(id, userId, type, title, body, link, createdAt);
+  if (notificationDispatcher) {
+    try { notificationDispatcher({ id, userId, type, title, body, link, createdAt }); }
+    catch (error) { console.warn('Notifikasi pusat belum dapat diantrikan:', error?.message || 'QUEUE_FAILED'); }
+  }
+  return id;
 }
 
 function notifyRole(role, type, title, body = '', link = '') {
@@ -988,6 +1016,6 @@ initDatabase();
 
 module.exports = {
   db, DB_PATH, DATA_DIR, UPLOAD_DIR, BACKUP_DIR, nowIso, getSetting, setSetting,
-  nextContentNumber, publicUser, recordAudit, notifyUser, notifyRole,
+  nextContentNumber, publicUser, recordAudit, notifyUser, notifyRole, setNotificationDispatcher,
   cleanupExpiredSessions, createDatabaseBackup, listDatabaseBackups
 };

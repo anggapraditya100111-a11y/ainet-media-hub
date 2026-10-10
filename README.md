@@ -2,7 +2,7 @@
 
 AXINDO Media Hub adalah aplikasi internal PT Axindo Infinitas Network untuk menyimpan, mereview, menjadwalkan, dan mempublikasikan konten AINET serta IMAS. Aplikasi berjalan mandiri di server Ubuntu menggunakan Docker Compose, database SQLite, dan penyimpanan berkas lokal server.
 
-Versi: **0.15.0 — Materi Review & File Final Terpilih**
+Versi: **0.16.0 — Integrasi Pusat Notifikasi AXINDO**
 
 ## Fitur yang sudah berfungsi
 
@@ -42,6 +42,7 @@ Versi: **0.15.0 — Materi Review & File Final Terpilih**
 - Seluruh user termasuk vendor dapat membaca/mengunduh aset aktif; aset kedaluwarsa atau diarsipkan dikunci untuk non-pengelola.
 - Workflow lama tetap tersedia untuk membuka dan melanjutkan data historis yang sudah ada.
 - Notifikasi dalam aplikasi untuk tugas, draft, revisi, approval, jadwal, dan publikasi.
+- Event penting untuk akun AXINDO ID dapat diteruskan ke Pusat Notifikasi Access dan Web Push Android/iPhone melalui antrean retry lokal.
 - Audit log untuk login, perubahan data, status workflow, versi berkas, publikasi, pengguna, pengaturan, dan backup.
 - Branding aplikasi, warna AINET/IMAS, logo perusahaan, dark mode, serta tampilan responsif desktop/mobile.
 - Backup database manual dari UI dan backup lengkap volume melalui script server.
@@ -162,6 +163,27 @@ Pengguna tanpa grup yang dipetakan akan ditolak. Jika satu pengguna memiliki beb
 Tombol login utama membuka halaman AXINDO Access di dalam popup. Jika pengguna sudah login di Access, tidak ada form login kedua. Access menerbitkan kode satu kali berumur 90 detik yang terikat pada origin Media Hub dan PKCE. Backend Media Hub menukar kode tersebut menjadi sesi lokal, lalu popup tertutup otomatis. Authentik tetap menjadi backend identitas dan grup, tetapi halaman Authentik tidak dibuka pada alur normal ini. Browser harus mengizinkan popup untuk domain Media Hub.
 
 Komunikasi backend Media Hub ke Access menggunakan `ACCESS_PORTAL_INTERNAL_URL`. Docker Compose memakai `http://host.docker.internal:8096` secara bawaan agar pertukaran tidak bergantung pada DNS publik atau Cloudflare Tunnel.
+
+### Pusat Notifikasi AXINDO
+
+Media Hub v0.16.0 meneruskan event penting bagi pengguna internal ke Access Manager: hasil Vendor siap direview, revisi dikirim ulang, tugas upload, perubahan jadwal, dan konten siap tayang. Notifikasi lokal Media Hub tetap menjadi sumber utama dan tidak dihapus. Event pusat disimpan dahulu pada tabel outbox lalu dicoba ulang otomatis bila Access Manager sedang restart atau koneksi internal terganggu.
+
+Konfigurasi paling aman dilakukan dari repository Access Manager setelah kedua aplikasi sudah di-update:
+
+```bash
+cd /opt/axindo-access-manager
+sudo ./configure-notifications.sh
+```
+
+Script memasang token acak yang sama tanpa menampilkannya. Konfigurasi Media Hub yang dihasilkan:
+
+```env
+ACCESS_NOTIFICATION_ENABLED=true
+ACCESS_NOTIFICATION_INTERNAL_URL=http://host.docker.internal:8096
+ACCESS_NOTIFICATION_TOKEN=<secret bersama, jangan dikirim melalui chat>
+```
+
+Vendor dengan Login Personal tetap menerima notifikasi lokal Media Hub. Pengiriman pusat hanya berlaku bagi pengguna internal yang memiliki `oidc_subject` AXINDO ID, sehingga penerima dapat dicocokkan secara aman di Access Manager.
 
 Untuk memberi akses kepada vendor, Super Admin membuka **Pengguna & Akses**, memilih **Tambah Login Personal**, mengisi username serta password awal, memilih role Vendor, lalu memasangkannya dengan data vendor. Sebelum dipasangkan, vendor dapat login tetapi belum melihat tugas produksi.
 
