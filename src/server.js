@@ -10,7 +10,7 @@ const oidc = require('openid-client');
 
 const {
   db, UPLOAD_DIR, BACKUP_DIR, nowIso, getSetting, setSetting, nextContentNumber,
-  publicUser, recordAudit, notifyUser, notifyRole, cleanupExpiredSessions,
+  publicUser, recordAudit, notifyUser, notifyRole, setNotificationDispatcher, cleanupExpiredSessions,
   createDatabaseBackup, listDatabaseBackups
 } = require('./db');
 const {
@@ -25,8 +25,9 @@ const {
   emailAllowed, safeReturnTo
 } = require('./oidc');
 const { installWorkflowV4 } = require('./workflow-v4');
+const { createAccessNotificationRelay } = require('./access-notifications');
 
-const APP_VERSION = '0.15.0';
+const APP_VERSION = '0.16.0';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';
@@ -48,6 +49,9 @@ const VENDOR_EDIT_FIELDS = Object.freeze({
 const VENDOR_EDIT_PERMISSIONS = new Set([...Object.keys(VENDOR_EDIT_FIELDS), 'attachments']);
 const ASSISTANT_DELEGATION_PERMISSIONS = new Set(['CREATE_REQUEST', 'REVIEW_VENDOR']);
 const OIDC = oidcSettings();
+const ACCESS_NOTIFICATIONS = createAccessNotificationRelay({ db, nowIso });
+setNotificationDispatcher(ACCESS_NOTIFICATIONS.enqueue);
+ACCESS_NOTIFICATIONS.start();
 let oidcConfigurationPromise = null;
 
 class AppError extends Error {
@@ -591,7 +595,11 @@ function permissionRequired(permission) {
 app.use(authenticate);
 
 app.get('/api/health', (_req, res) => {
-  res.json({ ok: true, service: 'ainet-media-hub', version: APP_VERSION, time: nowIso() });
+  res.json({
+    ok: true, service: 'ainet-media-hub', version: APP_VERSION,
+    accessNotifications: ACCESS_NOTIFICATIONS.active,
+    time: nowIso()
+  });
 });
 
 app.get('/api/public/config', (_req, res) => res.json(settingsPayload()));

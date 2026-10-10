@@ -5,7 +5,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ainet-media-hub:0.15.0
+      network: host
+    image: ainet-media-hub:0.16.0
     container_name: ainet-media-hub
     restart: unless-stopped
     ports:
@@ -22,6 +23,10 @@ services:
       PUBLIC_APP_URL: "${PUBLIC_APP_URL:-https://mediahub.axindo.my.id}"
       ACCESS_PORTAL_URL: "${ACCESS_PORTAL_URL:-https://akses.axindo.my.id}"
       ACCESS_PORTAL_INTERNAL_URL: "${ACCESS_PORTAL_INTERNAL_URL:-http://host.docker.internal:8096}"
+      ACCESS_NOTIFICATION_ENABLED: "${ACCESS_NOTIFICATION_ENABLED:-false}"
+      ACCESS_NOTIFICATION_INTERNAL_URL: "${ACCESS_NOTIFICATION_INTERNAL_URL:-http://host.docker.internal:8096}"
+      ACCESS_NOTIFICATION_TOKEN: "${ACCESS_NOTIFICATION_TOKEN:-}"
+      ACCESS_NOTIFICATION_TYPES: "${ACCESS_NOTIFICATION_TYPES:-RESULT_SUBMITTED,SIMPLE_VENDOR_RESULT,SIMPLE_CONTENT_RESUBMITTED,UPLOAD_ASSIGNED,UPLOAD_RESCHEDULED,READY_TO_PUBLISH,CONTENT_SCHEDULED}"
       TRUST_PROXY: "${TRUST_PROXY:-false}"
       COOKIE_SECURE: "${COOKIE_SECURE:-false}"
       SESSION_HOURS: "${SESSION_HOURS:-12}"

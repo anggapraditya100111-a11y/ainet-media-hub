@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.16.0 — 2026-10-10
+
+- Menambahkan relay event penting Media Hub ke Pusat Notifikasi AXINDO Access untuk akun internal yang memiliki subject OIDC.
+- Meneruskan hasil Vendor siap direview, pengiriman revisi, tugas/perubahan jadwal upload, dan konten siap tayang.
+- Menambahkan outbox SQLite idempoten dengan retry bertahap agar event tidak hilang ketika Access Manager atau jaringan internal sementara tidak tersedia.
+- Mempertahankan inbox Media Hub sebagai sumber utama dan melewati akun Vendor Login Personal yang tidak memiliki subject AXINDO ID.
+- Menambahkan environment token server-to-server serta health flag `accessNotifications`.
+- Membuat proses build Docker lebih tahan gangguan DNS npm melalui cache BuildKit, `prefer-offline`, retry, dan jaringan host saat build.
+- Memperbarui dependency proxy, upload, dan jaringan ke versi tanpa advisory audit.
+
 ## 0.14.0 — 2026-10-09
 
 - Menambahkan satu tombol **Tindak Lanjut Review** pada akun Koordinator untuk hasil produksi konten sederhana.
