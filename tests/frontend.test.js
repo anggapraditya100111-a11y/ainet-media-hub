@@ -205,6 +205,18 @@ test('Super Admin dapat menghapus aset Media Library secara permanen', () => {
   assert.match(app, /Konten sumber tetap tersimpan/);
 });
 
+test('Media Library menampilkan thumbnail cover, foto, dan cuplikan video', () => {
+  assert.match(app, /function assetThumbnail\(asset\)/);
+  assert.match(app, /asset\.coverFileUrl/);
+  assert.match(app, /data-asset-image-thumbnail/);
+  assert.match(app, /data-asset-video-thumbnail/);
+  assert.match(app, /#t=0\.1/);
+  assert.match(app, /data-media-preview/);
+  assert.match(css, /\.asset-thumbnail/);
+  assert.match(css, /object-fit: contain/);
+  assert.match(css, /\.asset-thumbnail-play/);
+});
+
 test('alur konten sederhana tersedia untuk internal dan vendor dengan revisi serta delegasi', () => {
   assert.match(app, /ASSISTANT_COORDINATOR:/);
   assert.match(app, /'contents', 'Konten'/);

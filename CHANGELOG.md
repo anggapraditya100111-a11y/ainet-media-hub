@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.17.0 — 2026-10-16
+
+- Menambahkan thumbnail visual pada setiap kartu Media Library.
+- Memprioritaskan Cover Media Sosial sebagai thumbnail, lalu foto utama atau cuplikan video.
+- Mempertahankan ikon jenis file sebagai fallback untuk dokumen atau media yang tidak dapat dimuat.
+- Membuka preview gambar, video, audio, atau PDF langsung ketika thumbnail diklik.
+- Menampilkan gambar vertikal secara utuh dan tetap responsif pada tampilan desktop maupun seluler.
+
 ## 0.16.0 — 2026-10-10
 
 - Menambahkan relay event penting Media Hub ke Pusat Notifikasi AXINDO Access untuk akun internal yang memiliki subject OIDC.
@@ -9,6 +17,14 @@
 - Menambahkan environment token server-to-server serta health flag `accessNotifications`.
 - Membuat proses build Docker lebih tahan gangguan DNS npm melalui cache BuildKit, `prefer-offline`, retry, dan jaringan host saat build.
 - Memperbarui dependency proxy, upload, dan jaringan ke versi tanpa advisory audit.
+
+## 0.15.0 — 2026-10-10
+
+- Koordinator dapat memperbarui Caption, Hashtag, dan Note (Catatan) pada tahap review konten sederhana.
+- Koordinator dapat menambahkan lampiran review tanpa mengganti file hasil produksi utama.
+- Koordinator memilih file final melalui checklist sebelum menyetujui atau meneruskan konten kepada Direksi.
+- Direksi dan Petugas Upload hanya menerima file yang dipilih sebagai final.
+- Pilihan file final dikosongkan ketika revisi baru dikirim dan file lama dibatasi dari Petugas Upload.
 
 ## 0.14.0 — 2026-10-09
 

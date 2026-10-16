@@ -2106,7 +2106,7 @@ async function renderLibrary() {
 function assetCards(items) {
   if (!items.length) return `<div class="card" style="grid-column:1/-1">${emptyState('Media Library masih kosong', 'Tambahkan logo, brosur, template, foto, atau materi kampanye pertama.')}</div>`;
   return items.map(asset => `<article class="card asset-card" data-asset-id="${attr(asset.id)}">
-    <div class="asset-preview">${assetIcon(asset)}</div><div class="card-body">
+    ${assetThumbnail(asset)}<div class="card-body">
       <div class="actions"><span class="status ${statusClass(asset.status)}">${escapeHtml(assetStatusLabel(asset.status))}</span>${asset.brand_code ? `<span class="brand-chip" style="background:${brandColor(asset.brand_code)}">${escapeHtml(asset.brand_code)}</span>` : ''}</div>
       <h3>${escapeHtml(asset.title)}</h3><p>${escapeHtml(asset.description || categoryLabel(asset.category))}</p>
       <div class="asset-meta"><span>${escapeHtml(asset.code)} · v${asset.version_number || '-'}</span><span>${fileSize(asset.file_size)}</span></div>
@@ -2114,7 +2114,27 @@ function assetCards(items) {
 }
 
 function bindAssetOpeners(root) {
-  root.querySelectorAll('[data-asset-id]').forEach(element => element.addEventListener('click', () => showAssetDetail(element.dataset.assetId)));
+  root.querySelectorAll('[data-asset-id]').forEach(element => element.addEventListener('click', event => {
+    if (event.target.closest('[data-media-preview]')) return;
+    showAssetDetail(element.dataset.assetId);
+  }));
+  bindMediaPreviewers(root);
+  root.querySelectorAll('[data-asset-video-thumbnail]').forEach(video => {
+    const reveal = () => video.closest('.asset-preview')?.classList.add('thumbnail-ready');
+    const seekPreview = () => {
+      if (Number.isFinite(video.duration) && video.duration > 0) video.currentTime = Math.min(0.1, video.duration / 2);
+    };
+    video.addEventListener('loadedmetadata', seekPreview, { once: true });
+    video.addEventListener('loadeddata', reveal, { once: true });
+    video.addEventListener('seeked', reveal, { once: true });
+    video.addEventListener('error', () => video.closest('.asset-preview')?.classList.add('thumbnail-error'), { once: true });
+    if (video.readyState >= 2) reveal();
+  });
+  root.querySelectorAll('[data-asset-image-thumbnail]').forEach(image => {
+    image.addEventListener('load', () => image.closest('.asset-preview')?.classList.add('thumbnail-ready'), { once: true });
+    image.addEventListener('error', () => image.closest('.asset-preview')?.classList.add('thumbnail-error'), { once: true });
+    if (image.complete && image.naturalWidth) image.closest('.asset-preview')?.classList.add('thumbnail-ready');
+  });
 }
 
 async function showAssetDetail(id) {
@@ -2710,6 +2730,31 @@ function assetIcon(asset) {
   if (asset.category === 'BROCHURE_PRODUCT') return '▤';
   if (asset.category === 'CONTENT_TEMPLATE') return '▦';
   return '◇';
+}
+
+function assetThumbnail(asset) {
+  const mime = String(asset.mime_type || '');
+  const hasCover = Boolean(asset.coverFileUrl);
+  const isImage = mime.startsWith('image/');
+  const isVideo = mime.startsWith('video/');
+  const visualUrl = hasCover ? asset.coverFileUrl : (isImage || isVideo ? asset.fileUrl : '');
+  const visualType = hasCover || isImage ? 'image' : isVideo ? 'video' : 'icon';
+  const label = hasCover ? 'Cover' : isImage ? 'Foto' : isVideo ? 'Video' : labelize((asset.original_name || '').split('.').pop() || 'File');
+  const previewUrl = isPreviewableMime(mime) && asset.fileUrl ? asset.fileUrl : hasCover ? asset.coverFileUrl : '';
+  const previewMime = isPreviewableMime(mime) && asset.fileUrl ? mime : hasCover ? (asset.cover_mime_type || 'image/jpeg') : '';
+  const previewName = isPreviewableMime(mime) && asset.fileUrl ? asset.original_name : asset.cover_original_name;
+  const media = visualType === 'image'
+    ? `<img data-asset-image-thumbnail src="${attr(visualUrl)}" alt="Thumbnail ${attr(asset.title)}" loading="lazy">`
+    : visualType === 'video'
+      ? `<video data-asset-video-thumbnail src="${attr(visualUrl)}#t=0.1" muted playsinline preload="metadata"></video>`
+      : '';
+  const previewAction = previewUrl
+    ? `<button class="asset-thumbnail-action" type="button" data-media-preview="${attr(previewUrl)}" data-media-mime="${attr(previewMime)}" data-media-name="${attr(previewName || asset.title)}" aria-label="Preview ${attr(asset.title)}"></button>`
+    : '';
+  return `<div class="asset-preview asset-thumbnail ${media ? 'has-thumbnail-media' : 'thumbnail-icon-only'}">
+    <span class="asset-thumbnail-fallback" aria-hidden="true">${assetIcon(asset)}</span>${media}${previewAction}
+    <span class="asset-thumbnail-type">${escapeHtml(label)}</span>${isVideo ? '<span class="asset-thumbnail-play" aria-hidden="true">▶</span>' : ''}
+  </div>`;
 }
 function externalLink(value) {
   if (!value) return 'Tanpa URL';

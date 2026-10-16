@@ -27,7 +27,7 @@ const {
 const { installWorkflowV4 } = require('./workflow-v4');
 const { createAccessNotificationRelay } = require('./access-notifications');
 
-const APP_VERSION = '0.16.0';
+const APP_VERSION = '0.17.0';
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';

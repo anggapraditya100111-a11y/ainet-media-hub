@@ -2,7 +2,7 @@
 
 AXINDO Media Hub adalah aplikasi internal PT Axindo Infinitas Network untuk menyimpan, mereview, menjadwalkan, dan mempublikasikan konten AINET serta IMAS. Aplikasi berjalan mandiri di server Ubuntu menggunakan Docker Compose, database SQLite, dan penyimpanan berkas lokal server.
 
-Versi: **0.16.0 — Integrasi Pusat Notifikasi AXINDO**
+Versi: **0.17.0 — Thumbnail Media Library**
 
 ## Fitur yang sudah berfungsi
 
@@ -38,6 +38,7 @@ Versi: **0.16.0 — Integrasi Pusat Notifikasi AXINDO**
 - Raw Footage terpisah untuk foto/video mentah, lengkap dengan kategori, brand, tanggal pengambilan, lokasi, tag, galeri preview, dan layar penuh; Asisten dapat mengunggah serta mengubah metadata footage miliknya sendiri.
 - Koordinator dapat memilih Raw Footage untuk Brief Produksi; Vendor hanya dapat membuka footage yang ditautkan ke tugasnya.
 - Media Library bersama untuk logo, brosur, template, foto/video final, materi kampanye, dan arsip.
+- Kartu Media Library menampilkan thumbnail cover, foto utama, atau cuplikan video dan dapat dibuka sebagai preview langsung.
 - Media Library memiliki versi aktif, tanggal berlaku, tanggal kedaluwarsa, checksum, pemilik, serta status.
 - Seluruh user termasuk vendor dapat membaca/mengunduh aset aktif; aset kedaluwarsa atau diarsipkan dikunci untuk non-pengelola.
 - Workflow lama tetap tersedia untuk membuka dan melanjutkan data historis yang sudah ada.

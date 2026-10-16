@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
       network: host
-    image: ainet-media-hub:0.16.0
+    image: ainet-media-hub:0.17.0
     container_name: ainet-media-hub
     restart: unless-stopped
     ports:
