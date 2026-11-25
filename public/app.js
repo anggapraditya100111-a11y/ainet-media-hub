@@ -1866,7 +1866,7 @@ function showPublicationForm(item) {
 
 async function showContentAssetsForm(item) {
   try {
-    const data = await api('/api/library?status=ACTIVE');
+    const data = await api('/api/library?status=ACTIVE&view=picker');
     const detail = await api(`/api/contents/${item.id}`);
     const selected = new Set(detail.assets.map(asset => asset.id));
     openModal('Aset Referensi', `<form id="content-assets-form">
@@ -1891,7 +1891,7 @@ async function showContentAssetsForm(item) {
 async function showContentRawFootageForm(item) {
   try {
     const [footageData, detail] = await Promise.all([
-      api('/api/raw-footage?status=ACTIVE'),
+      api('/api/raw-footage?status=ACTIVE&view=picker'),
       api(`/api/contents/${item.id}`)
     ]);
     const selected = new Set((detail.rawFootage || []).map(footage => footage.id));
@@ -1948,33 +1948,26 @@ async function renderRawFootage() {
       ${state.user.role !== 'VENDOR' ? `<label class="field"><span>Status</span><select name="status"><option value="">Semua status</option>${optionsHtml([['ACTIVE','Aktif'],['ARCHIVED','Arsip']])}</select></label>` : ''}
       <button class="btn btn-ghost" type="submit">Terapkan</button>
     </form>
-    <section id="raw-footage-results" class="asset-grid raw-footage-grid">${rawFootageCards(data.items)}</section>`;
+    <section id="raw-footage-results" class="asset-grid raw-footage-grid">${rawFootageCards(data.items)}</section>
+    <nav id="raw-footage-pagination" class="gallery-pagination" aria-label="Halaman Raw Footage">${galleryPagination(data.pagination)}</nav>`;
   $('#raw-footage-create')?.addEventListener('click', showRawFootageForm);
-  $('#raw-footage-filter').addEventListener('submit', async event => {
-    event.preventDefault(); setLoading(true);
-    try {
-      const form = new FormData(event.currentTarget);
-      const query = new URLSearchParams();
-      for (const key of ['q', 'mediaType', 'category', 'brandId', 'status']) if (form.get(key)) query.set(key, form.get(key));
-      const result = await api(`/api/raw-footage?${query}`);
-      $('#raw-footage-results').innerHTML = rawFootageCards(result.items);
-      bindRawFootageOpeners($('#raw-footage-results'));
-    } catch (error) { toast(error.message, true); }
-    finally { setLoading(false); }
+  bindGallery({
+    endpoint: '/api/raw-footage', filter: $('#raw-footage-filter'), grid: $('#raw-footage-results'),
+    navigation: $('#raw-footage-pagination'), cards: rawFootageCards, bindCards: bindRawFootageOpeners
   });
-  bindRawFootageOpeners(page);
 }
 
 function rawFootagePreview(footage) {
-  if (String(footage.mime_type || '').startsWith('image/')) return `<img src="${attr(footage.fileUrl)}" alt="${attr(footage.title)}" loading="lazy">`;
-  if (String(footage.mime_type || '').startsWith('video/')) return `<video src="${attr(footage.fileUrl)}" muted playsinline preload="metadata"></video><span class="raw-footage-play" aria-hidden="true">▶</span>`;
-  return '<span class="raw-footage-play" aria-hidden="true">◇</span>';
+  const video = footage.mediaType === 'VIDEO';
+  return `<span class="asset-thumbnail-fallback" aria-hidden="true">${video ? '▷' : '▧'}</span>
+    ${galleryImage(footage.thumbnailUrl)}
+    ${video ? '<span class="asset-thumbnail-play" aria-hidden="true">▶</span>' : ''}`;
 }
 
 function rawFootageCards(items) {
   if (!items.length) return `<div class="card" style="grid-column:1/-1">${emptyState('Raw Footage masih kosong', 'Tambahkan foto atau video mentah pertama sebagai bahan produksi.')}</div>`;
   return items.map(footage => `<article class="card asset-card raw-footage-card" data-raw-footage-id="${attr(footage.id)}">
-    <div class="asset-preview raw-footage-preview">${rawFootagePreview(footage)}<span class="raw-footage-type">${escapeHtml(footage.mediaType === 'VIDEO' ? 'Video' : 'Foto')}</span></div>
+    <div class="asset-preview asset-thumbnail raw-footage-preview">${rawFootagePreview(footage)}<span class="raw-footage-type">${escapeHtml(footage.mediaType === 'VIDEO' ? 'Video' : 'Foto')}</span></div>
     <div class="card-body"><div class="actions">${statusHtml(footage.status)}${footage.brand_code ? `<span class="brand-chip" style="background:${brandColor(footage.brand_code)}">${escapeHtml(footage.brand_code)}</span>` : ''}</div>
       <h3>${escapeHtml(footage.title)}</h3><p>${escapeHtml(footage.description || rawFootageCategoryLabel(footage.category))}</p>
       <div class="raw-footage-tags">${(footage.tags || []).slice(0, 3).map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}</div>
@@ -1994,7 +1987,7 @@ async function showRawFootageDetail(id) {
       <div class="actions">${statusHtml(item.status)}${item.brand_code ? `<span class="brand-chip" style="background:${brandColor(item.brand_code)}">${escapeHtml(item.brand_code)}</span>` : ''}</div>
       <h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.code)} · ${escapeHtml(rawFootageCategoryLabel(item.category))}</p>
     </section>
-    <div class="raw-footage-detail-preview">${String(item.mime_type).startsWith('image/') ? `<img src="${attr(item.fileUrl)}" alt="${attr(item.title)}">` : `<video src="${attr(item.fileUrl)}" controls playsinline preload="metadata"></video>`}</div>
+    <div class="raw-footage-detail-preview">${String(item.mime_type).startsWith('image/') ? `<img src="${attr(item.fileUrl)}" alt="${attr(item.title)}">` : `<video src="${attr(item.fileUrl)}" controls playsinline preload="none"></video>`}</div>
     <div class="actions" style="margin:16px 0">
       ${mediaPreviewButton(item)}<a class="btn btn-primary" href="${attr(item.fileUrl)}?download=1">↓ Unduh File Asli</a>
       ${has('footage.manage') || (has('footage.upload') && item.uploaded_by === state.user.id) ? '<button class="btn btn-ghost" data-raw-footage-action="edit">Edit Metadata</button>' : ''}
@@ -2086,21 +2079,68 @@ async function renderLibrary() {
       <label class="field"><span>Status</span><select name="status"><option value="">Semua status</option>${optionsHtml([['ACTIVE','Aktif'],['EXPIRED','Kedaluwarsa'],['ARCHIVED','Arsip']])}</select></label>
       <button class="btn btn-ghost" type="submit">Terapkan</button>
     </form>
-    <section id="asset-results" class="asset-grid">${assetCards(data.items)}</section>`;
+    <section id="asset-results" class="asset-grid">${assetCards(data.items)}</section>
+    <nav id="library-pagination" class="gallery-pagination" aria-label="Halaman Media Library">${galleryPagination(data.pagination)}</nav>`;
   $('#asset-create')?.addEventListener('click', showAssetForm);
-  $('#library-filter').addEventListener('submit', async event => {
-    event.preventDefault(); setLoading(true);
-    try {
-      const form = new FormData(event.currentTarget);
-      const query = new URLSearchParams();
-      for (const key of ['q', 'category', 'brandId', 'status']) if (form.get(key)) query.set(key, form.get(key));
-      const result = await api(`/api/library?${query}`);
-      $('#asset-results').innerHTML = assetCards(result.items);
-      bindAssetOpeners($('#asset-results'));
-    } catch (error) { toast(error.message, true); }
-    finally { setLoading(false); }
+  bindGallery({
+    endpoint: '/api/library', filter: $('#library-filter'), grid: $('#asset-results'),
+    navigation: $('#library-pagination'), cards: assetCards, bindCards: bindAssetOpeners
   });
-  bindAssetOpeners(page);
+}
+
+function galleryPagination({ page: current, hasNext } = { page: 1, hasNext: false }) {
+  return `<button type="button" class="btn btn-ghost btn-small" data-gallery-page="${current - 1}" ${current <= 1 ? 'disabled' : ''}>‹ Sebelumnya</button>
+    <span aria-live="polite">Halaman ${number(current)}</span>
+    <button type="button" class="btn btn-ghost btn-small" data-gallery-page="${current + 1}" ${hasNext ? '' : 'disabled'}>Berikutnya ›</button>`;
+}
+
+function galleryImage(url) {
+  return url ? `<img data-gallery-thumbnail src="${attr(url)}" alt="" loading="lazy" decoding="async">` : '';
+}
+
+function bindGallery({ endpoint, filter, grid, navigation, cards, bindCards }) {
+  let appliedFilters = new URLSearchParams();
+  let loading = false;
+  const bind = () => {
+    bindCards(grid);
+    grid.querySelectorAll('[data-gallery-thumbnail]').forEach(image => {
+      const reveal = () => image.closest('.asset-thumbnail')?.classList.add('thumbnail-ready');
+      image.addEventListener('load', reveal, { once: true });
+      if (image.complete && image.naturalWidth) reveal();
+    });
+  };
+  async function load(targetPage, filters = appliedFilters) {
+    if (loading) return;
+    loading = true;
+    grid.setAttribute('aria-busy', 'true');
+    try {
+      const query = new URLSearchParams(filters);
+      query.set('page', String(targetPage));
+      const result = await api(`${endpoint}?${query}`);
+      if (!grid.isConnected) return;
+      appliedFilters = filters;
+      grid.innerHTML = cards(result.items);
+      navigation.innerHTML = galleryPagination(result.pagination);
+      bind();
+      grid.scrollIntoView({ block: 'nearest' });
+    } catch (error) {
+      if (grid.isConnected) toast(error.message, true);
+    } finally {
+      grid.removeAttribute('aria-busy');
+      loading = false;
+    }
+  }
+  filter.addEventListener('submit', event => {
+    event.preventDefault();
+    const filters = new URLSearchParams();
+    for (const [key, value] of new FormData(filter)) if (value) filters.set(key, value);
+    load(1, filters);
+  });
+  navigation.addEventListener('click', event => {
+    const button = event.target.closest('[data-gallery-page]');
+    if (button && !button.disabled) load(Number(button.dataset.galleryPage));
+  });
+  bind();
 }
 
 function assetCards(items) {
@@ -2119,22 +2159,6 @@ function bindAssetOpeners(root) {
     showAssetDetail(element.dataset.assetId);
   }));
   bindMediaPreviewers(root);
-  root.querySelectorAll('[data-asset-video-thumbnail]').forEach(video => {
-    const reveal = () => video.closest('.asset-preview')?.classList.add('thumbnail-ready');
-    const seekPreview = () => {
-      if (Number.isFinite(video.duration) && video.duration > 0) video.currentTime = Math.min(0.1, video.duration / 2);
-    };
-    video.addEventListener('loadedmetadata', seekPreview, { once: true });
-    video.addEventListener('loadeddata', reveal, { once: true });
-    video.addEventListener('seeked', reveal, { once: true });
-    video.addEventListener('error', () => video.closest('.asset-preview')?.classList.add('thumbnail-error'), { once: true });
-    if (video.readyState >= 2) reveal();
-  });
-  root.querySelectorAll('[data-asset-image-thumbnail]').forEach(image => {
-    image.addEventListener('load', () => image.closest('.asset-preview')?.classList.add('thumbnail-ready'), { once: true });
-    image.addEventListener('error', () => image.closest('.asset-preview')?.classList.add('thumbnail-error'), { once: true });
-    if (image.complete && image.naturalWidth) image.closest('.asset-preview')?.classList.add('thumbnail-ready');
-  });
 }
 
 async function showAssetDetail(id) {
@@ -2737,17 +2761,11 @@ function assetThumbnail(asset) {
   const hasCover = Boolean(asset.coverFileUrl);
   const isImage = mime.startsWith('image/');
   const isVideo = mime.startsWith('video/');
-  const visualUrl = hasCover ? asset.coverFileUrl : (isImage || isVideo ? asset.fileUrl : '');
-  const visualType = hasCover || isImage ? 'image' : isVideo ? 'video' : 'icon';
   const label = hasCover ? 'Cover' : isImage ? 'Foto' : isVideo ? 'Video' : labelize((asset.original_name || '').split('.').pop() || 'File');
   const previewUrl = isPreviewableMime(mime) && asset.fileUrl ? asset.fileUrl : hasCover ? asset.coverFileUrl : '';
   const previewMime = isPreviewableMime(mime) && asset.fileUrl ? mime : hasCover ? (asset.cover_mime_type || 'image/jpeg') : '';
   const previewName = isPreviewableMime(mime) && asset.fileUrl ? asset.original_name : asset.cover_original_name;
-  const media = visualType === 'image'
-    ? `<img data-asset-image-thumbnail src="${attr(visualUrl)}" alt="Thumbnail ${attr(asset.title)}" loading="lazy">`
-    : visualType === 'video'
-      ? `<video data-asset-video-thumbnail src="${attr(visualUrl)}#t=0.1" muted playsinline preload="metadata"></video>`
-      : '';
+  const media = galleryImage(asset.thumbnailUrl);
   const previewAction = previewUrl
     ? `<button class="asset-thumbnail-action" type="button" data-media-preview="${attr(previewUrl)}" data-media-mime="${attr(previewMime)}" data-media-name="${attr(previewName || asset.title)}" aria-label="Preview ${attr(asset.title)}"></button>`
     : '';

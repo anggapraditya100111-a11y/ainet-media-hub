@@ -10,6 +10,9 @@ RUN --mount=type=cache,target=/root/.npm \
       --fetch-retry-maxtimeout=30000
 
 FROM node:24-bookworm-slim
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
 ENV NODE_ENV=production \
     NODE_NO_WARNINGS=1 \
     PORT=8094 \

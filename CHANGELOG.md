@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.18.0 — 2026-11-25
+
+- Membatasi Media Library dan Raw Footage menjadi 24 kartu per halaman tanpa mengubah filter atau alur pemilihan referensi.
+- Mengganti pemutar video di kartu dengan thumbnail WebP kecil yang dibuat satu per satu saat dibutuhkan. Video asli tetap bisa diputar dari preview.
+- Menggunakan ikon jika thumbnail belum siap atau format file tidak didukung, tanpa harus mengunggah ulang file lama.
+
 ## 0.17.0 — 2026-10-16
 
 - Menambahkan thumbnail visual pada setiap kartu Media Library.

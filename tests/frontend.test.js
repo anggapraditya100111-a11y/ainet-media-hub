@@ -2,6 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
+const vm = require('node:vm');
 
 const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'public', 'index.html'), 'utf8');
@@ -205,16 +206,27 @@ test('Super Admin dapat menghapus aset Media Library secara permanen', () => {
   assert.match(app, /Konten sumber tetap tersimpan/);
 });
 
-test('Media Library menampilkan thumbnail cover, foto, dan cuplikan video', () => {
-  assert.match(app, /function assetThumbnail\(asset\)/);
-  assert.match(app, /asset\.coverFileUrl/);
-  assert.match(app, /data-asset-image-thumbnail/);
-  assert.match(app, /data-asset-video-thumbnail/);
-  assert.match(app, /#t=0\.1/);
-  assert.match(app, /data-media-preview/);
-  assert.match(css, /\.asset-thumbnail/);
-  assert.match(css, /object-fit: contain/);
-  assert.match(css, /\.asset-thumbnail-play/);
+test('kartu kedua galeri memuat hanya thumbnail statis, bukan file asli', () => {
+  const element = { addEventListener() {} };
+  const context = vm.createContext({
+    window: element,
+    document: { ...element, querySelector: () => element, querySelectorAll: () => [] },
+    fixture: { title: 'Video contoh', fileUrl: '/api/files/library/original.mp4',
+      thumbnailUrl: '/api/library/test/thumbnail', coverFileUrl: '/api/files/library/cover.jpg',
+      mime_type: 'video/mp4', mediaType: 'VIDEO', status: 'ACTIVE' }
+  });
+  vm.runInContext(app, context);
+  const library = vm.runInContext('assetThumbnail(fixture)', context);
+  const raw = vm.runInContext('rawFootagePreview(fixture)', context);
+  for (const card of [library, raw]) {
+    assert.match(card, /<img [^>]*src="\/api\/library\/test\/thumbnail"[^>]*loading="lazy"/);
+    assert.doesNotMatch(card, /<video\b|src="\/api\/files\//);
+    assert.match(card, /asset-thumbnail-play/);
+  }
+  assert.match(library, /data-media-preview="\/api\/files\/library\/original\.mp4"/);
+  assert.doesNotMatch(vm.runInContext('assetThumbnail({...fixture,thumbnailUrl:""})', context), /<img\b/);
+  assert.match(vm.runInContext('galleryPagination({ page: 1, hasNext: true })', context), /data-gallery-page="2"/);
+  assert.match(css, /\.asset-thumbnail img [^\n]*object-fit: contain/);
 });
 
 test('alur konten sederhana tersedia untuk internal dan vendor dengan revisi serta delegasi', () => {

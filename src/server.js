@@ -26,8 +26,11 @@ const {
 } = require('./oidc');
 const { installWorkflowV4 } = require('./workflow-v4');
 const { createAccessNotificationRelay } = require('./access-notifications');
+const { createGalleryThumbnails } = require('./gallery-thumbnails');
 
-const APP_VERSION = '0.17.0';
+const APP_VERSION = '0.18.0';
+const galleryThumbnails = createGalleryThumbnails(UPLOAD_DIR);
+const GALLERY_PAGE_SIZE = 24;
 const PORT = Number(process.env.PORT || 8094);
 const COOKIE_NAME = 'mh_session';
 const OIDC_STATE_COOKIE = 'mh_oidc_state';
@@ -2072,6 +2075,43 @@ function serializeRawFootage(row) {
   };
 }
 
+function galleryPage(value) {
+  return Math.max(1, Math.min(1_000_000, toInteger(value, 1)));
+}
+
+function galleryResult(rows, page, serialize) {
+  return {
+    items: rows.slice(0, GALLERY_PAGE_SIZE).map(serialize),
+    pagination: { page, pageSize: GALLERY_PAGE_SIZE, hasNext: rows.length > GALLERY_PAGE_SIZE }
+  };
+}
+
+function canThumbnail(mime) {
+  return /^(image|video)\//i.test(mime || '');
+}
+
+function serveGalleryThumbnail(getSource) {
+  return async (req, res, next) => {
+    let timer;
+    try {
+      const source = getSource(req);
+      res.set('Cache-Control', 'private, no-store');
+      if (!source) return res.status(404).end();
+      const file = await Promise.race([
+        galleryThumbnails.get(source),
+        new Promise(resolve => { timer = setTimeout(() => resolve(null), 2500); timer.unref(); })
+      ]);
+      if (res.destroyed) return;
+      if (!file || getSource(req) !== source) return res.status(404).end();
+      res.set('Cache-Control', 'private, no-cache');
+      return res.type('image/webp').sendFile(file, { cacheControl: false }, err => {
+        if (err && !res.destroyed && !res.headersSent) next(err);
+      });
+    } catch (error) { next(error); }
+    finally { clearTimeout(timer); }
+  };
+}
+
 app.get('/api/raw-footage', authRequired, permissionRequired('footage.view'), (req, res) => {
   const access = rawFootageAccess(req.user);
   const conditions = [access.sql];
@@ -2087,12 +2127,26 @@ app.get('/api/raw-footage', authRequired, permissionRequired('footage.view'), (r
     conditions.push('(rf.title LIKE ? OR rf.code LIKE ? OR rf.description LIKE ? OR rf.location LIKE ? OR rf.tags_json LIKE ?)');
     params.push(query, query, query, query, query);
   }
+  const page = galleryPage(req.query.page);
+  const picker = req.query.view === 'picker';
   const rows = db.prepare(`SELECT rf.*,b.code AS brand_code,b.name AS brand_name,u.name AS uploaded_by_name
     FROM raw_footage rf LEFT JOIN brands b ON b.id=rf.brand_id JOIN users u ON u.id=rf.uploaded_by
-    WHERE ${conditions.join(' AND ')} ORDER BY CASE rf.status WHEN 'ACTIVE' THEN 0 ELSE 1 END,rf.updated_at DESC LIMIT 500`)
-    .all(...params).map(serializeRawFootage);
-  res.json({ items: rows, categories: RAW_FOOTAGE_CATEGORIES });
+    WHERE ${conditions.join(' AND ')} ORDER BY CASE rf.status WHEN 'ACTIVE' THEN 0 ELSE 1 END,rf.updated_at DESC,rf.id DESC LIMIT ? OFFSET ?`)
+    .all(...params, picker ? 500 : GALLERY_PAGE_SIZE + 1, picker ? 0 : (page - 1) * GALLERY_PAGE_SIZE);
+  const result = picker ? { items: rows.map(serializeRawFootage) } : galleryResult(rows, page, row => ({
+    ...serializeRawFootage(row),
+    thumbnailUrl: row.file_path && canThumbnail(row.mime_type) ? `/api/raw-footage/${encodeURIComponent(row.id)}/thumbnail` : ''
+  }));
+  res.json({ ...result, categories: RAW_FOOTAGE_CATEGORIES });
 });
+
+app.get('/api/raw-footage/:id/thumbnail', authRequired, permissionRequired('footage.view'), permissionRequired('footage.download'), serveGalleryThumbnail(req => {
+  const access = rawFootageAccess(req.user);
+  const row = db.prepare(`SELECT rf.file_path,rf.mime_type,rf.status FROM raw_footage rf WHERE rf.id=? AND ${access.sql}`)
+    .get(req.params.id, ...access.params);
+  if (!row || !canThumbnail(row.mime_type) || (req.user.role === 'VENDOR' && row.status !== 'ACTIVE')) return null;
+  return row.file_path;
+}));
 
 app.get('/api/raw-footage/:id', authRequired, permissionRequired('footage.view'), (req, res, next) => {
   try {
@@ -2188,6 +2242,7 @@ app.delete('/api/raw-footage/:id', authRequired, (req, res, next) => {
     })();
     const absolute = path.resolve(UPLOAD_DIR, item.file_path);
     if (absolute.startsWith(`${path.resolve(UPLOAD_DIR)}${path.sep}`)) { try { fs.unlinkSync(absolute); } catch {} }
+    galleryThumbnails.remove(item.file_path).catch(() => {});
     res.json({ ok: true });
   } catch (error) { next(error); }
 });
@@ -2292,16 +2347,34 @@ app.get('/api/library', authRequired, permissionRequired('library.view'), (req, 
     const query = `%${cleanText(req.query.q, 100)}%`;
     params.push(query, query, query);
   }
+  const page = galleryPage(req.query.page);
+  const picker = req.query.view === 'picker';
   const rows = db.prepare(`SELECT ma.*,b.code AS brand_code,b.name AS brand_name,u.name AS owner_name,
     mav.version_number,mav.file_path,mav.original_name,mav.mime_type,mav.file_size,mav.checksum,mav.cover_file_path,mav.cover_original_name,mav.cover_mime_type,mav.cover_file_size,mav.cover_checksum,mav.notes AS version_notes,mav.created_at AS version_created_at
     FROM media_assets ma
     LEFT JOIN brands b ON b.id=ma.brand_id
     JOIN users u ON u.id=ma.owner_id
     LEFT JOIN media_asset_versions mav ON mav.id=ma.active_version_id
-    WHERE ${conditions.join(' AND ')} ORDER BY CASE ma.status WHEN 'ACTIVE' THEN 0 WHEN 'EXPIRED' THEN 1 ELSE 2 END,ma.updated_at DESC`)
-    .all(...params).map(row => serializeAsset(row, req.user));
-  res.json({ items: rows });
+    WHERE ${conditions.join(' AND ')} ORDER BY CASE ma.status WHEN 'ACTIVE' THEN 0 WHEN 'EXPIRED' THEN 1 ELSE 2 END,ma.updated_at DESC,ma.id DESC LIMIT ? OFFSET ?`)
+    .all(...params, picker ? -1 : GALLERY_PAGE_SIZE + 1, picker ? 0 : (page - 1) * GALLERY_PAGE_SIZE);
+  if (picker) return res.json({ items: rows.map(row => serializeAsset(row, req.user)) });
+  res.json(galleryResult(rows, page, row => {
+    const item = serializeAsset(row, req.user);
+    return {
+      ...item,
+      thumbnailUrl: item.canDownload && (row.cover_file_path || (row.file_path && canThumbnail(row.mime_type)))
+        ? `/api/library/${encodeURIComponent(row.id)}/thumbnail` : ''
+    };
+  }));
 });
+
+app.get('/api/library/:id/thumbnail', authRequired, permissionRequired('library.view'), permissionRequired('library.download'), serveGalleryThumbnail(req => {
+  const row = db.prepare(`SELECT ma.status,ma.expires_at,mav.file_path,mav.mime_type,mav.cover_file_path
+    FROM media_assets ma JOIN media_asset_versions mav ON mav.id=ma.active_version_id WHERE ma.id=?`).get(req.params.id);
+  if (!row || (!hasPermission(req.user, 'library.manage') &&
+      (row.status !== 'ACTIVE' || (row.expires_at && row.expires_at < nowIso().slice(0, 10))))) return null;
+  return row.cover_file_path || (canThumbnail(row.mime_type) ? row.file_path : null);
+}));
 
 app.get('/api/library/:id', authRequired, permissionRequired('library.view'), (req, res, next) => {
   try {
@@ -2411,6 +2484,7 @@ app.post('/api/library/:id/cover', authRequired, permissionRequired('library.man
     if (activeVersion.cover_file_path) {
       const oldPath = path.resolve(UPLOAD_DIR, activeVersion.cover_file_path);
       if (oldPath.startsWith(`${path.resolve(UPLOAD_DIR)}${path.sep}`)) { try { fs.unlinkSync(oldPath); } catch {} }
+      galleryThumbnails.remove(activeVersion.cover_file_path).catch(() => {});
     }
     res.json({ ok: true });
   } catch (error) { removeRequestUploads(req); next(error); }
@@ -2461,6 +2535,7 @@ app.delete('/api/library/:id', authRequired, (req, res, next) => {
       for (const storedPath of [version.file_path, version.cover_file_path].filter(Boolean)) {
         const absolute = path.resolve(uploadRoot, storedPath);
         if (absolute.startsWith(`${uploadRoot}${path.sep}`)) { try { fs.unlinkSync(absolute); } catch {} }
+        galleryThumbnails.remove(storedPath).catch(() => {});
       }
     }
     res.json({ ok: true });
